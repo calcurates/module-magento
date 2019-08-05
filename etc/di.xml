@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!--
+  @author Calcurates Team
+  @copyright Copyright (c) 2019 Calcurates (https://www.calcurates.com)
+  @package Calcurates_Integration
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Calcurates\Integration\Api\Catalog\CategoryManagementInterface" type="Calcurates\Integration\Model\Catalog\CategoryManagement"/>
+    <preference for="Calcurates\Integration\Api\ConfigProviderInterface" type="Calcurates\Integration\Model\Config"/>
+    <preference for="Calcurates\Integration\Api\Data\ConfigDataInterface" type="Calcurates\Integration\Model\Config\Data"/>
+</config>

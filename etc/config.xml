@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+  @author Calcurates Team
+  @copyright Copyright (c) 2019 Calcurates (https://www.calcurates.com)
+  @package Calcurates_Integration
+  -->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <carriers>
+            <calcurates>
+                <active>0</active>
+                <showmethod>1</showmethod>
+                <api_url>https://api.calcurates.com</api_url>
+                <model>Calcurates\Integration\Model\Carrier</model>
+                <calcurates_token backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
+                <specificerrmsg>This shipping method is not available. To use this shipping method, please contact us.</specificerrmsg>
+                <debug>0</debug>
+            </calcurates>
+        </carriers>
+    </default>
+</config>
