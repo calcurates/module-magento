@@ -1,0 +1,24 @@
+image: alpine:3.10
+
+before_script:
+    - apk add openssh-client
+
+stages:
+    - test
+    - deploy
+
+test:
+    stage: test
+    script:
+        - echo "No tests"
+
+deploy:
+    stage: deploy
+    script:
+        - echo "Deploy to server"
+        - echo "$SSH_PRIVATE_KEY" > ./id_rsa
+        - chmod 600 ./id_rsa
+        - ssh -o StrictHostKeyChecking=no -p"$SSH_PORT" -i ./id_rsa "$SSH_USER"@"$SSH_HOST" "$SSH_DEPLOY_SCRIPT"
+    when: manual
+    only:
+        - master
