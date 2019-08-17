@@ -150,7 +150,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         if ($request->getAllItems()) {
             foreach ($request->getAllItems() as $item) {
                 /* @var $item \Magento\Quote\Model\Quote\Item */
-                if ($item->getProduct()->isVirtual() || $item->getParentItem()) {
+                if ($item->getParentItem() || $item->getProduct()->isVirtual()) {
                     continue;
                 }
 
@@ -186,7 +186,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             'postalCode' => $request->getDestPostcode(),
             'city' => $request->getDestCity(),
             'address' => $streetArray[0],
-            'addressLine2' => $streetArray[1] ?? "",
+            'addressLine2' => $streetArray[1] ?? '',
             'customerGroup' => '',
             'promo' => '',
             'products' => [],
