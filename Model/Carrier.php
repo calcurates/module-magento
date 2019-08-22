@@ -229,7 +229,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             $response = \Zend_Json::decode($client->getBody());
         } catch (\Throwable $e) {
             $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
-            $response = '';
+            $response = [];
         }
         $this->_debug($debugData);
 
@@ -276,7 +276,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.ElseExpression)
      */
-    protected function parseResponse($response = null)
+    protected function parseResponse($response = [])
     {
         $result = $this->rateFactory->create();
         try {
@@ -324,7 +324,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         foreach ($origin['tableRates'] as $tableRate) {
             $shippingOption = $tableRate['shippingOption'];
 
-            foreach ($tableRate->tableRateMethods as $responseRate) {
+            foreach ($tableRate['tableRateMethods'] as $responseRate) {
                 $tableRateMethod = $responseRate['tableRateMethod'];
                 $methodId = self::CODE . '_tableRate_' . $shippingOption['id'] . '_' . $tableRateMethod['id'];
 
