@@ -1,6 +1,7 @@
-### Calcurates Calcurates
+### Calcurates magento module
 
 #### Manual installation
+- Download [latest release](https://github.com/calcurates/module-magento/releases/latest)
 - Unpack archive to `app/code/Calcurates/Integration`
 - Execute
 ```bash
