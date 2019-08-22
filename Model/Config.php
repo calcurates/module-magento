@@ -11,6 +11,8 @@ use Calcurates\Integration\Api\ConfigProviderInterface;
 use Calcurates\Integration\Api\Data\ConfigDataInterface;
 use Calcurates\Integration\Api\Data\ConfigDataInterfaceFactory;
 use Calcurates\Integration\Model\Config\Data;
+use Composer\Factory as ComposerFactory;
+use Composer\IO\BufferIO;
 use Magento\Directory\Helper\Data as DirectoryData;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Stdlib\DateTime\Timezone;
@@ -99,5 +101,22 @@ class Config implements ConfigProviderInterface
     public function getCalcuratesToken()
     {
         return $this->scopeConfig->getValue(self::CONFIG_GROUP . self::CONFIG_TOKEN);
+    }
+
+    /**
+     * @return \Composer\Package\RootPackageInterface
+     */
+    public function getComposerPackage()
+    {
+        static $composerPackage = null;
+
+        if (!$composerPackage) {
+            $composerPackage = ComposerFactory::create(
+                new BufferIO(),
+                __DIR__ . '/../composer.json'
+            )->getPackage();
+        }
+
+        return $composerPackage;
     }
 }
