@@ -2,7 +2,7 @@
 
 #### Manual installation
 - Download [latest release](https://github.com/calcurates/module-magento/releases/latest)
-- Unpack archive to `app/code/Calcurates/Integration`
+- Unpack archive to `app/code/Calcurates/ModuleMagento`
 - Execute
 ```bash
 cd path_to_magento
@@ -13,7 +13,7 @@ sudo -u magento_user php bin/magento cache:flush
 #### Composer installation
 ```bash
 cd path_to_magento
-composer require calcurates/integration
+composer require calcurates/module-magento
 sudo -u magento_user php bin/magento setup:upgrade
 sudo -u magento_user php bin/magento cache:flush
 ```

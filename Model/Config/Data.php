@@ -2,12 +2,12 @@
 /**
  * @author Calcurates Team
  * @copyright Copyright (c) 2019 Calcurates (https://www.calcurates.com)
- * @package Calcurates_Integration
+ * @package Calcurates_ModuleMagento
  */
 
-namespace Calcurates\Integration\Model\Config;
+namespace Calcurates\ModuleMagento\Model\Config;
 
-use Calcurates\Integration\Api\Data\ConfigDataInterface;
+use Calcurates\ModuleMagento\Api\Data\ConfigDataInterface;
 use Magento\Framework\DataObject;
 
 class Data extends DataObject implements ConfigDataInterface

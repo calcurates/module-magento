@@ -2,10 +2,10 @@
 /**
  * @author Calcurates Team
  * @copyright Copyright (c) 2019 Calcurates (https://www.calcurates.com)
- * @package Calcurates_Integration
+ * @package Calcurates_ModuleMagento
  */
 
-namespace Calcurates\Integration\Model\Catalog\Category;
+namespace Calcurates\ModuleMagento\Model\Catalog\Category;
 
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Category\Tree as OriginalTree;

@@ -2,7 +2,7 @@
 <!--
   @author Calcurates Team
   @copyright Copyright (c) 2019 Calcurates (https://www.calcurates.com)
-  @package Calcurates_Integration
+  @package Calcurates_ModuleMagento
   -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
@@ -21,7 +21,7 @@
                                                         <item name="shipping-rates-validation" xsi:type="array">
                                                             <item name="children" xsi:type="array">
                                                                 <item name="calcurates-rates-validation" xsi:type="array">
-                                                                    <item name="component" xsi:type="string">Calcurates_Integration/js/view/shipping-rates-validation/calcurates</item>
+                                                                    <item name="component" xsi:type="string">Calcurates_ModuleMagento/js/view/shipping-rates-validation/calcurates</item>
                                                                 </item>
                                                             </item>
                                                         </item>

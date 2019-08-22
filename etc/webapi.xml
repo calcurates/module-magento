@@ -2,24 +2,24 @@
 <!--
   @author Calcurates Team
   @copyright Copyright (c) 2019 Calcurates (https://www.calcurates.com)
-  @package Calcurates_Integration
+  @package Calcurates_ModuleMagento
   -->
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
 
     <!-- Category Service -->
     <route url="/V1/calcurates/categories-by-website/:websiteId" method="GET">
-        <service class="Calcurates\Integration\Api\Catalog\CategoryManagementInterface" method="getTree" />
+        <service class="Calcurates\ModuleMagento\Api\Catalog\CategoryManagementInterface" method="getTree" />
         <resources>
-            <resource ref="Calcurates_Integration::api" />
+            <resource ref="Calcurates_ModuleMagento::api" />
         </resources>
     </route>
 
     <!-- Setting Service -->
     <route url="/V1/calcurates/shipping-settings/:websiteId" method="GET">
-        <service class="Calcurates\Integration\Api\ConfigProviderInterface" method="getSettings" />
+        <service class="Calcurates\ModuleMagento\Api\ConfigProviderInterface" method="getSettings" />
         <resources>
-            <resource ref="Calcurates_Integration::api" />
+            <resource ref="Calcurates_ModuleMagento::api" />
         </resources>
     </route>
 </routes>

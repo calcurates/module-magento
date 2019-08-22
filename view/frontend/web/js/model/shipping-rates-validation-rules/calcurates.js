@@ -1,7 +1,7 @@
 /**
  * @author Calcurates Team
  * @copyright Copyright (c) 2019 Calcurates (https://www.calcurates.com)
- * @package Calcurates_Integration
+ * @package Calcurates_ModuleMagento
  */
 
 define([], function () {

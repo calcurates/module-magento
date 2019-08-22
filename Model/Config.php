@@ -2,15 +2,15 @@
 /**
  * @author Calcurates Team
  * @copyright Copyright (c) 2019 Calcurates (https://www.calcurates.com)
- * @package Calcurates_Integration
+ * @package Calcurates_ModuleMagento
  */
 
-namespace Calcurates\Integration\Model;
+namespace Calcurates\ModuleMagento\Model;
 
-use Calcurates\Integration\Api\ConfigProviderInterface;
-use Calcurates\Integration\Api\Data\ConfigDataInterface;
-use Calcurates\Integration\Api\Data\ConfigDataInterfaceFactory;
-use Calcurates\Integration\Model\Config\Data;
+use Calcurates\ModuleMagento\Api\ConfigProviderInterface;
+use Calcurates\ModuleMagento\Api\Data\ConfigDataInterface;
+use Calcurates\ModuleMagento\Api\Data\ConfigDataInterfaceFactory;
+use Calcurates\ModuleMagento\Model\Config\Data;
 use Composer\Factory as ComposerFactory;
 use Composer\IO\BufferIO;
 use Magento\Directory\Helper\Data as DirectoryData;

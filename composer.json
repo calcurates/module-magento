@@ -1,6 +1,6 @@
 {
-    "name": "calcurates/integration",
-    "description": "Calcurates Integration",
+    "name": "calcurates/module-magento",
+    "description": "Calcurates Integration for Magento",
     "require": {
         "php": "7.0.2|7.0.4|~7.0.6|^7.1.0"
     },
@@ -14,7 +14,7 @@
             "registration.php"
         ],
         "psr-4": {
-            "Calcurates\\Integration\\": ""
+            "Calcurates\\ModuleMagento\\": ""
         }
     }
 }

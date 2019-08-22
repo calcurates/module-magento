@@ -2,10 +2,10 @@
 /**
  * @author Calcurates Team
  * @copyright Copyright (c) 2019 Calcurates (https://www.calcurates.com)
- * @package Calcurates_Integration
+ * @package Calcurates_ModuleMagento
  */
 
-namespace Calcurates\Integration\Api;
+namespace Calcurates\ModuleMagento\Api;
 
 /**
  * @api
@@ -17,7 +17,7 @@ interface ConfigProviderInterface
      *
      * @param int $websiteId
      *
-     * @return \Calcurates\Integration\Api\Data\ConfigDataInterface
+     * @return \Calcurates\ModuleMagento\Api\Data\ConfigDataInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException If ID is not found
      */
     public function getSettings($websiteId = null);

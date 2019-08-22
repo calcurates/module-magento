@@ -2,13 +2,13 @@
 /**
  * @author Calcurates Team
  * @copyright Copyright (c) 2019 Calcurates (https://www.calcurates.com)
- * @package Calcurates_Integration
+ * @package Calcurates_ModuleMagento
  */
 
-namespace Calcurates\Integration\Model\Catalog;
+namespace Calcurates\ModuleMagento\Model\Catalog;
 
-use Calcurates\Integration\Api\Catalog\CategoryManagementInterface;
-use Calcurates\Integration\Model\Catalog\Category\Tree;
+use Calcurates\ModuleMagento\Api\Catalog\CategoryManagementInterface;
+use Calcurates\ModuleMagento\Model\Catalog\Category\Tree;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryTreeInterface;
 use Magento\Catalog\Model\Category;

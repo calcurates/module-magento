@@ -2,12 +2,12 @@
 /**
  * @author Calcurates Team
  * @copyright Copyright (c) 2019 Calcurates (https://www.calcurates.com)
- * @package Calcurates_Integration
+ * @package Calcurates_ModuleMagento
  */
 
-namespace Calcurates\Integration\Model;
+namespace Calcurates\ModuleMagento\Model;
 
-use Calcurates\Integration\Model\Config as CalcuratesConfig;
+use Calcurates\ModuleMagento\Model\Config as CalcuratesConfig;
 use Magento\Directory\Model\RegionFactory;
 use Magento\Directory\Model\ResourceModel\Region as RegionResource;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -60,7 +60,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     private $httpClientFactory;
 
     /**
-     * @var \Calcurates\Integration\Model\Config
+     * @var \Calcurates\ModuleMagento\Model\Config
      */
     private $calcuratesConfig;
 
@@ -276,7 +276,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.ElseExpression)
      */
-    protected function parseResponse($response = [])
+    protected function parseResponse($response)
     {
         $result = $this->rateFactory->create();
         try {
