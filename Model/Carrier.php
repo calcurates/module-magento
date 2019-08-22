@@ -88,7 +88,6 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         ScopeConfigInterface $scopeConfig,
         ErrorFactory $rateErrorFactory,
         LoggerInterface $logger,
-        Config $configHelper,
         ClientFactory $httpClientFactory,
         CalcuratesConfig $calcuratesConfig,
         RegionResource $regionResource,
@@ -219,12 +218,15 @@ class Carrier extends AbstractCarrier implements CarrierInterface
 
         try {
             $client = $this->httpClientFactory->create();
+            $composerPackage = $this->calcuratesConfig->getComposerPackage();
+
+            $client->addHeader('User-Agent', $composerPackage->getName() . '/' . $composerPackage->getVersion());
             $client->addHeader('X-API-Key', $this->calcuratesConfig->getCalcuratesToken());
             $client->addHeader('Content-Type', 'application/json');
-            $client->post($this->getAPIUrl() . self::CALCURATES_API_PATH, \json_encode($apiRequestBody));
-            $response = $client->getBody();
-            $debugData['result'] = $response;
-            $response = \json_decode($response, true);
+            $client->post($this->getAPIUrl() . self::CALCURATES_API_PATH, \Zend_Json::encode($apiRequestBody));
+
+            $debugData['result'] = $client->getBody();
+            $response = \Zend_Json::decode($client->getBody());
         } catch (\Throwable $e) {
             $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
             $response = '';
