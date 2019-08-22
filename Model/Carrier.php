@@ -22,6 +22,8 @@ use Magento\Shipping\Model\Carrier\CarrierInterface;
 use Magento\Shipping\Model\Rate\Result;
 use Magento\Shipping\Model\Rate\ResultFactory;
 use Psr\Log\LoggerInterface;
+use Zend\Http\Exception\RuntimeException as HttpRuntimeException;
+
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -225,6 +227,9 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             $client->addHeader('Content-Type', 'application/json');
             $client->post($this->getAPIUrl() . self::CALCURATES_API_PATH, \Zend_Json::encode($apiRequestBody));
 
+            if ($client->getStatus() >= 400) {
+                throw new HttpRuntimeException($client->getBody(), $client->getStatus());
+            }
             $debugData['result'] = $client->getBody();
             $response = \Zend_Json::decode($client->getBody());
         } catch (\Throwable $e) {
