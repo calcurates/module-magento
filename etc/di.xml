@@ -6,8 +6,14 @@
   -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Calcurates\ModuleMagento\Api\Catalog\CategoryManagementInterface" type="Calcurates\ModuleMagento\Model\Catalog\CategoryManagement"/>
+
     <preference for="Calcurates\ModuleMagento\Api\ConfigProviderInterface" type="Calcurates\ModuleMagento\Model\Config"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\ConfigDataInterface" type="Calcurates\ModuleMagento\Model\Config\Data"/>
+
     <preference for="Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataInterface" type="Calcurates\ModuleMagento\Model\Catalog\Product\Attribute\CustomData"/>
     <preference for="Calcurates\ModuleMagento\Api\Catalog\Product\ProductAttributesListInterface" type="Calcurates\ModuleMagento\Model\Catalog\Product\AttributesList"/>
+
+    <preference for="Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\VolumetricWeightInterface" type="Calcurates\ModuleMagento\Model\Checkout\AttributeLinking\VolumetricWeight"/>
+    <preference for="Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\VolumetricWeight\SeparateDimensionsInterface" type="Calcurates\ModuleMagento\Model\Checkout\AttributeLinking\VolumetricWeight\SeparateDimensionsData"/>
+    <preference for="Calcurates\ModuleMagento\Api\System\Checkout\Attributes\VolumetricWeightInterface" type="Calcurates\ModuleMagento\Model\System\Checkout\Attributes\VolumetricWeight"/>
 </config>

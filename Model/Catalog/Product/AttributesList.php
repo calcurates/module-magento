@@ -47,7 +47,6 @@ class AttributesList implements ProductAttributesListInterface
     {
         /** @var \Magento\Framework\Api\SearchCriteria $searchCriteria */
         $searchCriteria = $this->searchCriteriaBuilder
-            ->addFilter(ProductAttributeInterface::IS_VISIBLE, true)
             ->addFilter(ProductAttributeInterface::ATTRIBUTE_ID, 1, 'gteq')
             ->create();
 
