@@ -30,4 +30,12 @@
             <resource ref="Calcurates_ModuleMagento::api" />
         </resources>
     </route>
+
+    <!-- Entrypoint for saving linked attributes of Volumetric Weight -->
+    <route url="/V1/calcurates/system/checkout/attributes/volumetric-weight/:websiteId" method="POST">
+        <service class="Calcurates\ModuleMagento\Api\System\Checkout\Attributes\VolumetricWeightInterface" method="link" />
+        <resources>
+            <resource ref="Calcurates_ModuleMagento::api" />
+        </resources>
+    </route>
 </routes>

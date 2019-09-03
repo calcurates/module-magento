@@ -33,6 +33,8 @@ class Config implements ConfigProviderInterface
 
     const CONFIG_ERROR_MESSAGE = 'specificerrmsg';
 
+    const CONFIG_ATTRIBUTES_VOLUMETRIC_WEIGHT = 'checkout/attributes/volumetric-weight';
+
     /**
      * @var ScopeConfigInterface
      */
@@ -101,6 +103,14 @@ class Config implements ConfigProviderInterface
     public function getCalcuratesToken()
     {
         return $this->scopeConfig->getValue(self::CONFIG_GROUP . self::CONFIG_TOKEN);
+    }
+
+    /**
+     * @return string
+     */
+    public function getLinkedVolumetricWeightAttributes()
+    {
+        return $this->scopeConfig->getValue(self::CONFIG_GROUP . self::CONFIG_ATTRIBUTES_VOLUMETRIC_WEIGHT, ScopeInterface::SCOPE_WEBSITES);
     }
 
     /**
