@@ -27,12 +27,19 @@ class VolumetricWeight implements VolumetricWeightInterface
      */
     private $serializer;
 
+    /**
+     * @var Process
+     */
+    private $processAttributes;
+
     public function __construct(
         WriterInterface $scopeConfig,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        Process $processAttributes
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->serializer = $serializer;
+        $this->processAttributes = $processAttributes;
     }
 
     /**
@@ -42,7 +49,20 @@ class VolumetricWeight implements VolumetricWeightInterface
     {
         $this->validate($attributes);
 
-        $data = $this->serializer->serialize($attributes->getData());
+        $data = [
+            'volumetricWeight' => [
+                'volume' => [
+                    'volume' => $attributes->getVolume(),
+                ],
+                'volumetricWeight' => [
+                    'volumetricWeight' => $attributes->getVolumetricWeight(),
+                ],
+                'separateDimensions' => $attributes->getSeparateDimensions()->getData()
+            ]
+        ];
+
+        $data = $this->processAttributes->switchToCode($data);
+        $data = $this->serializer->serialize($data);
 
         $this->scopeConfig->save(
             Config::CONFIG_GROUP.Config::CONFIG_ATTRIBUTES_VOLUMETRIC_WEIGHT,
@@ -60,6 +80,7 @@ class VolumetricWeight implements VolumetricWeightInterface
     private function validate(DataVolumetricWeightInterface $attributes)
     {
         if ($attributes->getSeparateDimensions() !== null
+            && !$attributes->getSeparateDimensions()->isEmpty()
             && !($attributes->getSeparateDimensions()->getLength()
                 && $attributes->getSeparateDimensions()->getWidth()
                 && $attributes->getSeparateDimensions()->getHeight())

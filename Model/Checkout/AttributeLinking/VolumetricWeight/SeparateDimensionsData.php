@@ -53,7 +53,15 @@ class SeparateDimensionsData implements SeparateDimensionsInterface
     }
 
     /**
-`     * @inheritDoc
+     * @inheritDoc
+     */
+    public function isEmpty()
+    {
+        return !$this->getHeight() && !$this->getWidth() && !$this->getLength();
+    }
+
+    /**
+     * @inheritDoc
      */
     public function setHeight($height)
     {
