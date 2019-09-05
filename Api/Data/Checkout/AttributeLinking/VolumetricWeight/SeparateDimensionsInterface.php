@@ -7,6 +7,9 @@
 
 namespace Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\VolumetricWeight;
 
+/**
+ * @api
+ */
 interface SeparateDimensionsInterface
 {
     /**

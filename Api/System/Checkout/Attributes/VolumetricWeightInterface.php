@@ -9,6 +9,9 @@ namespace Calcurates\ModuleMagento\Api\System\Checkout\Attributes;
 
 use Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\VolumetricWeightInterface as DataVolumetricWeightInterface;
 
+/**
+ * @api
+ */
 interface VolumetricWeightInterface
 {
     /**

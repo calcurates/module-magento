@@ -15,6 +15,7 @@ use Composer\Factory as ComposerFactory;
 use Composer\IO\BufferIO;
 use Magento\Directory\Helper\Data as DirectoryData;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\Stdlib\DateTime\Timezone;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -55,16 +56,23 @@ class Config implements ConfigProviderInterface
      */
     private $timezone;
 
+    /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         StoreManagerInterface $storeManager,
         ConfigDataInterfaceFactory $dataFactory,
-        Timezone $timezone
+        Timezone $timezone,
+        SerializerInterface $serializer
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
         $this->dataFactory = $dataFactory;
         $this->timezone = $timezone;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -102,15 +110,20 @@ class Config implements ConfigProviderInterface
      */
     public function getCalcuratesToken()
     {
-        return $this->scopeConfig->getValue(self::CONFIG_GROUP . self::CONFIG_TOKEN);
+        return $this->scopeConfig->getValue(self::CONFIG_GROUP.self::CONFIG_TOKEN);
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getLinkedVolumetricWeightAttributes()
     {
-        return $this->scopeConfig->getValue(self::CONFIG_GROUP . self::CONFIG_ATTRIBUTES_VOLUMETRIC_WEIGHT, ScopeInterface::SCOPE_WEBSITES);
+        $data = $this->scopeConfig->getValue(
+            self::CONFIG_GROUP.self::CONFIG_ATTRIBUTES_VOLUMETRIC_WEIGHT,
+            ScopeInterface::SCOPE_WEBSITES
+        );
+
+        return $this->serializer->unserialize($data);
     }
 
     /**
@@ -123,7 +136,7 @@ class Config implements ConfigProviderInterface
         if (!$composerPackage) {
             $composerPackage = ComposerFactory::create(
                 new BufferIO(),
-                __DIR__ . '/../composer.json'
+                __DIR__.'/../composer.json'
             )->getPackage();
         }
 

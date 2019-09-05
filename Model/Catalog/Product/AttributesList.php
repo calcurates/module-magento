@@ -51,7 +51,7 @@ class AttributesList implements ProductAttributesListInterface
             ->create();
 
         $attributesItems = $this->eavAttributeRepository->getList(
-            \Magento\Catalog\Api\Data\ProductAttributeInterface::ENTITY_TYPE_CODE,
+            ProductAttributeInterface::ENTITY_TYPE_CODE,
             $searchCriteria
         )->getItems();
         $result = [];

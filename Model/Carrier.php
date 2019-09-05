@@ -17,13 +17,13 @@ use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Quote\Model\Quote\Address\RateResult\Error;
 use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
 use Magento\Quote\Model\Quote\Address\RateResult\MethodFactory;
+use Magento\Quote\Model\Quote\Item;
 use Magento\Shipping\Model\Carrier\AbstractCarrier;
 use Magento\Shipping\Model\Carrier\CarrierInterface;
 use Magento\Shipping\Model\Rate\Result;
 use Magento\Shipping\Model\Rate\ResultFactory;
 use Psr\Log\LoggerInterface;
 use Zend\Http\Exception\RuntimeException as HttpRuntimeException;
-
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -150,7 +150,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
 
         if ($request->getAllItems()) {
             foreach ($request->getAllItems() as $item) {
-                /* @var $item \Magento\Quote\Model\Quote\Item */
+                /* @var $item Item */
                 if ($item->getParentItem() || $item->getProduct()->isVirtual()) {
                     continue;
                 }
@@ -193,7 +193,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             'products' => [],
         ];
 
-        /** @var \Magento\Quote\Model\Quote\Item[] $items */
+        /** @var Item[] $items */
         $items = $this->getAllItems($request);
 
         $quote = current($items)->getQuote();
@@ -213,6 +213,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
                 'origin' => '', // @todo in the next iterations
                 'sku' => $item->getSku(),
                 'categories' => $item->getProduct()->getCategoryIds(),
+                'feature' => $this->getAttributesData($item),
             ];
         }
 
@@ -222,10 +223,10 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             $client = $this->httpClientFactory->create();
             $composerPackage = $this->calcuratesConfig->getComposerPackage();
 
-            $client->addHeader('User-Agent', $composerPackage->getName() . '/' . $composerPackage->getVersion());
+            $client->addHeader('User-Agent', $composerPackage->getName().'/'.$composerPackage->getVersion());
             $client->addHeader('X-API-Key', $this->calcuratesConfig->getCalcuratesToken());
             $client->addHeader('Content-Type', 'application/json');
-            $client->post($this->getAPIUrl() . self::CALCURATES_API_PATH, \Zend_Json::encode($apiRequestBody));
+            $client->post($this->getAPIUrl().self::CALCURATES_API_PATH, \Zend_Json::encode($apiRequestBody));
 
             if ($client->getStatus() >= 400) {
                 throw new HttpRuntimeException($client->getBody(), $client->getStatus());
@@ -311,9 +312,9 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     protected function processFlatAndFreeRates(array $origin, Result $result)
     {
         foreach (['flatRate', 'freeShipping'] as $shippingType) {
-            foreach ($origin[$shippingType . 's'] as $responseRate) {
+            foreach ($origin[$shippingType.'s'] as $responseRate) {
                 $shippingOption = $responseRate[$shippingType]['shippingOption'];
-                $methodId = self::CODE . '_' . $shippingType . '_' . $shippingOption['id'];
+                $methodId = self::CODE.'_'.$shippingType.'_'.$shippingOption['id'];
 
                 $this->processRate($shippingOption, $responseRate, $methodId, $result);
             }
@@ -331,7 +332,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
 
             foreach ($tableRate['tableRateMethods'] as $responseRate) {
                 $tableRateMethod = $responseRate['tableRateMethod'];
-                $methodId = self::CODE . '_tableRate_' . $shippingOption['id'] . '_' . $tableRateMethod['id'];
+                $methodId = self::CODE.'_tableRate_'.$shippingOption['id'].'_'.$tableRateMethod['id'];
 
                 $this->processRate($shippingOption, $responseRate, $methodId, $result);
             }
@@ -369,6 +370,36 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             }
 
             $result->append($error);
+        }
+    }
+
+    /**
+     * @param Item $item
+     *
+     * @return array
+     */
+    private function getAttributesData(Item $item)
+    {
+        $data = $this->calcuratesConfig->getLinkedVolumetricWeightAttributes();
+        $this->processAttributes($data, $item);
+
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     * @param Item $item
+     */
+    private function processAttributes(&$data, Item $item)
+    {
+        foreach ($data as $key => &$value) {
+            if (\is_array($value)) {
+                $this->processAttributes($value, $item);
+
+                continue;
+            }
+
+            $value = $item->getProduct()->getData($value);
         }
     }
 

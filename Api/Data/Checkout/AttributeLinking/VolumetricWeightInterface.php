@@ -7,6 +7,9 @@
 
 namespace Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking;
 
+/**
+ * @api
+ */
 interface VolumetricWeightInterface
 {
     const SEPARATE_DIMENSIONS = 'separate_dimensions';
