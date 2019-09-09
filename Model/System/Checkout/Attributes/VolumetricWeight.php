@@ -79,11 +79,13 @@ class VolumetricWeight implements VolumetricWeightInterface
      */
     private function validate(DataVolumetricWeightInterface $attributes)
     {
-        if ($attributes->getSeparateDimensions() !== null
-            && !$attributes->getSeparateDimensions()->isEmpty()
-            && !($attributes->getSeparateDimensions()->getLength()
-                && $attributes->getSeparateDimensions()->getWidth()
-                && $attributes->getSeparateDimensions()->getHeight())
+        $separateDimensions = $attributes->getSeparateDimensions();
+
+        if ($separateDimensions !== null
+            && !$separateDimensions->isEmpty()
+            && (!$separateDimensions->getLength()
+                || !$separateDimensions->getWidth()
+                || !$separateDimensions->getHeight())
         ) {
             throw new LocalizedException(
                 __('separate_dimensions is set, but one of its properties has invalid value.')

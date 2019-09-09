@@ -13,38 +13,43 @@ namespace Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\Volumetric
 interface SeparateDimensionsInterface
 {
     /**
-     * @param int $height
+     * @param float $height
      *
      * @return SeparateDimensionsInterface
      */
     public function setHeight($height);
 
     /**
-     * @param int $width
+     * @param float $width
      *
      * @return SeparateDimensionsInterface
      */
     public function setWidth($width);
 
     /**
-     * @param int $length
+     * @param float $length
      *
      * @return SeparateDimensionsInterface
      */
     public function setLength($length);
 
     /**
-     * @return int
+     * @return float
      */
     public function getHeight();
 
     /**
-     * @return int
+     * @return float
      */
     public function getWidth();
 
     /**
-     * @return int
+     * @return float
      */
     public function getLength();
+
+    /**
+     * @return bool
+     */
+    public function isEmpty();
 }
