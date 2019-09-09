@@ -24,14 +24,14 @@ interface VolumetricWeightInterface
     public function setSeparateDimensions(VolumetricWeight\SeparateDimensionsInterface $separateDimensions);
 
     /**
-     * @param float $volume
+     * @param int $volume
      *
      * @return VolumetricWeightInterface
      */
     public function setVolume($volume);
 
     /**
-     * @param float $volumetricWeight
+     * @param int $volumetricWeight
      *
      * @return VolumetricWeightInterface
      */
@@ -43,12 +43,12 @@ interface VolumetricWeightInterface
     public function getSeparateDimensions();
 
     /**
-     * @return float|null
+     * @return int|null
      */
     public function getVolume();
 
     /**
-     * @return float|null
+     * @return int|null
      */
     public function getVolumetricWeight();
 }

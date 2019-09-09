@@ -53,7 +53,7 @@ class SeparateDimensionsData implements SeparateDimensionsInterface
     }
 
     /**
-     * @inheritDoc
+     * @return bool
      */
     public function isEmpty()
     {
