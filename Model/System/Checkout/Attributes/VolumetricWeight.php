@@ -73,7 +73,8 @@ class VolumetricWeight implements VolumetricWeightInterface
                 'volumetricWeight' => [
                     'volumetricWeight' => $attributes->getVolumetricWeight(),
                 ],
-                'separateDimensions' => $attributes->getSeparateDimensions()->getData()
+                'separateDimensions' => $attributes->getSeparateDimensions() !== null
+                    ? $attributes->getSeparateDimensions()->getData() : null
             ]
         ];
 
