@@ -10,6 +10,7 @@ namespace Calcurates\ModuleMagento\Model\System\Checkout\Attributes;
 use Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\VolumetricWeightInterface as DataVolumetricWeightInterface;
 use Calcurates\ModuleMagento\Api\System\Checkout\Attributes\VolumetricWeightInterface;
 use Calcurates\ModuleMagento\Model\Config;
+use Magento\Catalog\Model\Attribute\Config\Data;
 use Magento\Framework\App\Cache\TypeListInterface as CacheTypeList;
 use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\Exception\LocalizedException;
@@ -38,16 +39,23 @@ class VolumetricWeight implements VolumetricWeightInterface
      */
     private $cacheTypeList;
 
+    /**
+     * @var Data
+     */
+    private $attributeConfig;
+
     public function __construct(
         WriterInterface $scopeConfig,
         SerializerInterface $serializer,
         Process $processAttributes,
-        CacheTypeList $cacheTypeList
+        CacheTypeList $cacheTypeList,
+        Data $attributeConfig
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->serializer = $serializer;
         $this->processAttributes = $processAttributes;
         $this->cacheTypeList = $cacheTypeList;
+        $this->attributeConfig = $attributeConfig;
     }
 
     /**
@@ -80,6 +88,7 @@ class VolumetricWeight implements VolumetricWeightInterface
         );
 
         $this->cacheTypeList->cleanType(\Magento\Framework\App\Cache\Type\Config::TYPE_IDENTIFIER);
+        $this->attributeConfig->reset();
     }
 
     /**
