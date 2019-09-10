@@ -54,6 +54,10 @@ class Process
             if (\is_array($value)) {
                 $this->processArray($value, $linkArray);
 
+                if ($value === []) {
+                    unset($data[$key]);
+                }
+
                 continue;
             }
 

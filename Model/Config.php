@@ -123,7 +123,7 @@ class Config implements ConfigProviderInterface
             ScopeInterface::SCOPE_WEBSITES
         );
 
-        return $this->serializer->unserialize($data);
+        return $data ? $this->serializer->unserialize($data) : [];
     }
 
     /**
