@@ -12,13 +12,23 @@ test:
     script:
         - echo "No tests"
 
-deploy:
+deploy_staging:
     stage: deploy
     script:
-        - echo "Deploy to server"
+        - echo "Deploy to staging server"
         - echo "$SSH_PRIVATE_KEY" > ./id_rsa
         - chmod 600 ./id_rsa
-        - ssh -o StrictHostKeyChecking=no -p"$SSH_PORT" -i ./id_rsa "$SSH_USER"@"$SSH_HOST" "$SSH_DEPLOY_SCRIPT"
+        - ssh -o StrictHostKeyChecking=no -p"$SSH_PORT" -i ./id_rsa "$SSH_USER"@"$SSH_STAGING_HOST" "$SSH_DEPLOY_SCRIPT"
+    only:
+        - dev
+
+deploy_demo:
+    stage: deploy
+    script:
+        - echo "Deploy to demo server"
+        - echo "$SSH_PRIVATE_KEY" > ./id_rsa
+        - chmod 600 ./id_rsa
+        - ssh -o StrictHostKeyChecking=no -p"$SSH_PORT" -i ./id_rsa "$SSH_USER"@"$SSH_DEMO_HOST" "$SSH_DEPLOY_SCRIPT"
     when: manual
     only:
         - master
