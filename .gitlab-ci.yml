@@ -5,16 +5,15 @@ before_script:
 
 stages:
     - test
-    - deploy-staging
-    - deploy-demo
+    - deploy
 
 test:
     stage: test
     script:
         - echo "No tests"
 
-deploy-staging:
-    stage: deploy-staging
+deploy_staging:
+    stage: deploy
     script:
         - echo "Deploy to staging server"
         - echo "$SSH_PRIVATE_KEY" > ./id_rsa
@@ -23,8 +22,8 @@ deploy-staging:
     only:
         - dev
 
-deploy-demo:
-    stage: deploy-demo
+deploy_demo:
+    stage: deploy
     script:
         - echo "Deploy to demo server"
         - echo "$SSH_PRIVATE_KEY" > ./id_rsa
