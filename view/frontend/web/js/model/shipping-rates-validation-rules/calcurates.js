@@ -13,18 +13,6 @@ define([], function () {
          */
         getRules: function () {
             return {
-                'firstname': {
-                    'required': false
-                },
-                'lastname': {
-                    'required': false
-                },
-                'company': {
-                    'required': false
-                },
-                'telephone': {
-                    'required': false
-                },
                 'postcode': {
                     'required': true
                 },

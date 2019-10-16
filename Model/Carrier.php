@@ -198,7 +198,6 @@ class Carrier extends AbstractCarrier implements CarrierInterface
 
         $quote = current($items)->getQuote();
         $customer = $quote->getCustomer();
-        $apiRequestBody = array_merge($apiRequestBody, $this->getCustomerData($quote));
 
         if ($customer->getId()) {
             $apiRequestBody['customerGroup'] = $customer->getGroupId();
@@ -402,33 +401,6 @@ class Carrier extends AbstractCarrier implements CarrierInterface
 
             $value = $item->getProduct()->getData($value);
         }
-    }
-
-    /**
-     * Collect customer information from shipping address
-     *
-     * @param \Magento\Quote\Model\Quote $quote
-     *
-     * @return array
-     */
-    private function getCustomerData(\Magento\Quote\Model\Quote $quote)
-    {
-        $customerData = [
-            'contactName' => '',
-            'companyName' => '',
-            'contactPhone' => '',
-        ];
-        $shipAddress = $quote->getShippingAddress();
-
-        $customerData['contactName'] = $shipAddress->getPrefix() . ' ';
-        $customerData['contactName'] .= $shipAddress->getFirstname() ? $shipAddress->getFirstname() . ' ' : '';
-        $customerData['contactName'] .= $shipAddress->getMiddlename() ? $shipAddress->getMiddlename() . ' ' : '';
-        $customerData['contactName'] = trim($customerData['contactName'] . $shipAddress->getLastname());
-
-        $customerData['companyName'] = $shipAddress->getCompany();
-        $customerData['contactPhone'] = $shipAddress->getTelephone();
-
-        return $customerData;
     }
 
     /**
