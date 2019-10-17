@@ -37,8 +37,6 @@ class Carrier extends AbstractCarrier implements CarrierInterface
      */
     const CODE = 'calcurates';
 
-    const CALCURATES_API_PATH = '/calculator/calculate-magento';
-
     /**
      * Code of the carrier
      *
@@ -227,7 +225,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             $client->addHeader('User-Agent', $composerPackage->getName().'/'.$composerPackage->getVersion());
             $client->addHeader('X-API-Key', $this->calcuratesConfig->getCalcuratesToken());
             $client->addHeader('Content-Type', 'application/json');
-            $client->post($this->getAPIUrl().self::CALCURATES_API_PATH, \Zend_Json::encode($apiRequestBody));
+            $client->post($this->getAPIUrl().'/rates', \Zend_Json::encode($apiRequestBody));
 
             if ($client->getStatus() >= 400) {
                 throw new HttpRuntimeException($client->getBody(), $client->getStatus());
@@ -269,7 +267,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
      */
     protected function getAPIUrl()
     {
-        return rtrim($this->getConfigData(CalcuratesConfig::CONFIG_API_URL), '/');
+        return rtrim($this->getConfigData(CalcuratesConfig::CONFIG_API_URL), '/').'/api/v1';
     }
 
     /**
