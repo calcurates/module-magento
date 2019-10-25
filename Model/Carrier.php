@@ -385,7 +385,33 @@ class Carrier extends AbstractCarrier implements CarrierInterface
      */
     protected function processCarriers(array $carriers, Result $result)
     {
-        // TODO: handle the carriers object
+        foreach ($carriers as $carrier) {
+            if (!isset($carrier['success'])) {
+                return;
+            }
+
+            if (!$carrier['success']) {
+                $this->processFailedRate($carrier['name'], $result, $carrier['message']);
+
+                return;
+            }
+
+            $carrierMeta = $carrier;
+            unset($carrierMeta['services']);
+            $baseMethodId = 'carrier_'.$carrier['id'].'_';
+
+            foreach ($carrier['services'] as $service) {
+                $rateData = array_merge($carrierMeta, $service, $service['rate']);
+                $rateData['message'] = $carrier['message'];
+                unset($rateData['rate']);
+
+                $this->processRate(
+                    $baseMethodId.$rateData['id'],
+                    $rateData,
+                    $result
+                );
+            }
+        }
     }
 
     /**
