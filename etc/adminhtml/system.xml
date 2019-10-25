@@ -7,7 +7,7 @@
 
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Config/etc/system_file.xsd">
     <system>
-        <section id="carriers" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
+        <section id="carriers">
             <resource>Calcurates_ModuleMagento::config</resource>
             <group id="calcurates" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Calcurates</label>

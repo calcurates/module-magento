@@ -263,6 +263,29 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     }
 
     /**
+     * @param string $methodId
+     * @param array $responseRate
+     * @param Result $result
+     */
+    protected function processRate($methodId, array $responseRate, Result $result)
+    {
+        if ($responseRate['cost'] !== null) {
+            $rate = $this->rateMethodFactory->create();
+            $rate->setCarrier(self::CODE);
+            $rate->setMethod($methodId);
+            $rate->setMethodTitle($responseRate['name']);
+            $rate->setCarrierTitle('');
+            $rate->setInfoMessageEnabled((bool)$responseRate['message']);
+            $rate->setInfoMessage($responseRate['message']);
+            $rate->setCost($responseRate['cost']);
+            $rate->setPrice($responseRate['cost']);
+            $result->append($rate);
+        } elseif (!$responseRate['success']) {
+            $this->processFailedRate($responseRate['name'], $result, $responseRate['message']);
+        }
+    }
+
+    /**
      * @return string
      */
     protected function getAPIUrl()
@@ -285,20 +308,17 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     {
         $result = $this->rateFactory->create();
         try {
-            if (!isset($response['origins'])) {
+            if (!$response) {
                 throw new \LogicException();
             }
 
-            foreach ($response['origins'] as $origin) {
-                $this->processFlatAndFreeRates($origin, $result);
-                $this->processTableRates($origin, $result);
+            foreach ($response as $origin) {
+                $this->processSingleRates($origin, $result);
+                $this->processTableRates($origin['tableRates'], $result);
+                $this->processCarriers($origin['carriers'], $result);
             }
         } catch (\LogicException $exception) { //phpcs:ignore
-            $error = $this->_rateErrorFactory->create();
-            $error->setCarrier(self::CODE);
-            $error->setCarrierTitle($this->getConfigData('title'));
-            $error->setErrorMessage($this->getConfigData(CalcuratesConfig::CONFIG_ERROR_MESSAGE));
-            $result->append($error);
+            $this->processFailedRate($this->getConfigData('title'), $result);
         }
 
         return $result;
@@ -308,68 +328,110 @@ class Carrier extends AbstractCarrier implements CarrierInterface
      * @param array $origin
      * @param Result $result
      */
-    protected function processFlatAndFreeRates(array $origin, Result $result)
+    private function processSingleRates(array $origin, Result $result)
     {
-        foreach (['flatRate', 'freeShipping'] as $shippingType) {
-            foreach ($origin[$shippingType.'s'] as $responseRate) {
-                $shippingOption = $responseRate[$shippingType]['shippingOption'];
-                $methodId = self::CODE.'_'.$shippingType.'_'.$shippingOption['id'];
+        foreach (['flatRates', 'freeShipping'] as $shippingType) {
+            foreach ($origin[$shippingType] as $responseRate) {
+                $rateData = array_merge($responseRate['rate'], $responseRate);
+                unset($rateData['rate']);
 
-                $this->processRate($shippingOption, $responseRate, $methodId, $result);
+                $this->processRate(
+                    $shippingType.'_'.$rateData['id'],
+                    $rateData,
+                    $result
+                );
             }
         }
     }
 
     /**
-     * @param array $origin
+     * @param array $tableRates
      * @param Result $result
      */
-    protected function processTableRates(array $origin, Result $result)
+    private function processTableRates(array $tableRates, Result $result)
     {
-        foreach ($origin['tableRates'] as $tableRate) {
-            $shippingOption = $tableRate['shippingOption'];
+        foreach ($tableRates as $tableRate) {
+            if (!isset($tableRate['success'])) {
+                return;
+            }
 
-            foreach ($tableRate['tableRateMethods'] as $responseRate) {
-                $tableRateMethod = $responseRate['tableRateMethod'];
-                $methodId = self::CODE.'_tableRate_'.$shippingOption['id'].'_'.$tableRateMethod['id'];
+            if (!$tableRate['success']) {
+                $this->processFailedRate($tableRate['name'], $result, $tableRate['message']);
 
-                $this->processRate($shippingOption, $responseRate, $methodId, $result);
+                return;
+            }
+
+            $tableRatesMeta = $tableRate;
+            unset($tableRatesMeta['methods']);
+            $baseMethodId = 'tableRate_'.$tableRate['id'].'_';
+
+            foreach ($tableRate['methods'] as $responseRate) {
+                $rateData = array_merge($tableRatesMeta, $responseRate['rate'], $responseRate);
+                $rateData['message'] = $tableRate['message'];
+                unset($rateData['rate']);
+
+                $this->processRate(
+                    $baseMethodId.$rateData['id'],
+                    $rateData,
+                    $result
+                );
             }
         }
     }
 
     /**
-     * @param array $shippingOption
-     * @param array $responseRate
-     * @param string $methodId
+     * @param array $carriers
      * @param Result $result
      */
-    protected function processRate(array $shippingOption, array $responseRate, $methodId, Result $result)
+    protected function processCarriers(array $carriers, Result $result)
     {
-        if ($responseRate['cost'] !== null) {
-            $rate = $this->rateMethodFactory->create();
-            $rate->setCarrier(self::CODE);
-            $rate->setMethod($methodId);
-            $rate->setMethodTitle($shippingOption['name']);
-            $rate->setCarrierTitle('');
-            $rate->setInfoMessageEnabled($shippingOption['infoMessageEnabled']);
-            $rate->setInfoMessage($shippingOption['infoMessage']);
-            $rate->setCost($responseRate['cost']);
-            $rate->setPrice($responseRate['cost']);
-            $result->append($rate);
-        } elseif ($shippingOption['errorMessageEnabled']) {
-            $error = $this->_rateErrorFactory->create();
-            $error->setCarrier(self::CODE);
-            $error->setCarrierTitle($shippingOption['name']);
-
-            if ($shippingOption['errorMessage']) {
-                $error->setErrorMessage($shippingOption['errorMessage']);
-            } else {
-                $error->setErrorMessage($this->getConfigData(CalcuratesConfig::CONFIG_ERROR_MESSAGE));
+        foreach ($carriers as $carrier) {
+            if (!isset($carrier['success'])) {
+                return;
             }
 
-            $result->append($error);
+            if (!$carrier['success']) {
+                $this->processFailedRate($carrier['name'], $result, $carrier['message']);
+
+                return;
+            }
+
+            $carrierMeta = $carrier;
+            unset($carrierMeta['services']);
+            $baseMethodId = 'carrier_'.$carrier['id'].'_';
+
+            foreach ($carrier['services'] as $service) {
+                $rateData = array_merge($carrierMeta, $service, $service['rate']);
+                $rateData['message'] = $carrier['message'];
+                unset($rateData['rate']);
+
+                $this->processRate(
+                    $baseMethodId.$rateData['id'],
+                    $rateData,
+                    $result
+                );
+            }
         }
+    }
+
+    /**
+     * @param string $rateName
+     * @param Result $result
+     * @param string $message
+     */
+    private function processFailedRate(string $rateName, Result $result, string $message = '')
+    {
+        $error = $this->_rateErrorFactory->create();
+        $error->setCarrier(self::CODE);
+        $error->setCarrierTitle($rateName);
+
+        if ($message) {
+            $error->setErrorMessage($message);
+        } else {
+            $error->setErrorMessage($this->getConfigData(CalcuratesConfig::CONFIG_ERROR_MESSAGE));
+        }
+
+        $result->append($error);
     }
 
     /**
@@ -418,10 +480,10 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         ];
         $shipAddress = $quote->getShippingAddress();
 
-        $customerData['contactName'] = $shipAddress->getPrefix() . ' ';
-        $customerData['contactName'] .= $shipAddress->getFirstname() ? $shipAddress->getFirstname() . ' ' : '';
-        $customerData['contactName'] .= $shipAddress->getMiddlename() ? $shipAddress->getMiddlename() . ' ' : '';
-        $customerData['contactName'] = trim($customerData['contactName'] . $shipAddress->getLastname());
+        $customerData['contactName'] = $shipAddress->getPrefix().' ';
+        $customerData['contactName'] .= $shipAddress->getFirstname() ? $shipAddress->getFirstname().' ' : '';
+        $customerData['contactName'] .= $shipAddress->getMiddlename() ? $shipAddress->getMiddlename().' ' : '';
+        $customerData['contactName'] = trim($customerData['contactName'].$shipAddress->getLastname());
 
         $customerData['companyName'] = $shipAddress->getCompany();
         $customerData['contactPhone'] = $shipAddress->getTelephone();
