@@ -332,8 +332,13 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     {
         foreach (['flatRates', 'freeShipping'] as $shippingType) {
             foreach ($origin[$shippingType] as $responseRate) {
-                $rateData = array_merge($responseRate['rate'], $responseRate);
-                unset($rateData['rate']);
+                if (isset($responseRate['rate'])) {
+                    $rateData = array_merge($responseRate['rate'], $responseRate);
+                    unset($rateData['rate']);
+                } else {
+                    $rateData = $responseRate;
+                    $rateData['cost'] = 0;
+                }
 
                 $this->processRate(
                     $shippingType.'_'.$rateData['id'],
