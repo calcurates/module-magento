@@ -269,7 +269,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
      */
     protected function processRate($methodId, array $responseRate, Result $result)
     {
-        if ($responseRate['cost'] !== null) {
+        if (isset($responseRate['success']) && $responseRate['success']) {
             $rate = $this->rateMethodFactory->create();
             $rate->setCarrier(self::CODE);
             $rate->setMethod($methodId);
@@ -280,7 +280,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             $rate->setCost($responseRate['cost']);
             $rate->setPrice($responseRate['cost']);
             $result->append($rate);
-        } elseif (!$responseRate['success']) {
+        } else {
             $this->processFailedRate($responseRate['name'], $result, $responseRate['message']);
         }
     }
@@ -307,13 +307,15 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     protected function parseResponse($response)
     {
         $result = $this->rateFactory->create();
+
         try {
             if (!$response) {
                 throw new \LogicException();
             }
 
             foreach ($response as $origin) {
-                $this->processSingleRates($origin, $result);
+                $this->processFreeShipping($origin['freeShipping'], $result);
+                $this->processFlatRates($origin['flatRates'], $result);
                 $this->processTableRates($origin['tableRates'], $result);
                 $this->processCarriers($origin['carriers'], $result);
             }
@@ -325,27 +327,37 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     }
 
     /**
-     * @param array $origin
+     * @param array $flatRates
      * @param Result $result
      */
-    private function processSingleRates(array $origin, Result $result)
+    private function processFlatRates(array $flatRates, Result $result)
     {
-        foreach (['flatRates', 'freeShipping'] as $shippingType) {
-            foreach ($origin[$shippingType] as $responseRate) {
-                if (isset($responseRate['rate'])) {
-                    $rateData = array_merge($responseRate['rate'], $responseRate);
-                    unset($rateData['rate']);
-                } else {
-                    $rateData = $responseRate;
-                    $rateData['cost'] = 0;
-                }
+        foreach ($flatRates as $responseRate) {
+            $rateData = array_merge($responseRate['rate'], $responseRate);
+            unset($rateData['rate']);
 
-                $this->processRate(
-                    $shippingType.'_'.$rateData['id'],
-                    $rateData,
-                    $result
-                );
-            }
+            $this->processRate(
+                'flatRates_'.$rateData['id'],
+                $rateData,
+                $result
+            );
+        }
+    }
+
+    /**
+     * @param array $freeShipping
+     * @param Result $result
+     */
+    private function processFreeShipping(array $freeShipping, Result $result)
+    {
+        foreach ($freeShipping as $responseRate) {
+            $responseRate['cost'] = 0;
+
+            $this->processRate(
+                'freeShipping'.$responseRate['id'],
+                $responseRate,
+                $result
+            );
         }
     }
 
