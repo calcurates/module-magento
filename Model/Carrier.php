@@ -269,20 +269,16 @@ class Carrier extends AbstractCarrier implements CarrierInterface
      */
     protected function processRate($methodId, array $responseRate, Result $result)
     {
-        if (isset($responseRate['success']) && $responseRate['success']) {
-            $rate = $this->rateMethodFactory->create();
-            $rate->setCarrier(self::CODE);
-            $rate->setMethod($methodId);
-            $rate->setMethodTitle($responseRate['name']);
-            $rate->setCarrierTitle('');
-            $rate->setInfoMessageEnabled((bool)$responseRate['message']);
-            $rate->setInfoMessage($responseRate['message']);
-            $rate->setCost($responseRate['cost']);
-            $rate->setPrice($responseRate['cost']);
-            $result->append($rate);
-        } else {
-            $this->processFailedRate($responseRate['name'], $result, $responseRate['message']);
-        }
+        $rate = $this->rateMethodFactory->create();
+        $rate->setCarrier(self::CODE);
+        $rate->setMethod($methodId);
+        $rate->setMethodTitle($responseRate['name']);
+        $rate->setCarrierTitle('');
+        $rate->setInfoMessageEnabled((bool)$responseRate['message']);
+        $rate->setInfoMessage($responseRate['message']);
+        $rate->setCost($responseRate['rate']['cost']);
+        $rate->setPrice($responseRate['rate']['cost']);
+        $result->append($rate);
     }
 
     /**
@@ -333,12 +329,16 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     private function processFlatRates(array $flatRates, Result $result)
     {
         foreach ($flatRates as $responseRate) {
-            $rateData = array_merge($responseRate['rate'], $responseRate);
-            unset($rateData['rate']);
+            if (!$responseRate['success']) {
+                if ($responseRate['message']) {
+                    $this->processFailedRate($responseRate['name'], $result, $responseRate['message']);
+                }
+                continue;
+            }
 
             $this->processRate(
-                'flatRates_'.$rateData['id'],
-                $rateData,
+                'flatRates_'.$responseRate['id'],
+                $responseRate,
                 $result
             );
         }
@@ -351,7 +351,17 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     private function processFreeShipping(array $freeShipping, Result $result)
     {
         foreach ($freeShipping as $responseRate) {
-            $responseRate['cost'] = 0;
+            if (!$responseRate['success']) {
+                if ($responseRate['message']) {
+                    $this->processFailedRate($responseRate['name'], $result, $responseRate['message']);
+                }
+                continue;
+            }
+
+            $responseRate['rate'] = [
+                'cost' => 0,
+                'currency' => null,
+            ];
 
             $this->processRate(
                 'freeShipping'.$responseRate['id'],
@@ -368,28 +378,26 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     private function processTableRates(array $tableRates, Result $result)
     {
         foreach ($tableRates as $tableRate) {
-            if (!isset($tableRate['success'])) {
-                return;
-            }
-
             if (!$tableRate['success']) {
-                $this->processFailedRate($tableRate['name'], $result, $tableRate['message']);
+                if ($tableRate['message']) {
+                    $this->processFailedRate($tableRate['name'], $result, $tableRate['message']);
+                }
 
-                return;
+                continue;
             }
-
-            $tableRatesMeta = $tableRate;
-            unset($tableRatesMeta['methods']);
-            $baseMethodId = 'tableRate_'.$tableRate['id'].'_';
 
             foreach ($tableRate['methods'] as $responseRate) {
-                $rateData = array_merge($tableRatesMeta, $responseRate['rate'], $responseRate);
-                $rateData['message'] = $tableRate['message'];
-                unset($rateData['rate']);
+                if (!$responseRate['success']) {
+                    if ($responseRate['message']) {
+                        $this->processFailedRate($responseRate['name'], $result, $responseRate['message']);
+                    }
+
+                    continue;
+                }
 
                 $this->processRate(
-                    $baseMethodId.$rateData['id'],
-                    $rateData,
+                    'tableRate_'.$tableRate['id'].'_'.$responseRate['id'],
+                    $responseRate,
                     $result
                 );
             }
@@ -403,28 +411,26 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     protected function processCarriers(array $carriers, Result $result)
     {
         foreach ($carriers as $carrier) {
-            if (!isset($carrier['success'])) {
-                return;
-            }
-
             if (!$carrier['success']) {
-                $this->processFailedRate($carrier['name'], $result, $carrier['message']);
+                if ($carrier['message']) {
+                    $this->processFailedRate($carrier['name'], $result, $carrier['message']);
+                }
 
-                return;
+                continue;
             }
 
-            $carrierMeta = $carrier;
-            unset($carrierMeta['services']);
-            $baseMethodId = 'carrier_'.$carrier['id'].'_';
+            foreach ($carrier['services'] as $responseRate) {
+                if (!$responseRate['success']) {
+                    if ($responseRate['message']) {
+                        $this->processFailedRate($responseRate['name'], $result, $responseRate['message']);
+                    }
 
-            foreach ($carrier['services'] as $service) {
-                $rateData = array_merge($carrierMeta, $service, $service['rate']);
-                $rateData['message'] = $carrier['message'];
-                unset($rateData['rate']);
+                    continue;
+                }
 
                 $this->processRate(
-                    $baseMethodId.$rateData['id'],
-                    $rateData,
+                    'carrier_'.$carrier['id'].'_'.$responseRate['id'],
+                    $responseRate,
                     $result
                 );
             }
