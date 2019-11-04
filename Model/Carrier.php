@@ -37,8 +37,6 @@ class Carrier extends AbstractCarrier implements CarrierInterface
      */
     const CODE = 'calcurates';
 
-    const CALCURATES_API_PATH = '/calculator/calculate-magento';
-
     /**
      * Code of the carrier
      *
@@ -198,6 +196,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
 
         $quote = current($items)->getQuote();
         $customer = $quote->getCustomer();
+        $apiRequestBody = array_merge($apiRequestBody, $this->getCustomerData($quote));
 
         if ($customer->getId()) {
             $apiRequestBody['customerGroup'] = $customer->getGroupId();
@@ -226,7 +225,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             $client->addHeader('User-Agent', $composerPackage->getName().'/'.$composerPackage->getVersion());
             $client->addHeader('X-API-Key', $this->calcuratesConfig->getCalcuratesToken());
             $client->addHeader('Content-Type', 'application/json');
-            $client->post($this->getAPIUrl().self::CALCURATES_API_PATH, \Zend_Json::encode($apiRequestBody));
+            $client->post($this->getAPIUrl().'/rates', \Zend_Json::encode($apiRequestBody));
 
             if ($client->getStatus() >= 400) {
                 throw new HttpRuntimeException($client->getBody(), $client->getStatus());
@@ -264,11 +263,30 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     }
 
     /**
+     * @param string $methodId
+     * @param array $responseRate
+     * @param Result $result
+     */
+    protected function processRate($methodId, array $responseRate, Result $result)
+    {
+        $rate = $this->rateMethodFactory->create();
+        $rate->setCarrier(self::CODE);
+        $rate->setMethod($methodId);
+        $rate->setMethodTitle($responseRate['name']);
+        $rate->setCarrierTitle('');
+        $rate->setInfoMessageEnabled((bool)$responseRate['message']);
+        $rate->setInfoMessage($responseRate['message']);
+        $rate->setCost($responseRate['rate']['cost']);
+        $rate->setPrice($responseRate['rate']['cost']);
+        $result->append($rate);
+    }
+
+    /**
      * @return string
      */
     protected function getAPIUrl()
     {
-        return rtrim($this->getConfigData(CalcuratesConfig::CONFIG_API_URL), '/');
+        return rtrim($this->getConfigData(CalcuratesConfig::CONFIG_API_URL), '/').'/api/v1';
     }
 
     /**
@@ -285,92 +303,158 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     protected function parseResponse($response)
     {
         $result = $this->rateFactory->create();
+
         try {
-            if (!isset($response['origins'])) {
+            if (!$response) {
                 throw new \LogicException();
             }
 
-            foreach ($response['origins'] as $origin) {
-                $this->processFlatAndFreeRates($origin, $result);
-                $this->processTableRates($origin, $result);
+            foreach ($response as $origin) {
+                $this->processFreeShipping($origin['freeShipping'], $result);
+                $this->processFlatRates($origin['flatRates'], $result);
+                $this->processTableRates($origin['tableRates'], $result);
+                $this->processCarriers($origin['carriers'], $result);
             }
         } catch (\LogicException $exception) { //phpcs:ignore
-            $error = $this->_rateErrorFactory->create();
-            $error->setCarrier(self::CODE);
-            $error->setCarrierTitle($this->getConfigData('title'));
-            $error->setErrorMessage($this->getConfigData(CalcuratesConfig::CONFIG_ERROR_MESSAGE));
-            $result->append($error);
+            $this->processFailedRate($this->getConfigData('title'), $result);
         }
 
         return $result;
     }
 
     /**
-     * @param array $origin
+     * @param array $flatRates
      * @param Result $result
      */
-    protected function processFlatAndFreeRates(array $origin, Result $result)
+    private function processFlatRates(array $flatRates, Result $result)
     {
-        foreach (['flatRate', 'freeShipping'] as $shippingType) {
-            foreach ($origin[$shippingType.'s'] as $responseRate) {
-                $shippingOption = $responseRate[$shippingType]['shippingOption'];
-                $methodId = self::CODE.'_'.$shippingType.'_'.$shippingOption['id'];
+        foreach ($flatRates as $responseRate) {
+            if (!$responseRate['success']) {
+                if ($responseRate['message']) {
+                    $this->processFailedRate($responseRate['name'], $result, $responseRate['message']);
+                }
+                continue;
+            }
 
-                $this->processRate($shippingOption, $responseRate, $methodId, $result);
+            $this->processRate(
+                'flatRates_'.$responseRate['id'],
+                $responseRate,
+                $result
+            );
+        }
+    }
+
+    /**
+     * @param array $freeShipping
+     * @param Result $result
+     */
+    private function processFreeShipping(array $freeShipping, Result $result)
+    {
+        foreach ($freeShipping as $responseRate) {
+            if (!$responseRate['success']) {
+                if ($responseRate['message']) {
+                    $this->processFailedRate($responseRate['name'], $result, $responseRate['message']);
+                }
+                continue;
+            }
+
+            $responseRate['rate'] = [
+                'cost' => 0,
+                'currency' => null,
+            ];
+
+            $this->processRate(
+                'freeShipping'.$responseRate['id'],
+                $responseRate,
+                $result
+            );
+        }
+    }
+
+    /**
+     * @param array $tableRates
+     * @param Result $result
+     */
+    private function processTableRates(array $tableRates, Result $result)
+    {
+        foreach ($tableRates as $tableRate) {
+            if (!$tableRate['success']) {
+                if ($tableRate['message']) {
+                    $this->processFailedRate($tableRate['name'], $result, $tableRate['message']);
+                }
+
+                continue;
+            }
+
+            foreach ($tableRate['methods'] as $responseRate) {
+                if (!$responseRate['success']) {
+                    if ($responseRate['message']) {
+                        $this->processFailedRate($responseRate['name'], $result, $responseRate['message']);
+                    }
+
+                    continue;
+                }
+
+                $this->processRate(
+                    'tableRate_'.$tableRate['id'].'_'.$responseRate['id'],
+                    $responseRate,
+                    $result
+                );
             }
         }
     }
 
     /**
-     * @param array $origin
+     * @param array $carriers
      * @param Result $result
      */
-    protected function processTableRates(array $origin, Result $result)
+    protected function processCarriers(array $carriers, Result $result)
     {
-        foreach ($origin['tableRates'] as $tableRate) {
-            $shippingOption = $tableRate['shippingOption'];
+        foreach ($carriers as $carrier) {
+            if (!$carrier['success']) {
+                if ($carrier['message']) {
+                    $this->processFailedRate($carrier['name'], $result, $carrier['message']);
+                }
 
-            foreach ($tableRate['tableRateMethods'] as $responseRate) {
-                $tableRateMethod = $responseRate['tableRateMethod'];
-                $methodId = self::CODE.'_tableRate_'.$shippingOption['id'].'_'.$tableRateMethod['id'];
+                continue;
+            }
 
-                $this->processRate($shippingOption, $responseRate, $methodId, $result);
+            foreach ($carrier['services'] as $responseRate) {
+                if (!$responseRate['success']) {
+                    if ($responseRate['message']) {
+                        $this->processFailedRate($responseRate['name'], $result, $responseRate['message']);
+                    }
+
+                    continue;
+                }
+
+                $this->processRate(
+                    'carrier_'.$carrier['id'].'_'.$responseRate['id'],
+                    $responseRate,
+                    $result
+                );
             }
         }
     }
 
     /**
-     * @param array $shippingOption
-     * @param array $responseRate
-     * @param string $methodId
+     * @param string $rateName
      * @param Result $result
+     * @param string $message
      */
-    protected function processRate(array $shippingOption, array $responseRate, $methodId, Result $result)
+    private function processFailedRate(string $rateName, Result $result, string $message = '')
     {
-        if ($responseRate['cost'] !== null) {
-            $rate = $this->rateMethodFactory->create();
-            $rate->setCarrier(self::CODE);
-            $rate->setMethod($methodId);
-            $rate->setMethodTitle($shippingOption['name']);
-            $rate->setCarrierTitle('');
-            $rate->setInfoMessageEnabled($shippingOption['infoMessageEnabled']);
-            $rate->setInfoMessage($shippingOption['infoMessage']);
-            $rate->setCost($responseRate['cost']);
-            $rate->setPrice($responseRate['cost']);
-            $result->append($rate);
-        } elseif ($shippingOption['errorMessageEnabled']) {
-            $error = $this->_rateErrorFactory->create();
-            $error->setCarrier(self::CODE);
-            $error->setCarrierTitle($shippingOption['name']);
+        $error = $this->_rateErrorFactory->create();
+        $error->setCarrier(self::CODE);
+        $error->setCarrierTitle($rateName);
 
-            if ($shippingOption['errorMessage']) {
-                $error->setErrorMessage($shippingOption['errorMessage']);
-            } else {
-                $error->setErrorMessage($this->getConfigData(CalcuratesConfig::CONFIG_ERROR_MESSAGE));
-            }
-
-            $result->append($error);
+        if ($message) {
+            $error->setErrorMessage($message);
+        } else {
+            $error->setErrorMessage($this->getConfigData(CalcuratesConfig::CONFIG_ERROR_MESSAGE));
         }
+
+        $result->append($error);
     }
 
     /**
@@ -401,6 +485,33 @@ class Carrier extends AbstractCarrier implements CarrierInterface
 
             $value = $item->getProduct()->getData($value);
         }
+    }
+
+    /**
+     * Collect customer information from shipping address
+     *
+     * @param \Magento\Quote\Model\Quote $quote
+     *
+     * @return array
+     */
+    private function getCustomerData(\Magento\Quote\Model\Quote $quote)
+    {
+        $customerData = [
+            'contactName' => '',
+            'companyName' => '',
+            'contactPhone' => '',
+        ];
+        $shipAddress = $quote->getShippingAddress();
+
+        $customerData['contactName'] = $shipAddress->getPrefix().' ';
+        $customerData['contactName'] .= $shipAddress->getFirstname() ? $shipAddress->getFirstname().' ' : '';
+        $customerData['contactName'] .= $shipAddress->getMiddlename() ? $shipAddress->getMiddlename().' ' : '';
+        $customerData['contactName'] = trim($customerData['contactName'].$shipAddress->getLastname());
+
+        $customerData['companyName'] = $shipAddress->getCompany();
+        $customerData['contactPhone'] = $shipAddress->getTelephone();
+
+        return $customerData;
     }
 
     /**
