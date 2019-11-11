@@ -60,7 +60,7 @@ class AttributesList implements ProductAttributesListInterface
             $result[] = $this->getCustomDataObject()
                 ->setAttributeId($attributesItem->getAttributeId())
                 ->setAttributeCode($attributesItem->getAttributeCode())
-                ->setAttributeType($attributesItem->getAttributeType())
+                ->setAttributeType($attributesItem->getBackendType())
                 ->setFrontendLabel($attributesItem->getDefaultFrontendLabel());
         }
 
