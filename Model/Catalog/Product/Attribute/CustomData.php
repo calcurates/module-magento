@@ -30,9 +30,17 @@ class CustomData extends \Magento\Framework\DataObject implements AttributeCusto
     /**
      * @inheritDoc
      */
-    public function getAttributeType()
+    public function getAttributeBackendType()
     {
-        return $this->_getData(self::ATTRIBUTE_TYPE);
+        return $this->_getData(self::ATTRIBUTE_BACKEND_TYPE);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAttributeFrontendType()
+    {
+        return $this->_getData(self::ATTRIBUTE_FRONTEND_TYPE);
     }
 
     /**
@@ -62,9 +70,17 @@ class CustomData extends \Magento\Framework\DataObject implements AttributeCusto
     /**
      * @inheritDoc
      */
-    public function setAttributeType($attributeType)
+    public function setAttributeBackendType($attributeBackendType)
     {
-        return $this->setData(self::ATTRIBUTE_TYPE, $attributeType);
+        return $this->setData(self::ATTRIBUTE_BACKEND_TYPE, $attributeBackendType);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setAttributeFrontendType($attributeFrontendType)
+    {
+        return $this->setData(self::ATTRIBUTE_FRONTEND_TYPE, $attributeFrontendType);
     }
 
     /**
