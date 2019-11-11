@@ -54,13 +54,19 @@ class AttributesList implements ProductAttributesListInterface
             ProductAttributeInterface::ENTITY_TYPE_CODE,
             $searchCriteria
         )->getItems();
-        $result = [];
 
+        $result = [];
         foreach ($attributesItems as $attributesItem) {
+            if ($attributesItem->getFrontendInput() === 'boolean') {
+                $attributeType = 'bool';
+            } else {
+                $attributeType = $attributesItem->getBackendType();
+            }
+
             $result[] = $this->getCustomDataObject()
                 ->setAttributeId($attributesItem->getAttributeId())
                 ->setAttributeCode($attributesItem->getAttributeCode())
-                ->setAttributeType($attributesItem->getBackendType())
+                ->setAttributeType($attributeType)
                 ->setFrontendLabel($attributesItem->getDefaultFrontendLabel());
         }
 
