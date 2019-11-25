@@ -25,3 +25,8 @@ sudo -u magento_user php bin/magento cache:flush
     - "Calcurates API Token" - token obtained in Calcurates platform
     -  "Magento API Token" - token should be generated and added into Calcurates platform
 1. Configure Magento API Integration token as shown in - [Magento Integration Token Instructions](https://devdocs.magento.com/guides/v2.3/get-started/authentication/gs-authentication-token.html)
+
+
+#### API Permissions
+- Calcurates API resource
+- Stores → Settings → All Stores (the codes are `Calcurates_ModuleMagento::api` and `Magento_Backend::store`)
