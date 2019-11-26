@@ -114,6 +114,19 @@ class Config implements ConfigProviderInterface
     }
 
     /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @return string
+     */
+    public function getApiUrl($storeId)
+    {
+        return $this->scopeConfig->getValue(
+            self::CONFIG_GROUP.self::CONFIG_API_URL,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
      * @return array
      */
     public function getLinkedVolumetricWeightAttributes()

@@ -20,4 +20,10 @@
     <type name="Magento\Catalog\Model\Attribute\Config\Reader">
         <plugin sortOrder="10" name="Calcurates_ModuleMagento::AttributeReader" type="Calcurates\ModuleMagento\Plugin\Model\Attribute\Config\ReaderPlugin"/>
     </type>
+    <type name="Magento\Shipping\Model\Order\Track">
+        <plugin name="Calcurates_ModuleMagento::Track" type="Calcurates\ModuleMagento\Plugin\Model\Order\TrackPlugin"/>
+    </type>
+    <type name="Magento\Sales\Model\Order\Shipment">
+        <plugin name="Calcurates_ModuleMagento::Shipment" type="Calcurates\ModuleMagento\Plugin\Model\Order\ShipmentPlugin"/>
+    </type>
 </config>

@@ -7,28 +7,26 @@
 
 namespace Calcurates\ModuleMagento\Model;
 
+use Calcurates\ModuleMagento\Client\CalcuratesClient;
 use Calcurates\ModuleMagento\Model\Config as CalcuratesConfig;
-use Magento\Directory\Model\RegionFactory;
 use Magento\Directory\Model\ResourceModel\Region as RegionResource;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
-use Magento\Framework\HTTP\ClientFactory;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Xml\Security;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Quote\Model\Quote\Address\RateResult\Error;
 use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
-use Magento\Quote\Model\Quote\Address\RateResult\MethodFactory;
 use Magento\Quote\Model\Quote\Item;
-use Magento\Shipping\Model\Carrier\AbstractCarrier;
+use Magento\Shipping\Model\Carrier\AbstractCarrierOnline;
 use Magento\Shipping\Model\Carrier\CarrierInterface;
 use Magento\Shipping\Model\Rate\Result;
-use Magento\Shipping\Model\Rate\ResultFactory;
 use Psr\Log\LoggerInterface;
-use Zend\Http\Exception\RuntimeException as HttpRuntimeException;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class Carrier extends AbstractCarrier implements CarrierInterface
+class Carrier extends AbstractCarrierOnline implements CarrierInterface
 {
     /**
      * Code of the carrier
@@ -55,55 +53,106 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     protected $regionNamesCache = [];
 
     /**
-     * @var ClientFactory
-     */
-    private $httpClientFactory;
-
-    /**
      * @var \Calcurates\ModuleMagento\Model\Config
      */
-    private $calcuratesConfig;
+    protected $calcuratesConfig;
 
     /**
      * @var RegionResource
      */
-    private $regionResource;
+    protected $regionResource;
 
     /**
-     * @var ResultFactory
+     * @var \Magento\Framework\Registry
      */
-    private $rateFactory;
+    protected $registry;
 
     /**
-     * @var RegionFactory
+     * @var \Magento\Shipping\Model\Order\Track
      */
-    private $regionFactory;
+    protected $trackingObject;
 
     /**
-     * @var MethodFactory
+     * @var \Magento\Framework\App\RequestInterface
      */
-    private $rateMethodFactory;
+    private $request;
 
+    /**
+     * @var CalcuratesClient
+     */
+    private $calcuratesClient;
+
+    /**
+     * Carrier constructor.
+     * @param ScopeConfigInterface $scopeConfig
+     * @param ErrorFactory $rateErrorFactory
+     * @param LoggerInterface $logger
+     * @param Security $xmlSecurity
+     * @param \Magento\Shipping\Model\Simplexml\ElementFactory $xmlElFactory
+     * @param \Magento\Shipping\Model\Rate\ResultFactory $rateFactory
+     * @param \Magento\Quote\Model\Quote\Address\RateResult\MethodFactory $rateMethodFactory
+     * @param \Magento\Shipping\Model\Tracking\ResultFactory $trackFactory
+     * @param \Magento\Shipping\Model\Tracking\Result\ErrorFactory $trackErrorFactory
+     * @param \Magento\Shipping\Model\Tracking\Result\StatusFactory $trackStatusFactory
+     * @param \Magento\Directory\Model\RegionFactory $regionFactory
+     * @param \Magento\Directory\Model\CountryFactory $countryFactory
+     * @param \Magento\Directory\Model\CurrencyFactory $currencyFactory
+     * @param \Magento\Directory\Helper\Data $directoryData
+     * @param \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry
+     * @param Config $calcuratesConfig
+     * @param RegionResource $regionResource
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\App\RequestInterface $request
+     * @param CalcuratesClient $calcuratesClient
+     * @param array $data
+     */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         ErrorFactory $rateErrorFactory,
         LoggerInterface $logger,
-        ClientFactory $httpClientFactory,
+        Security $xmlSecurity,
+        \Magento\Shipping\Model\Simplexml\ElementFactory $xmlElFactory,
+        \Magento\Shipping\Model\Rate\ResultFactory $rateFactory,
+        \Magento\Quote\Model\Quote\Address\RateResult\MethodFactory $rateMethodFactory,
+        \Magento\Shipping\Model\Tracking\ResultFactory $trackFactory,
+        \Magento\Shipping\Model\Tracking\Result\ErrorFactory $trackErrorFactory,
+        \Magento\Shipping\Model\Tracking\Result\StatusFactory $trackStatusFactory,
+        \Magento\Directory\Model\RegionFactory $regionFactory,
+        \Magento\Directory\Model\CountryFactory $countryFactory,
+        \Magento\Directory\Model\CurrencyFactory $currencyFactory,
+        \Magento\Directory\Helper\Data $directoryData,
+        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
         CalcuratesConfig $calcuratesConfig,
         RegionResource $regionResource,
-        ResultFactory $rateFactory,
-        RegionFactory $regionFactory,
-        MethodFactory $rateMethodFactory,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\App\RequestInterface $request,
+        CalcuratesClient $calcuratesClient,
         array $data = []
     ) {
-        parent::__construct($scopeConfig, $rateErrorFactory, $logger, $data);
+        parent::__construct(
+            $scopeConfig,
+            $rateErrorFactory,
+            $logger,
+            $xmlSecurity,
+            $xmlElFactory,
+            $rateFactory,
+            $rateMethodFactory,
+            $trackFactory,
+            $trackErrorFactory,
+            $trackStatusFactory,
+            $regionFactory,
+            $countryFactory,
+            $currencyFactory,
+            $directoryData,
+            $stockRegistry,
+            $data
+        );
 
-        $this->httpClientFactory = $httpClientFactory;
         $this->calcuratesConfig = $calcuratesConfig;
         $this->regionResource = $regionResource;
-        $this->rateFactory = $rateFactory;
-        $this->regionFactory = $regionFactory;
-        $this->rateMethodFactory = $rateMethodFactory;
+        $this->registry = $registry;
+        $this->request = $request;
+        $this->calcuratesClient = $calcuratesClient;
     }
 
     /**
@@ -219,20 +268,9 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         $debugData['request'] = $apiRequestBody;
 
         try {
-            $client = $this->httpClientFactory->create();
-            $composerPackage = $this->calcuratesConfig->getComposerPackage();
-
-            $client->addHeader('User-Agent', $composerPackage->getName().'/'.$composerPackage->getVersion());
-            $client->addHeader('X-API-Key', $this->calcuratesConfig->getCalcuratesToken());
-            $client->addHeader('Content-Type', 'application/json');
-            $client->post($this->getAPIUrl().'/rates', \Zend_Json::encode($apiRequestBody));
-
-            if ($client->getStatus() >= 400) {
-                throw new HttpRuntimeException($client->getBody(), $client->getStatus());
-            }
-            $debugData['result'] = $client->getBody();
-            $response = \Zend_Json::decode($client->getBody());
-        } catch (\Throwable $e) {
+            $response = $this->calcuratesClient->getRates($apiRequestBody, $this->getStore());
+            $debugData['result'] = $response;
+        } catch (LocalizedException $e) {
             $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
             $response = [];
         }
@@ -256,7 +294,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             return $this->regionNamesCache[$regionId];
         }
 
-        $regionInstance = $this->regionFactory->create();
+        $regionInstance = $this->_regionFactory->create();
         $this->regionResource->load($regionInstance, $regionId);
 
         return $this->regionNamesCache[$regionId] = $regionInstance->getName();
@@ -266,27 +304,20 @@ class Carrier extends AbstractCarrier implements CarrierInterface
      * @param string $methodId
      * @param array $responseRate
      * @param Result $result
+     * @param string $carrierTitle
      */
-    protected function processRate($methodId, array $responseRate, Result $result)
+    protected function processRate($methodId, array $responseRate, Result $result, $carrierTitle = '')
     {
-        $rate = $this->rateMethodFactory->create();
+        $rate = $this->_rateMethodFactory->create();
         $rate->setCarrier(self::CODE);
         $rate->setMethod($methodId);
         $rate->setMethodTitle($responseRate['name']);
-        $rate->setCarrierTitle('');
+        $rate->setCarrierTitle($carrierTitle);
         $rate->setInfoMessageEnabled((bool)$responseRate['message']);
         $rate->setInfoMessage($responseRate['message']);
         $rate->setCost($responseRate['rate']['cost']);
         $rate->setPrice($responseRate['rate']['cost']);
         $result->append($rate);
-    }
-
-    /**
-     * @return string
-     */
-    protected function getAPIUrl()
-    {
-        return rtrim($this->getConfigData(CalcuratesConfig::CONFIG_API_URL), '/').'/api/v1';
     }
 
     /**
@@ -302,7 +333,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
      */
     protected function parseResponse($response)
     {
-        $result = $this->rateFactory->create();
+        $result = $this->_rateFactory->create();
 
         try {
             if (!$response) {
@@ -337,7 +368,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             }
 
             $this->processRate(
-                'flatRates_'.$responseRate['id'],
+                'flatRates_' . $responseRate['id'],
                 $responseRate,
                 $result
             );
@@ -364,7 +395,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             ];
 
             $this->processRate(
-                'freeShipping'.$responseRate['id'],
+                'freeShipping' . $responseRate['id'],
                 $responseRate,
                 $result
             );
@@ -396,7 +427,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
                 }
 
                 $this->processRate(
-                    'tableRate_'.$tableRate['id'].'_'.$responseRate['id'],
+                    'tableRate_' . $tableRate['id'] . '_' . $responseRate['id'],
                     $responseRate,
                     $result
                 );
@@ -429,9 +460,10 @@ class Carrier extends AbstractCarrier implements CarrierInterface
                 }
 
                 $this->processRate(
-                    'carrier_'.$carrier['id'].'_'.$responseRate['id'],
+                    'carrier_' . $carrier['id'] . '_' . $responseRate['id'],
                     $responseRate,
-                    $result
+                    $result,
+                    $carrier['name']
                 );
             }
         }
@@ -503,10 +535,10 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         ];
         $shipAddress = $quote->getShippingAddress();
 
-        $customerData['contactName'] = $shipAddress->getPrefix().' ';
-        $customerData['contactName'] .= $shipAddress->getFirstname() ? $shipAddress->getFirstname().' ' : '';
-        $customerData['contactName'] .= $shipAddress->getMiddlename() ? $shipAddress->getMiddlename().' ' : '';
-        $customerData['contactName'] = trim($customerData['contactName'].$shipAddress->getLastname());
+        $customerData['contactName'] = $shipAddress->getPrefix() . ' ';
+        $customerData['contactName'] .= $shipAddress->getFirstname() ? $shipAddress->getFirstname() . ' ' : '';
+        $customerData['contactName'] .= $shipAddress->getMiddlename() ? $shipAddress->getMiddlename() . ' ' : '';
+        $customerData['contactName'] = trim($customerData['contactName'] . $shipAddress->getLastname());
 
         $customerData['companyName'] = $shipAddress->getCompany();
         $customerData['contactPhone'] = $shipAddress->getTelephone();
@@ -533,5 +565,395 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     public function processAdditionalValidation(DataObject $request)
     {
         return $this;
+    }
+
+    /**
+     * Do request to shipment
+     *
+     * @param \Magento\Shipping\Model\Shipment\Request $request
+     * @return array|\Magento\Framework\DataObject
+     * @throws LocalizedException
+     */
+    public function requestToShipment($request)
+    {
+        $packages = $request->getPackages();
+        if (!is_array($packages) || !$packages) {
+            throw new LocalizedException(__('No packages for request'));
+        }
+        $result = $this->_doShipmentRequest($request);
+        $request->setMasterTrackingId($result['tracking_number']);
+
+        $response = new \Magento\Framework\DataObject(
+            [
+                'info' => [$result],
+            ]
+        );
+
+        return $response;
+    }
+
+    /**
+     * Do shipment request to carrier web service, obtain Print Shipping Labels and process errors in response
+     *
+     * @param \Magento\Framework\DataObject $request
+     * @return \Magento\Framework\DataObject
+     * @throws LocalizedException
+     */
+    protected function _doShipmentRequest(\Magento\Framework\DataObject $request)
+    {
+        /** @var \Magento\Shipping\Model\Shipment\Request $request */
+        $this->_prepareShipmentRequest($request);
+
+        $shippingMethod = $this->request->getParam('calcuratesShippingServiceId');
+        if (!$shippingMethod) {
+            $shippingMethod = explode('_', $request->getShippingMethod());
+            $shippingMethod = end($shippingMethod);
+        }
+
+        $apiRequestBody = [
+            'service' => $shippingMethod,
+            'shipFrom' => [
+                'name' => $request->getShipperContactPersonName(),
+                'phone' => $request->getShipperContactPhoneNumber(),
+                'companyName' => $request->getShipperContactCompanyName(),
+                'addressLine1' => $request->getShipperAddressStreet1(),
+                'addressLine2' => $request->getShipperAddressStreet2(),
+                'city' => $request->getShipperAddressCity(),
+                'region' => $request->getShipperAddressStateOrProvinceCode(),
+                'postalCode' => $request->getShipperAddressPostalCode(),
+                'country' => $request->getShipperAddressCountryCode(),
+                'addressResidentialIndicator' => 'unknown',
+            ],
+            'shipTo' => [
+                'name' => $request->getRecipientContactPersonName(),
+                'phone' => $request->getRecipientContactPhoneNumber(),
+                'companyName' => $request->getRecipientContactCompanyName(),
+                'addressLine1' => $request->getRecipientAddressStreet1(),
+                'addressLine2' => $request->getRecipientAddressStreet2(),
+                'city' => $request->getRecipientAddressCity(),
+                'region' => $request->getRecipientAddressStateOrProvinceCode(),
+                'postalCode' => $request->getRecipientAddressPostalCode(),
+                'country' => $request->getRecipientAddressCountryCode(),
+                'addressResidentialIndicator' => 'unknown',
+            ],
+            'packages' => [],
+            'testLabel' => (bool)$this->getDebugFlag(),
+            'validateAddress' => 'no_validation',
+        ];
+
+        foreach ($request->getPackages() as $package) {
+            $rawPackage = [
+                'weight' => [
+                    'value' => $package['params']['weight'],
+                    'unit' => $this->getWeightUnits($package['params']['weight_units']),
+                ],
+                'dimensions' => [
+                    'length' => $package['params']['length'],
+                    'width' => $package['params']['width'],
+                    'height' => $package['params']['height'],
+                    'unit' => $this->getDimensionUnits($package['params']['dimension_units']),
+                ],
+            ];
+            $apiRequestBody['packages'][] = $rawPackage;
+        }
+
+        $debugData = [
+            'request' => $apiRequestBody,
+            'type' => 'shippingLabelCreate'
+        ];
+
+        try {
+            $response = $this->calcuratesClient->createShippingLabel($apiRequestBody, $this->getStore());
+            $debugData['result'] = $response;
+        } catch (LocalizedException $e) {
+            $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
+            $this->_debug($debugData);
+            throw $e;
+        }
+        $this->_debug($debugData);
+
+        return $this->prepareShippingLabelContent($response);
+    }
+
+    /**
+     * @param string $weightUnits
+     * @return string
+     */
+    protected function getWeightUnits($weightUnits)
+    {
+        switch ($weightUnits) {
+            case \Zend_Measure_Weight::POUND:
+                $weightUnits = 'pound';
+                break;
+            case \Zend_Measure_Weight::KILOGRAM:
+                $weightUnits = 'kilogram';
+                break;
+            case \Zend_Measure_Weight::OUNCE:
+                $weightUnits = 'ounce';
+                break;
+            case \Zend_Measure_Weight::GRAM:
+                $weightUnits = 'gram';
+                break;
+            default:
+                throw new \InvalidArgumentException('Invalid weight units');
+        }
+
+        return $weightUnits;
+    }
+
+    /**
+     * @param string $dimensionUnits
+     * @return string
+     */
+    protected function getDimensionUnits($dimensionUnits)
+    {
+        switch ($dimensionUnits) {
+            case \Zend_Measure_Length::INCH:
+                $dimensionUnits = 'inch';
+                break;
+            case \Zend_Measure_Length::CENTIMETER:
+                $dimensionUnits = 'centimeter';
+                break;
+            default:
+                throw new \InvalidArgumentException('Invalid dimension units');
+        }
+
+        return $dimensionUnits;
+    }
+
+    /**
+     * @param array $labelData
+     * @return array
+     * @throws LocalizedException
+     */
+    protected function prepareShippingLabelContent(array $labelData)
+    {
+        $labelContent = '';
+        if (!empty($labelData['labelDownload'])) {
+            $labelContent = $this->downloadLabelContent($labelData['labelDownload']);
+        }
+        return [
+            'tracking_number' => !empty($labelData['trackingNumber']) ? $labelData['trackingNumber'] : '',
+            'label_content' => $labelContent
+        ];
+    }
+
+    /**
+     * @param string $url
+     * @return string
+     * @throws LocalizedException
+     */
+    protected function downloadLabelContent($url)
+    {
+        $debugData = ['request' => $url, 'type' => 'shippingLabelDownload'];
+        try {
+            $result = $this->calcuratesClient->getLabelContent($url);
+            $debugData['result'] = $result;
+        } catch (LocalizedException $e) {
+            $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
+            $this->_debug($debugData);
+            throw $e;
+        }
+        $this->_debug($debugData);
+
+        return $result;
+    }
+
+    /**
+     * Check if city option required
+     *
+     * @return bool
+     */
+    public function isCityRequired()
+    {
+        return false;
+    }
+
+    /**
+     * Determine whether zip-code is required for the country of destination
+     *
+     * @param string|null $countryId
+     * @return bool
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function isZipCodeRequired($countryId = null)
+    {
+        return false;
+    }
+
+    /**
+     * Check if carrier has shipping label option available
+     *
+     * @return bool
+     */
+    public function isShippingLabelsAvailable()
+    {
+        /** @var \Magento\Sales\Model\Order\Shipment|null $shipment */
+        $shipment = $this->registry->registry('current_shipment');
+        if (!$shipment) {
+            return false;
+        }
+        $method = $shipment->getOrder()->getShippingMethod(true);
+        return strpos($method->getMethod(), 'carrier_') === 0;
+    }
+
+    /**
+     * Get tracking information
+     *
+     * @param string $tracking
+     * @param \Magento\Shipping\Model\Order\Track|null $trackObject
+     * @return string|false
+     * @throws LocalizedException
+     * @api
+     */
+    public function getTrackingInfo($tracking, $trackObject = null)
+    {
+        $this->trackingObject = $trackObject;
+        return parent::getTrackingInfo($tracking);
+    }
+
+    /**
+     * Get tracking
+     *
+     * @param @param string|string[] $trackings
+     * @return \Magento\Shipping\Model\Tracking\Result|null
+     * @throws LocalizedException
+     */
+    public function getTracking($trackings)
+    {
+        if (!is_array($trackings)) {
+            $trackings = [$trackings];
+        }
+
+        $result = $this->_trackFactory->create();
+
+        if (!empty($this->trackingObject)) {
+            foreach ($trackings as $tracking) {
+                $this->loadTracking($tracking, $result);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param string $tracking
+     * @param \Magento\Shipping\Model\Tracking\Result $result
+     * @throws LocalizedException
+     */
+    protected function loadTracking($tracking, $result)
+    {
+        $shippingMethod = $this->trackingObject->getShipment()->getOrder()->getShippingMethod(false);
+        $shippingMethod = explode('_', $shippingMethod);
+        $serviceId = end($shippingMethod);
+        $debugData = ['request' => $serviceId . ' - ' . $tracking, 'type' => 'tracking'];
+        $response = [];
+        try {
+            $response = $this->calcuratesClient->getTrackingInfo($serviceId, $tracking, $this->getStore());
+            $debugData['result'] = $response;
+        } catch (\Throwable $e) {
+            $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
+        }
+        $this->_debug($debugData);
+        $this->parseTrackingData($response, $result);
+    }
+
+    /**
+     * @param array $response
+     * @param \Magento\Shipping\Model\Tracking\Result $result
+     */
+    protected function parseTrackingData(array $response, $result)
+    {
+        $carrierTitle = $this->trackingObject->getTitle();
+        if (!empty($response['trackingNumber'])) {
+            $tracking = $this->_trackStatusFactory->create();
+            $tracking->setCarrier(self::CODE);
+            $tracking->setCarrierTitle($carrierTitle);
+            $tracking->setTracking($response['trackingNumber']);
+            $tracking->addData($this->processTrackingDetails($response));
+            $result->append($tracking);
+        } else {
+            $error = $this->_trackErrorFactory->create();
+            $error->setCarrier(self::CODE);
+            $error->setCarrierTitle($carrierTitle);
+            $error->setTracking($this->trackingObject->getTrackNumber());
+            $error->setErrorMessage(!empty($response['message']) ? $response['message'] : __('Tracking getting error'));
+            $result->append($error);
+        }
+
+    }
+
+    /**
+     * @param array $response
+     * @return array
+     */
+    protected function processTrackingDetails($response)
+    {
+        $result = [
+            'shippedDate' => null,
+            'deliverydate' => null,
+            'deliverytime' => null,
+            'deliverylocation' => null,
+            'weight' => null,
+            'progressdetail' => [],
+        ];
+        $datetime = $this->parseDate(!empty($response['shipDate']) ? $response['shipDate'] : null);
+        if ($datetime) {
+            $result['shippedDate'] = gmdate('Y-m-d', $datetime->getTimestamp());
+        }
+
+        $field = 'estimatedDeliveryDate';
+        // if delivered - get actual date
+        if (!empty($response['statusCode']) && $response['statusCode'] == 'DE') {
+            $field = 'actualDeliveryDate';
+        }
+        $datetime = $this->parseDate(!empty($response[$field]) ? $response[$field] : null);
+        if ($datetime) {
+            $result['deliverydate'] = gmdate('Y-m-d', $datetime->getTimestamp());
+            $result['deliverytime'] = gmdate('H:i:s', $datetime->getTimestamp());
+        }
+
+        if (!empty($response['events']) && is_array($response['events'])) {
+            foreach ($response['events'] as $event) {
+                $item = [
+                    'activity' => !empty($event['description']) ? (string)$event['description'] : '',
+                    'deliverydate' => null,
+                    'deliverytime' => null,
+                    'deliverylocation' => null
+                ];
+                $datetime = $this->parseDate(!empty($event['occurredAt']) ? $event['occurredAt'] : null);
+                if ($datetime) {
+                    $item['deliverydate'] = gmdate('Y-m-d', $datetime->getTimestamp());
+                    $item['deliverytime'] = gmdate('H:i:s', $datetime->getTimestamp());
+                }
+
+                $result['progressdetail'][] = $item;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Parses datetime string
+     *
+     * @param string $timestamp
+     * @return bool|\DateTime
+     */
+    private function parseDate($timestamp)
+    {
+        if ($timestamp === null) {
+            return false;
+        }
+        return \DateTime::createFromFormat(\DateTime::RFC3339, $timestamp);
+    }
+
+    /**
+     * @param DataObject $params
+     * @return array
+     */
+    public function getContainerTypes(\Magento\Framework\DataObject $params = null)
+    {
+        return ['CUSTOM_PACKAGE' => __('Custom Package')];
     }
 }

@@ -1,0 +1,245 @@
+<?php /** @var $block \Magento\Shipping\Block\Adminhtml\Order\Packaging */ ?>
+<?php
+$shippingMethod = $block->getShipment()->getOrder()->getShippingMethod();
+$sizeSource = $block->getSourceSizeModel()->toOptionArray();
+$girthEnabled = $block->isDisplayGirthValue() && $block->isGirthAllowed() ? 1 : 0;
+/** @var \Calcurates\ModuleMagento\Helper\ShipmentAddressHelper $helper */
+$helper = $this->helper(\Calcurates\ModuleMagento\Helper\ShipmentAddressHelper::class);
+$order = $block->getShipment()->getOrder();
+
+?>
+<script>
+    require([
+        "jquery",
+        "prototype",
+        "Magento_Shipping/order/packaging",
+        "Magento_Ui/js/modal/modal"
+    ], function(jQuery){
+
+        window.packaging = new Packaging(<?= /* @noEscape */ $block->getConfigDataJson() ?>);
+        packaging.changeContainerType($$('select[name=package_container]')[0]);
+        packaging.checkSizeAndGirthParameter(
+            $$('select[name=package_container]')[0],
+            <?= /* @noEscape */ $girthEnabled ?>
+        );
+        packaging.setConfirmPackagingCallback(function(){
+            packaging.setParamsCreateLabelRequest($('edit_form').serialize(true));
+            packaging.setParamsCreateLabelRequest({
+                calcuratesShippingServiceId: jQuery('#calcurates_change_shipping_method_select').val()
+            });
+
+            packaging.sendCreateLabelRequest();
+        });
+        packaging.setLabelCreatedCallback(function(response){
+            setLocation("<?= $block->escapeJs($block->escapeUrl($block->getUrl(
+                'sales/order/view',
+                ['order_id' => $block->getShipment()->getOrderId()]
+            ))); ?>");
+        });
+        packaging.setCancelCallback(function() {
+            if ($('create_shipping_label')) {
+                packaging.cleanPackages();
+                $('create_shipping_label').checked = false;
+                toggleCreateLabelCheckbox();
+            }
+        });
+        packaging.setItemQtyCallback(function(itemId){
+            var item = $$('[name="shipment[items]['+itemId+']"]')[0];
+            if (item && !isNaN(item.value)) {
+                return item.value;
+            }
+        });
+
+        var packagingWindowOverviewButtons = [{
+            text: '<?= $block->escapeJs($block->escapeHtml(__('Cancel'))) ?>',
+            'class': 'action-secondary',
+            click: function () {
+                packaging.cancelPackaging();
+                this.closeModal();
+            }
+        }, {
+            text: '<?= $block->escapeJs($block->escapeHtml(__('Save'))) ?>',
+            'attr': {'data-action':'save-packages'},
+            'class': 'action-primary',
+            click: function () {
+                packaging.confirmPackaging();
+            }
+        }, {
+            text: '<?= $block->escapeJs($block->escapeHtml(__('Back To Packages'))) ?>',
+            'attr': {'data-action':'back-to-packages'},
+            'class': 'action-secondary',
+            click: function () {
+                jQuery('#packaging_window').modal('openModal');
+                jQuery('#packaging_window_overview').modal('closeModal');
+            }
+        }];
+
+        var packagingWindowButtons = [{
+            text: '<?= $block->escapeJs($block->escapeHtml(__('Cancel'))) ?>',
+            'class': 'action-secondary',
+            click: function () {
+                packaging.cancelPackaging();
+                this.closeModal();
+            }
+        }, {
+            text: '<?= $block->escapeJs($block->escapeHtml(__('Next'))) ?>',
+            'attr': {'disabled':'disabled', 'data-action':'save-packages'},
+            'class': 'action-primary _disabled',
+            click: function () {
+                jQuery('#packaging_window').modal('closeModal');
+                jQuery('#packaging_window_overview').modal('openModal');
+                updatePackagesContentOverview();
+            }
+        }, {
+            text: '<?= $block->escapeJs($block->escapeHtml(__('Add Package'))) ?>',
+            'attr': {'data-action':'add-packages'},
+            'class': 'action-secondary',
+            click: function () {
+                packaging.newPackage();
+            }
+        }];
+
+        jQuery('#packaging_window').modal({
+            type: 'slide',
+            title: '<?= $block->escapeJs($block->escapeHtml(__('Create Packages'))) ?>',
+            buttons: packagingWindowButtons
+        });
+        jQuery(document).trigger('packaging:inited');
+        jQuery(document).data('packagingInited', true);
+
+        jQuery('#packaging_window_overview').modal({
+            type: 'slide',
+            title: '<?= $block->escapeJs($block->escapeHtml(__('Select Method and Confirm'))) ?>',
+            buttons: packagingWindowOverviewButtons
+        });
+
+        jQuery('#calcurates_change_shipping_method').on('click', function (e) {
+            e.preventDefault();
+            jQuery('#calcurates_change_shipping_method_select').removeAttr('disabled');
+        });
+
+
+        function updatePackagesContentOverview() {
+            var weightUnitsSelect, dimensionUnitsSelect, html, packageId;
+            jQuery('#packages_content_overview').html('');
+            packaging.packagesContent.childElements().each(function (pack) {
+                weightUnitsSelect = pack.select('select[name="container_weight_units"]')[0];
+                dimensionUnitsSelect = pack.select('select[name="container_dimension_units"]')[0];
+                packageId = packaging.getPackageId(pack);
+
+                html = renderTemplate('#packages_content_overview_template', {
+                    packageId: packageId,
+                    weight: parseFloat(pack.select('input[name="container_weight"]')[0].value),
+                    length: parseFloat(pack.select('input[name="container_length"]')[0].value),
+                    width: parseFloat(pack.select('input[name="container_width"]')[0].value),
+                    height: parseFloat(pack.select('input[name="container_height"]')[0].value),
+                    weightUnits: weightUnitsSelect.options[weightUnitsSelect.selectedIndex].text,
+                    dimensionUnits: dimensionUnitsSelect.options[dimensionUnitsSelect.selectedIndex].text
+                });
+                jQuery('#packages_content_overview').append(html);
+
+                for (var packedItemId in packaging.packages[packageId]['items']) {
+                    if (!isNaN(packedItemId)) {
+                        html = renderTemplate('#packages_content_overview_items_template',{
+                            productName: packaging.defaultItemsName[packedItemId],
+                            productWeight: packaging.defaultItemsWeight[packedItemId],
+                            productQty: packaging.packages[packageId]['items'][packedItemId]['qty'],
+                        });
+
+                        jQuery('#packages_content_overview').append(html);
+                    }
+                }
+
+            });
+        }
+
+        function renderTemplate(templateId, params) {
+            var template = jQuery(templateId).html();
+            for (var paramKey in params) {
+                template = template.replace("{" + paramKey + "}", params[paramKey]);
+            }
+            return template;
+        }
+    });
+</script>
+<?php include ($block->getTemplateFile('Magento_Shipping::order/packaging/popup_content.phtml')) ?>
+<div id="packaging_window_overview">
+    <div class="admin__page-section">
+        <div class="admin__page-section-content">
+            <div class="admin__page-section-item order-payment-method">
+                <div class="admin__page-section-item-title">
+                    <span class="title"><?= __('Shipping Method') ?></span>
+                </div>
+                <div class="admin__page-section-item-content">
+                    <?php
+                    $shippingServiceId = $helper->getShippingServiceId($order);
+                    ?>
+                    <select name="calcurates_change_shipping_method_select" id="calcurates_change_shipping_method_select" class="select admin__control-select carrier" disabled>
+                        <?php foreach ($helper->getShippingServices($order) as $shippingService): ?>
+                            <option value="<?= $shippingService['value'] ?>"<?= $shippingService['value'] == $shippingServiceId ? ' selected' : '' ?>><?= $shippingService['label'] ?>
+                        <?php endforeach; ?>
+                    </select>
+                    <div class="actions" style="display: inline-block;margin-left: 0.5rem;"><a href="#" id="calcurates_change_shipping_method">Edit</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <section class="admin__page-section order-addresses">
+        <div class="admin__page-section-content">
+            <div class="admin__page-section-item order-billing-address">
+                <div class="admin__page-section-item-title">
+                    <span class="title"><?= __('Origin Address') ?></span>
+                </div>
+                <address class="admin__page-section-item-content">
+                    <?= /* @noEscape */ $helper->getOriginAddressHtml($block->getShipment()); ?>
+                </address>
+            </div>
+            <div class="admin__page-section-item order-shipping-address">
+                <div class="admin__page-section-item-title">
+                    <span class="title"><?= __('Shipping Address') ?></span>
+                </div>
+                <address class="admin__page-section-item-content"> <?= /* @noEscape */ $helper->getFormattedAddress($order->getShippingAddress()); ?></address>
+            </div>
+        </div>
+    </section>
+
+    <div id="packages_content_overview"></div>
+
+    <div id="packages_content_overview_template" style="display: none">
+        <div class="admin__page-section-title">
+            <span class="title">
+                <?= __('Package') ?> <span data-role="package-number">{packageId}</span>
+            </span>
+        </div>
+        <div style="margin-bottom: 10px;font-weight: 600;">
+            <?= __('Custom Package') ?>, {weight} {weightUnits}, {width}x{height}x{length} {dimensionUnits}
+        </div>
+    </div>
+    <div id="packages_content_overview_items_template" style="display: none">
+        <div class="admin__page-subsection package_items">
+            <div class="grid">
+                <div class="admin__table-wrapper">
+                    <table class="data-grid">
+                        <thead>
+                        <tr>
+                            <th class="data-grid-th"><?= __('Product Name') ?></th>
+                            <th class="data-grid-th"><?= __('Weight') ?></th>
+                            <th class="data-grid-th"><?= __('Qty') ?></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="data-grid-controls-row data-row ">
+                            <td>{productName}</td>
+                            <td data-role="item-weight">{productWeight}</td>
+                            <td>{productQty}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
