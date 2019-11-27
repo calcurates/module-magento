@@ -71,6 +71,7 @@ $order = $block->getShipment()->getOrder();
             click: function () {
                 jQuery('#packaging_window').modal('openModal');
                 jQuery('#packaging_window_overview').modal('closeModal');
+                packaging.messages = $('packaging_window').select('.message-warning')[0];
             }
         }];
 
@@ -89,6 +90,7 @@ $order = $block->getShipment()->getOrder();
                 jQuery('#packaging_window').modal('closeModal');
                 jQuery('#packaging_window_overview').modal('openModal');
                 updatePackagesContentOverview();
+                packaging.messages = $('packaging_window_overview').select('.message-warning')[0];
             }
         }, {
             text: '<?= $block->escapeJs($block->escapeHtml(__('Add Package'))) ?>',
@@ -164,6 +166,7 @@ $order = $block->getShipment()->getOrder();
 </script>
 <?php include ($block->getTemplateFile('Magento_Shipping::order/packaging/popup_content.phtml')) ?>
 <div id="packaging_window_overview">
+    <div class="message message-warning" style="display: none"></div>
     <div class="admin__page-section">
         <div class="admin__page-section-content">
             <div class="admin__page-section-item order-payment-method">
