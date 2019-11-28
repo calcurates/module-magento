@@ -36,6 +36,8 @@ class Config implements ConfigProviderInterface
 
     const CONFIG_ATTRIBUTES_VOLUMETRIC_WEIGHT = 'checkout/attributes/volumetric-weight';
 
+    const CONFIG_ATTRIBUTES_CUSTOM_ATTRIBUTES = 'checkout/attributes/custom-attributes';
+
     /**
      * @var ScopeConfigInterface
      */
@@ -133,6 +135,19 @@ class Config implements ConfigProviderInterface
     {
         $data = $this->scopeConfig->getValue(
             self::CONFIG_GROUP.self::CONFIG_ATTRIBUTES_VOLUMETRIC_WEIGHT,
+            ScopeInterface::SCOPE_WEBSITES
+        );
+
+        return $data ? $this->serializer->unserialize($data) : [];
+    }
+
+    /**
+     * @return array
+     */
+    public function getCustomAttributes()
+    {
+        $data = $this->scopeConfig->getValue(
+            self::CONFIG_GROUP.self::CONFIG_ATTRIBUTES_CUSTOM_ATTRIBUTES,
             ScopeInterface::SCOPE_WEBSITES
         );
 

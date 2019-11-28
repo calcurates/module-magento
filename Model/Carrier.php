@@ -262,6 +262,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
                 'sku' => $item->getSku(),
                 'categories' => $item->getProduct()->getCategoryIds(),
                 'feature' => $this->getAttributesData($item),
+                'customAttributes' => $this->getCustomAttributesData($item)
             ];
         }
 
@@ -498,6 +499,21 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     {
         $data = $this->calcuratesConfig->getLinkedVolumetricWeightAttributes();
         $this->processAttributes($data, $item);
+
+        return $data;
+    }
+
+    /**
+     * @param Item $item
+     * @return array
+     */
+    private function getCustomAttributesData(Item $item)
+    {
+        $customAttributes = $this->calcuratesConfig->getCustomAttributes();
+        $data = [];
+        foreach ($customAttributes as $customAttribute) {
+            $data[$customAttribute] = $item->getProduct()->getData($customAttribute);
+        }
 
         return $data;
     }

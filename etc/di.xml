@@ -17,6 +17,9 @@
     <preference for="Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\VolumetricWeight\SeparateDimensionsInterface" type="Calcurates\ModuleMagento\Model\Checkout\AttributeLinking\VolumetricWeight\SeparateDimensionsData"/>
     <preference for="Calcurates\ModuleMagento\Api\System\Checkout\Attributes\VolumetricWeightInterface" type="Calcurates\ModuleMagento\Model\System\Checkout\Attributes\VolumetricWeight"/>
 
+    <preference for="Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\CustomAttributeInterface" type="Calcurates\ModuleMagento\Model\Checkout\AttributeLinking\CustomAttribute"/>
+    <preference for="Calcurates\ModuleMagento\Api\System\Checkout\Attributes\CustomAttributesInterface" type="Calcurates\ModuleMagento\Model\System\Checkout\Attributes\CustomAttributes"/>
+
     <type name="Magento\Catalog\Model\Attribute\Config\Reader">
         <plugin sortOrder="10" name="Calcurates_ModuleMagento::AttributeReader" type="Calcurates\ModuleMagento\Plugin\Model\Attribute\Config\ReaderPlugin"/>
     </type>
