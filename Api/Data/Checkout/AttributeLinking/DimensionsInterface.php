@@ -17,11 +17,11 @@ interface DimensionsInterface
     const VOLUMETRIC_WEIGHT = 'volumetric_weight';
 
     /**
-     * @param \Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\VolumetricWeight\SeparateDimensionsInterface $separateDimensions
+     * @param \Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\Dimensions\SeparateDimensionsInterface $separateDimensions
      *
      * @return DimensionsInterface
      */
-    public function setSeparateDimensions(VolumetricWeight\SeparateDimensionsInterface $separateDimensions);
+    public function setSeparateDimensions(Dimensions\SeparateDimensionsInterface $separateDimensions);
 
     /**
      * @param int $volume
@@ -38,7 +38,7 @@ interface DimensionsInterface
     public function setVolumetricWeight($volumetricWeight);
 
     /**
-     * @return \Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\VolumetricWeight\SeparateDimensionsInterface|null
+     * @return \Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\Dimensions\SeparateDimensionsInterface|null
      */
     public function getSeparateDimensions();
 

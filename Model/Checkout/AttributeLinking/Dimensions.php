@@ -8,7 +8,7 @@
 namespace Calcurates\ModuleMagento\Model\Checkout\AttributeLinking;
 
 use Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\DimensionsInterface;
-use Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\VolumetricWeight\SeparateDimensionsInterface;
+use Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\Dimensions\SeparateDimensionsInterface;
 
 class Dimensions extends \Magento\Framework\DataObject implements DimensionsInterface
 {

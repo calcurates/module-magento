@@ -5,9 +5,9 @@
  * @package Calcurates_ModuleMagento
  */
 
-namespace Calcurates\ModuleMagento\Model\Checkout\AttributeLinking\VolumetricWeight;
+namespace Calcurates\ModuleMagento\Model\Checkout\AttributeLinking\Dimensions;
 
-use Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\VolumetricWeight\SeparateDimensionsInterface;
+use Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\Dimensions\SeparateDimensionsInterface;
 
 class SeparateDimensionsData implements SeparateDimensionsInterface
 {

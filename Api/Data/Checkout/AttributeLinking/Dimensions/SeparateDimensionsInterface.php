@@ -5,7 +5,7 @@
  * @package Calcurates_ModuleMagento
  */
 
-namespace Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\VolumetricWeight;
+namespace Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\Dimensions;
 
 /**
  * @api
