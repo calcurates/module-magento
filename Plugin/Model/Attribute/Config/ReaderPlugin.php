@@ -33,7 +33,7 @@ class ReaderPlugin
      */
     public function afterRead(\Magento\Catalog\Model\Attribute\Config\Reader $subject, $result)
     {
-        $volumetricData = $this->config->getLinkedVolumetricWeightAttributes();
+        $volumetricData = $this->config->getLinkedDimensionsAttributes();
         $attributes = [];
         $quoteAttributes = isset($result['quote_item']) ? $result['quote_item'] : [];
 

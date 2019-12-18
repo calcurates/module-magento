@@ -34,7 +34,7 @@ class Config implements ConfigProviderInterface
 
     const CONFIG_ERROR_MESSAGE = 'specificerrmsg';
 
-    const CONFIG_ATTRIBUTES_VOLUMETRIC_WEIGHT = 'checkout/attributes/volumetric-weight';
+    const CONFIG_ATTRIBUTES_DIMENSIONS = 'checkout/attributes/dimensions';
 
     const CONFIG_ATTRIBUTES_CUSTOM_ATTRIBUTES = 'checkout/attributes/custom-attributes';
 
@@ -131,10 +131,10 @@ class Config implements ConfigProviderInterface
     /**
      * @return array
      */
-    public function getLinkedVolumetricWeightAttributes()
+    public function getLinkedDimensionsAttributes()
     {
         $data = $this->scopeConfig->getValue(
-            self::CONFIG_GROUP.self::CONFIG_ATTRIBUTES_VOLUMETRIC_WEIGHT,
+            self::CONFIG_GROUP.self::CONFIG_ATTRIBUTES_DIMENSIONS,
             ScopeInterface::SCOPE_WEBSITES
         );
 

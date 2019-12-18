@@ -7,8 +7,8 @@
 
 namespace Calcurates\ModuleMagento\Model\System\Checkout\Attributes;
 
-use Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\VolumetricWeightInterface as DataVolumetricWeightInterface;
-use Calcurates\ModuleMagento\Api\System\Checkout\Attributes\VolumetricWeightInterface;
+use Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\DimensionsInterface as DataDimensionsInterface;
+use Calcurates\ModuleMagento\Api\System\Checkout\Attributes\DimensionsInterface;
 use Calcurates\ModuleMagento\Model\Config;
 use Magento\Catalog\Model\Attribute\Config\Data;
 use Magento\Framework\App\Cache\TypeListInterface as CacheTypeList;
@@ -17,7 +17,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Store\Model\ScopeInterface;
 
-class VolumetricWeight implements VolumetricWeightInterface
+class Dimensions implements DimensionsInterface
 {
     /**
      * @var WriterInterface
@@ -61,28 +61,26 @@ class VolumetricWeight implements VolumetricWeightInterface
     /**
      * @inheritDoc
      */
-    public function link(DataVolumetricWeightInterface $attributes, $websiteId)
+    public function link(DataDimensionsInterface $attributes, $websiteId)
     {
         $this->validate($attributes);
 
         $data = [
+            'volume' => [
+                'volume' => $attributes->getVolume(),
+            ],
             'volumetricWeight' => [
-                'volume' => [
-                    'volume' => $attributes->getVolume(),
-                ],
-                'volumetricWeight' => [
-                    'volumetricWeight' => $attributes->getVolumetricWeight(),
-                ],
-                'separateDimensions' => $attributes->getSeparateDimensions() !== null
-                    ? $attributes->getSeparateDimensions()->getData() : null
-            ]
+                'volumetricWeight' => $attributes->getVolumetricWeight(),
+            ],
+            'separateDimensions' => $attributes->getSeparateDimensions() !== null
+                ? $attributes->getSeparateDimensions()->getData() : null
         ];
 
         $data = $this->processAttributes->switchToCode($data);
         $data = $this->serializer->serialize($data);
 
         $this->scopeConfig->save(
-            Config::CONFIG_GROUP.Config::CONFIG_ATTRIBUTES_VOLUMETRIC_WEIGHT,
+            Config::CONFIG_GROUP.Config::CONFIG_ATTRIBUTES_DIMENSIONS,
             $data,
             ScopeInterface::SCOPE_WEBSITES,
             $websiteId
@@ -93,11 +91,11 @@ class VolumetricWeight implements VolumetricWeightInterface
     }
 
     /**
-     * @param DataVolumetricWeightInterface $attributes
+     * @param DataDimensionsInterface $attributes
      *
      * @throws LocalizedException
      */
-    private function validate(DataVolumetricWeightInterface $attributes)
+    private function validate(DataDimensionsInterface $attributes)
     {
         $separateDimensions = $attributes->getSeparateDimensions();
 

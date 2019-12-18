@@ -10,7 +10,7 @@ namespace Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking;
 /**
  * @api
  */
-interface VolumetricWeightInterface
+interface DimensionsInterface
 {
     const SEPARATE_DIMENSIONS = 'separate_dimensions';
     const VOLUME = 'volume';
@@ -19,21 +19,21 @@ interface VolumetricWeightInterface
     /**
      * @param \Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\VolumetricWeight\SeparateDimensionsInterface $separateDimensions
      *
-     * @return VolumetricWeightInterface
+     * @return DimensionsInterface
      */
     public function setSeparateDimensions(VolumetricWeight\SeparateDimensionsInterface $separateDimensions);
 
     /**
      * @param int $volume
      *
-     * @return VolumetricWeightInterface
+     * @return DimensionsInterface
      */
     public function setVolume($volume);
 
     /**
      * @param int $volumetricWeight
      *
-     * @return VolumetricWeightInterface
+     * @return DimensionsInterface
      */
     public function setVolumetricWeight($volumetricWeight);
 

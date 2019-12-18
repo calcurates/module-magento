@@ -7,10 +7,10 @@
 
 namespace Calcurates\ModuleMagento\Model\Checkout\AttributeLinking;
 
-use Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\VolumetricWeightInterface;
+use Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\DimensionsInterface;
 use Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\VolumetricWeight\SeparateDimensionsInterface;
 
-class VolumetricWeight extends \Magento\Framework\DataObject implements VolumetricWeightInterface
+class Dimensions extends \Magento\Framework\DataObject implements DimensionsInterface
 {
     /**
      * Add properties of SeparateDimensionsInterface if separate_dimensions is set.
