@@ -233,7 +233,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             'regionName' => $this->getRegionCodeById($request->getDestRegionId()) ?: $request->getDestRegionCode(),
             'postalCode' => $request->getDestPostcode(),
             'city' => $request->getDestCity(),
-            'address' => $streetArray[0],
+            'addressLine1' => $streetArray[0],
             'addressLine2' => $streetArray[1] ?? '',
             'customerGroup' => '',
             'promo' => '',
