@@ -277,7 +277,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         }
         $this->_debug($debugData);
 
-        return $this->parseResponse($response);
+        return $this->parseResponse($response, $quote);
     }
 
     /**
@@ -325,6 +325,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * Prepare shipping rate result based on response
      *
      * @param array $response
+     * @param \Magento\Quote\Model\Quote $quote
      *
      * @return Result
      *
@@ -332,7 +333,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.ElseExpression)
      */
-    protected function parseResponse($response)
+    protected function parseResponse($response, $quote)
     {
         $result = $this->_rateFactory->create();
 
@@ -346,12 +347,24 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
                 $this->processFlatRates($origin['flatRates'], $result);
                 $this->processTableRates($origin['tableRates'], $result);
                 $this->processCarriers($origin['carriers'], $result);
+                $this->processOrigin($origin['origin'], $quote);
             }
         } catch (\LogicException $exception) { //phpcs:ignore
             $this->processFailedRate($this->getConfigData('title'), $result);
         }
 
         return $result;
+    }
+
+    /**
+     * @param array $origin
+     * @param \Magento\Quote\Model\Quote $quote
+     *
+     * @return void
+     */
+    private function processOrigin($origin, $quote)
+    {
+        $quote->setData('calcurates_origin_data', json_encode($origin));
     }
 
     /**
@@ -628,18 +641,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
 
         $apiRequestBody = [
             'service' => $shippingMethod,
-            'shipFrom' => [
-                'name' => $request->getShipperContactPersonName(),
-                'phone' => $request->getShipperContactPhoneNumber(),
-                'companyName' => $request->getShipperContactCompanyName(),
-                'addressLine1' => $request->getShipperAddressStreet1(),
-                'addressLine2' => $request->getShipperAddressStreet2(),
-                'city' => $request->getShipperAddressCity(),
-                'region' => $request->getShipperAddressStateOrProvinceCode(),
-                'postalCode' => $request->getShipperAddressPostalCode(),
-                'country' => $request->getShipperAddressCountryCode(),
-                'addressResidentialIndicator' => 'unknown',
-            ],
+            'origin' => $this->getOriginId($request),
             'shipTo' => [
                 'name' => $request->getRecipientContactPersonName(),
                 'phone' => $request->getRecipientContactPhoneNumber(),
@@ -689,6 +691,21 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->_debug($debugData);
 
         return $this->prepareShippingLabelContent($response);
+    }
+
+    /**
+     * @param \Magento\Shipping\Model\Shipment\Request $request
+     * @return string
+     */
+    protected function getOriginId($request)
+    {
+        $originData = $request->getOrderShipment()->getOrder()->getData('calcurates_origin_data');
+        if (!$originData || !is_string($originData)) {
+            return '';
+        }
+        $originData = json_decode($originData, true);
+
+        return $originData['id'];
     }
 
     /**
