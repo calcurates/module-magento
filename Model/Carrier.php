@@ -625,7 +625,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * Do shipment request to carrier web service, obtain Print Shipping Labels and process errors in response
      *
      * @param \Magento\Framework\DataObject $request
-     * @return \Magento\Framework\DataObject
+     * @return array
      * @throws LocalizedException
      */
     protected function _doShipmentRequest(\Magento\Framework\DataObject $request)
@@ -937,7 +937,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
 
         $field = 'estimatedDeliveryDate';
         // if delivered - get actual date
-        if (!empty($response['statusCode']) && $response['statusCode'] == 'DE') {
+        if (!empty($response['statusCode']) && $response['statusCode'] === 'DE') {
             $field = 'actualDeliveryDate';
         }
         $datetime = $this->parseDate(!empty($response[$field]) ? $response[$field] : null);
