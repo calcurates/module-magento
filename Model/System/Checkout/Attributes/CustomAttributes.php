@@ -63,10 +63,11 @@ class CustomAttributes implements CustomAttributesInterface
     {
         $attributeCodes = [];
         foreach ($attributes as $attribute) {
-            if (empty($attribute->getAttributeCode())) {
+            $attributeCode = $attribute->getAttributeCode();
+            if (empty($attributeCode)) {
                 throw InputException::requiredField('attribute_code');
             }
-            $attributeCodes[$attribute->getAttributeCode()] = $attribute->getAttributeCode();
+            $attributeCodes[$attributeCode] = $attributeCode;
         }
 
         $attributeCodes = array_values($attributeCodes);

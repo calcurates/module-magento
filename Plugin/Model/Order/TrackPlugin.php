@@ -30,16 +30,16 @@ class TrackPlugin
      */
     public function aroundGetNumberDetail(Track $subject, \Closure $proceed)
     {
-        if ($subject->getCarrierCode() == Carrier::CODE) {
+        if ($subject->getCarrierCode() === Carrier::CODE) {
             $carrierInstance = $this->carrierFactory->create($subject->getCarrierCode());
             if (!$carrierInstance) {
                 $custom = [];
                 $custom['title'] = $subject->getTitle();
                 $custom['number'] = $subject->getTrackNumber();
                 return $custom;
-            } else {
-                $carrierInstance->setStore($subject->getStore());
             }
+
+            $carrierInstance->setStore($subject->getStore());
 
             $trackingInfo = $carrierInstance->getTrackingInfo($subject->getNumber(), $subject);
             if (!$trackingInfo) {

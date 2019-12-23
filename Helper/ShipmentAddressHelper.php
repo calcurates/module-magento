@@ -25,11 +25,6 @@ class ShipmentAddressHelper extends AbstractHelper
     private $authSession;
 
     /**
-     * @var \Magento\Directory\Model\RegionFactory
-     */
-    private $regionFactory;
-
-    /**
      * @var \Magento\Sales\Model\Order\AddressFactory
      */
     private $addressFactory;
@@ -44,7 +39,6 @@ class ShipmentAddressHelper extends AbstractHelper
      * @param Context $context
      * @param Address\Renderer $addressRenderer
      * @param \Magento\Backend\Model\Auth\Session $authSession
-     * @param \Magento\Directory\Model\RegionFactory $regionFactory
      * @param \Magento\Sales\Model\Order\AddressFactory $addressFactory
      * @param CalcuratesClient $calcuratesClient
      */
@@ -52,14 +46,12 @@ class ShipmentAddressHelper extends AbstractHelper
         Context $context,
         Address\Renderer $addressRenderer,
         \Magento\Backend\Model\Auth\Session $authSession,
-        \Magento\Directory\Model\RegionFactory $regionFactory,
         \Magento\Sales\Model\Order\AddressFactory $addressFactory,
         CalcuratesClient $calcuratesClient
     ) {
         parent::__construct($context);
         $this->addressRenderer = $addressRenderer;
         $this->authSession = $authSession;
-        $this->regionFactory = $regionFactory;
         $this->addressFactory = $addressFactory;
         $this->calcuratesClient = $calcuratesClient;
     }

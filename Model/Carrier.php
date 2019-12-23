@@ -339,7 +339,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
 
         try {
             if (!$response) {
-                throw new \LogicException();
+                throw new \LogicException('Unable to get response');
             }
 
             foreach ($response as $origin) {
@@ -600,7 +600,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * Do request to shipment
      *
      * @param \Magento\Shipping\Model\Shipment\Request $request
-     * @return array|\Magento\Framework\DataObject
+     * @return \Magento\Framework\DataObject
      * @throws LocalizedException
      */
     public function requestToShipment($request)
@@ -612,13 +612,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $result = $this->_doShipmentRequest($request);
         $request->setMasterTrackingId($result['tracking_number']);
 
-        $response = new \Magento\Framework\DataObject(
+        return new \Magento\Framework\DataObject(
             [
                 'info' => [$result],
             ]
         );
-
-        return $response;
     }
 
     /**

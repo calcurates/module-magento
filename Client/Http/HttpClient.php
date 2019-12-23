@@ -40,7 +40,7 @@ class HttpClient
     /**
      * @param string $type
      * @param string $url
-     * @param string|null $requestData
+     * @param array|string|null $requestData
      * @return string
      * @throws ApiException
      * @throws \InvalidArgumentException
@@ -68,9 +68,8 @@ class HttpClient
         if ($client->getStatus() >= 400) {
             throw new ApiException($client->getBody(), $client->getStatus());
         }
-        $response = $client->getBody();
 
-        return $response;
+        return $client->getBody();
     }
 
     /**
@@ -85,7 +84,7 @@ class HttpClient
 
     /**
      * @param string $url
-     * @param string $data
+     * @param string|array $data
      * @return string
      * @throws ApiException
      */

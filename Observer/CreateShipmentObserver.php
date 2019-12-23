@@ -32,7 +32,7 @@ class CreateShipmentObserver implements ObserverInterface
     public function execute(Observer $observer)
     {
         $action = $observer->getData('full_action_name');
-        if ($action != 'adminhtml_order_shipment_new') {
+        if ($action !== 'adminhtml_order_shipment_new') {
             return;
         }
 

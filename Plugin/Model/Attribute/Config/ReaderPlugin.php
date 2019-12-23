@@ -68,7 +68,7 @@ class ReaderPlugin
                 continue;
             }
 
-            if ((int)$value && isset($linkArray[$value], $linkArray[$value][AttributeInterface::ATTRIBUTE_CODE])) {
+            if ((int)$value && isset($linkArray[$value][AttributeInterface::ATTRIBUTE_CODE])) {
                 $value = $linkArray[$value][AttributeInterface::ATTRIBUTE_CODE];
 
                 continue;

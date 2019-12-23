@@ -14,7 +14,7 @@ $order = $block->getShipment()->getOrder();
         "prototype",
         "Magento_Shipping/order/packaging",
         "Magento_Ui/js/modal/modal"
-    ], function(jQuery){
+    ], function(jQuery) {
 
         window.packaging = new Packaging(<?= /* @noEscape */ $block->getConfigDataJson() ?>);
         packaging.changeContainerType($$('select[name=package_container]')[0]);
@@ -22,7 +22,7 @@ $order = $block->getShipment()->getOrder();
             $$('select[name=package_container]')[0],
             <?= /* @noEscape */ $girthEnabled ?>
         );
-        packaging.setConfirmPackagingCallback(function(){
+        packaging.setConfirmPackagingCallback(function() {
             packaging.setParamsCreateLabelRequest($('edit_form').serialize(true));
             packaging.setParamsCreateLabelRequest({
                 calcuratesShippingServiceId: jQuery('#calcurates_change_shipping_method_select').val()
@@ -30,20 +30,21 @@ $order = $block->getShipment()->getOrder();
 
             packaging.sendCreateLabelRequest();
         });
-        packaging.setLabelCreatedCallback(function(response){
+        packaging.setLabelCreatedCallback(function(response) {
             setLocation("<?= $block->escapeJs($block->escapeUrl($block->getUrl(
                 'sales/order/view',
                 ['order_id' => $block->getShipment()->getOrderId()]
             ))); ?>");
         });
         packaging.setCancelCallback(function() {
-            if ($('create_shipping_label')) {
+            var label = $('create_shipping_label');
+            if (label.length) {
                 packaging.cleanPackages();
-                $('create_shipping_label').checked = false;
+                label.checked = false;
                 toggleCreateLabelCheckbox();
             }
         });
-        packaging.setItemQtyCallback(function(itemId){
+        packaging.setItemQtyCallback(function(itemId) {
             var item = $$('[name="shipment[items]['+itemId+']"]')[0];
             if (item && !isNaN(item.value)) {
                 return item.value;
@@ -123,7 +124,9 @@ $order = $block->getShipment()->getOrder();
 
         function updatePackagesContentOverview() {
             var weightUnitsSelect, dimensionUnitsSelect, html, packageId;
-            jQuery('#packages_content_overview').html('');
+            var packagesContent = jQuery('#packages_content_overview');
+
+            packagesContent.html('');
             packaging.packagesContent.childElements().each(function (pack) {
                 weightUnitsSelect = pack.select('select[name="container_weight_units"]')[0];
                 dimensionUnitsSelect = pack.select('select[name="container_dimension_units"]')[0];
@@ -138,17 +141,17 @@ $order = $block->getShipment()->getOrder();
                     weightUnits: weightUnitsSelect.options[weightUnitsSelect.selectedIndex].text,
                     dimensionUnits: dimensionUnitsSelect.options[dimensionUnitsSelect.selectedIndex].text
                 });
-                jQuery('#packages_content_overview').append(html);
+                packagesContent.append(html);
 
                 for (var packedItemId in packaging.packages[packageId]['items']) {
                     if (!isNaN(packedItemId)) {
-                        html = renderTemplate('#packages_content_overview_items_template',{
+                        html = renderTemplate('#packages_content_overview_items_template', {
                             productName: packaging.defaultItemsName[packedItemId],
                             productWeight: packaging.defaultItemsWeight[packedItemId],
-                            productQty: packaging.packages[packageId]['items'][packedItemId]['qty'],
+                            productQty: packaging.packages[packageId]['items'][packedItemId]['qty']
                         });
 
-                        jQuery('#packages_content_overview').append(html);
+                        packagesContent.append(html);
                     }
                 }
 

@@ -15,7 +15,7 @@ class ShipmentPlugin
      */
     public function beforeAddTrack(Shipment $subject, \Magento\Sales\Model\Order\Shipment\Track $track)
     {
-        if ($track->getCarrierCode() == Carrier::CODE && empty($track->getTitle())) {
+        if ($track->getCarrierCode() === Carrier::CODE && empty($track->getTitle())) {
             $order = $subject->getOrder();
             $shippingMethod = $order->getShippingMethod(true);
 
