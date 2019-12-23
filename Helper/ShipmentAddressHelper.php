@@ -83,57 +83,30 @@ class ShipmentAddressHelper extends AbstractHelper
     public function getOriginAddressHtml(Shipment $orderShipment)
     {
         $admin = $this->authSession->getUser();
-        $shipmentStoreId = $orderShipment->getStoreId();
-        $shipperRegionCode = $this->scopeConfig->getValue(
-            Shipment::XML_PATH_STORE_REGION_ID,
-            ScopeInterface::SCOPE_STORE,
-            $shipmentStoreId
-        );
-        if (is_numeric($shipperRegionCode)) {
-            $shipperRegionCode = $this->regionFactory->create()->load($shipperRegionCode)->getCode();
-        }
+        $originAddressFromCalcurates = $this->getOriginAddress($orderShipment);
 
-        $originStreet1 = $this->scopeConfig->getValue(
-            Shipment::XML_PATH_STORE_ADDRESS1,
-            ScopeInterface::SCOPE_STORE,
-            $shipmentStoreId
-        );
-        $originStreet2 = $this->scopeConfig->getValue(
-            Shipment::XML_PATH_STORE_ADDRESS2,
-            ScopeInterface::SCOPE_STORE,
-            $shipmentStoreId
-        );
+        if(!$originAddressFromCalcurates) {
+            return '';
+        }
         $storeInfo = new DataObject(
             (array)$this->scopeConfig->getValue(
                 'general/store_information',
                 ScopeInterface::SCOPE_STORE,
-                $shipmentStoreId
+                $orderShipment->getStoreId()
             )
         );
-
         $addressData = [
             'firstname' => $admin->getFirstName(),
             'lastname' => $admin->getLastName(),
             'company' => $storeInfo->getName(),
-            'street' => trim($originStreet1 . ' ' . $originStreet2),
-            'city' => $this->scopeConfig->getValue(
-                Shipment::XML_PATH_STORE_CITY,
-                ScopeInterface::SCOPE_STORE,
-                $shipmentStoreId
-            ),
-            'postcode' => $this->scopeConfig->getValue(
-                Shipment::XML_PATH_STORE_ZIP,
-                ScopeInterface::SCOPE_STORE,
-                $shipmentStoreId
-            ),
-            'region' => $shipperRegionCode,
-            'country_id' => $this->scopeConfig->getValue(
-                Shipment::XML_PATH_STORE_COUNTRY_ID,
-                ScopeInterface::SCOPE_STORE,
-                $shipmentStoreId
-            ),
+            'street' => trim($originAddressFromCalcurates['addressLine1'] . ' ' .
+                $originAddressFromCalcurates['addressLine2']),
+            'city' => $originAddressFromCalcurates['city'],
+            'postcode' => $originAddressFromCalcurates['postalCode'],
+            'region' => $originAddressFromCalcurates['regionName'],
+            'country_id' => $originAddressFromCalcurates['country'],
             'email' => $admin->getEmail(),
-            'telephone' => $storeInfo->getPhone(),
+            'telephone' => $originAddressFromCalcurates['contactPhone'],
         ];
 
         /** @var Address $address */
@@ -174,5 +147,20 @@ class ShipmentAddressHelper extends AbstractHelper
     {
         $method = explode('_', $order->getShippingMethod(true)->getMethod());
         return end($method);
+    }
+
+    /**
+     * @param Shipment $orderShipment
+     * @return array|false
+     */
+    private function getOriginAddress(Shipment $orderShipment)
+    {
+        $originData = $orderShipment->getOrder()->getData('calcurates_origin_data');
+        if (!$originData || !is_string($originData)) {
+            return false;
+        }
+        $originData = json_decode($originData, true);
+
+        return $originData;
     }
 }
