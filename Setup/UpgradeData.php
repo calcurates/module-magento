@@ -33,7 +33,7 @@ class UpgradeData implements UpgradeDataInterface
     public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
         $setup->startSetup();
-        if (version_compare($context->getVersion(), '1.3.0', '<')) {
+        if (version_compare($context->getVersion(), '1.3.1', '<')) {
             $this->addQuoteAndOrderOriginField->execute($setup);
         }
         $setup->endSetup();
