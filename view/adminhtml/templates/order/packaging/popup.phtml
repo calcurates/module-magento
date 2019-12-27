@@ -6,7 +6,7 @@ $girthEnabled = $block->isDisplayGirthValue() && $block->isGirthAllowed() ? 1 : 
 /** @var \Calcurates\ModuleMagento\Helper\ShipmentAddressHelper $helper */
 $helper = $this->helper(\Calcurates\ModuleMagento\Helper\ShipmentAddressHelper::class);
 $order = $block->getShipment()->getOrder();
-
+// phpcs:disable Magento2.Security.IncludeFile.FoundIncludeFile
 ?>
 <script>
     require([
@@ -167,7 +167,7 @@ $order = $block->getShipment()->getOrder();
         }
     });
 </script>
-<?php echo $this->getLayout()->createBlock('Magento\Framework\View\Element\Template')->setTemplate('Magento_Shipping::order/packaging/popup_content.phtml')->toHtml() ?>
+<?php include ($block->getTemplateFile('Magento_Shipping::order/packaging/popup_content.phtml')) ?>
 <div id="packaging_window_overview">
     <div class="message message-warning" style="display: none"></div>
     <div class="admin__page-section">
