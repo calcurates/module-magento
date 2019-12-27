@@ -16,23 +16,43 @@ class ReaderPlugin
      */
     private $config;
 
+    /**
+     * ReaderPlugin constructor.
+     * @param \Calcurates\ModuleMagento\Model\Config $config
+     */
     public function __construct(
         \Calcurates\ModuleMagento\Model\Config $config
     ) {
         $this->config = $config;
     }
 
+    /**
+     * @param \Magento\Catalog\Model\Attribute\Config\Reader $subject
+     * @param array $result
+     * @return array
+     */
     public function afterRead(\Magento\Catalog\Model\Attribute\Config\Reader $subject, $result)
     {
-        $volumetricData = $this->config->getLinkedVolumetricWeightAttributes();
+        $volumetricData = $this->config->getLinkedDimensionsAttributes();
         $attributes = [];
         $quoteAttributes = isset($result['quote_item']) ? $result['quote_item'] : [];
 
         $this->processAttributesArray($volumetricData, $attributes);
+        $this->processCustomAttributes($attributes);
 
         $result['quote_item'] = \array_merge($quoteAttributes, \array_keys($attributes));
 
         return $result;
+    }
+
+    /**
+     * @param array $attributes
+     */
+    private function processCustomAttributes(&$attributes)
+    {
+        foreach ($this->config->getCustomAttributes() as $customAttribute) {
+            $attributes[$customAttribute] = $customAttribute;
+        }
     }
 
     /**
@@ -48,7 +68,7 @@ class ReaderPlugin
                 continue;
             }
 
-            if ((int)$value && isset($linkArray[$value], $linkArray[$value][AttributeInterface::ATTRIBUTE_CODE])) {
+            if ((int)$value && isset($linkArray[$value][AttributeInterface::ATTRIBUTE_CODE])) {
                 $value = $linkArray[$value][AttributeInterface::ATTRIBUTE_CODE];
 
                 continue;

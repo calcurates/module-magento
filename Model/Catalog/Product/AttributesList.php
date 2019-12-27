@@ -54,12 +54,14 @@ class AttributesList implements ProductAttributesListInterface
             ProductAttributeInterface::ENTITY_TYPE_CODE,
             $searchCriteria
         )->getItems();
-        $result = [];
 
+        $result = [];
         foreach ($attributesItems as $attributesItem) {
             $result[] = $this->getCustomDataObject()
                 ->setAttributeId($attributesItem->getAttributeId())
                 ->setAttributeCode($attributesItem->getAttributeCode())
+                ->setAttributeBackendType($attributesItem->getBackendType())
+                ->setAttributeFrontendType($attributesItem->getFrontendInput())
                 ->setFrontendLabel($attributesItem->getDefaultFrontendLabel());
         }
 

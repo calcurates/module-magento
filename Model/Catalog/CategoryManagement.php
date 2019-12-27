@@ -100,9 +100,11 @@ class CategoryManagement implements CategoryManagementInterface
         } elseif ($this->isAdminStore()) {
             $category = $this->getTopLevelCategory();
         }
-        $result = $this->categoryTree->getTree($this->categoryTree->getRootNode($category), $depth);
 
-        return $result;
+        return $this->categoryTree->getTree(
+            $this->categoryTree->getRootNode($category),
+            $depth
+        );
     }
 
     /**

@@ -14,6 +14,8 @@ interface AttributeCustomDataInterface
 {
     const ATTRIBUTE_ID = 'attribute_id';
     const ATTRIBUTE_CODE = 'attribute_code';
+    const ATTRIBUTE_BACKEND_TYPE = 'attribute_backend_type';
+    const ATTRIBUTE_FRONTEND_TYPE = 'attribute_frontend_type';
     const FRONTEND_LABEL = 'frontend_label';
 
     /**
@@ -25,6 +27,16 @@ interface AttributeCustomDataInterface
      * @return string
      */
     public function getAttributeCode();
+
+    /**
+     * @return string
+     */
+    public function getAttributeBackendType();
+
+    /**
+     * @return string
+     */
+    public function getAttributeFrontendType();
 
     /**
      * @return string
@@ -51,4 +63,18 @@ interface AttributeCustomDataInterface
      * @return AttributeCustomDataInterface
      */
     public function setAttributeCode($attributeCode);
+
+    /**
+     * @param string $attributeBackendType
+     *
+     * @return AttributeCustomDataInterface
+     */
+    public function setAttributeBackendType($attributeBackendType);
+
+    /**
+     * @param string $attributeFrontendType
+     *
+     * @return AttributeCustomDataInterface
+     */
+    public function setAttributeFrontendType($attributeFrontendType);
 }
