@@ -167,7 +167,7 @@ $order = $block->getShipment()->getOrder();
         }
     });
 </script>
-<?php include ($block->getTemplateFile('Magento_Shipping::order/packaging/popup_content.phtml')) ?>
+<?php echo $this->getLayout()->createBlock('Magento\Framework\View\Element\Template')->setTemplate('Magento_Shipping::order/packaging/popup_content.phtml')->toHtml() ?>
 <div id="packaging_window_overview">
     <div class="message message-warning" style="display: none"></div>
     <div class="admin__page-section">
