@@ -8,6 +8,13 @@ $helper = $this->helper(\Calcurates\ModuleMagento\Helper\ShipmentAddressHelper::
 $order = $block->getShipment()->getOrder();
 // phpcs:disable Magento2.Security.IncludeFile.FoundIncludeFile
 ?>
+<?php /** fix for magento 2.3.3 validation styles. Remove after fixing in magento */ ?>
+<style type="text/css">
+    .data-table input[type="text"].validation-failed {
+        border-color: #e22626;
+        box-shadow: 0 0 8px rgba(226, 38, 38, 0.6);
+    }
+</style>
 <script>
     require([
         "jquery",
@@ -51,6 +58,20 @@ $order = $block->getShipment()->getOrder();
             }
         });
 
+        Packaging.prototype.validate = function () {
+            var dimensionElements = $('packaging_window').select(
+                'input[name=container_length],input[name=container_width],input[name=container_height],input[name=container_girth]:not("._disabled")'
+            );
+
+            dimensionElements.each(function (element) {
+                $(element).addClassName('required-entry');
+            });
+
+            return $$('[id^="package_block_"] input').collect(function (element) {
+                return this.validateElement(element);
+            }, this).all();
+        };
+
         var packagingWindowOverviewButtons = [{
             text: '<?= $block->escapeJs($block->escapeHtml(__('Cancel'))) ?>',
             'class': 'action-secondary',
@@ -88,6 +109,13 @@ $order = $block->getShipment()->getOrder();
             'attr': {'disabled':'disabled', 'data-action':'save-packages'},
             'class': 'action-primary _disabled',
             click: function () {
+                if (!packaging.validate()) {
+                    packaging.messages.show().update(packaging.validationErrorMsg);
+
+                    return;
+                }
+                packaging.messages.hide().update();
+
                 jQuery('#packaging_window').modal('closeModal');
                 jQuery('#packaging_window_overview').modal('openModal');
                 updatePackagesContentOverview();
