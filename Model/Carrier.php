@@ -83,6 +83,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private $calcuratesClient;
 
     /**
+     * @var \Magento\Framework\Pricing\PriceCurrencyInterface
+     */
+    private $priceCurrency;
+
+    /**
      * Carrier constructor.
      * @param ScopeConfigInterface $scopeConfig
      * @param ErrorFactory $rateErrorFactory
@@ -104,6 +109,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\App\RequestInterface $request
      * @param CalcuratesClient $calcuratesClient
+     * @param \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency
      * @param array $data
      */
     public function __construct(
@@ -127,6 +133,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         \Magento\Framework\Registry $registry,
         \Magento\Framework\App\RequestInterface $request,
         CalcuratesClient $calcuratesClient,
+        \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
         array $data = []
     ) {
         parent::__construct(
@@ -153,6 +160,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->registry = $registry;
         $this->request = $request;
         $this->calcuratesClient = $calcuratesClient;
+        $this->priceCurrency = $priceCurrency;
     }
 
     /**
@@ -310,14 +318,19 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     protected function processRate($methodId, array $responseRate, Result $result, $carrierTitle = '')
     {
         $rate = $this->_rateMethodFactory->create();
+        $baseAmount = $this->priceCurrency->convert(
+            $responseRate['rate']['cost'],
+            null,
+            $responseRate['rate']['currency']
+        );
         $rate->setCarrier(self::CODE);
         $rate->setMethod($methodId);
         $rate->setMethodTitle($responseRate['name']);
         $rate->setCarrierTitle($carrierTitle);
         $rate->setInfoMessageEnabled((bool)$responseRate['message']);
         $rate->setInfoMessage($responseRate['message']);
-        $rate->setCost($responseRate['rate']['cost']);
-        $rate->setPrice($responseRate['rate']['cost']);
+        $rate->setCost($baseAmount);
+        $rate->setPrice($baseAmount);
         $result->append($rate);
     }
 
