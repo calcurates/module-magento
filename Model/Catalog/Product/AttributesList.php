@@ -28,14 +28,21 @@ class AttributesList implements ProductAttributesListInterface
      */
     private $customDataFactory;
 
+    /**
+     * @var \Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataOptionInterfaceFactory
+     */
+    private $customDataOptionFactory;
+
     public function __construct(
         \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
         \Magento\Eav\Api\AttributeRepositoryInterface $eavAttributeRepository,
-        \Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataInterfaceFactory $customDataFactory
+        \Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataInterfaceFactory $customDataFactory,
+        \Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataOptionInterfaceFactory $customDataOptionFactory
     ) {
         $this->eavAttributeRepository = $eavAttributeRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->customDataFactory = $customDataFactory;
+        $this->customDataOptionFactory = $customDataOptionFactory;
     }
 
     /**
@@ -56,13 +63,24 @@ class AttributesList implements ProductAttributesListInterface
         )->getItems();
 
         $result = [];
+        /** @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute\Interceptor $attributesItem */
         foreach ($attributesItems as $attributesItem) {
+            $values = [];
+            foreach ($attributesItem->getSource()->getAllOptions() as $option) {
+                if (empty($option['value'])) {
+                    continue;
+                }
+                $values[] = $this->getCustomDataOptionObject()
+                    ->setLabel($option['label'])
+                    ->setValue($option['value']);
+            }
             $result[] = $this->getCustomDataObject()
                 ->setAttributeId($attributesItem->getAttributeId())
                 ->setAttributeCode($attributesItem->getAttributeCode())
                 ->setAttributeBackendType($attributesItem->getBackendType())
                 ->setAttributeFrontendType($attributesItem->getFrontendInput())
-                ->setFrontendLabel($attributesItem->getDefaultFrontendLabel());
+                ->setFrontendLabel($attributesItem->getDefaultFrontendLabel())
+                ->setValues($values);
         }
 
         return $result;
@@ -74,5 +92,13 @@ class AttributesList implements ProductAttributesListInterface
     private function getCustomDataObject()
     {
         return $this->customDataFactory->create();
+    }
+
+    /**
+     * @return \Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataOptionInterface
+     */
+    private function getCustomDataOptionObject()
+    {
+        return $this->customDataOptionFactory->create();
     }
 }

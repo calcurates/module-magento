@@ -17,6 +17,7 @@ interface AttributeCustomDataInterface
     const ATTRIBUTE_BACKEND_TYPE = 'attribute_backend_type';
     const ATTRIBUTE_FRONTEND_TYPE = 'attribute_frontend_type';
     const FRONTEND_LABEL = 'frontend_label';
+    const VALUES = 'values';
 
     /**
      * @return int
@@ -42,6 +43,11 @@ interface AttributeCustomDataInterface
      * @return string
      */
     public function getFrontendLabel();
+
+    /**
+     * @return \Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataOptionInterface[] $values
+     */
+    public function getValues();
 
     /**
      * @param int $attributeId
@@ -77,4 +83,11 @@ interface AttributeCustomDataInterface
      * @return AttributeCustomDataInterface
      */
     public function setAttributeFrontendType($attributeFrontendType);
+
+    /**
+     * @param \Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataOptionInterface[] $values
+     *
+     * @return AttributeCustomDataInterface
+     */
+    public function setValues($values);
 }
