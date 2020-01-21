@@ -54,6 +54,14 @@ class CustomData extends \Magento\Framework\DataObject implements AttributeCusto
     /**
      * @inheritDoc
      */
+    public function getValues()
+    {
+        return $this->_getData(self::VALUES);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setAttributeId($attributeId)
     {
         return $this->setData(self::ATTRIBUTE_ID, $attributeId);
@@ -89,5 +97,13 @@ class CustomData extends \Magento\Framework\DataObject implements AttributeCusto
     public function setFrontendLabel($frontendLabel)
     {
         return $this->setData(self::FRONTEND_LABEL, $frontendLabel);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setValues($values)
+    {
+        return $this->setData(self::VALUES, $values);
     }
 }

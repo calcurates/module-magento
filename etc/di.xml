@@ -11,6 +11,7 @@
     <preference for="Calcurates\ModuleMagento\Api\Data\ConfigDataInterface" type="Calcurates\ModuleMagento\Model\Config\Data"/>
 
     <preference for="Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataInterface" type="Calcurates\ModuleMagento\Model\Catalog\Product\Attribute\CustomData"/>
+    <preference for="Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataOptionInterface" type="Calcurates\ModuleMagento\Model\Catalog\Product\Attribute\CustomDataOption"/>
     <preference for="Calcurates\ModuleMagento\Api\Catalog\Product\ProductAttributesListInterface" type="Calcurates\ModuleMagento\Model\Catalog\Product\AttributesList"/>
 
     <preference for="Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\DimensionsInterface" type="Calcurates\ModuleMagento\Model\Checkout\AttributeLinking\Dimensions"/>
