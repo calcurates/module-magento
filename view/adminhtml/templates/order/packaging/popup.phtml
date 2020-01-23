@@ -8,6 +8,13 @@ $helper = $this->helper(\Calcurates\ModuleMagento\Helper\ShipmentAddressHelper::
 $order = $block->getShipment()->getOrder();
 // phpcs:disable Magento2.Security.IncludeFile.FoundIncludeFile
 ?>
+<?php /** fix for magento 2.3.3 validation styles. Remove after fixing in magento */ ?>
+<style type="text/css">
+    .data-table input[type="text"].validation-failed {
+        border-color: #e22626;
+        box-shadow: 0 0 8px rgba(226, 38, 38, 0.6);
+    }
+</style>
 <script>
     require([
         "jquery",
@@ -51,6 +58,20 @@ $order = $block->getShipment()->getOrder();
             }
         });
 
+        Packaging.prototype.validate = function () {
+            var dimensionElements = $('packaging_window').select(
+                'input[name=container_length],input[name=container_width],input[name=container_height],input[name=container_girth]:not("._disabled")'
+            );
+
+            dimensionElements.each(function (element) {
+                $(element).addClassName('required-entry');
+            });
+
+            return $$('[id^="package_block_"] input').collect(function (element) {
+                return this.validateElement(element);
+            }, this).all();
+        };
+
         var packagingWindowOverviewButtons = [{
             text: '<?= $block->escapeJs($block->escapeHtml(__('Cancel'))) ?>',
             'class': 'action-secondary',
@@ -88,6 +109,13 @@ $order = $block->getShipment()->getOrder();
             'attr': {'disabled':'disabled', 'data-action':'save-packages'},
             'class': 'action-primary _disabled',
             click: function () {
+                if (!packaging.validate()) {
+                    packaging.messages.show().update(packaging.validationErrorMsg);
+
+                    return;
+                }
+                packaging.messages.hide().update();
+
                 jQuery('#packaging_window').modal('closeModal');
                 jQuery('#packaging_window_overview').modal('openModal');
                 updatePackagesContentOverview();
@@ -134,10 +162,10 @@ $order = $block->getShipment()->getOrder();
 
                 html = renderTemplate('#packages_content_overview_template', {
                     packageId: packageId,
-                    weight: parseFloat(pack.select('input[name="container_weight"]')[0].value),
-                    length: parseFloat(pack.select('input[name="container_length"]')[0].value),
-                    width: parseFloat(pack.select('input[name="container_width"]')[0].value),
-                    height: parseFloat(pack.select('input[name="container_height"]')[0].value),
+                    weight: parseFloat(pack.select('input[name="container_weight"]')[0].value || 0),
+                    length: parseFloat(pack.select('input[name="container_length"]')[0].value || 0),
+                    width: parseFloat(pack.select('input[name="container_width"]')[0].value || 0),
+                    height: parseFloat(pack.select('input[name="container_height"]')[0].value || 0),
                     weightUnits: weightUnitsSelect.options[weightUnitsSelect.selectedIndex].text,
                     dimensionUnits: dimensionUnitsSelect.options[dimensionUnitsSelect.selectedIndex].text
                 });
@@ -221,7 +249,7 @@ $order = $block->getShipment()->getOrder();
             </span>
         </div>
         <div style="margin-bottom: 10px;font-weight: 600;">
-            <?= __('Custom Package') ?>, {weight} {weightUnits}, {width}x{height}x{length} {dimensionUnits}
+            <?= __('Custom Package') ?>, {weight} {weightUnits}, {length}x{width}x{height} {dimensionUnits}
         </div>
     </div>
     <div id="packages_content_overview_items_template" style="display: none">
