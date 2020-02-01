@@ -129,32 +129,6 @@ class Config implements ConfigProviderInterface
     }
 
     /**
-     * @return array
-     */
-    public function getLinkedDimensionsAttributes()
-    {
-        $data = $this->scopeConfig->getValue(
-            self::CONFIG_GROUP.self::CONFIG_ATTRIBUTES_DIMENSIONS,
-            ScopeInterface::SCOPE_WEBSITES
-        );
-
-        return $data ? $this->serializer->unserialize($data) : [];
-    }
-
-    /**
-     * @return array
-     */
-    public function getCustomAttributes()
-    {
-        $data = $this->scopeConfig->getValue(
-            self::CONFIG_GROUP.self::CONFIG_ATTRIBUTES_CUSTOM_ATTRIBUTES,
-            ScopeInterface::SCOPE_WEBSITES
-        );
-
-        return $data ? $this->serializer->unserialize($data) : [];
-    }
-
-    /**
      * @return \Composer\Package\RootPackageInterface
      */
     public function getComposerPackage()

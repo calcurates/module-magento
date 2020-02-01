@@ -9,6 +9,7 @@ namespace Calcurates\ModuleMagento\Model;
 
 use Calcurates\ModuleMagento\Client\CalcuratesClient;
 use Calcurates\ModuleMagento\Model\Config as CalcuratesConfig;
+use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Directory\Model\ResourceModel\Region as RegionResource;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
@@ -88,6 +89,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private $priceCurrency;
 
     /**
+     * @var ProductRepositoryInterface
+     */
+    private $productRepository;
+
+    /**
      * Carrier constructor.
      * @param ScopeConfigInterface $scopeConfig
      * @param ErrorFactory $rateErrorFactory
@@ -110,6 +116,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param \Magento\Framework\App\RequestInterface $request
      * @param CalcuratesClient $calcuratesClient
      * @param \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency
+     * @param ProductRepositoryInterface $productRepository
      * @param array $data
      */
     public function __construct(
@@ -134,6 +141,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         \Magento\Framework\App\RequestInterface $request,
         CalcuratesClient $calcuratesClient,
         \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
+        ProductRepositoryInterface $productRepository,
         array $data = []
     ) {
         parent::__construct(
@@ -161,6 +169,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->request = $request;
         $this->calcuratesClient = $calcuratesClient;
         $this->priceCurrency = $priceCurrency;
+        $this->productRepository = $productRepository;
     }
 
     /**
@@ -269,8 +278,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
                 'origin' => '', // @todo in the next iterations
                 'sku' => $item->getSku(),
                 'categories' => $item->getProduct()->getCategoryIds(),
-                'dimensions' => $this->getDimensionsData($item),
-                'customAttributes' => $this->getCustomAttributesData($item)
+                'attributes' => $this->getAttributes($item)
             ];
         }
 
@@ -518,47 +526,24 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
 
     /**
      * @param Item $item
-     *
      * @return array
      */
-    private function getDimensionsData(Item $item)
+    private function getAttributes(Item $item)
     {
-        $data = $this->calcuratesConfig->getLinkedDimensionsAttributes();
-        $this->processAttributes($data, $item);
-
-        return $data;
-    }
-
-    /**
-     * @param Item $item
-     * @return array
-     */
-    private function getCustomAttributesData(Item $item)
-    {
-        $customAttributes = $this->calcuratesConfig->getCustomAttributes();
+        $product = $this->productRepository->get($item->getSku());
         $data = [];
-        foreach ($customAttributes as $customAttribute) {
-            $data[$customAttribute] = $item->getProduct()->getData($customAttribute);
-        }
-
-        return $data;
-    }
-
-    /**
-     * @param array $data
-     * @param Item $item
-     */
-    private function processAttributes(&$data, Item $item)
-    {
-        foreach ($data as $key => &$value) {
-            if (\is_array($value)) {
-                $this->processAttributes($value, $item);
-
+        foreach ($product->getData() as $key => $value) {
+            if (is_object($value)) {
                 continue;
             }
 
-            $value = $item->getProduct()->getData($value);
+            $data[$key] = $value;
         }
+        foreach ($product->getCustomAttributes() as $customAttribute) {
+            $data[$customAttribute->getAttributeCode()] = $customAttribute->getValue();
+        }
+
+        return $data;
     }
 
     /**
