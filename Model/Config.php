@@ -112,7 +112,7 @@ class Config implements ConfigProviderInterface
      */
     public function getCalcuratesToken()
     {
-        return $this->scopeConfig->getValue(self::CONFIG_GROUP.self::CONFIG_TOKEN);
+        return $this->scopeConfig->getValue(self::CONFIG_GROUP.self::CONFIG_TOKEN, ScopeInterface::SCOPE_WEBSITE);
     }
 
     /**
