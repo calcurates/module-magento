@@ -112,7 +112,7 @@ class Config implements ConfigProviderInterface
      */
     public function getCalcuratesToken()
     {
-        return $this->scopeConfig->getValue(self::CONFIG_GROUP.self::CONFIG_TOKEN);
+        return $this->scopeConfig->getValue(self::CONFIG_GROUP.self::CONFIG_TOKEN, ScopeInterface::SCOPE_WEBSITE);
     }
 
     /**
@@ -126,32 +126,6 @@ class Config implements ConfigProviderInterface
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );
-    }
-
-    /**
-     * @return array
-     */
-    public function getLinkedDimensionsAttributes()
-    {
-        $data = $this->scopeConfig->getValue(
-            self::CONFIG_GROUP.self::CONFIG_ATTRIBUTES_DIMENSIONS,
-            ScopeInterface::SCOPE_WEBSITES
-        );
-
-        return $data ? $this->serializer->unserialize($data) : [];
-    }
-
-    /**
-     * @return array
-     */
-    public function getCustomAttributes()
-    {
-        $data = $this->scopeConfig->getValue(
-            self::CONFIG_GROUP.self::CONFIG_ATTRIBUTES_CUSTOM_ATTRIBUTES,
-            ScopeInterface::SCOPE_WEBSITES
-        );
-
-        return $data ? $this->serializer->unserialize($data) : [];
     }
 
     /**

@@ -14,16 +14,6 @@
     <preference for="Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataOptionInterface" type="Calcurates\ModuleMagento\Model\Catalog\Product\Attribute\CustomDataOption"/>
     <preference for="Calcurates\ModuleMagento\Api\Catalog\Product\ProductAttributesListInterface" type="Calcurates\ModuleMagento\Model\Catalog\Product\AttributesList"/>
 
-    <preference for="Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\DimensionsInterface" type="Calcurates\ModuleMagento\Model\Checkout\AttributeLinking\Dimensions"/>
-    <preference for="Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\Dimensions\SeparateDimensionsInterface" type="Calcurates\ModuleMagento\Model\Checkout\AttributeLinking\Dimensions\SeparateDimensionsData"/>
-    <preference for="Calcurates\ModuleMagento\Api\System\Checkout\Attributes\DimensionsInterface" type="Calcurates\ModuleMagento\Model\System\Checkout\Attributes\Dimensions"/>
-
-    <preference for="Calcurates\ModuleMagento\Api\Data\Checkout\AttributeLinking\CustomAttributeInterface" type="Calcurates\ModuleMagento\Model\Checkout\AttributeLinking\CustomAttribute"/>
-    <preference for="Calcurates\ModuleMagento\Api\System\Checkout\Attributes\CustomAttributesInterface" type="Calcurates\ModuleMagento\Model\System\Checkout\Attributes\CustomAttributes"/>
-
-    <type name="Magento\Catalog\Model\Attribute\Config\Reader">
-        <plugin sortOrder="10" name="Calcurates_ModuleMagento::AttributeReader" type="Calcurates\ModuleMagento\Plugin\Model\Attribute\Config\ReaderPlugin"/>
-    </type>
     <type name="Magento\Shipping\Model\Order\Track">
         <plugin name="Calcurates_ModuleMagento::Track" type="Calcurates\ModuleMagento\Plugin\Model\Order\TrackPlugin"/>
     </type>
