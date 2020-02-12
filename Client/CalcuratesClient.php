@@ -139,7 +139,7 @@ class CalcuratesClient
     {
         try {
             $response = $this->httpClient->post(
-                $this->getAPIUrl($storeId) . '/rates',
+                $this->getAPIUrl($storeId) . '/rates/magento2',
                 \Zend_Json::encode($request)
             );
             $response = \Zend_Json::decode($response);
