@@ -359,7 +359,9 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $result = $this->_rateFactory->create();
 
         try {
-            if (!$response) {
+            // status only for errors
+            $status = $response['status'] ?? null;
+            if (!$response || $status) {
                 throw new \LogicException('Unable to get response');
             }
 
@@ -371,7 +373,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
                 $this->processOrigin($origin['origin'], $quote);
             }
         } catch (\LogicException $exception) { //phpcs:ignore
-            $this->processFailedRate($this->getConfigData('title'), $result);
+            $this->processFailedRate((string)$this->getConfigData('title'), $result);
         }
 
         return $result;
