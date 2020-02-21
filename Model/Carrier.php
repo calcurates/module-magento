@@ -185,7 +185,17 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             return false;
         }
 
-        $this->result = $this->getQuotes($request);
+        if ($this->validateRequest($request)) {
+            $this->result = $this->getQuotes($request);
+        } else {
+            $result = $this->_rateFactory->create();
+            $this->processFailedRate(
+                (string)$this->getConfigData('title'),
+                $result,
+                (string)__('Please fill in the required delivery address fields to get shipping quotes')
+            );
+            $this->result = $result;
+        }
         $this->_updateFreeMethodQuote($request);
 
         return $this->getResult();
@@ -359,7 +369,9 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $result = $this->_rateFactory->create();
 
         try {
-            if (!$response) {
+            // status only for errors
+            $status = $response['status'] ?? null;
+            if (!$response || $status) {
                 throw new \LogicException('Unable to get response');
             }
 
@@ -371,7 +383,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
                 $this->processOrigin($origin['origin'], $quote);
             }
         } catch (\LogicException $exception) { //phpcs:ignore
-            $this->processFailedRate($this->getConfigData('title'), $result);
+            $this->processFailedRate((string)$this->getConfigData('title'), $result);
         }
 
         return $result;
@@ -984,5 +996,19 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     public function getContainerTypes(\Magento\Framework\DataObject $params = null)
     {
         return ['CUSTOM_PACKAGE' => __('Custom Package')];
+    }
+
+    /**
+     * @param RateRequest $request
+     * @return bool
+     */
+    private function validateRequest(RateRequest $request)
+    {
+        return !empty($request->getDestStreet())
+            && !empty($request->getDestCity())
+            && !empty($request->getDestRegionCode())
+            && !empty($request->getDestPostcode())
+            && !empty($request->getDestCountryId());
+
     }
 }
