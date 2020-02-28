@@ -36,11 +36,14 @@ $order = $block->getShipment()->getOrder();
             <?= /* @noEscape */ $girthEnabled ?>
         );
         packaging.setConfirmPackagingCallback(function () {
-            packaging.setParamsCreateLabelRequest($('#edit_form').serialize(true));
-            packaging.setParamsCreateLabelRequest({
+            var form = {
                 calcuratesShippingServiceId: $('#calcurates_change_shipping_method_select').val()
+            };
+            $.each($('#edit_form').serializeArray(), function (i, item) {
+                form[item.name] = item.value;
             });
 
+            packaging.setParamsCreateLabelRequest(form);
             packaging.sendCreateLabelRequest();
         });
         packaging.setLabelCreatedCallback(function (response) {
