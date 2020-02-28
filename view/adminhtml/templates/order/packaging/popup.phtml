@@ -28,7 +28,7 @@ $order = $block->getShipment()->getOrder();
         "prototype",
         "Magento_Shipping/order/packaging",
         "Magento_Ui/js/modal/modal"
-    ], function ($, $$) {
+    ], function ($) {
 
         window.packaging = new Packaging(<?= /* @noEscape */ $block->getConfigDataJson() ?>);
         packaging.changeContainerType($$('select[name="package_container"]')[0]);
