@@ -1,4 +1,10 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  @author Calcurates Team
+  @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
+  @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+  @package Calcurates_ModuleMagento
+-->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
     <event name="sales_model_service_quote_submit_before">
         <observer name="calcurates_sales_model_service_quote_submit_before"
