@@ -28,7 +28,7 @@ $order = $block->getShipment()->getOrder();
         "prototype",
         "Magento_Shipping/order/packaging",
         "Magento_Ui/js/modal/modal"
-    ], function (jQuery) {
+    ], function ($, $$) {
 
         window.packaging = new Packaging(<?= /* @noEscape */ $block->getConfigDataJson() ?>);
         packaging.changeContainerType($$('select[name="package_container"]')[0]);
@@ -39,7 +39,7 @@ $order = $block->getShipment()->getOrder();
         packaging.setConfirmPackagingCallback(function () {
             packaging.setParamsCreateLabelRequest($('edit_form').serialize(true));
             packaging.setParamsCreateLabelRequest({
-                calcuratesShippingServiceId: jQuery('#calcurates_change_shipping_method_select').val()
+                calcuratesShippingServiceId: $('#calcurates_change_shipping_method_select').val()
             });
 
             packaging.sendCreateLabelRequest();
@@ -98,8 +98,8 @@ $order = $block->getShipment()->getOrder();
             'attr': {'data-action':'back-to-packages'},
             'class': 'action-secondary',
             click: function () {
-                jQuery('#packaging_window').modal('openModal');
-                jQuery('#packaging_window_overview').modal('closeModal');
+                $('#packaging_window').modal('openModal');
+                $('#packaging_window_overview').modal('closeModal');
                 packaging.messages = $('packaging_window').select('.message-warning')[0];
             }
         }];
@@ -123,8 +123,8 @@ $order = $block->getShipment()->getOrder();
                 }
                 packaging.messages.hide().update();
 
-                jQuery('#packaging_window').modal('closeModal');
-                jQuery('#packaging_window_overview').modal('openModal');
+                $('#packaging_window').modal('closeModal');
+                $('#packaging_window_overview').modal('openModal');
                 updatePackagesContentOverview();
                 packaging.messages = $('packaging_window_overview').select('.message-warning')[0];
             }
@@ -137,29 +137,29 @@ $order = $block->getShipment()->getOrder();
             }
         }];
 
-        jQuery('#packaging_window').modal({
+        $('#packaging_window').modal({
             type: 'slide',
             title: '<?= $block->escapeJs($block->escapeHtml(__('Create Packages'))) ?>',
             buttons: packagingWindowButtons
         });
-        jQuery(document).trigger('packaging:inited');
-        jQuery(document).data('packagingInited', true);
+        $(document).trigger('packaging:inited');
+        $(document).data('packagingInited', true);
 
-        jQuery('#packaging_window_overview').modal({
+        $('#packaging_window_overview').modal({
             type: 'slide',
             title: '<?= $block->escapeJs($block->escapeHtml(__('Select Method and Confirm'))) ?>',
             buttons: packagingWindowOverviewButtons
         });
 
-        jQuery('#calcurates_change_shipping_method').on('click', function (e) {
-            e.preventDefault();
-            jQuery('#calcurates_change_shipping_method_select').removeAttr('disabled');
+        $('#calcurates_change_shipping_method').on('click', function () {
+            $('#calcurates_change_shipping_method_select').prop('disabled', false);
+            return false;
         });
 
 
         function updatePackagesContentOverview() {
             var weightUnitsSelect, dimensionUnitsSelect, html, packageId;
-            var packagesContent = jQuery('#packages_content_overview');
+            var packagesContent = $('#packages_content_overview');
 
             packagesContent.html('');
             packaging.packagesContent.childElements().each(function (pack) {
@@ -193,8 +193,8 @@ $order = $block->getShipment()->getOrder();
             });
         }
 
-        function renderTemplate(templateId, params) {
-            var template = jQuery(templateId).html();
+        function renderTemplate(templateSelector, params) {
+            var template = $(templateSelector).html();
             for (var paramKey in params) {
                 template = template.replace("{" + paramKey + "}", params[paramKey]);
             }
@@ -237,7 +237,7 @@ $order = $block->getShipment()->getOrder();
                     <span class="title"><?= __('Origin Address') ?></span>
                 </div>
                 <address class="admin__page-section-item-content">
-                    <?= /* @noEscape */ $helper->getOriginAddressHtml($block->getShipment()); ?>
+                    <?= /* @noEscape */ $helper->getOriginAddressHtml($block->getShipment()) ?>
                 </address>
             </div>
             <div class="admin__page-section-item order-shipping-address">
