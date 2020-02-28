@@ -46,15 +46,14 @@ class CurrencyConverter
             /** @var Currency $baseCurrency */
             $baseCurrency = $this->storeManager->getStore()->getBaseCurrency();
             $baseCurrencyCode = $baseCurrency->getCurrencyCode();
-            if ($baseCurrencyCode != $fromCurrencyCode) {
+            if ($baseCurrencyCode !== $fromCurrencyCode) {
                 /** @var Currency $currency */
                 $currency = $this->priceCurrency->getCurrency(null, $fromCurrencyCode);
                 $rate = $currency->getRate($baseCurrencyCode);
                 if (!$rate) {
                     $rates = $currency->getRates();
-                    $rates[$baseCurrencyCode] = $baseCurrency->getRate($fromCurrencyCode)
-                        ? 1 / $baseCurrency->getRate($fromCurrencyCode)
-                        : 1;
+                    $fromCurrencyRate = $baseCurrency->getRate($fromCurrencyCode);
+                    $rates[$baseCurrencyCode] = $fromCurrencyRate ? 1 / $fromCurrencyRate : 1;
                     $currency->setRates($rates);
                 }
 
