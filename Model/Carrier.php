@@ -256,6 +256,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             'customerGroup' => '',
             'promo' => '',
             'products' => [],
+            'storeView' => $request->getStoreId(),
         ];
 
         /** @var Item[] $items */
