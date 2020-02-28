@@ -30,21 +30,17 @@ $order = $block->getShipment()->getOrder();
         "Magento_Ui/js/modal/modal"
     ], function (jQuery) {
         window.packaging = new Packaging(<?= /* @noEscape */ $block->getConfigDataJson() ?>);
-        var packageContainerNode = jQuery('select[name="package_container"]').get(0);
-        packaging.changeContainerType(packageContainerNode);
+        packaging.changeContainerType($$('select[name=package_container]')[0]);
         packaging.checkSizeAndGirthParameter(
-            packageContainerNode,
+            $$('select[name=package_container]')[0],
             <?= /* @noEscape */ $girthEnabled ?>
         );
         packaging.setConfirmPackagingCallback(function () {
-            var form = {
+            packaging.setParamsCreateLabelRequest($('edit_form').serialize(true));
+            packaging.setParamsCreateLabelRequest({
                 calcuratesShippingServiceId: jQuery('#calcurates_change_shipping_method_select').val()
-            };
-            jQuery.each(jQuery('#edit_form').serializeArray(), function (i, item) {
-                form[item.name] = item.value;
             });
 
-            packaging.setParamsCreateLabelRequest(form);
             packaging.sendCreateLabelRequest();
         });
         packaging.setLabelCreatedCallback(function (response) {
@@ -54,35 +50,32 @@ $order = $block->getShipment()->getOrder();
             ))) ?>");
         });
         packaging.setCancelCallback(function () {
-            var $label = jQuery('#create_shipping_label');
-            if ($label.length) {
+            var label = $('create_shipping_label');
+            if (label.length) {
                 packaging.cleanPackages();
-                $label.prop('checked', false);
+                label.checked = false;
                 toggleCreateLabelCheckbox();
             }
         });
         packaging.setItemQtyCallback(function (itemId) {
-            var itemNode = jQuery('[name="shipment[items]['+itemId+']"]').get(0);
-            if (itemNode && !isNaN(item.value)) {
+            var item = $$('[name="shipment[items]['+itemId+']"]')[0];
+            if (item && !isNaN(item.value)) {
                 return item.value;
             }
         });
 
         Packaging.prototype.validate = function () {
-            jQuery('#packaging_window').find(
-                'input[name="container_length"],input[name="container_width"],input[name="container_height"],input[name="container_girth"]:not("._disabled")'
-            ).each(function (i, element) {
-                jQuery(element).addClass('required-entry');
+            var dimensionElements = $('packaging_window').select(
+                'input[name=container_length],input[name=container_width],input[name=container_height],input[name=container_girth]:not("._disabled")'
+            );
+
+            dimensionElements.each(function (element) {
+                $(element).addClassName('required-entry');
             });
 
-            var isValid = true;
-            jQuery('[id^="package_block_"] input').each(function (i, element) {
-                if (!this.validateElement(element)) {
-                    isValid = false;
-                }
-            }).bind(this);
-
-            return isValid;
+            return $$('[id^="package_block_"] input').collect(function (element) {
+                return this.validateElement(element);
+            }, this).all();
         };
 
         var packagingWindowOverviewButtons = [{
