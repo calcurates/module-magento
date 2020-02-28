@@ -4,9 +4,7 @@ namespace Calcurates\ModuleMagento\Client;
 
 use Calcurates\ModuleMagento\Model\Carrier;
 use Calcurates\ModuleMagento\Model\Config as CalcuratesConfig;
-use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
-use Magento\Quote\Model\Quote\Address\RateResult\MethodFactory;
 use Magento\Shipping\Model\Rate\Result;
 use Magento\Shipping\Model\Rate\ResultFactory;
 
@@ -28,36 +26,28 @@ class RatesResponseProcessor
     private $calcuratesConfig;
 
     /**
-     * @var MethodFactory
+     * @var RateBuilder
      */
-    private $rateMethodFactory;
-
-    /**
-     * @var PriceCurrencyInterface
-     */
-    private $priceCurrency;
+    private $rateBuilder;
 
     /**
      * RatesResponseProcessor constructor.
      * @param ResultFactory $rateFactory
      * @param ErrorFactory $rateErrorFactory
      * @param CalcuratesConfig $calcuratesConfig
-     * @param MethodFactory $rateMethodFactory
-     * @param PriceCurrencyInterface $priceCurrency
+     * @param RateBuilder $rateBuilder
      */
     public function __construct(
         ResultFactory $rateFactory,
         ErrorFactory $rateErrorFactory,
         CalcuratesConfig $calcuratesConfig,
-        MethodFactory $rateMethodFactory,
-        PriceCurrencyInterface $priceCurrency
+        RateBuilder $rateBuilder
     )
     {
         $this->rateFactory = $rateFactory;
         $this->rateErrorFactory = $rateErrorFactory;
         $this->calcuratesConfig = $calcuratesConfig;
-        $this->rateMethodFactory = $rateMethodFactory;
-        $this->priceCurrency = $priceCurrency;
+        $this->rateBuilder = $rateBuilder;
     }
 
     /**
@@ -139,11 +129,11 @@ class RatesResponseProcessor
                 continue;
             }
 
-            $this->processRate(
+            $rate = $this->rateBuilder->build(
                 'flatRates_' . $responseRate['id'],
-                $responseRate,
-                $result
+                $responseRate
             );
+            $result->append($rate);
         }
     }
 
@@ -166,11 +156,11 @@ class RatesResponseProcessor
                 'currency' => null,
             ];
 
-            $this->processRate(
+            $rate = $this->rateBuilder->build(
                 'freeShipping' . $responseRate['id'],
-                $responseRate,
-                $result
+                $responseRate
             );
+            $result->append($rate);
         }
     }
 
@@ -198,11 +188,11 @@ class RatesResponseProcessor
                     continue;
                 }
 
-                $this->processRate(
+                $rate = $this->rateBuilder->build(
                     'tableRate_' . $tableRate['id'] . '_' . $responseRate['id'],
-                    $responseRate,
-                    $result
+                    $responseRate
                 );
+                $result->append($rate);
             }
         }
     }
@@ -231,38 +221,13 @@ class RatesResponseProcessor
                     continue;
                 }
 
-                $this->processRate(
+                $rate = $this->rateBuilder->build(
                     'carrier_' . $carrier['id'] . '_' . $responseRate['id'],
                     $responseRate,
-                    $result,
                     $carrier['name']
                 );
+                $result->append($rate);
             }
         }
-    }
-
-    /**
-     * @param string $methodId
-     * @param array $responseRate
-     * @param Result $result
-     * @param string $carrierTitle
-     */
-    private function processRate($methodId, array $responseRate, Result $result, $carrierTitle = '')
-    {
-        $rate = $this->rateMethodFactory->create();
-        $baseAmount = $this->priceCurrency->convert(
-            $responseRate['rate']['cost'],
-            null,
-            $responseRate['rate']['currency']
-        );
-        $rate->setCarrier(Carrier::CODE);
-        $rate->setMethod($methodId);
-        $rate->setMethodTitle($responseRate['name']);
-        $rate->setCarrierTitle($carrierTitle);
-        $rate->setInfoMessageEnabled((bool)$responseRate['message']);
-        $rate->setInfoMessage($responseRate['message']);
-        $rate->setCost($baseAmount);
-        $rate->setPrice($baseAmount);
-        $result->append($rate);
     }
 }
