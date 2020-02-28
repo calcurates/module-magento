@@ -71,7 +71,7 @@ $order = $block->getShipment()->getOrder();
             $('#packaging_window').find(
                 'input[name="container_length"],input[name="container_width"],input[name="container_height"],input[name="container_girth"]:not("._disabled")'
             ).each(function (i, element) {
-                $(element).addClassName('required-entry');
+                $(element).addClass('required-entry');
             });
 
             var isValid = true;
