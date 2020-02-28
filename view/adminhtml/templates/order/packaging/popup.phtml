@@ -27,9 +27,9 @@ $order = $block->getShipment()->getOrder();
         "jquery",
         "Magento_Shipping/order/packaging",
         "Magento_Ui/js/modal/modal"
-    ], function ($) {
+    ], function (jQuery) {
         window.packaging = new Packaging(<?= /* @noEscape */ $block->getConfigDataJson() ?>);
-        var packageContainerNode = $('select[name="package_container"]').get(0);
+        var packageContainerNode = jQuery('select[name="package_container"]').get(0);
         packaging.changeContainerType(packageContainerNode);
         packaging.checkSizeAndGirthParameter(
             packageContainerNode,
@@ -37,9 +37,9 @@ $order = $block->getShipment()->getOrder();
         );
         packaging.setConfirmPackagingCallback(function () {
             var form = {
-                calcuratesShippingServiceId: $('#calcurates_change_shipping_method_select').val()
+                calcuratesShippingServiceId: jQuery('#calcurates_change_shipping_method_select').val()
             };
-            $.each($('#edit_form').serializeArray(), function (i, item) {
+            jQuery.each(jQuery('#edit_form').serializeArray(), function (i, item) {
                 form[item.name] = item.value;
             });
 
@@ -53,7 +53,7 @@ $order = $block->getShipment()->getOrder();
             ))) ?>");
         });
         packaging.setCancelCallback(function () {
-            var $label = $('#create_shipping_label');
+            var $label = jQuery('#create_shipping_label');
             if ($label.length) {
                 packaging.cleanPackages();
                 $label.prop('checked', false);
@@ -61,21 +61,21 @@ $order = $block->getShipment()->getOrder();
             }
         });
         packaging.setItemQtyCallback(function (itemId) {
-            var itemNode = $('[name="shipment[items]['+itemId+']"]').get(0);
+            var itemNode = jQuery('[name="shipment[items]['+itemId+']"]').get(0);
             if (itemNode && !isNaN(item.value)) {
                 return item.value;
             }
         });
 
         Packaging.prototype.validate = function () {
-            $('#packaging_window').find(
+            jQuery('#packaging_window').find(
                 'input[name="container_length"],input[name="container_width"],input[name="container_height"],input[name="container_girth"]:not("._disabled")'
             ).each(function (i, element) {
-                $(element).addClass('required-entry');
+                jQuery(element).addClass('required-entry');
             });
 
             var isValid = true;
-            $('[id^="package_block_"] input').each(function (i, element) {
+            jQuery('[id^="package_block_"] input').each(function (i, element) {
                 if (!this.validateElement(element)) {
                     isValid = false;
                 }
@@ -103,9 +103,9 @@ $order = $block->getShipment()->getOrder();
             'attr': {'data-action':'back-to-packages'},
             'class': 'action-secondary',
             click: function () {
-                var $packagingWindow = $('#packaging_window');
+                var $packagingWindow = jQuery('#packaging_window');
                 $packagingWindow.modal('openModal');
-                $('#packaging_window_overview').modal('closeModal');
+                jQuery('#packaging_window_overview').modal('closeModal');
                 packaging.messages = $packagingWindow.find('.message-warning').get(0);
             }
         }];
@@ -129,8 +129,8 @@ $order = $block->getShipment()->getOrder();
                 }
                 packaging.messages.hide().update();
 
-                var $packagingWindowOverview = $('#packaging_window_overview');
-                $('#packaging_window').modal('closeModal');
+                var $packagingWindowOverview = jQuery('#packaging_window_overview');
+                jQuery('#packaging_window').modal('closeModal');
                 $packagingWindowOverview.modal('openModal');
                 updatePackagesContentOverview();
                 packaging.messages = $packagingWindowOverview.find('.message-warning').get(0);
@@ -144,32 +144,32 @@ $order = $block->getShipment()->getOrder();
             }
         }];
 
-        $('#packaging_window').modal({
+        jQuery('#packaging_window').modal({
             type: 'slide',
             title: '<?= $block->escapeJs($block->escapeHtml(__('Create Packages'))) ?>',
             buttons: packagingWindowButtons
         });
-        $(document).trigger('packaging:inited');
-        $(document).data('packagingInited', true);
+        jQuery(document).trigger('packaging:inited');
+        jQuery(document).data('packagingInited', true);
 
-        $('#packaging_window_overview').modal({
+        jQuery('#packaging_window_overview').modal({
             type: 'slide',
             title: '<?= $block->escapeJs($block->escapeHtml(__('Select Method and Confirm'))) ?>',
             buttons: packagingWindowOverviewButtons
         });
 
-        $('#calcurates_change_shipping_method').on('click', function () {
-            $('#calcurates_change_shipping_method_select').prop('disabled', false);
+        jQuery('#calcurates_change_shipping_method').on('click', function () {
+            jQuery('#calcurates_change_shipping_method_select').prop('disabled', false);
             return false;
         });
 
 
         function updatePackagesContentOverview() {
-            var $packagesContent = $('#packages_content_overview');
+            var $packagesContent = jQuery('#packages_content_overview');
 
             $packagesContent.empty();
-            $.each(packaging.packagesContent.childElements(), function (i, pack) {
-                var $pack = $(pack);
+            jQuery.each(packaging.packagesContent.childElements(), function (i, pack) {
+                var $pack = jQuery(pack);
                 var weightUnitsSelect = $pack.find('select[name="container_weight_units"]').get(0);
                 var dimensionUnitsSelect = $pack.find('select[name="container_dimension_units"]').get(0);
                 var packageId = packaging.getPackageId(pack);
@@ -201,7 +201,7 @@ $order = $block->getShipment()->getOrder();
         }
 
         function renderTemplate(templateSelector, params) {
-            var template = $(templateSelector).html();
+            var template = jQuery(templateSelector).html();
             for (var paramKey in params) {
                 template = template.replace("{" + paramKey + "}", params[paramKey]);
             }
