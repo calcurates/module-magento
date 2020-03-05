@@ -1,14 +1,14 @@
 <?php
 /**
  * @author Calcurates Team
- * @copyright Copyright (c) 2019 Calcurates (https://www.calcurates.com)
+ * @copyright Copyright © 2019-2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @package Calcurates_ModuleMagento
  */
-
 namespace Calcurates\ModuleMagento\Model;
 
 use Calcurates\ModuleMagento\Client\CalcuratesClient;
-use Calcurates\ModuleMagento\Model\Config as CalcuratesConfig;
+use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Directory\Model\ResourceModel\Region as RegionResource;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -54,11 +54,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     protected $regionNamesCache = [];
 
     /**
-     * @var \Calcurates\ModuleMagento\Model\Config
-     */
-    protected $calcuratesConfig;
-
-    /**
      * @var RegionResource
      */
     protected $regionResource;
@@ -84,14 +79,14 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private $calcuratesClient;
 
     /**
-     * @var \Magento\Framework\Pricing\PriceCurrencyInterface
-     */
-    private $priceCurrency;
-
-    /**
      * @var ProductRepositoryInterface
      */
     private $productRepository;
+
+    /**
+     * @var RatesResponseProcessor
+     */
+    private $ratesResponseProcessor;
 
     /**
      * Carrier constructor.
@@ -110,13 +105,12 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param \Magento\Directory\Model\CurrencyFactory $currencyFactory
      * @param \Magento\Directory\Helper\Data $directoryData
      * @param \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry
-     * @param Config $calcuratesConfig
      * @param RegionResource $regionResource
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\App\RequestInterface $request
      * @param CalcuratesClient $calcuratesClient
-     * @param \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency
      * @param ProductRepositoryInterface $productRepository
+     * @param RatesResponseProcessor $ratesResponseProcessor
      * @param array $data
      */
     public function __construct(
@@ -135,13 +129,12 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         \Magento\Directory\Model\CurrencyFactory $currencyFactory,
         \Magento\Directory\Helper\Data $directoryData,
         \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
-        CalcuratesConfig $calcuratesConfig,
         RegionResource $regionResource,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\App\RequestInterface $request,
         CalcuratesClient $calcuratesClient,
-        \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
         ProductRepositoryInterface $productRepository,
+        RatesResponseProcessor $ratesResponseProcessor,
         array $data = []
     ) {
         parent::__construct(
@@ -162,14 +155,12 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             $stockRegistry,
             $data
         );
-
-        $this->calcuratesConfig = $calcuratesConfig;
         $this->regionResource = $regionResource;
         $this->registry = $registry;
         $this->request = $request;
         $this->calcuratesClient = $calcuratesClient;
-        $this->priceCurrency = $priceCurrency;
         $this->productRepository = $productRepository;
+        $this->ratesResponseProcessor = $ratesResponseProcessor;
     }
 
     /**
@@ -189,7 +180,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             $this->result = $this->getQuotes($request);
         } else {
             $result = $this->_rateFactory->create();
-            $this->processFailedRate(
+            $this->ratesResponseProcessor->processFailedRate(
                 (string)$this->getConfigData('title'),
                 $result,
                 (string)__('Please fill in the required delivery address fields to get shipping quotes')
@@ -265,6 +256,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             'customerGroup' => '',
             'promo' => '',
             'products' => [],
+            'storeView' => $request->getStoreId(),
         ];
 
         /** @var Item[] $items */
@@ -303,7 +295,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         }
         $this->_debug($debugData);
 
-        return $this->parseResponse($response, $quote);
+        return $this->ratesResponseProcessor->processResponse($response, $quote);
     }
 
     /**
@@ -325,215 +317,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->regionResource->load($regionInstance, $regionId);
 
         return $this->regionNamesCache[$regionId] = $regionInstance->getName();
-    }
-
-    /**
-     * @param string $methodId
-     * @param array $responseRate
-     * @param Result $result
-     * @param string $carrierTitle
-     */
-    protected function processRate($methodId, array $responseRate, Result $result, $carrierTitle = '')
-    {
-        $rate = $this->_rateMethodFactory->create();
-        $baseAmount = $this->priceCurrency->convert(
-            $responseRate['rate']['cost'],
-            null,
-            $responseRate['rate']['currency']
-        );
-        $rate->setCarrier(self::CODE);
-        $rate->setMethod($methodId);
-        $rate->setMethodTitle($responseRate['name']);
-        $rate->setCarrierTitle($carrierTitle);
-        $rate->setInfoMessageEnabled((bool)$responseRate['message']);
-        $rate->setInfoMessage($responseRate['message']);
-        $rate->setCost($baseAmount);
-        $rate->setPrice($baseAmount);
-        $result->append($rate);
-    }
-
-    /**
-     * Prepare shipping rate result based on response
-     *
-     * @param array $response
-     * @param \Magento\Quote\Model\Quote $quote
-     *
-     * @return Result
-     *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @SuppressWarnings(PHPMD.ElseExpression)
-     */
-    protected function parseResponse($response, $quote)
-    {
-        $result = $this->_rateFactory->create();
-
-        try {
-            // status only for errors
-            $status = $response['status'] ?? null;
-            if (!$response || $status) {
-                throw new \LogicException('Unable to get response');
-            }
-
-            foreach ($response as $origin) {
-                $this->processFreeShipping($origin['freeShipping'], $result);
-                $this->processFlatRates($origin['flatRates'], $result);
-                $this->processTableRates($origin['tableRates'], $result);
-                $this->processCarriers($origin['carriers'], $result);
-                $this->processOrigin($origin['origin'], $quote);
-            }
-        } catch (\LogicException $exception) { //phpcs:ignore
-            $this->processFailedRate((string)$this->getConfigData('title'), $result);
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param array $origin
-     * @param \Magento\Quote\Model\Quote $quote
-     *
-     * @return void
-     */
-    private function processOrigin($origin, $quote)
-    {
-        $quote->setData('calcurates_origin_data', json_encode($origin));
-    }
-
-    /**
-     * @param array $flatRates
-     * @param Result $result
-     */
-    private function processFlatRates(array $flatRates, Result $result)
-    {
-        foreach ($flatRates as $responseRate) {
-            if (!$responseRate['success']) {
-                if ($responseRate['message']) {
-                    $this->processFailedRate($responseRate['name'], $result, $responseRate['message']);
-                }
-                continue;
-            }
-
-            $this->processRate(
-                'flatRates_' . $responseRate['id'],
-                $responseRate,
-                $result
-            );
-        }
-    }
-
-    /**
-     * @param array $freeShipping
-     * @param Result $result
-     */
-    private function processFreeShipping(array $freeShipping, Result $result)
-    {
-        foreach ($freeShipping as $responseRate) {
-            if (!$responseRate['success']) {
-                if ($responseRate['message']) {
-                    $this->processFailedRate($responseRate['name'], $result, $responseRate['message']);
-                }
-                continue;
-            }
-
-            $responseRate['rate'] = [
-                'cost' => 0,
-                'currency' => null,
-            ];
-
-            $this->processRate(
-                'freeShipping' . $responseRate['id'],
-                $responseRate,
-                $result
-            );
-        }
-    }
-
-    /**
-     * @param array $tableRates
-     * @param Result $result
-     */
-    private function processTableRates(array $tableRates, Result $result)
-    {
-        foreach ($tableRates as $tableRate) {
-            if (!$tableRate['success']) {
-                if ($tableRate['message']) {
-                    $this->processFailedRate($tableRate['name'], $result, $tableRate['message']);
-                }
-
-                continue;
-            }
-
-            foreach ($tableRate['methods'] as $responseRate) {
-                if (!$responseRate['success']) {
-                    if ($responseRate['message']) {
-                        $this->processFailedRate($responseRate['name'], $result, $responseRate['message']);
-                    }
-
-                    continue;
-                }
-
-                $this->processRate(
-                    'tableRate_' . $tableRate['id'] . '_' . $responseRate['id'],
-                    $responseRate,
-                    $result
-                );
-            }
-        }
-    }
-
-    /**
-     * @param array $carriers
-     * @param Result $result
-     */
-    protected function processCarriers(array $carriers, Result $result)
-    {
-        foreach ($carriers as $carrier) {
-            if (!$carrier['success']) {
-                if ($carrier['message']) {
-                    $this->processFailedRate($carrier['name'], $result, $carrier['message']);
-                }
-
-                continue;
-            }
-
-            foreach ($carrier['services'] as $responseRate) {
-                if (!$responseRate['success']) {
-                    if ($responseRate['message']) {
-                        $this->processFailedRate($responseRate['name'], $result, $responseRate['message']);
-                    }
-
-                    continue;
-                }
-
-                $this->processRate(
-                    'carrier_' . $carrier['id'] . '_' . $responseRate['id'],
-                    $responseRate,
-                    $result,
-                    $carrier['name']
-                );
-            }
-        }
-    }
-
-    /**
-     * @param string $rateName
-     * @param Result $result
-     * @param string $message
-     */
-    private function processFailedRate(string $rateName, Result $result, string $message = '')
-    {
-        $error = $this->_rateErrorFactory->create();
-        $error->setCarrier(self::CODE);
-        $error->setCarrierTitle($rateName);
-
-        if ($message) {
-            $error->setErrorMessage($message);
-        } else {
-            $error->setErrorMessage($this->getConfigData(CalcuratesConfig::CONFIG_ERROR_MESSAGE));
-        }
-
-        $result->append($error);
     }
 
     /**

@@ -1,8 +1,15 @@
+<?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2019-2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
+?>
 <?php /** @var $block \Magento\Shipping\Block\Adminhtml\Order\Packaging */ ?>
 <?php
-$shippingMethod = $block->getShipment()->getOrder()->getShippingMethod();
-$sizeSource = $block->getSourceSizeModel()->toOptionArray();
-$girthEnabled = $block->isDisplayGirthValue() && $block->isGirthAllowed() ? 1 : 0;
+$sizeSource = $block->getSourceSizeModel()->toOptionArray(); // used in included `popup_content.phtml` file
+$girthEnabled = $block->isDisplayGirthValue() && $block->isGirthAllowed() ? 1 : 0; // used in included `popup_content.phtml` file
 /** @var \Calcurates\ModuleMagento\Helper\ShipmentAddressHelper $helper */
 $helper = $this->helper(\Calcurates\ModuleMagento\Helper\ShipmentAddressHelper::class);
 $order = $block->getShipment()->getOrder();
@@ -21,15 +28,14 @@ $order = $block->getShipment()->getOrder();
         "prototype",
         "Magento_Shipping/order/packaging",
         "Magento_Ui/js/modal/modal"
-    ], function(jQuery) {
-
+    ], function (jQuery) {
         window.packaging = new Packaging(<?= /* @noEscape */ $block->getConfigDataJson() ?>);
         packaging.changeContainerType($$('select[name=package_container]')[0]);
         packaging.checkSizeAndGirthParameter(
             $$('select[name=package_container]')[0],
             <?= /* @noEscape */ $girthEnabled ?>
         );
-        packaging.setConfirmPackagingCallback(function() {
+        packaging.setConfirmPackagingCallback(function () {
             packaging.setParamsCreateLabelRequest($('edit_form').serialize(true));
             packaging.setParamsCreateLabelRequest({
                 calcuratesShippingServiceId: jQuery('#calcurates_change_shipping_method_select').val()
@@ -37,13 +43,13 @@ $order = $block->getShipment()->getOrder();
 
             packaging.sendCreateLabelRequest();
         });
-        packaging.setLabelCreatedCallback(function(response) {
+        packaging.setLabelCreatedCallback(function (response) {
             setLocation("<?= $block->escapeJs($block->escapeUrl($block->getUrl(
                 'sales/order/view',
                 ['order_id' => $block->getShipment()->getOrderId()]
-            ))); ?>");
+            ))) ?>");
         });
-        packaging.setCancelCallback(function() {
+        packaging.setCancelCallback(function () {
             var label = $('create_shipping_label');
             if (label.length) {
                 packaging.cleanPackages();
@@ -51,7 +57,7 @@ $order = $block->getShipment()->getOrder();
                 toggleCreateLabelCheckbox();
             }
         });
-        packaging.setItemQtyCallback(function(itemId) {
+        packaging.setItemQtyCallback(function (itemId) {
             var item = $$('[name="shipment[items]['+itemId+']"]')[0];
             if (item && !isNaN(item.value)) {
                 return item.value;
@@ -91,9 +97,10 @@ $order = $block->getShipment()->getOrder();
             'attr': {'data-action':'back-to-packages'},
             'class': 'action-secondary',
             click: function () {
-                jQuery('#packaging_window').modal('openModal');
+                var $packagingWindow = jQuery('#packaging_window');
+                $packagingWindow.modal('openModal');
                 jQuery('#packaging_window_overview').modal('closeModal');
-                packaging.messages = $('packaging_window').select('.message-warning')[0];
+                packaging.messages = $packagingWindow.find('.message-warning').get(0);
             }
         }];
 
@@ -116,10 +123,11 @@ $order = $block->getShipment()->getOrder();
                 }
                 packaging.messages.hide().update();
 
+                var $packagingWindowOverview = jQuery('#packaging_window_overview');
                 jQuery('#packaging_window').modal('closeModal');
-                jQuery('#packaging_window_overview').modal('openModal');
+                $packagingWindowOverview.modal('openModal');
                 updatePackagesContentOverview();
-                packaging.messages = $('packaging_window_overview').select('.message-warning')[0];
+                packaging.messages = $packagingWindowOverview.find('.message-warning').get(0);
             }
         }, {
             text: '<?= $block->escapeJs($block->escapeHtml(__('Add Package'))) ?>',
@@ -144,50 +152,50 @@ $order = $block->getShipment()->getOrder();
             buttons: packagingWindowOverviewButtons
         });
 
-        jQuery('#calcurates_change_shipping_method').on('click', function (e) {
-            e.preventDefault();
-            jQuery('#calcurates_change_shipping_method_select').removeAttr('disabled');
+        jQuery('#calcurates_change_shipping_method').on('click', function () {
+            jQuery('#calcurates_change_shipping_method_select').prop('disabled', false);
+            return false;
         });
 
 
         function updatePackagesContentOverview() {
-            var weightUnitsSelect, dimensionUnitsSelect, html, packageId;
-            var packagesContent = jQuery('#packages_content_overview');
+            var $packagesContent = jQuery('#packages_content_overview');
 
-            packagesContent.html('');
-            packaging.packagesContent.childElements().each(function (pack) {
-                weightUnitsSelect = pack.select('select[name="container_weight_units"]')[0];
-                dimensionUnitsSelect = pack.select('select[name="container_dimension_units"]')[0];
-                packageId = packaging.getPackageId(pack);
+            $packagesContent.empty();
+            jQuery.each(packaging.packagesContent.childElements(), function (i, pack) {
+                var $pack = jQuery(pack);
+                var weightUnitsSelect = $pack.find('select[name="container_weight_units"]').get(0);
+                var dimensionUnitsSelect = $pack.find('select[name="container_dimension_units"]').get(0);
+                var packageId = packaging.getPackageId(pack);
 
-                html = renderTemplate('#packages_content_overview_template', {
+                var overviewHtml = renderTemplate('#packages_content_overview_template', {
                     packageId: packageId,
-                    weight: parseFloat(pack.select('input[name="container_weight"]')[0].value || 0),
-                    length: parseFloat(pack.select('input[name="container_length"]')[0].value || 0),
-                    width: parseFloat(pack.select('input[name="container_width"]')[0].value || 0),
-                    height: parseFloat(pack.select('input[name="container_height"]')[0].value || 0),
+                    weight: parseFloat($pack.find('input[name="container_weight"]').get(0).value || 0),
+                    length: parseFloat($pack.find('input[name="container_length"]').get(0).value || 0),
+                    width: parseFloat($pack.find('input[name="container_width"]').get(0).value || 0),
+                    height: parseFloat($pack.find('input[name="container_height"]').get(0).value || 0),
                     weightUnits: weightUnitsSelect.options[weightUnitsSelect.selectedIndex].text,
                     dimensionUnits: dimensionUnitsSelect.options[dimensionUnitsSelect.selectedIndex].text
                 });
-                packagesContent.append(html);
+                $packagesContent.append(overviewHtml);
 
                 for (var packedItemId in packaging.packages[packageId]['items']) {
                     if (!isNaN(packedItemId)) {
-                        html = renderTemplate('#packages_content_overview_items_template', {
+                        var overviewItemsHtml = renderTemplate('#packages_content_overview_items_template', {
                             productName: packaging.defaultItemsName[packedItemId],
                             productWeight: packaging.defaultItemsWeight[packedItemId],
                             productQty: packaging.packages[packageId]['items'][packedItemId]['qty']
                         });
 
-                        packagesContent.append(html);
+                        $packagesContent.append(overviewItemsHtml);
                     }
                 }
 
             });
         }
 
-        function renderTemplate(templateId, params) {
-            var template = jQuery(templateId).html();
+        function renderTemplate(templateSelector, params) {
+            var template = jQuery(templateSelector).html();
             for (var paramKey in params) {
                 template = template.replace("{" + paramKey + "}", params[paramKey]);
             }
@@ -195,7 +203,7 @@ $order = $block->getShipment()->getOrder();
         }
     });
 </script>
-<?php include ($block->getTemplateFile('Magento_Shipping::order/packaging/popup_content.phtml')) ?>
+<?php include ($block->getTemplateFile('Magento_Shipping::order/packaging/popup_content.phtml')); ?>
 <div id="packaging_window_overview">
     <div class="message message-warning" style="display: none"></div>
     <div class="admin__page-section">
@@ -205,15 +213,17 @@ $order = $block->getShipment()->getOrder();
                     <span class="title"><?= __('Shipping Method') ?></span>
                 </div>
                 <div class="admin__page-section-item-content">
-                    <?php
-                    $shippingServiceId = $helper->getShippingServiceId($order);
-                    ?>
-                    <select name="calcurates_change_shipping_method_select" id="calcurates_change_shipping_method_select" class="select admin__control-select carrier" disabled>
+                    <?php $shippingServiceId = $helper->getShippingServiceId($order); ?>
+                    <select name="calcurates_change_shipping_method_select" id="calcurates_change_shipping_method_select" class="select admin__control-select carrier" disabled="disabled">
                         <?php foreach ($helper->getShippingServices($order) as $shippingService): ?>
-                            <option value="<?= $shippingService['value'] ?>"<?= $shippingService['value'] == $shippingServiceId ? ' selected' : '' ?>><?= $shippingService['label'] ?>
+                            <option value="<?= $block->escapeHtml($shippingService['value']) ?>"<?= $shippingService['value'] == $shippingServiceId ? ' selected="selected"' : '' ?>>
+                                <?= $block->escapeHtml($shippingService['label']) ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
-                    <div class="actions" style="display: inline-block;margin-left: 0.5rem;"><a href="#" id="calcurates_change_shipping_method">Edit</a></div>
+                    <div class="actions" style="display: inline-block;margin-left: 0.5rem;">
+                        <a href="#" id="calcurates_change_shipping_method">Edit</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -228,14 +238,14 @@ $order = $block->getShipment()->getOrder();
                     <span class="title"><?= __('Origin Address') ?></span>
                 </div>
                 <address class="admin__page-section-item-content">
-                    <?= /* @noEscape */ $helper->getOriginAddressHtml($block->getShipment()); ?>
+                    <?= /* @noEscape */ $helper->getOriginAddressHtml($block->getShipment()) ?>
                 </address>
             </div>
             <div class="admin__page-section-item order-shipping-address">
                 <div class="admin__page-section-item-title">
                     <span class="title"><?= __('Shipping Address') ?></span>
                 </div>
-                <address class="admin__page-section-item-content"> <?= /* @noEscape */ $helper->getFormattedAddress($order->getShippingAddress()); ?></address>
+                <address class="admin__page-section-item-content"> <?= /* @noEscape */ $helper->getFormattedAddress($order->getShippingAddress()) ?></address>
             </div>
         </div>
     </section>
