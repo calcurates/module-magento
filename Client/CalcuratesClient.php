@@ -124,7 +124,7 @@ class CalcuratesClient
     {
         try {
             $response = $this->httpClient->post(
-                $this->getAPIUrl($storeId) . '/labels',
+                $this->getAPIUrl($storeId) . '/labels/magento2',
                 \Zend_Json::encode($request)
             );
             $response = \Zend_Json::decode($response);
