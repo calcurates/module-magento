@@ -22,6 +22,7 @@ use Magento\Quote\Model\Quote\Item;
 use Magento\Shipping\Model\Carrier\AbstractCarrierOnline;
 use Magento\Shipping\Model\Carrier\CarrierInterface;
 use Magento\Shipping\Model\Rate\Result;
+use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -89,6 +90,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private $ratesResponseProcessor;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * Carrier constructor.
      * @param ScopeConfigInterface $scopeConfig
      * @param ErrorFactory $rateErrorFactory
@@ -111,6 +117,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param CalcuratesClient $calcuratesClient
      * @param ProductRepositoryInterface $productRepository
      * @param RatesResponseProcessor $ratesResponseProcessor
+     * @param StoreManagerInterface $storeManager
      * @param array $data
      */
     public function __construct(
@@ -135,6 +142,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         CalcuratesClient $calcuratesClient,
         ProductRepositoryInterface $productRepository,
         RatesResponseProcessor $ratesResponseProcessor,
+        StoreManagerInterface $storeManager,
         array $data = []
     ) {
         parent::__construct(
@@ -161,6 +169,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->calcuratesClient = $calcuratesClient;
         $this->productRepository = $productRepository;
         $this->ratesResponseProcessor = $ratesResponseProcessor;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -256,7 +265,9 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             'customerGroup' => '',
             'promo' => '',
             'products' => [],
-            'storeView' => $request->getStoreId(),
+            // storeId in $request - from quote, and not correct if we open store via store url
+            // setting "Use store codes in URL"
+            'storeView' => $this->storeManager->getStore()->getId(),
         ];
 
         /** @var Item[] $items */
