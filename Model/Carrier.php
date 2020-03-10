@@ -8,9 +8,8 @@
 namespace Calcurates\ModuleMagento\Model;
 
 use Calcurates\ModuleMagento\Client\CalcuratesClient;
+use Calcurates\ModuleMagento\Client\RateRequestBuilder;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
-use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Directory\Model\ResourceModel\Region as RegionResource;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
@@ -22,7 +21,6 @@ use Magento\Quote\Model\Quote\Item;
 use Magento\Shipping\Model\Carrier\AbstractCarrierOnline;
 use Magento\Shipping\Model\Carrier\CarrierInterface;
 use Magento\Shipping\Model\Rate\Result;
-use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -50,16 +48,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     protected $result;
 
     /**
-     * @var array
-     */
-    protected $regionNamesCache = [];
-
-    /**
-     * @var RegionResource
-     */
-    protected $regionResource;
-
-    /**
      * @var \Magento\Framework\Registry
      */
     protected $registry;
@@ -80,19 +68,14 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private $calcuratesClient;
 
     /**
-     * @var ProductRepositoryInterface
-     */
-    private $productRepository;
-
-    /**
      * @var RatesResponseProcessor
      */
     private $ratesResponseProcessor;
 
     /**
-     * @var StoreManagerInterface
+     * @var RateRequestBuilder
      */
-    private $storeManager;
+    private $rateRequestBuilder;
 
     /**
      * Carrier constructor.
@@ -111,13 +94,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param \Magento\Directory\Model\CurrencyFactory $currencyFactory
      * @param \Magento\Directory\Helper\Data $directoryData
      * @param \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry
-     * @param RegionResource $regionResource
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\App\RequestInterface $request
      * @param CalcuratesClient $calcuratesClient
-     * @param ProductRepositoryInterface $productRepository
      * @param RatesResponseProcessor $ratesResponseProcessor
-     * @param StoreManagerInterface $storeManager
+     * @param RateRequestBuilder $rateRequestBuilder
      * @param array $data
      */
     public function __construct(
@@ -136,13 +117,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         \Magento\Directory\Model\CurrencyFactory $currencyFactory,
         \Magento\Directory\Helper\Data $directoryData,
         \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
-        RegionResource $regionResource,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\App\RequestInterface $request,
         CalcuratesClient $calcuratesClient,
-        ProductRepositoryInterface $productRepository,
         RatesResponseProcessor $ratesResponseProcessor,
-        StoreManagerInterface $storeManager,
+        RateRequestBuilder $rateRequestBuilder,
         array $data = []
     ) {
         parent::__construct(
@@ -163,13 +142,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             $stockRegistry,
             $data
         );
-        $this->regionResource = $regionResource;
         $this->registry = $registry;
         $this->request = $request;
         $this->calcuratesClient = $calcuratesClient;
-        $this->productRepository = $productRepository;
         $this->ratesResponseProcessor = $ratesResponseProcessor;
-        $this->storeManager = $storeManager;
+        $this->rateRequestBuilder = $rateRequestBuilder;
     }
 
     /**
@@ -252,48 +229,12 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      */
     protected function getQuotes(RateRequest $request)
     {
-        $streetArray = explode("\n", $request->getDestStreet());
-
-        $apiRequestBody = [
-            'country' => $request->getDestCountryId(),
-            'regionCode' => $request->getDestRegionId() ? $request->getDestRegionCode() : null,
-            'regionName' => $this->getRegionCodeById($request->getDestRegionId()) ?: $request->getDestRegionCode(),
-            'postalCode' => $request->getDestPostcode(),
-            'city' => $request->getDestCity(),
-            'addressLine1' => $streetArray[0],
-            'addressLine2' => $streetArray[1] ?? '',
-            'customerGroup' => '',
-            'promo' => '',
-            'products' => [],
-            // storeId in $request - from quote, and not correct if we open store via store url
-            // setting "Use store codes in URL"
-            'storeView' => $this->storeManager->getStore()->getId(),
-        ];
-
-        /** @var Item[] $items */
         $items = $this->getAllItems($request);
-
         $quote = current($items)->getQuote();
-        $customer = $quote->getCustomer();
-        $apiRequestBody = array_merge($apiRequestBody, $this->getCustomerData($quote));
-
-        if ($customer->getId()) {
-            $apiRequestBody['customerGroup'] = $customer->getGroupId();
-        }
-
-        foreach ($items as $item) {
-            $apiRequestBody['products'][] = [
-                'priceWithTax' => round($item->getBasePriceInclTax(), 2),
-                'priceWithoutTax' => round($item->getBasePrice(), 2),
-                'discountAmount' => round($item->getBaseDiscountAmount(), 2),
-                'quantity' => $item->getQty(),
-                'weight' => $item->getWeight(),
-                'origin' => '', // @todo in the next iterations
-                'sku' => $item->getSku(),
-                'categories' => $item->getProduct()->getCategoryIds(),
-                'attributes' => $this->getAttributes($item)
-            ];
-        }
+        $apiRequestBody = $this->rateRequestBuilder->build(
+            $request,
+            $items
+        );
 
         $debugData['request'] = $apiRequestBody;
 
@@ -307,76 +248,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->_debug($debugData);
 
         return $this->ratesResponseProcessor->processResponse($response, $quote);
-    }
-
-    /**
-     * @param string $regionId
-     *
-     * @return string|null
-     */
-    protected function getRegionCodeById($regionId)
-    {
-        if (!$regionId) {
-            return null;
-        }
-
-        if (!empty($this->regionNamesCache[$regionId])) {
-            return $this->regionNamesCache[$regionId];
-        }
-
-        $regionInstance = $this->_regionFactory->create();
-        $this->regionResource->load($regionInstance, $regionId);
-
-        return $this->regionNamesCache[$regionId] = $regionInstance->getName();
-    }
-
-    /**
-     * @param Item $item
-     * @return array
-     */
-    private function getAttributes(Item $item)
-    {
-        $product = $this->productRepository->get($item->getSku());
-        $data = [];
-        foreach ($product->getData() as $key => $value) {
-            if (is_object($value)) {
-                continue;
-            }
-
-            $data[$key] = $value;
-        }
-        foreach ($product->getCustomAttributes() as $customAttribute) {
-            $data[$customAttribute->getAttributeCode()] = $customAttribute->getValue();
-        }
-
-        return $data;
-    }
-
-    /**
-     * Collect customer information from shipping address
-     *
-     * @param \Magento\Quote\Model\Quote $quote
-     *
-     * @return array
-     */
-    private function getCustomerData(\Magento\Quote\Model\Quote $quote)
-    {
-        $customerData = [
-            'contactName' => '',
-            'companyName' => '',
-            'contactPhone' => '',
-        ];
-        $shipAddress = $quote->getShippingAddress();
-
-        $customerData['contactName'] = $shipAddress->getPrefix() . ' ';
-        $customerData['contactName'] .= $shipAddress->getFirstname() ? $shipAddress->getFirstname() . ' ' : '';
-        $customerData['contactName'] .= $shipAddress->getMiddlename() ? $shipAddress->getMiddlename() . ' ' : '';
-        $customerData['contactName'] = trim($customerData['contactName'] . $shipAddress->getLastname());
-
-        $customerData['companyName'] = $shipAddress->getCompany();
-        $customerData['contactPhone'] = $shipAddress->getTelephone();
-
-        return $customerData;
     }
 
     /**
