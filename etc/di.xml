@@ -21,4 +21,11 @@
     <type name="Magento\Sales\Model\Order\Shipment">
         <plugin name="Calcurates_ModuleMagento::Shipment" type="Calcurates\ModuleMagento\Plugin\Model\Order\ShipmentPlugin"/>
     </type>
+
+    <type name="Calcurates\ModuleMagento\Model\Carrier">
+        <arguments>
+            <argument name="calcuratesClient" xsi:type="object">Calcurates\ModuleMagento\Client\CalcuratesClient\Proxy</argument>
+            <argument name="rateRequestBuilder" xsi:type="object">Calcurates\ModuleMagento\Client\RateRequestBuilder\Proxy</argument>
+        </arguments>
+    </type>
 </config>
