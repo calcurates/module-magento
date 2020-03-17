@@ -8,8 +8,9 @@
 namespace Calcurates\ModuleMagento\Model;
 
 use Calcurates\ModuleMagento\Client\CalcuratesClient;
-use Calcurates\ModuleMagento\Client\RateRequestBuilder;
+use Calcurates\ModuleMagento\Client\Request\RateRequestBuilder;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
+use Calcurates\ModuleMagento\Client\Request\ShippingLabelRequestBuilder;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
@@ -58,11 +59,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     protected $trackingObject;
 
     /**
-     * @var \Magento\Framework\App\RequestInterface
-     */
-    private $request;
-
-    /**
      * @var CalcuratesClient
      */
     private $calcuratesClient;
@@ -76,6 +72,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @var RateRequestBuilder
      */
     private $rateRequestBuilder;
+
+    /**
+     * @var ShippingLabelRequestBuilder
+     */
+    private $shippingLabelRequestBuilder;
 
     /**
      * Carrier constructor.
@@ -95,10 +96,10 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param \Magento\Directory\Helper\Data $directoryData
      * @param \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry
      * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\App\RequestInterface $request
      * @param CalcuratesClient $calcuratesClient
      * @param RatesResponseProcessor $ratesResponseProcessor
      * @param RateRequestBuilder $rateRequestBuilder
+     * @param ShippingLabelRequestBuilder $shippingLabelRequestBuilder
      * @param array $data
      */
     public function __construct(
@@ -118,10 +119,10 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         \Magento\Directory\Helper\Data $directoryData,
         \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
         \Magento\Framework\Registry $registry,
-        \Magento\Framework\App\RequestInterface $request,
         CalcuratesClient $calcuratesClient,
         RatesResponseProcessor $ratesResponseProcessor,
         RateRequestBuilder $rateRequestBuilder,
+        ShippingLabelRequestBuilder $shippingLabelRequestBuilder,
         array $data = []
     ) {
         parent::__construct(
@@ -143,10 +144,10 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             $data
         );
         $this->registry = $registry;
-        $this->request = $request;
         $this->calcuratesClient = $calcuratesClient;
         $this->ratesResponseProcessor = $ratesResponseProcessor;
         $this->rateRequestBuilder = $rateRequestBuilder;
+        $this->shippingLabelRequestBuilder = $shippingLabelRequestBuilder;
     }
 
     /**
@@ -306,47 +307,10 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         /** @var \Magento\Shipping\Model\Shipment\Request $request */
         $this->_prepareShipmentRequest($request);
 
-        $shippingMethod = $this->request->getParam('calcuratesShippingServiceId');
-        if (!$shippingMethod) {
-            $shippingMethod = explode('_', $request->getShippingMethod());
-            $shippingMethod = end($shippingMethod);
-        }
-
-        $apiRequestBody = [
-            'service' => $shippingMethod,
-            'origin' => $this->getOriginId($request),
-            'shipTo' => [
-                'name' => $request->getRecipientContactPersonName(),
-                'phone' => $request->getRecipientContactPhoneNumber(),
-                'companyName' => $request->getRecipientContactCompanyName(),
-                'addressLine1' => $request->getRecipientAddressStreet1(),
-                'addressLine2' => $request->getRecipientAddressStreet2(),
-                'city' => $request->getRecipientAddressCity(),
-                'region' => $request->getRecipientAddressStateOrProvinceCode(),
-                'postalCode' => $request->getRecipientAddressPostalCode(),
-                'country' => $request->getRecipientAddressCountryCode(),
-                'addressResidentialIndicator' => 'unknown',
-            ],
-            'packages' => [],
-            'testLabel' => (bool)$this->getDebugFlag(),
-            'validateAddress' => 'no_validation',
-        ];
-
-        foreach ($request->getPackages() as $package) {
-            $rawPackage = [
-                'weight' => [
-                    'value' => $package['params']['weight'],
-                    'unit' => $this->getWeightUnits($package['params']['weight_units']),
-                ],
-                'dimensions' => [
-                    'length' => $package['params']['length'],
-                    'width' => $package['params']['width'],
-                    'height' => $package['params']['height'],
-                    'unit' => $this->getDimensionUnits($package['params']['dimension_units']),
-                ],
-            ];
-            $apiRequestBody['packages'][] = $rawPackage;
-        }
+        $apiRequestBody = $this->shippingLabelRequestBuilder->build(
+            $request,
+            (bool)$this->getDebugFlag()
+        );
 
         $debugData = [
             'request' => $apiRequestBody,
@@ -364,67 +328,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->_debug($debugData);
 
         return $this->prepareShippingLabelContent($response);
-    }
-
-    /**
-     * @param \Magento\Shipping\Model\Shipment\Request $request
-     * @return string
-     */
-    protected function getOriginId($request)
-    {
-        $originData = $request->getOrderShipment()->getOrder()->getData('calcurates_origin_data');
-        if (!$originData || !is_string($originData)) {
-            return '';
-        }
-        $originData = json_decode($originData, true);
-
-        return $originData['id'];
-    }
-
-    /**
-     * @param string $weightUnits
-     * @return string
-     */
-    protected function getWeightUnits($weightUnits)
-    {
-        switch ($weightUnits) {
-            case \Zend_Measure_Weight::POUND:
-                $weightUnits = 'pound';
-                break;
-            case \Zend_Measure_Weight::KILOGRAM:
-                $weightUnits = 'kilogram';
-                break;
-            case \Zend_Measure_Weight::OUNCE:
-                $weightUnits = 'ounce';
-                break;
-            case \Zend_Measure_Weight::GRAM:
-                $weightUnits = 'gram';
-                break;
-            default:
-                throw new \InvalidArgumentException('Invalid weight units');
-        }
-
-        return $weightUnits;
-    }
-
-    /**
-     * @param string $dimensionUnits
-     * @return string
-     */
-    protected function getDimensionUnits($dimensionUnits)
-    {
-        switch ($dimensionUnits) {
-            case \Zend_Measure_Length::INCH:
-                $dimensionUnits = 'inch';
-                break;
-            case \Zend_Measure_Length::CENTIMETER:
-                $dimensionUnits = 'centimeter';
-                break;
-            default:
-                throw new \InvalidArgumentException('Invalid dimension units');
-        }
-
-        return $dimensionUnits;
     }
 
     /**

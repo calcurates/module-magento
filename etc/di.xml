@@ -25,7 +25,8 @@
     <type name="Calcurates\ModuleMagento\Model\Carrier">
         <arguments>
             <argument name="calcuratesClient" xsi:type="object">Calcurates\ModuleMagento\Client\CalcuratesClient\Proxy</argument>
-            <argument name="rateRequestBuilder" xsi:type="object">Calcurates\ModuleMagento\Client\RateRequestBuilder\Proxy</argument>
+            <argument name="rateRequestBuilder" xsi:type="object">Calcurates\ModuleMagento\Client\Request\RateRequestBuilder\Proxy</argument>
+            <argument name="shippingLabelRequestBuilder" xsi:type="object">Calcurates\ModuleMagento\Client\Request\ShippingLabelRequestBuilder\Proxy</argument>
         </arguments>
     </type>
 </config>

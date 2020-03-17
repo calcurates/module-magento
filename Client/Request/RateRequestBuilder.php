@@ -1,6 +1,6 @@
 <?php
 
-namespace Calcurates\ModuleMagento\Client;
+namespace Calcurates\ModuleMagento\Client\Request;
 
 use Calcurates\ModuleMagento\Model\Source\GetSourceCodesPerSkus;
 use Magento\Catalog\Api\ProductRepositoryInterface;

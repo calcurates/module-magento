@@ -9,6 +9,7 @@
 namespace Calcurates\ModuleMagento\Helper;
 
 use Calcurates\ModuleMagento\Client\CalcuratesClient;
+use Calcurates\ModuleMagento\Model\Source\SourceAddressService;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\DataObject;
@@ -41,25 +42,41 @@ class ShipmentAddressHelper extends AbstractHelper
     private $calcuratesClient;
 
     /**
+     * @var SourceAddressService
+     */
+    private $sourceAddressService;
+
+    /**
+     * @var \Magento\Directory\Model\RegionFactory
+     */
+    private $regionFactory;
+
+    /**
      * ShipmentAddressHelper constructor.
      * @param Context $context
      * @param Address\Renderer $addressRenderer
      * @param \Magento\Backend\Model\Auth\Session $authSession
      * @param \Magento\Sales\Model\Order\AddressFactory $addressFactory
      * @param CalcuratesClient $calcuratesClient
+     * @param SourceAddressService $sourceAddressService
+     * @param \Magento\Directory\Model\RegionFactory $regionFactory
      */
     public function __construct(
         Context $context,
         Address\Renderer $addressRenderer,
         \Magento\Backend\Model\Auth\Session $authSession,
         \Magento\Sales\Model\Order\AddressFactory $addressFactory,
-        CalcuratesClient $calcuratesClient
+        CalcuratesClient $calcuratesClient,
+        SourceAddressService $sourceAddressService,
+        \Magento\Directory\Model\RegionFactory $regionFactory
     ) {
         parent::__construct($context);
         $this->addressRenderer = $addressRenderer;
         $this->authSession = $authSession;
         $this->addressFactory = $addressFactory;
         $this->calcuratesClient = $calcuratesClient;
+        $this->sourceAddressService = $sourceAddressService;
+        $this->regionFactory = $regionFactory;
     }
 
     /**
@@ -80,32 +97,12 @@ class ShipmentAddressHelper extends AbstractHelper
      */
     public function getOriginAddressHtml(Shipment $orderShipment)
     {
-        $admin = $this->authSession->getUser();
-        $originAddressFromCalcurates = $this->getOriginAddress($orderShipment);
-
-        if (!$originAddressFromCalcurates) {
-            return '';
-        }
-        $storeInfo = new DataObject(
-            (array)$this->scopeConfig->getValue(
-                'general/store_information',
-                ScopeInterface::SCOPE_STORE,
-                $orderShipment->getStoreId()
-            )
+        $addressData = $this->sourceAddressService->getAddressDataByShipment(
+            $orderShipment
         );
-        $addressData = [
-            'firstname' => $admin->getFirstName(),
-            'lastname' => $admin->getLastName(),
-            'company' => $storeInfo->getName(),
-            'street' => trim($originAddressFromCalcurates['addressLine1'] . ' ' .
-                $originAddressFromCalcurates['addressLine2']),
-            'city' => $originAddressFromCalcurates['city'],
-            'postcode' => $originAddressFromCalcurates['postalCode'],
-            'region' => $originAddressFromCalcurates['regionName'],
-            'country_id' => $originAddressFromCalcurates['country'],
-            'email' => $admin->getEmail(),
-            'telephone' => $originAddressFromCalcurates['contactPhone'],
-        ];
+        if (!$addressData) {
+            $addressData = $this->getOriginAddressData($orderShipment);
+        }
 
         /** @var Address $address */
         $address = $this->addressFactory->create(['data' => $addressData]);
@@ -151,14 +148,66 @@ class ShipmentAddressHelper extends AbstractHelper
      * @param Shipment $orderShipment
      * @return array|false
      */
-    private function getOriginAddress(Shipment $orderShipment)
+    private function getOriginAddressData(Shipment $orderShipment)
     {
-        $originData = $orderShipment->getOrder()->getData('calcurates_origin_data');
-        if (!$originData || !is_string($originData)) {
-            return false;
-        }
-        $originData = json_decode($originData, true);
+        $admin = $this->authSession->getUser();
+        $storeInfo = new DataObject(
+            (array)$this->scopeConfig->getValue(
+                'general/store_information',
+                ScopeInterface::SCOPE_STORE,
+                $orderShipment->getStoreId()
+            )
+        );
 
-        return $originData;
+        $originStreet = $this->scopeConfig->getValue(
+            Shipment::XML_PATH_STORE_ADDRESS1,
+            ScopeInterface::SCOPE_STORE,
+            $orderShipment->getStoreId()
+        );
+
+        $originStreet2 = $this->scopeConfig->getValue(
+            Shipment::XML_PATH_STORE_ADDRESS2,
+            ScopeInterface::SCOPE_STORE,
+            $orderShipment->getStoreId()
+        );
+
+        $city = $this->scopeConfig->getValue(
+            Shipment::XML_PATH_STORE_CITY,
+            ScopeInterface::SCOPE_STORE,
+            $orderShipment->getStoreId()
+        );
+        $postcode = $this->scopeConfig->getValue(
+            Shipment::XML_PATH_STORE_ZIP,
+            ScopeInterface::SCOPE_STORE,
+            $orderShipment->getStoreId()
+        );
+
+        $shipperRegionCode = $this->scopeConfig->getValue(
+            Shipment::XML_PATH_STORE_REGION_ID,
+            ScopeInterface::SCOPE_STORE,
+            $orderShipment->getStoreId()
+        );
+        if (is_numeric($shipperRegionCode)) {
+            $shipperRegionCode = $this->regionFactory->create()->load($shipperRegionCode)->getCode();
+        }
+
+        $countryId = $this->scopeConfig->getValue(
+            Shipment::XML_PATH_STORE_COUNTRY_ID,
+            ScopeInterface::SCOPE_STORE,
+            $orderShipment->getStoreId()
+        );
+
+        return [
+            'firstname' => $admin->getFirstName(),
+            'lastname' => $admin->getLastName(),
+            'company' => $storeInfo->getName(),
+            'street' => trim($originStreet . ' ' . $originStreet2),
+            'city' => $city,
+            'postcode' => $postcode,
+            'region' => $shipperRegionCode,
+            'country_id' => $countryId,
+            'email' => $admin->getEmail(),
+            'telephone' => $storeInfo->getPhone()
+        ];
     }
 }

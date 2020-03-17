@@ -74,7 +74,7 @@ class RatesResponseProcessor
 
         // status only for errors
         $status = $response['status'] ?? null;
-        if (!$response || $status) {
+        if (!$response || empty($response['shippingOptions']) || $status) {
             $this->processFailedRate(
                 $this->calcuratesConfig->getTitle($quote->getStoreId()),
                 $result,
@@ -84,13 +84,11 @@ class RatesResponseProcessor
             return $result;
         }
 
-        foreach ($response as $origin) {
-            $this->processFreeShipping($origin['freeShipping'], $result);
-            $this->processFlatRates($origin['flatRates'], $result);
-            $this->processTableRates($origin['tableRates'], $result);
-            $this->processCarriers($origin['carriers'], $result);
-            $this->processOrigin($origin['origin'], $quote);
-        }
+        $shippingOptions = $response['shippingOptions'];
+        $this->processFreeShipping($shippingOptions['freeShipping'], $result);
+        $this->processFlatRates($shippingOptions['flatRates'], $result);
+        $this->processTableRates($shippingOptions['tableRates'], $result);
+        $this->processCarriers($shippingOptions['carriers'], $result);
 
         return $result;
     }
@@ -108,17 +106,6 @@ class RatesResponseProcessor
         $error->setErrorMessage($message);
 
         $result->append($error);
-    }
-
-    /**
-     * @param array $origin
-     * @param \Magento\Quote\Model\Quote $quote
-     *
-     * @return void
-     */
-    private function processOrigin($origin, $quote)
-    {
-        $quote->setData('calcurates_origin_data', json_encode($origin));
     }
 
     /**

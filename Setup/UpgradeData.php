@@ -9,6 +9,7 @@
 namespace Calcurates\ModuleMagento\Setup;
 
 use Calcurates\ModuleMagento\Setup\Operation\AddQuoteAndOrderOriginField;
+use Calcurates\ModuleMagento\Setup\Operation\RemoveQuoteAndOrderOriginField;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\UpgradeDataInterface;
@@ -21,12 +22,21 @@ class UpgradeData implements UpgradeDataInterface
     private $addQuoteAndOrderOriginField;
 
     /**
+     * @var RemoveQuoteAndOrderOriginField
+     */
+    private $removeQuoteAndOrderOriginField;
+
+    /**
      * UpgradeData constructor.
      * @param AddQuoteAndOrderOriginField $addQuoteAndOrderOriginField
+     * @param RemoveQuoteAndOrderOriginField $removeQuoteAndOrderOriginField
      */
-    public function __construct(AddQuoteAndOrderOriginField $addQuoteAndOrderOriginField)
-    {
+    public function __construct(
+        AddQuoteAndOrderOriginField $addQuoteAndOrderOriginField,
+        RemoveQuoteAndOrderOriginField $removeQuoteAndOrderOriginField
+    ) {
         $this->addQuoteAndOrderOriginField = $addQuoteAndOrderOriginField;
+        $this->removeQuoteAndOrderOriginField = $removeQuoteAndOrderOriginField;
     }
 
     /**
@@ -41,6 +51,10 @@ class UpgradeData implements UpgradeDataInterface
         $setup->startSetup();
         if (version_compare($context->getVersion(), '1.3.3', '<')) {
             $this->addQuoteAndOrderOriginField->execute($setup);
+        }
+
+        if (version_compare($context->getVersion(), '1.8.0', '<')) {
+            $this->removeQuoteAndOrderOriginField->execute($setup);
         }
         $setup->endSetup();
     }
