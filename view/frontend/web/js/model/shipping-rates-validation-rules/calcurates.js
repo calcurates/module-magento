@@ -37,6 +37,9 @@ define([], function () {
                 },
                 'region_id_input': {
                     'required': true
+                },
+                'city': {
+                    'required': true
                 }
             };
         }
