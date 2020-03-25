@@ -71,31 +71,31 @@ class RateRequestBuilder
      */
     public function build(RateRequest $request, array $items)
     {
+        $quote = current($items)->getQuote();
+        $customerData = $this->getCustomerData($quote);
         $streetArray = explode("\n", $request->getDestStreet());
+        $customer = $quote->getCustomer();
 
         $apiRequestBody = [
-            'country' => $request->getDestCountryId(),
-            'regionCode' => $request->getDestRegionId() ? $request->getDestRegionCode() : null,
-            'regionName' => $this->getRegionCodeById($request->getDestRegionId()) ?: $request->getDestRegionCode(),
-            'postalCode' => $request->getDestPostcode(),
-            'city' => $request->getDestCity(),
-            'addressLine1' => $streetArray[0],
-            'addressLine2' => $streetArray[1] ?? '',
-            'customerGroup' => '',
-            'promo' => '',
+            'shipTo' => [
+                'country' => $request->getDestCountryId(),
+                'regionCode' => $request->getDestRegionId() ? $request->getDestRegionCode() : null,
+                'regionName' => $this->getRegionNameById($request->getDestRegionId()) ?: $request->getDestRegionCode(),
+                'postalCode' => $request->getDestPostcode(),
+                'city' => $request->getDestCity(),
+                'addressLine1' => $streetArray[0],
+                'addressLine2' => $streetArray[1] ?? '',
+                'contactName' => $customerData['contactName'],
+                'companyName' => $customerData['companyName'],
+                'contactPhone' => $customerData['contactPhone'],
+            ],
+            'customerGroup' => $customer->getId() ? $customer->getGroupId() : null,
+            'promo' => null,
             'products' => [],
             // storeId in $request - from quote, and not correct if we open store via store url
             // setting "Use store codes in URL"
             'storeView' => $this->storeManager->getStore()->getId(),
         ];
-
-        $quote = current($items)->getQuote();
-        $customer = $quote->getCustomer();
-        $apiRequestBody = array_merge($apiRequestBody, $this->getCustomerData($quote));
-
-        if ($customer->getId()) {
-            $apiRequestBody['customerGroup'] = $customer->getGroupId();
-        }
 
         $itemsSkus = [];
         foreach ($items as $item) {
@@ -127,20 +127,19 @@ class RateRequestBuilder
      *
      * @return string|null
      */
-    private function getRegionCodeById($regionId)
+    private function getRegionNameById($regionId)
     {
         if (!$regionId) {
             return null;
         }
 
-        if (!empty($this->regionNamesCache[$regionId])) {
-            return $this->regionNamesCache[$regionId];
+        if (!isset($this->regionNamesCache[$regionId])) {
+            $regionInstance = $this->regionFactory->create();
+            $this->regionResource->load($regionInstance, $regionId);
+            $this->regionNamesCache[$regionId] = $regionInstance->getName();
         }
 
-        $regionInstance = $this->regionFactory->create();
-        $this->regionResource->load($regionInstance, $regionId);
-
-        return $this->regionNamesCache[$regionId] = $regionInstance->getName();
+        return $this->regionNamesCache[$regionId];
     }
 
     /**
