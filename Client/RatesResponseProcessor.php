@@ -11,6 +11,7 @@ namespace Calcurates\ModuleMagento\Client;
 use Calcurates\ModuleMagento\Model\Carrier;
 use Calcurates\ModuleMagento\Model\Config as CalcuratesConfig;
 use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
+use Magento\Quote\Model\Quote\Item;
 use Magento\Shipping\Model\Rate\Result;
 use Magento\Shipping\Model\Rate\ResultFactory;
 
@@ -84,6 +85,7 @@ class RatesResponseProcessor
             return $result;
         }
 
+        $this->processOrigins($response['origins'], $quote);
         $shippingOptions = $response['shippingOptions'];
         $this->processFreeShipping($shippingOptions['freeShipping'], $result);
         $this->processFlatRates($shippingOptions['flatRates'], $result);
@@ -220,6 +222,34 @@ class RatesResponseProcessor
                     $carrier['name']
                 );
                 $result->append($rate);
+            }
+        }
+    }
+
+    /**
+     * @param array $origins
+     * @param \Magento\Quote\Model\Quote $quote
+     */
+    private function processOrigins(array $origins, $quote)
+    {
+        $quoteItemIdToSourceCode = [];
+        foreach ($origins as $origin) {
+            $sourceCode = $origin['origin']['targetValue']['targetId'] ?? null;
+            // @TODO: remove
+            $sourceCode = 'uk_source';
+            if ($sourceCode === null) {
+                continue;
+            }
+            foreach ($origin['products'] as $product) {
+                $quoteItemId = $product['quoteItemId'];
+                $quoteItemIdToSourceCode[$quoteItemId] = $sourceCode;
+            }
+        }
+
+        foreach ($quote->getAllItems() as $quoteItem) {
+            /** @var Item $quoteItem */
+            if (array_key_exists($quoteItem->getId(), $quoteItemIdToSourceCode)) {
+                $quoteItem->setData('calcurates_source_code', $quoteItemIdToSourceCode[$quoteItem->getId()]);
             }
         }
     }
