@@ -2,6 +2,8 @@
 
 namespace Calcurates\ModuleMagento\Model\Source\Algorithms\Result;
 
+use Calcurates\ModuleMagento\Model\Source\SourceServiceContext;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\InventoryApi\Api\Data\SourceItemInterface;
 use Magento\InventorySourceSelectionApi\Api\Data\InventoryRequestInterface;
 use Magento\InventorySourceSelectionApi\Api\Data\SourceSelectionItemInterfaceFactory;
@@ -33,25 +35,20 @@ class GetCalcuratesSortedSourcesResult
     private $getSourceItemQtyAvailable;
 
     /**
-     * @param SourceSelectionItemInterfaceFactory $sourceSelectionItemFactory
-     * @param SourceSelectionResultInterfaceFactory $sourceSelectionResultFactory
-     * @param null $searchCriteriaBuilder @deprecated
-     * @param null $sourceItemRepository @deprecated
-     * @param GetInStockSourceItemsBySkusAndSortedSource $getInStockSourceItemsBySkusAndSortedSource = null
-     * @param GetSourceItemQtyAvailableInterface|null $getSourceItemQtyAvailable
-     * @SuppressWarnings(PHPMD.LongVariable)
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * GetCalcuratesSortedSourcesResult constructor.
+     * @param ObjectManagerInterface $objectManager
      */
     public function __construct(
-        SourceSelectionItemInterfaceFactory $sourceSelectionItemFactory,
-        SourceSelectionResultInterfaceFactory $sourceSelectionResultFactory,
-        GetInStockSourceItemsBySkusAndSortedSource $getInStockSourceItemsBySkusAndSortedSource,
-        GetSourceItemQtyAvailableInterface $getSourceItemQtyAvailable
+        ObjectManagerInterface $objectManager
     ) {
-        $this->sourceSelectionItemFactory = $sourceSelectionItemFactory;
-        $this->sourceSelectionResultFactory = $sourceSelectionResultFactory;
-        $this->getInStockSourceItemsBySkusAndSortedSource = $getInStockSourceItemsBySkusAndSortedSource;
-        $this->getSourceItemQtyAvailable = $getSourceItemQtyAvailable;
+        if (SourceServiceContext::doesSourceExist()) {
+            $this->sourceSelectionItemFactory = $objectManager->get(SourceSelectionItemInterfaceFactory::class);
+            $this->sourceSelectionResultFactory = $objectManager->get(SourceSelectionResultInterfaceFactory::class);
+            $this->getInStockSourceItemsBySkusAndSortedSource = $objectManager->get(
+                GetInStockSourceItemsBySkusAndSortedSource::class
+            );
+            $this->getSourceItemQtyAvailable = $objectManager->get(GetSourceItemQtyAvailableInterface::class);
+        }
     }
 
     /**
@@ -61,7 +58,7 @@ class GetCalcuratesSortedSourcesResult
      *
      * @return bool
      */
-    private function isZero(float $floatNumber): bool
+    private function isZero($floatNumber)
     {
         return $floatNumber < 0.0000001;
     }
@@ -78,7 +75,7 @@ class GetCalcuratesSortedSourcesResult
         InventoryRequestInterface $inventoryRequest,
         array $sortedSources,
         array $mainSourceCodesForSkus = []
-    ): SourceSelectionResultInterface {
+    ) {
         $sourceItemSelections = [];
 
         $itemsTdDeliver = [];
@@ -157,7 +154,7 @@ class GetCalcuratesSortedSourcesResult
      * @param string $sku
      * @return string
      */
-    private function normalizeSku(string $sku): string
+    private function normalizeSku($sku)
     {
         return mb_convert_case($sku, MB_CASE_LOWER, 'UTF-8');
     }

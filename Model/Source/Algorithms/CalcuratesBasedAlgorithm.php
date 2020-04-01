@@ -3,12 +3,21 @@
 namespace Calcurates\ModuleMagento\Model\Source\Algorithms;
 
 use Calcurates\ModuleMagento\Model\Source\Algorithms\Result\GetCalcuratesSortedSourcesResult;
+use Calcurates\ModuleMagento\Model\Source\SourceServiceContext;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\InventoryApi\Api\Data\SourceInterface;
 use Magento\InventoryApi\Api\GetSourcesAssignedToStockOrderedByPriorityInterface;
 use Magento\InventorySourceSelectionApi\Api\Data\InventoryRequestInterface;
 use Magento\InventorySourceSelectionApi\Api\Data\SourceSelectionResultInterface;
 use Magento\InventorySourceSelectionApi\Model\SourceSelectionInterface;
 use Magento\Sales\Api\OrderItemRepositoryInterface;
+
+if (!SourceServiceContext::doesSourceExist()) {
+    class_alias(
+        \Calcurates\ModuleMagento\Api\Fake\SourceSelectionInterface::class,
+        \Magento\InventorySourceSelectionApi\Model\SourceSelectionInterface::class
+    );
+}
 
 class CalcuratesBasedAlgorithm implements SourceSelectionInterface
 {
@@ -37,18 +46,22 @@ class CalcuratesBasedAlgorithm implements SourceSelectionInterface
      * @param \Magento\Framework\App\RequestInterface $request
      * @param OrderItemRepositoryInterface $orderItemRepository
      * @param GetCalcuratesSortedSourcesResult $getCalcuratesSortedSourcesResult
-     * @param GetSourcesAssignedToStockOrderedByPriorityInterface $getSourcesAssignedToStockOrderedByPriority
+     * @param ObjectManagerInterface $objectManager
      */
     public function __construct(
         \Magento\Framework\App\RequestInterface $request,
         OrderItemRepositoryInterface $orderItemRepository,
         GetCalcuratesSortedSourcesResult $getCalcuratesSortedSourcesResult,
-        GetSourcesAssignedToStockOrderedByPriorityInterface $getSourcesAssignedToStockOrderedByPriority
+        ObjectManagerInterface $objectManager
     ) {
         $this->request = $request;
         $this->orderItemRepository = $orderItemRepository;
         $this->getCalcuratesSortedSourcesResult = $getCalcuratesSortedSourcesResult;
-        $this->getSourcesAssignedToStockOrderedByPriority = $getSourcesAssignedToStockOrderedByPriority;
+        if (SourceServiceContext::doesSourceExist()) {
+            $this->getSourcesAssignedToStockOrderedByPriority = $objectManager->get(
+                GetSourcesAssignedToStockOrderedByPriorityInterface::class
+            );
+        }
     }
 
     /**

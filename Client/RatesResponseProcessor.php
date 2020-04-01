@@ -235,8 +235,6 @@ class RatesResponseProcessor
         $quoteItemIdToSourceCode = [];
         foreach ($origins as $origin) {
             $sourceCode = $origin['origin']['targetValue']['targetId'] ?? null;
-            // @TODO: remove
-            $sourceCode = 'uk_source';
             if ($sourceCode === null) {
                 continue;
             }
