@@ -21,12 +21,41 @@
     <type name="Magento\Sales\Model\Order\Shipment">
         <plugin name="Calcurates_ModuleMagento::Shipment" type="Calcurates\ModuleMagento\Plugin\Model\Order\ShipmentPlugin"/>
     </type>
+    <type name="Magento\Quote\Model\Quote\Item\ToOrderItem">
+        <plugin name="Calcurates_ModuleMagento::QuoteToOrderItem" type="Calcurates\ModuleMagento\Plugin\Model\Quote\ToOrderItemPlugin"/>
+    </type>
+
+    <!-- magento fix region is array. -->
+    <type name="Magento\Customer\Model\Address\AbstractAddress">
+        <plugin name="Calcurates_ModuleMagento::FixRegionIsArray" type="Calcurates\ModuleMagento\Plugin\Model\Customer\Address\AbstractAddressPlugin"/>
+    </type>
 
     <type name="Calcurates\ModuleMagento\Model\Carrier">
         <arguments>
             <argument name="calcuratesClient" xsi:type="object">Calcurates\ModuleMagento\Client\CalcuratesClient\Proxy</argument>
             <argument name="rateRequestBuilder" xsi:type="object">Calcurates\ModuleMagento\Client\Request\RateRequestBuilder\Proxy</argument>
             <argument name="shippingLabelRequestBuilder" xsi:type="object">Calcurates\ModuleMagento\Client\Request\ShippingLabelRequestBuilder\Proxy</argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\InventorySourceSelectionApi\Model\SourceSelectionService">
+        <arguments>
+            <argument name="sourceSelectionMethods" xsi:type="array">
+                <item name="calcurates"
+                      xsi:type="string">Calcurates\ModuleMagento\Model\Source\Algorithms\CalcuratesBasedAlgorithm</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\InventorySourceSelectionApi\Model\GetSourceSelectionAlgorithmList">
+        <arguments>
+            <argument name="availableAlgorithms" xsi:type="array">
+                <item name="calcurates" xsi:type="array">
+                    <item xsi:type="string" name="code">calcurates</item>
+                    <item xsi:type="string" name="title" translatable="true">Calcurates Algorithm</item>
+                    <item xsi:type="string" name="description" translatable="true">Algorithm which provides Source Selections based on Calcurates service</item>
+                </item>
+            </argument>
         </arguments>
     </type>
 </config>

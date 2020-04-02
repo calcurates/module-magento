@@ -107,6 +107,7 @@ class RateRequestBuilder
 
         foreach ($items as $item) {
             $apiRequestBody['products'][] = [
+                'quoteItemId' => $item->getId(),
                 'priceWithTax' => round($item->getBasePriceInclTax(), 2),
                 'priceWithoutTax' => round($item->getBasePrice(), 2),
                 'discountAmount' => round($item->getBaseDiscountAmount(), 2),

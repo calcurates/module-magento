@@ -39,19 +39,11 @@ class SourceAddressService
     {
         $sourceCode = $this->shipmentSourceCodeRetriever->retrieve($shipment);
         $addressData = null;
-        if ($this->doesSourceExist() && !empty($sourceCode)) {
+        if (SourceServiceContext::doesSourceExist() && !empty($sourceCode)) {
             $addressData = $this->getBySourceCode($sourceCode);
         }
 
         return $addressData;
-    }
-
-    /**
-     * @return bool
-     */
-    private function doesSourceExist()
-    {
-        return interface_exists(\Magento\InventoryApi\Api\SourceRepositoryInterface::class);
     }
 
     /**
