@@ -6,9 +6,10 @@
  * @package Calcurates_ModuleMagento
  */
 
-namespace Calcurates\ModuleMagento\Api\Fake;
+namespace Calcurates\ModuleMagento\Api\Data;
 
-interface SourceSelectionInterface
+interface CustomSalesAttributesInterface
 {
-
+    const CARRIER_SOURCE_CODE_TO_SERVICE = 'calcurates_carrier_srvs_srs_codes';
+    const SOURCE_CODE = 'calcurates_source_code';
 }

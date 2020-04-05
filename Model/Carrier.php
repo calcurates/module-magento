@@ -453,6 +453,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     protected function loadTracking($tracking, $result)
     {
         $shippingMethod = $this->trackingObject->getShipment()->getOrder()->getShippingMethod(false);
+        // @TODO
         $shippingMethod = explode('_', $shippingMethod);
         $serviceId = end($shippingMethod);
         $debugData = ['request' => $serviceId . ' - ' . $tracking, 'type' => 'tracking'];

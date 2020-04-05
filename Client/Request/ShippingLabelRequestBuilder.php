@@ -2,6 +2,7 @@
 
 namespace Calcurates\ModuleMagento\Client\Request;
 
+use Calcurates\ModuleMagento\Model\Source\ShipmentServiceRetriever;
 use Calcurates\ModuleMagento\Model\Source\ShipmentSourceCodeRetriever;
 
 class ShippingLabelRequestBuilder
@@ -17,16 +18,24 @@ class ShippingLabelRequestBuilder
     private $shipmentSourceCodeRetriever;
 
     /**
+     * @var ShipmentServiceRetriever
+     */
+    private $shipmentServiceRetriever;
+
+    /**
      * ShippingLabelRequestBuilder constructor.
      * @param \Magento\Framework\App\RequestInterface $request
      * @param ShipmentSourceCodeRetriever $shipmentSourceCodeRetriever
+     * @param ShipmentServiceRetriever $shipmentServiceRetriever
      */
     public function __construct(
         \Magento\Framework\App\RequestInterface $request,
-        ShipmentSourceCodeRetriever $shipmentSourceCodeRetriever
+        ShipmentSourceCodeRetriever $shipmentSourceCodeRetriever,
+        ShipmentServiceRetriever $shipmentServiceRetriever
     ) {
         $this->request = $request;
         $this->shipmentSourceCodeRetriever = $shipmentSourceCodeRetriever;
+        $this->shipmentServiceRetriever = $shipmentServiceRetriever;
     }
 
     /**
@@ -37,15 +46,18 @@ class ShippingLabelRequestBuilder
     public function build(\Magento\Framework\DataObject $request, $testLabel = false)
     {
         /** @var \Magento\Shipping\Model\Shipment\Request $request */
-        $shippingMethod = $this->request->getParam('calcuratesShippingServiceId');
-        if (!$shippingMethod) {
-            $shippingMethod = explode('_', $request->getShippingMethod());
-            $shippingMethod = end($shippingMethod);
+        $shippingService = $this->request->getParam('calcuratesShippingServiceId');
+        $sourceCode = $this->shipmentSourceCodeRetriever->retrieve($request->getOrderShipment());
+        if (!$shippingService) {
+            $shippingService = $this->shipmentServiceRetriever->retrieve(
+                $request->getOrderShipment()->getOrder(),
+                $sourceCode
+            );
         }
 
         $apiRequestBody = [
-            'service' => $shippingMethod,
-            'source' => $this->shipmentSourceCodeRetriever->retrieve($request->getOrderShipment()),
+            'service' => $shippingService,
+            'source' => $sourceCode,
             'shipTo' => [
                 'name' => $request->getRecipientContactPersonName(),
                 'phone' => $request->getRecipientContactPhoneNumber(),

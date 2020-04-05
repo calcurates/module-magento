@@ -13,7 +13,7 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Quote\Setup\QuoteSetupFactory;
 use Magento\Sales\Setup\SalesSetupFactory;
 
-class AddQuoteAndOrderItemSourceField
+class AddServiceToOriginField
 {
     /**
      * @var QuoteSetupFactory
@@ -41,13 +41,13 @@ class AddQuoteAndOrderItemSourceField
      */
     public function execute(ModuleDataSetupInterface $setup)
     {
-        $options = ['type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 'visible' => false, 'required' => false];
         /** @var \Magento\Quote\Setup\QuoteSetup $quoteSetup */
         $quoteSetup = $this->quoteSetupFactory->create(['setup' => $setup]);
+        $options = ['type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 'visible' => false, 'required' => false];
+        $quoteSetup->addAttribute('quote', CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE, $options);
+
         /** @var \Magento\Sales\Setup\SalesSetup $salesSetup */
         $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
-
-        $quoteSetup->addAttribute('quote_item', CustomSalesAttributesInterface::SOURCE_CODE, $options);
-        $salesSetup->addAttribute('order_item', CustomSalesAttributesInterface::SOURCE_CODE, $options);
+        $salesSetup->addAttribute('order', CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE, $options);
     }
 }

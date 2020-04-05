@@ -9,6 +9,8 @@
 namespace Calcurates\ModuleMagento\Helper;
 
 use Calcurates\ModuleMagento\Client\CalcuratesClient;
+use Calcurates\ModuleMagento\Model\Source\ShipmentServiceRetriever;
+use Calcurates\ModuleMagento\Model\Source\ShipmentSourceCodeRetriever;
 use Calcurates\ModuleMagento\Model\Source\SourceAddressService;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
@@ -52,6 +54,16 @@ class ShipmentAddressHelper extends AbstractHelper
     private $regionFactory;
 
     /**
+     * @var ShipmentSourceCodeRetriever
+     */
+    private $shipmentSourceCodeRetriever;
+
+    /**
+     * @var ShipmentServiceRetriever
+     */
+    private $shipmentServiceRetriever;
+
+    /**
      * ShipmentAddressHelper constructor.
      * @param Context $context
      * @param Address\Renderer $addressRenderer
@@ -60,6 +72,8 @@ class ShipmentAddressHelper extends AbstractHelper
      * @param CalcuratesClient $calcuratesClient
      * @param SourceAddressService $sourceAddressService
      * @param \Magento\Directory\Model\RegionFactory $regionFactory
+     * @param ShipmentSourceCodeRetriever $shipmentSourceCodeRetriever
+     * @param ShipmentServiceRetriever $shipmentServiceRetriever
      */
     public function __construct(
         Context $context,
@@ -68,7 +82,9 @@ class ShipmentAddressHelper extends AbstractHelper
         \Magento\Sales\Model\Order\AddressFactory $addressFactory,
         CalcuratesClient $calcuratesClient,
         SourceAddressService $sourceAddressService,
-        \Magento\Directory\Model\RegionFactory $regionFactory
+        \Magento\Directory\Model\RegionFactory $regionFactory,
+        ShipmentSourceCodeRetriever $shipmentSourceCodeRetriever,
+        ShipmentServiceRetriever $shipmentServiceRetriever
     ) {
         parent::__construct($context);
         $this->addressRenderer = $addressRenderer;
@@ -77,6 +93,8 @@ class ShipmentAddressHelper extends AbstractHelper
         $this->calcuratesClient = $calcuratesClient;
         $this->sourceAddressService = $sourceAddressService;
         $this->regionFactory = $regionFactory;
+        $this->shipmentSourceCodeRetriever = $shipmentSourceCodeRetriever;
+        $this->shipmentServiceRetriever = $shipmentServiceRetriever;
     }
 
     /**
@@ -113,9 +131,10 @@ class ShipmentAddressHelper extends AbstractHelper
 
     /**
      * @param Order $order
+     * @param Shipment $shipment
      * @return array
      */
-    public function getShippingServices(Order $order)
+    public function getShippingServices(Order $order, $shipment)
     {
         $method = $order->getShippingMethod(true)->getMethod();
         $methodId = current(explode('_', str_replace('carrier_', '', $method)));
@@ -124,7 +143,7 @@ class ShipmentAddressHelper extends AbstractHelper
         if (empty($shippingServices)) {
             $shippingServiceLabel = explode('-', $order->getShippingDescription());
             $shippingServiceLabel = end($shippingServiceLabel);
-            $shippingServiceValue = $this->getShippingServiceId($order);
+            $shippingServiceValue = $this->getShippingServiceId($order, $shipment);
             $shippingServices[] = [
                 'value' => $shippingServiceValue,
                 'label' => $shippingServiceLabel
@@ -136,12 +155,14 @@ class ShipmentAddressHelper extends AbstractHelper
 
     /**
      * @param Order $order
-     * @return mixed
+     * @param Shipment $shipment
+     * @return string
      */
-    public function getShippingServiceId(Order $order)
+    public function getShippingServiceId(Order $order, $shipment)
     {
-        $method = explode('_', $order->getShippingMethod(true)->getMethod());
-        return end($method);
+        $sourceCode = $this->shipmentSourceCodeRetriever->retrieve($shipment);
+
+        return  $this->shipmentServiceRetriever->retrieve($order, $sourceCode);
     }
 
     /**

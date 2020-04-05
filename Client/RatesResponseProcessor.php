@@ -8,12 +8,14 @@
 
 namespace Calcurates\ModuleMagento\Client;
 
+use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Model\Carrier;
 use Calcurates\ModuleMagento\Model\Config as CalcuratesConfig;
 use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Shipping\Model\Rate\Result;
 use Magento\Shipping\Model\Rate\ResultFactory;
+use Magento\Framework\Serialize\SerializerInterface;
 
 class RatesResponseProcessor
 {
@@ -38,23 +40,31 @@ class RatesResponseProcessor
     private $rateBuilder;
 
     /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    /**
      * RatesResponseProcessor constructor.
      * @param ResultFactory $rateFactory
      * @param ErrorFactory $rateErrorFactory
      * @param CalcuratesConfig $calcuratesConfig
      * @param RateBuilder $rateBuilder
+     * @param SerializerInterface $serializer
      */
     public function __construct(
         ResultFactory $rateFactory,
         ErrorFactory $rateErrorFactory,
         CalcuratesConfig $calcuratesConfig,
-        RateBuilder $rateBuilder
+        RateBuilder $rateBuilder,
+        SerializerInterface $serializer
     )
     {
         $this->rateFactory = $rateFactory;
         $this->rateErrorFactory = $rateErrorFactory;
         $this->calcuratesConfig = $calcuratesConfig;
         $this->rateBuilder = $rateBuilder;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -90,7 +100,7 @@ class RatesResponseProcessor
         $this->processFreeShipping($shippingOptions['freeShipping'], $result);
         $this->processFlatRates($shippingOptions['flatRates'], $result);
         $this->processTableRates($shippingOptions['tableRates'], $result);
-        $this->processCarriers($shippingOptions['carriers'], $result);
+        $this->processCarriers($shippingOptions['carriers'], $result, $quote);
 
         return $result;
     }
@@ -195,9 +205,11 @@ class RatesResponseProcessor
     /**
      * @param array $carriers
      * @param Result $result
+     * @param \Magento\Quote\Model\Quote $quote
      */
-    private function processCarriers(array $carriers, Result $result)
+    private function processCarriers(array $carriers, Result $result, $quote)
     {
+        $carrierServicesToOrigins = [];
         foreach ($carriers as $carrier) {
             if (!$carrier['success']) {
                 if ($carrier['message']) {
@@ -207,7 +219,7 @@ class RatesResponseProcessor
                 continue;
             }
 
-            foreach ($carrier['services'] as $responseRate) {
+            foreach ($carrier['rates'] as $responseRate) {
                 if (!$responseRate['success']) {
                     if ($responseRate['message']) {
                         $this->processFailedRate($responseRate['name'], $result, $responseRate['message']);
@@ -215,6 +227,23 @@ class RatesResponseProcessor
 
                     continue;
                 }
+                $serviceIds = [];
+                $serviceNames = [];
+                $sourceToServiceId = [];
+                foreach ($responseRate['services'] as $service) {
+                    $serviceIds[] = $service['id'];
+                    $serviceNames[] = $service['name'];
+                    $sourceCode = $service['origin']['targetValue']['targetId'] ?? null;
+
+                    if ($sourceCode) {
+                        $sourceToServiceId[$sourceCode] = $service['id'];
+                    }
+                }
+
+                $responseRate['id'] = implode(',', $serviceIds);
+                $responseRate['name'] = implode(' ', $serviceNames);
+
+                $carrierServicesToOrigins[$carrier['id']][$responseRate['id']] = $sourceToServiceId;
 
                 $rate = $this->rateBuilder->build(
                     'carrier_' . $carrier['id'] . '_' . $responseRate['id'],
@@ -224,6 +253,8 @@ class RatesResponseProcessor
                 $result->append($rate);
             }
         }
+
+        $quote->setData(CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE, $this->serializer->serialize($carrierServicesToOrigins));
     }
 
     /**
@@ -247,7 +278,7 @@ class RatesResponseProcessor
         foreach ($quote->getAllItems() as $quoteItem) {
             /** @var Item $quoteItem */
             if (array_key_exists($quoteItem->getId(), $quoteItemIdToSourceCode)) {
-                $quoteItem->setData('calcurates_source_code', $quoteItemIdToSourceCode[$quoteItem->getId()]);
+                $quoteItem->setData(CustomSalesAttributesInterface::SOURCE_CODE, $quoteItemIdToSourceCode[$quoteItem->getId()]);
             }
         }
     }
