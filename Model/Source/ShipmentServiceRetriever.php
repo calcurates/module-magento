@@ -29,8 +29,8 @@ class ShipmentServiceRetriever
      */
     public function retrieve($order, $requestedSourceCode)
     {
-        $shippingMethod = $order->getShippingMethod(false);
-        list(, $carrierId, $shippingServices) = explode('_', $shippingMethod);
+        $shippingMethod = $order->getShippingMethod(true);
+        list(, $carrierId, $shippingServices) = explode('_', $shippingMethod->getMethod());
         $shippingServicesArray = explode(',', $shippingServices);
 
         try {

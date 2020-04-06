@@ -7,6 +7,7 @@
  */
 namespace Calcurates\ModuleMagento\Model;
 
+use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Client\CalcuratesClient;
 use Calcurates\ModuleMagento\Client\Request\RateRequestBuilder;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
@@ -452,10 +453,14 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      */
     protected function loadTracking($tracking, $result)
     {
-        $shippingMethod = $this->trackingObject->getShipment()->getOrder()->getShippingMethod(false);
-        // @TODO
-        $shippingMethod = explode('_', $shippingMethod);
-        $serviceId = end($shippingMethod);
+        $serviceId = $this->trackingObject->getData(CustomSalesAttributesInterface::SERVICE_ID);
+        if (empty($serviceId)) {
+            // backward compatibility
+            $shippingMethod = $this->trackingObject->getShipment()->getOrder()->getShippingMethod(false);
+            $shippingMethod = explode('_', $shippingMethod);
+            $serviceId = end($shippingMethod);
+        }
+
         $debugData = ['request' => $serviceId . ' - ' . $tracking, 'type' => 'tracking'];
         $response = [];
         try {

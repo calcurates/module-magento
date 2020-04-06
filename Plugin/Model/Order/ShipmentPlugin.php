@@ -8,11 +8,27 @@
 
 namespace Calcurates\ModuleMagento\Plugin\Model\Order;
 
+use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
+use Calcurates\ModuleMagento\Api\Shipping\ShippingDataResolverInterface;
 use Calcurates\ModuleMagento\Model\Carrier;
 use Magento\Sales\Model\Order\Shipment;
 
 class ShipmentPlugin
 {
+    /**
+     * @var ShippingDataResolverInterface
+     */
+    private $shippingDataResolver;
+
+    /**
+     * ShipmentPlugin constructor.
+     * @param ShippingDataResolverInterface $shippingDataResolver
+     */
+    public function __construct(ShippingDataResolverInterface $shippingDataResolver)
+    {
+        $this->shippingDataResolver = $shippingDataResolver;
+    }
+
     /**
      * Workaround to set track title
      *
@@ -30,6 +46,9 @@ class ShipmentPlugin
                 $title = trim(current($title));
                 $track->setTitle($title);
             }
+
+            $shippingData = $this->shippingDataResolver->getShippingData($subject);
+            $track->setData(CustomSalesAttributesInterface::SERVICE_ID, $shippingData->getShippingServiceId());
         }
     }
 }

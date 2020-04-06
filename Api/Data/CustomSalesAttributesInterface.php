@@ -12,4 +12,5 @@ interface CustomSalesAttributesInterface
 {
     const CARRIER_SOURCE_CODE_TO_SERVICE = 'calcurates_carrier_srvs_srs_codes';
     const SOURCE_CODE = 'calcurates_source_code';
+    const SERVICE_ID = 'calcurates_service_id';
 }
