@@ -1,12 +1,19 @@
 <?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
 
 namespace Calcurates\ModuleMagento\Setup\Operation;
 
+use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Quote\Setup\QuoteSetupFactory;
 use Magento\Sales\Setup\SalesSetupFactory;
 
-class AddQuoteAndOrderItemSourceField
+class AddCalcuratesServiceAndSourceFields
 {
     /**
      * @var QuoteSetupFactory
@@ -40,7 +47,14 @@ class AddQuoteAndOrderItemSourceField
         /** @var \Magento\Sales\Setup\SalesSetup $salesSetup */
         $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
 
-        $quoteSetup->addAttribute('quote_item', 'calcurates_source_code', $options);
-        $salesSetup->addAttribute('order_item', 'calcurates_source_code', $options);
+        $quoteSetup->addAttribute('quote_item', CustomSalesAttributesInterface::SOURCE_CODE, $options);
+        $quoteSetup->addAttribute('quote', CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE, $options);
+
+
+        $salesSetup->addAttribute('order', CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE, $options);
+        $salesSetup->addAttribute('order_item', CustomSalesAttributesInterface::SOURCE_CODE, $options);
+
+
+        $salesSetup->addAttribute('shipment_track', CustomSalesAttributesInterface::SERVICE_ID, $options);
     }
 }

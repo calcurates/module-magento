@@ -2,6 +2,7 @@
 
 namespace Calcurates\ModuleMagento\Model\Source\Algorithms;
 
+use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Model\Source\Algorithms\Result\GetCalcuratesSortedSourcesResult;
 use Calcurates\ModuleMagento\Model\Source\SourceServiceContext;
 use Magento\Framework\ObjectManagerInterface;
@@ -76,7 +77,9 @@ class CalcuratesBasedAlgorithm implements SourceSelectionInterface
             foreach ($requestData as $item) {
                 $orderItem = $this->orderItemRepository->get($item['orderItem']);
                 $normalizedSku = $this->normalizeSku($item['sku']);
-                $mainSourceCodesForSkus[$normalizedSku] = $orderItem->getData('calcurates_source_code');
+                $mainSourceCodesForSkus[$normalizedSku] = $orderItem->getData(
+                    CustomSalesAttributesInterface::SOURCE_CODE
+                );
             }
         }
 

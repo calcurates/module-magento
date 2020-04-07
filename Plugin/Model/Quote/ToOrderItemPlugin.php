@@ -2,6 +2,7 @@
 
 namespace Calcurates\ModuleMagento\Plugin\Model\Quote;
 
+use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Magento\Quote\Model\Quote\Address\Item as AddressItem;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Quote\Model\Quote\Item\ToOrderItem;
@@ -18,7 +19,10 @@ class ToOrderItemPlugin
      */
     public function afterConvert(ToOrderItem $subject, $result, $item, $data = [])
     {
-        $result->setData('calcurates_source_code', $item->getData('calcurates_source_code'));
+        $result->setData(
+            CustomSalesAttributesInterface::SOURCE_CODE,
+            $item->getData(CustomSalesAttributesInterface::SOURCE_CODE)
+        );
 
         return $result;
     }

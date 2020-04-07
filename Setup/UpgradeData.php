@@ -8,7 +8,7 @@
 
 namespace Calcurates\ModuleMagento\Setup;
 
-use Calcurates\ModuleMagento\Setup\Operation\AddQuoteAndOrderItemSourceField;
+use Calcurates\ModuleMagento\Setup\Operation\AddCalcuratesServiceAndSourceFields;
 use Calcurates\ModuleMagento\Setup\Operation\AddQuoteAndOrderOriginField;
 use Calcurates\ModuleMagento\Setup\Operation\RemoveQuoteAndOrderOriginField;
 use Magento\Framework\Setup\ModuleContextInterface;
@@ -28,24 +28,24 @@ class UpgradeData implements UpgradeDataInterface
     private $removeQuoteAndOrderOriginField;
 
     /**
-     * @var AddQuoteAndOrderItemSourceField
+     * @var AddCalcuratesServiceAndSourceFields
      */
-    private $addQuoteAndOrderItemSourceField;
+    private $addCalcuratesServiceAndSourceFields;
 
     /**
      * UpgradeData constructor.
      * @param AddQuoteAndOrderOriginField $addQuoteAndOrderOriginField
      * @param RemoveQuoteAndOrderOriginField $removeQuoteAndOrderOriginField
-     * @param AddQuoteAndOrderItemSourceField $addQuoteAndOrderItemSourceField
+     * @param AddCalcuratesServiceAndSourceFields $addCalcuratesServiceAndSourceFields
      */
     public function __construct(
         AddQuoteAndOrderOriginField $addQuoteAndOrderOriginField,
         RemoveQuoteAndOrderOriginField $removeQuoteAndOrderOriginField,
-        AddQuoteAndOrderItemSourceField $addQuoteAndOrderItemSourceField
+        AddCalcuratesServiceAndSourceFields $addCalcuratesServiceAndSourceFields
     ) {
         $this->addQuoteAndOrderOriginField = $addQuoteAndOrderOriginField;
         $this->removeQuoteAndOrderOriginField = $removeQuoteAndOrderOriginField;
-        $this->addQuoteAndOrderItemSourceField = $addQuoteAndOrderItemSourceField;
+        $this->addCalcuratesServiceAndSourceFields = $addCalcuratesServiceAndSourceFields;
     }
 
     /**
@@ -64,7 +64,7 @@ class UpgradeData implements UpgradeDataInterface
 
         if (version_compare($context->getVersion(), '1.8.0', '<')) {
             $this->removeQuoteAndOrderOriginField->execute($setup);
-            $this->addQuoteAndOrderItemSourceField->execute($setup);
+            $this->addCalcuratesServiceAndSourceFields->execute($setup);
         }
 
         $setup->endSetup();
