@@ -99,7 +99,10 @@ class GetCalcuratesSortedSourcesResult
         usort($sourceItems,
             function (SourceItemInterface $itemA, SourceItemInterface $itemB) use ($mainSourceCodesForSkus) {
                 $normalizedSkuA = $this->normalizeSku($itemA->getSku());
-                $normalizedSkuB = $this->normalizeSku($itemA->getSku());
+                $normalizedSkuB = $this->normalizeSku($itemB->getSku());
+                if ($normalizedSkuA == $normalizedSkuB) {
+                    return 0;
+                }
 
                 if ($mainSourceCodesForSkus[$normalizedSkuA] == $itemA->getSourceCode()) {
                     return -1;
