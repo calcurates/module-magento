@@ -231,8 +231,11 @@ class RatesResponseProcessor
                 $serviceNames = [];
                 $sourceToServiceId = [];
                 foreach ($responseRate['services'] as $service) {
+                    if (!in_array($service['id'], $serviceIds, true)) { // avoid duplication of service names
+                        $serviceNames[] = $service['name'];
+                    }
                     $serviceIds[] = $service['id'];
-                    $serviceNames[] = $service['name'];
+
                     $sourceCode = $service['origin']['targetValue']['targetId'] ?? null;
 
                     if ($sourceCode) {
