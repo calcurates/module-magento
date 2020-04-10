@@ -61,4 +61,8 @@
             </argument>
         </arguments>
     </type>
+
+    <!-- change default source algorithm to calcurates -->
+    <preference for="Magento\InventorySourceSelectionApi\Api\GetDefaultSourceSelectionAlgorithmCodeInterface"
+                type="Calcurates\ModuleMagento\Model\Source\Algorithms\GetDefaultSourceSelectionAlgorithmCode"/>
 </config>

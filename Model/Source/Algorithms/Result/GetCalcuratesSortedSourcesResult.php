@@ -1,4 +1,10 @@
 <?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
 
 namespace Calcurates\ModuleMagento\Model\Source\Algorithms\Result;
 
@@ -95,13 +101,17 @@ class GetCalcuratesSortedSourcesResult
                 $sortedSourceCodes
             );
 
+        $itemsPositionForSku = array_keys($mainSourceCodesForSkus);
         // sort source items, where calcurate-recommended sourceCodes are first
         usort($sourceItems,
-            function (SourceItemInterface $itemA, SourceItemInterface $itemB) use ($mainSourceCodesForSkus) {
+            function (SourceItemInterface $itemA, SourceItemInterface $itemB)
+            use ($mainSourceCodesForSkus, $itemsPositionForSku) {
                 $normalizedSkuA = $this->normalizeSku($itemA->getSku());
                 $normalizedSkuB = $this->normalizeSku($itemB->getSku());
-                if ($normalizedSkuA == $normalizedSkuB) {
-                    return 0;
+                if ($normalizedSkuA != $normalizedSkuB) {
+                    $positionSkuA = array_search($normalizedSkuA, $itemsPositionForSku);
+                    $positionSkuB = array_search($normalizedSkuB, $itemsPositionForSku);
+                    return $positionSkuA < $positionSkuB ? -1 : 1;
                 }
 
                 if ($mainSourceCodesForSkus[$normalizedSkuA] == $itemA->getSourceCode()) {

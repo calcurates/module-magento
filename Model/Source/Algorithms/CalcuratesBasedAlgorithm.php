@@ -1,4 +1,10 @@
 <?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
 
 namespace Calcurates\ModuleMagento\Model\Source\Algorithms;
 
@@ -23,16 +29,6 @@ if (!SourceServiceContext::doesSourceExist()) {
 class CalcuratesBasedAlgorithm implements SourceSelectionInterface
 {
     /**
-     * @var \Magento\Framework\App\RequestInterface
-     */
-    private $request;
-
-    /**
-     * @var OrderItemRepositoryInterface
-     */
-    private $orderItemRepository;
-
-    /**
      * @var GetCalcuratesSortedSourcesResult
      */
     private $getCalcuratesSortedSourcesResult;
@@ -43,26 +39,28 @@ class CalcuratesBasedAlgorithm implements SourceSelectionInterface
     private $getSourcesAssignedToStockOrderedByPriority;
 
     /**
+     * @var OrderItemsRetriever
+     */
+    private $orderItemsRetriever;
+
+    /**
      * CalcuratesBasedAlgorithm constructor.
-     * @param \Magento\Framework\App\RequestInterface $request
-     * @param OrderItemRepositoryInterface $orderItemRepository
      * @param GetCalcuratesSortedSourcesResult $getCalcuratesSortedSourcesResult
      * @param ObjectManagerInterface $objectManager
+     * @param OrderItemsRetriever $orderItemsRetriever
      */
     public function __construct(
-        \Magento\Framework\App\RequestInterface $request,
-        OrderItemRepositoryInterface $orderItemRepository,
         GetCalcuratesSortedSourcesResult $getCalcuratesSortedSourcesResult,
-        ObjectManagerInterface $objectManager
+        ObjectManagerInterface $objectManager,
+        OrderItemsRetriever $orderItemsRetriever
     ) {
-        $this->request = $request;
-        $this->orderItemRepository = $orderItemRepository;
         $this->getCalcuratesSortedSourcesResult = $getCalcuratesSortedSourcesResult;
         if (SourceServiceContext::doesSourceExist()) {
             $this->getSourcesAssignedToStockOrderedByPriority = $objectManager->get(
                 GetSourcesAssignedToStockOrderedByPriorityInterface::class
             );
         }
+        $this->orderItemsRetriever = $orderItemsRetriever;
     }
 
     /**
@@ -70,17 +68,14 @@ class CalcuratesBasedAlgorithm implements SourceSelectionInterface
      */
     public function execute(InventoryRequestInterface $inventoryRequest): SourceSelectionResultInterface
     {
-        $requestData = $this->request->getParam('requestData');
-
         $mainSourceCodesForSkus = [];
-        if (!empty($requestData)) {
-            foreach ($requestData as $item) {
-                $orderItem = $this->orderItemRepository->get($item['orderItem']);
-                $normalizedSku = $this->normalizeSku($item['sku']);
-                $mainSourceCodesForSkus[$normalizedSku] = $orderItem->getData(
-                    CustomSalesAttributesInterface::SOURCE_CODE
-                );
-            }
+        // workaround for get order items(because in inventory request we haven't that information)
+        $orderItems = $this->orderItemsRetriever->getOrderItems();
+        foreach ($orderItems as $orderItem) {
+            $normalizedSku = $this->normalizeSku($orderItem->getSku());
+            $mainSourceCodesForSkus[$normalizedSku] = $orderItem->getData(
+                CustomSalesAttributesInterface::SOURCE_CODE
+            );
         }
 
         $stockId = $inventoryRequest->getStockId();
