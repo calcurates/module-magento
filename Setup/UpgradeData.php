@@ -8,7 +8,9 @@
 
 namespace Calcurates\ModuleMagento\Setup;
 
+use Calcurates\ModuleMagento\Setup\Operation\AddCalcuratesServiceAndSourceFields;
 use Calcurates\ModuleMagento\Setup\Operation\AddQuoteAndOrderOriginField;
+use Calcurates\ModuleMagento\Setup\Operation\RemoveQuoteAndOrderOriginField;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\UpgradeDataInterface;
@@ -21,12 +23,29 @@ class UpgradeData implements UpgradeDataInterface
     private $addQuoteAndOrderOriginField;
 
     /**
+     * @var RemoveQuoteAndOrderOriginField
+     */
+    private $removeQuoteAndOrderOriginField;
+
+    /**
+     * @var AddCalcuratesServiceAndSourceFields
+     */
+    private $addCalcuratesServiceAndSourceFields;
+
+    /**
      * UpgradeData constructor.
      * @param AddQuoteAndOrderOriginField $addQuoteAndOrderOriginField
+     * @param RemoveQuoteAndOrderOriginField $removeQuoteAndOrderOriginField
+     * @param AddCalcuratesServiceAndSourceFields $addCalcuratesServiceAndSourceFields
      */
-    public function __construct(AddQuoteAndOrderOriginField $addQuoteAndOrderOriginField)
-    {
+    public function __construct(
+        AddQuoteAndOrderOriginField $addQuoteAndOrderOriginField,
+        RemoveQuoteAndOrderOriginField $removeQuoteAndOrderOriginField,
+        AddCalcuratesServiceAndSourceFields $addCalcuratesServiceAndSourceFields
+    ) {
         $this->addQuoteAndOrderOriginField = $addQuoteAndOrderOriginField;
+        $this->removeQuoteAndOrderOriginField = $removeQuoteAndOrderOriginField;
+        $this->addCalcuratesServiceAndSourceFields = $addCalcuratesServiceAndSourceFields;
     }
 
     /**
@@ -42,6 +61,12 @@ class UpgradeData implements UpgradeDataInterface
         if (version_compare($context->getVersion(), '1.3.3', '<')) {
             $this->addQuoteAndOrderOriginField->execute($setup);
         }
+
+        if (version_compare($context->getVersion(), '1.8.0', '<')) {
+            $this->removeQuoteAndOrderOriginField->execute($setup);
+            $this->addCalcuratesServiceAndSourceFields->execute($setup);
+        }
+
         $setup->endSetup();
     }
 }

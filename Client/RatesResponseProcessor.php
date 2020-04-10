@@ -8,11 +8,14 @@
 
 namespace Calcurates\ModuleMagento\Client;
 
+use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Model\Carrier;
 use Calcurates\ModuleMagento\Model\Config as CalcuratesConfig;
 use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
+use Magento\Quote\Model\Quote\Item;
 use Magento\Shipping\Model\Rate\Result;
 use Magento\Shipping\Model\Rate\ResultFactory;
+use Magento\Framework\Serialize\SerializerInterface;
 
 class RatesResponseProcessor
 {
@@ -37,23 +40,31 @@ class RatesResponseProcessor
     private $rateBuilder;
 
     /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    /**
      * RatesResponseProcessor constructor.
      * @param ResultFactory $rateFactory
      * @param ErrorFactory $rateErrorFactory
      * @param CalcuratesConfig $calcuratesConfig
      * @param RateBuilder $rateBuilder
+     * @param SerializerInterface $serializer
      */
     public function __construct(
         ResultFactory $rateFactory,
         ErrorFactory $rateErrorFactory,
         CalcuratesConfig $calcuratesConfig,
-        RateBuilder $rateBuilder
+        RateBuilder $rateBuilder,
+        SerializerInterface $serializer
     )
     {
         $this->rateFactory = $rateFactory;
         $this->rateErrorFactory = $rateErrorFactory;
         $this->calcuratesConfig = $calcuratesConfig;
         $this->rateBuilder = $rateBuilder;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -74,7 +85,7 @@ class RatesResponseProcessor
 
         // status only for errors
         $status = $response['status'] ?? null;
-        if (!$response || $status) {
+        if (!$response || empty($response['shippingOptions']) || $status) {
             $this->processFailedRate(
                 $this->calcuratesConfig->getTitle($quote->getStoreId()),
                 $result,
@@ -84,13 +95,12 @@ class RatesResponseProcessor
             return $result;
         }
 
-        foreach ($response as $origin) {
-            $this->processFreeShipping($origin['freeShipping'], $result);
-            $this->processFlatRates($origin['flatRates'], $result);
-            $this->processTableRates($origin['tableRates'], $result);
-            $this->processCarriers($origin['carriers'], $result);
-            $this->processOrigin($origin['origin'], $quote);
-        }
+        $this->processOrigins($response['origins'], $quote);
+        $shippingOptions = $response['shippingOptions'];
+        $this->processFreeShipping($shippingOptions['freeShipping'], $result);
+        $this->processFlatRates($shippingOptions['flatRates'], $result);
+        $this->processTableRates($shippingOptions['tableRates'], $result);
+        $this->processCarriers($shippingOptions['carriers'], $result, $quote);
 
         return $result;
     }
@@ -108,17 +118,6 @@ class RatesResponseProcessor
         $error->setErrorMessage($message);
 
         $result->append($error);
-    }
-
-    /**
-     * @param array $origin
-     * @param \Magento\Quote\Model\Quote $quote
-     *
-     * @return void
-     */
-    private function processOrigin($origin, $quote)
-    {
-        $quote->setData('calcurates_origin_data', json_encode($origin));
     }
 
     /**
@@ -206,9 +205,11 @@ class RatesResponseProcessor
     /**
      * @param array $carriers
      * @param Result $result
+     * @param \Magento\Quote\Model\Quote $quote
      */
-    private function processCarriers(array $carriers, Result $result)
+    private function processCarriers(array $carriers, Result $result, $quote)
     {
+        $carrierServicesToOrigins = [];
         foreach ($carriers as $carrier) {
             if (!$carrier['success']) {
                 if ($carrier['message']) {
@@ -218,7 +219,7 @@ class RatesResponseProcessor
                 continue;
             }
 
-            foreach ($carrier['services'] as $responseRate) {
+            foreach ($carrier['rates'] as $responseRate) {
                 if (!$responseRate['success']) {
                     if ($responseRate['message']) {
                         $this->processFailedRate($responseRate['name'], $result, $responseRate['message']);
@@ -226,6 +227,26 @@ class RatesResponseProcessor
 
                     continue;
                 }
+                $serviceIds = [];
+                $serviceNames = [];
+                $sourceToServiceId = [];
+                foreach ($responseRate['services'] as $service) {
+                    if (!in_array($service['id'], $serviceIds, true)) { // avoid duplication of service names
+                        $serviceNames[] = $service['name'];
+                    }
+                    $serviceIds[] = $service['id'];
+
+                    $sourceCode = $service['origin']['targetValue']['targetId'] ?? null;
+
+                    if ($sourceCode) {
+                        $sourceToServiceId[$sourceCode] = $service['id'];
+                    }
+                }
+
+                $responseRate['id'] = implode(',', $serviceIds);
+                $responseRate['name'] = implode(' ', $serviceNames);
+
+                $carrierServicesToOrigins[$carrier['id']][$responseRate['id']] = $sourceToServiceId;
 
                 $rate = $this->rateBuilder->build(
                     'carrier_' . $carrier['id'] . '_' . $responseRate['id'],
@@ -233,6 +254,34 @@ class RatesResponseProcessor
                     $carrier['name']
                 );
                 $result->append($rate);
+            }
+        }
+
+        $quote->setData(CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE, $this->serializer->serialize($carrierServicesToOrigins));
+    }
+
+    /**
+     * @param array $origins
+     * @param \Magento\Quote\Model\Quote $quote
+     */
+    private function processOrigins(array $origins, $quote)
+    {
+        $quoteItemIdToSourceCode = [];
+        foreach ($origins as $origin) {
+            $sourceCode = $origin['origin']['targetValue']['targetId'] ?? null;
+            if ($sourceCode === null) {
+                continue;
+            }
+            foreach ($origin['products'] as $product) {
+                $quoteItemId = $product['quoteItemId'];
+                $quoteItemIdToSourceCode[$quoteItemId] = $sourceCode;
+            }
+        }
+
+        foreach ($quote->getAllItems() as $quoteItem) {
+            /** @var Item $quoteItem */
+            if (array_key_exists($quoteItem->getId(), $quoteItemIdToSourceCode)) {
+                $quoteItem->setData(CustomSalesAttributesInterface::SOURCE_CODE, $quoteItemIdToSourceCode[$quoteItem->getId()]);
             }
         }
     }

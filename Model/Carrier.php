@@ -7,10 +7,11 @@
  */
 namespace Calcurates\ModuleMagento\Model;
 
+use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Client\CalcuratesClient;
+use Calcurates\ModuleMagento\Client\Request\RateRequestBuilder;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
-use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Directory\Model\ResourceModel\Region as RegionResource;
+use Calcurates\ModuleMagento\Client\Request\ShippingLabelRequestBuilder;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
@@ -49,16 +50,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     protected $result;
 
     /**
-     * @var array
-     */
-    protected $regionNamesCache = [];
-
-    /**
-     * @var RegionResource
-     */
-    protected $regionResource;
-
-    /**
      * @var \Magento\Framework\Registry
      */
     protected $registry;
@@ -69,24 +60,24 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     protected $trackingObject;
 
     /**
-     * @var \Magento\Framework\App\RequestInterface
-     */
-    private $request;
-
-    /**
      * @var CalcuratesClient
      */
     private $calcuratesClient;
 
     /**
-     * @var ProductRepositoryInterface
-     */
-    private $productRepository;
-
-    /**
      * @var RatesResponseProcessor
      */
     private $ratesResponseProcessor;
+
+    /**
+     * @var RateRequestBuilder
+     */
+    private $rateRequestBuilder;
+
+    /**
+     * @var ShippingLabelRequestBuilder
+     */
+    private $shippingLabelRequestBuilder;
 
     /**
      * Carrier constructor.
@@ -105,12 +96,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param \Magento\Directory\Model\CurrencyFactory $currencyFactory
      * @param \Magento\Directory\Helper\Data $directoryData
      * @param \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry
-     * @param RegionResource $regionResource
      * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\App\RequestInterface $request
      * @param CalcuratesClient $calcuratesClient
-     * @param ProductRepositoryInterface $productRepository
      * @param RatesResponseProcessor $ratesResponseProcessor
+     * @param RateRequestBuilder $rateRequestBuilder
+     * @param ShippingLabelRequestBuilder $shippingLabelRequestBuilder
      * @param array $data
      */
     public function __construct(
@@ -129,12 +119,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         \Magento\Directory\Model\CurrencyFactory $currencyFactory,
         \Magento\Directory\Helper\Data $directoryData,
         \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
-        RegionResource $regionResource,
         \Magento\Framework\Registry $registry,
-        \Magento\Framework\App\RequestInterface $request,
         CalcuratesClient $calcuratesClient,
-        ProductRepositoryInterface $productRepository,
         RatesResponseProcessor $ratesResponseProcessor,
+        RateRequestBuilder $rateRequestBuilder,
+        ShippingLabelRequestBuilder $shippingLabelRequestBuilder,
         array $data = []
     ) {
         parent::__construct(
@@ -155,12 +144,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             $stockRegistry,
             $data
         );
-        $this->regionResource = $regionResource;
         $this->registry = $registry;
-        $this->request = $request;
         $this->calcuratesClient = $calcuratesClient;
-        $this->productRepository = $productRepository;
         $this->ratesResponseProcessor = $ratesResponseProcessor;
+        $this->rateRequestBuilder = $rateRequestBuilder;
+        $this->shippingLabelRequestBuilder = $shippingLabelRequestBuilder;
     }
 
     /**
@@ -243,46 +231,12 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      */
     protected function getQuotes(RateRequest $request)
     {
-        $streetArray = explode("\n", $request->getDestStreet());
-
-        $apiRequestBody = [
-            'country' => $request->getDestCountryId(),
-            'regionCode' => $request->getDestRegionId() ? $request->getDestRegionCode() : null,
-            'regionName' => $this->getRegionCodeById($request->getDestRegionId()) ?: $request->getDestRegionCode(),
-            'postalCode' => $request->getDestPostcode(),
-            'city' => $request->getDestCity(),
-            'addressLine1' => $streetArray[0],
-            'addressLine2' => $streetArray[1] ?? '',
-            'customerGroup' => '',
-            'promo' => '',
-            'products' => [],
-            'storeView' => $request->getStoreId(),
-        ];
-
-        /** @var Item[] $items */
         $items = $this->getAllItems($request);
-
         $quote = current($items)->getQuote();
-        $customer = $quote->getCustomer();
-        $apiRequestBody = array_merge($apiRequestBody, $this->getCustomerData($quote));
-
-        if ($customer->getId()) {
-            $apiRequestBody['customerGroup'] = $customer->getGroupId();
-        }
-
-        foreach ($items as $item) {
-            $apiRequestBody['products'][] = [
-                'priceWithTax' => round($item->getBasePriceInclTax(), 2),
-                'priceWithoutTax' => round($item->getBasePrice(), 2),
-                'discountAmount' => round($item->getBaseDiscountAmount(), 2),
-                'quantity' => $item->getQty(),
-                'weight' => $item->getWeight(),
-                'origin' => '', // @todo in the next iterations
-                'sku' => $item->getSku(),
-                'categories' => $item->getProduct()->getCategoryIds(),
-                'attributes' => $this->getAttributes($item)
-            ];
-        }
+        $apiRequestBody = $this->rateRequestBuilder->build(
+            $request,
+            $items
+        );
 
         $debugData['request'] = $apiRequestBody;
 
@@ -296,76 +250,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->_debug($debugData);
 
         return $this->ratesResponseProcessor->processResponse($response, $quote);
-    }
-
-    /**
-     * @param string $regionId
-     *
-     * @return string|null
-     */
-    protected function getRegionCodeById($regionId)
-    {
-        if (!$regionId) {
-            return null;
-        }
-
-        if (!empty($this->regionNamesCache[$regionId])) {
-            return $this->regionNamesCache[$regionId];
-        }
-
-        $regionInstance = $this->_regionFactory->create();
-        $this->regionResource->load($regionInstance, $regionId);
-
-        return $this->regionNamesCache[$regionId] = $regionInstance->getName();
-    }
-
-    /**
-     * @param Item $item
-     * @return array
-     */
-    private function getAttributes(Item $item)
-    {
-        $product = $this->productRepository->get($item->getSku());
-        $data = [];
-        foreach ($product->getData() as $key => $value) {
-            if (is_object($value)) {
-                continue;
-            }
-
-            $data[$key] = $value;
-        }
-        foreach ($product->getCustomAttributes() as $customAttribute) {
-            $data[$customAttribute->getAttributeCode()] = $customAttribute->getValue();
-        }
-
-        return $data;
-    }
-
-    /**
-     * Collect customer information from shipping address
-     *
-     * @param \Magento\Quote\Model\Quote $quote
-     *
-     * @return array
-     */
-    private function getCustomerData(\Magento\Quote\Model\Quote $quote)
-    {
-        $customerData = [
-            'contactName' => '',
-            'companyName' => '',
-            'contactPhone' => '',
-        ];
-        $shipAddress = $quote->getShippingAddress();
-
-        $customerData['contactName'] = $shipAddress->getPrefix() . ' ';
-        $customerData['contactName'] .= $shipAddress->getFirstname() ? $shipAddress->getFirstname() . ' ' : '';
-        $customerData['contactName'] .= $shipAddress->getMiddlename() ? $shipAddress->getMiddlename() . ' ' : '';
-        $customerData['contactName'] = trim($customerData['contactName'] . $shipAddress->getLastname());
-
-        $customerData['companyName'] = $shipAddress->getCompany();
-        $customerData['contactPhone'] = $shipAddress->getTelephone();
-
-        return $customerData;
     }
 
     /**
@@ -424,47 +308,10 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         /** @var \Magento\Shipping\Model\Shipment\Request $request */
         $this->_prepareShipmentRequest($request);
 
-        $shippingMethod = $this->request->getParam('calcuratesShippingServiceId');
-        if (!$shippingMethod) {
-            $shippingMethod = explode('_', $request->getShippingMethod());
-            $shippingMethod = end($shippingMethod);
-        }
-
-        $apiRequestBody = [
-            'service' => $shippingMethod,
-            'origin' => $this->getOriginId($request),
-            'shipTo' => [
-                'name' => $request->getRecipientContactPersonName(),
-                'phone' => $request->getRecipientContactPhoneNumber(),
-                'companyName' => $request->getRecipientContactCompanyName(),
-                'addressLine1' => $request->getRecipientAddressStreet1(),
-                'addressLine2' => $request->getRecipientAddressStreet2(),
-                'city' => $request->getRecipientAddressCity(),
-                'region' => $request->getRecipientAddressStateOrProvinceCode(),
-                'postalCode' => $request->getRecipientAddressPostalCode(),
-                'country' => $request->getRecipientAddressCountryCode(),
-                'addressResidentialIndicator' => 'unknown',
-            ],
-            'packages' => [],
-            'testLabel' => (bool)$this->getDebugFlag(),
-            'validateAddress' => 'no_validation',
-        ];
-
-        foreach ($request->getPackages() as $package) {
-            $rawPackage = [
-                'weight' => [
-                    'value' => $package['params']['weight'],
-                    'unit' => $this->getWeightUnits($package['params']['weight_units']),
-                ],
-                'dimensions' => [
-                    'length' => $package['params']['length'],
-                    'width' => $package['params']['width'],
-                    'height' => $package['params']['height'],
-                    'unit' => $this->getDimensionUnits($package['params']['dimension_units']),
-                ],
-            ];
-            $apiRequestBody['packages'][] = $rawPackage;
-        }
+        $apiRequestBody = $this->shippingLabelRequestBuilder->build(
+            $request,
+            (bool)$this->getDebugFlag()
+        );
 
         $debugData = [
             'request' => $apiRequestBody,
@@ -482,67 +329,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->_debug($debugData);
 
         return $this->prepareShippingLabelContent($response);
-    }
-
-    /**
-     * @param \Magento\Shipping\Model\Shipment\Request $request
-     * @return string
-     */
-    protected function getOriginId($request)
-    {
-        $originData = $request->getOrderShipment()->getOrder()->getData('calcurates_origin_data');
-        if (!$originData || !is_string($originData)) {
-            return '';
-        }
-        $originData = json_decode($originData, true);
-
-        return $originData['id'];
-    }
-
-    /**
-     * @param string $weightUnits
-     * @return string
-     */
-    protected function getWeightUnits($weightUnits)
-    {
-        switch ($weightUnits) {
-            case \Zend_Measure_Weight::POUND:
-                $weightUnits = 'pound';
-                break;
-            case \Zend_Measure_Weight::KILOGRAM:
-                $weightUnits = 'kilogram';
-                break;
-            case \Zend_Measure_Weight::OUNCE:
-                $weightUnits = 'ounce';
-                break;
-            case \Zend_Measure_Weight::GRAM:
-                $weightUnits = 'gram';
-                break;
-            default:
-                throw new \InvalidArgumentException('Invalid weight units');
-        }
-
-        return $weightUnits;
-    }
-
-    /**
-     * @param string $dimensionUnits
-     * @return string
-     */
-    protected function getDimensionUnits($dimensionUnits)
-    {
-        switch ($dimensionUnits) {
-            case \Zend_Measure_Length::INCH:
-                $dimensionUnits = 'inch';
-                break;
-            case \Zend_Measure_Length::CENTIMETER:
-                $dimensionUnits = 'centimeter';
-                break;
-            default:
-                throw new \InvalidArgumentException('Invalid dimension units');
-        }
-
-        return $dimensionUnits;
     }
 
     /**
@@ -667,9 +453,14 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      */
     protected function loadTracking($tracking, $result)
     {
-        $shippingMethod = $this->trackingObject->getShipment()->getOrder()->getShippingMethod(false);
-        $shippingMethod = explode('_', $shippingMethod);
-        $serviceId = end($shippingMethod);
+        $serviceId = $this->trackingObject->getData(CustomSalesAttributesInterface::SERVICE_ID);
+        if (empty($serviceId)) {
+            // backward compatibility
+            $shippingMethod = $this->trackingObject->getShipment()->getOrder()->getShippingMethod(false);
+            $shippingMethod = explode('_', $shippingMethod);
+            $serviceId = end($shippingMethod);
+        }
+
         $debugData = ['request' => $serviceId . ' - ' . $tracking, 'type' => 'tracking'];
         $response = [];
         try {

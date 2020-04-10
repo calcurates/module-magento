@@ -8,6 +8,7 @@
 
 namespace Calcurates\ModuleMagento\Observer;
 
+use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 
@@ -24,7 +25,10 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
         /* @var \Magento\Quote\Model\Quote $quote */
         $quote = $observer->getEvent()->getData('quote');
 
-        $order->setData('calcurates_origin_data', $quote->getData('calcurates_origin_data'));
+        $order->setData(
+            CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE,
+            $quote->getData(CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE)
+        );
 
         return $this;
     }

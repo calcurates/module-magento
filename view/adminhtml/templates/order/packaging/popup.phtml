@@ -12,7 +12,8 @@ $sizeSource = $block->getSourceSizeModel()->toOptionArray(); // used in included
 $girthEnabled = $block->isDisplayGirthValue() && $block->isGirthAllowed() ? 1 : 0; // used in included `popup_content.phtml` file
 /** @var \Calcurates\ModuleMagento\Helper\ShipmentAddressHelper $helper */
 $helper = $this->helper(\Calcurates\ModuleMagento\Helper\ShipmentAddressHelper::class);
-$order = $block->getShipment()->getOrder();
+$shipment = $block->getShipment();
+$order = $shipment->getOrder();
 // phpcs:disable Magento2.Security.IncludeFile.FoundIncludeFile
 ?>
 <?php /** fix for magento 2.3.3 validation styles. Remove after fixing in magento */ ?>
@@ -58,7 +59,11 @@ $order = $block->getShipment()->getOrder();
             }
         });
         packaging.setItemQtyCallback(function (itemId) {
-            var item = $$('[name="shipment[items]['+itemId+']"]')[0];
+            var item = $$('[name="shipment[items]['+itemId+']"]')[0],
+                itemTitle = $('order_item_' + itemId + '_title');
+            if (!itemTitle && !item) {
+                return 0;
+            }
             if (item && !isNaN(item.value)) {
                 return item.value;
             }
@@ -213,9 +218,9 @@ $order = $block->getShipment()->getOrder();
                     <span class="title"><?= __('Shipping Method') ?></span>
                 </div>
                 <div class="admin__page-section-item-content">
-                    <?php $shippingServiceId = $helper->getShippingServiceId($order); ?>
+                    <?php $shippingServiceId = $helper->getShippingServiceId($order, $shipment); ?>
                     <select name="calcurates_change_shipping_method_select" id="calcurates_change_shipping_method_select" class="select admin__control-select carrier" disabled="disabled">
-                        <?php foreach ($helper->getShippingServices($order) as $shippingService): ?>
+                        <?php foreach ($helper->getShippingServices($order, $shipment) as $shippingService): ?>
                             <option value="<?= $block->escapeHtml($shippingService['value']) ?>"<?= $shippingService['value'] == $shippingServiceId ? ' selected="selected"' : '' ?>>
                                 <?= $block->escapeHtml($shippingService['label']) ?>
                             </option>
