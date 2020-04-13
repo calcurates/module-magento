@@ -71,6 +71,9 @@ class RateRequestBuilder
      */
     public function build(RateRequest $request, array $items)
     {
+        /**
+         * @var $quote \Magento\Quote\Model\Quote
+         */
         $quote = current($items)->getQuote();
         $customerData = $this->getCustomerData($quote);
         $streetArray = explode("\n", $request->getDestStreet());
