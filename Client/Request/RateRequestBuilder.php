@@ -71,6 +71,9 @@ class RateRequestBuilder
      */
     public function build(RateRequest $request, array $items)
     {
+        /**
+         * @var $quote \Magento\Quote\Model\Quote
+         */
         $quote = current($items)->getQuote();
         $customerData = $this->getCustomerData($quote);
         $streetArray = explode("\n", $request->getDestStreet());
@@ -89,7 +92,7 @@ class RateRequestBuilder
                 'companyName' => $customerData['companyName'],
                 'contactPhone' => $customerData['contactPhone'],
             ],
-            'customerGroup' => $customer->getId() ? $customer->getGroupId() : null,
+            'customerGroup' => $customer->getGroupId() ?: 0,
             'promo' => null,
             'products' => [],
             // storeId in $request - from quote, and not correct if we open store via store url
