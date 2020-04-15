@@ -92,7 +92,7 @@ class RateRequestBuilder
                 'companyName' => $customerData['companyName'],
                 'contactPhone' => $customerData['contactPhone'],
             ],
-            'customerGroup' => $customer->getId() ? $customer->getGroupId() : null,
+            'customerGroup' => $customer->getGroupId(),
             'promo' => null,
             'products' => [],
             // storeId in $request - from quote, and not correct if we open store via store url
