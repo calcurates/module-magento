@@ -29,6 +29,7 @@ class GetSourceCodesPerSkus
      */
     public function execute(array $skus)
     {
+        // phpcs:ignore Magento2.Security.InsecureFunction
         $cacheKey = md5(implode('___', $skus));
 
         if (!array_key_exists($cacheKey, $this->cache)) {

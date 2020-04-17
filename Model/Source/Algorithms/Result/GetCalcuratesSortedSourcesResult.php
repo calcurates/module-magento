@@ -101,30 +101,36 @@ class GetCalcuratesSortedSourcesResult
                 $sortedSourceCodes
             );
 
-        $itemsPositionForSku = array_keys($mainSourceCodesForSkus);
-        // sort source items, where calcurate-recommended sourceCodes are first
-        usort($sourceItems,
-            function (SourceItemInterface $itemA, SourceItemInterface $itemB)
-            use ($mainSourceCodesForSkus, $itemsPositionForSku) {
-                $normalizedSkuA = $this->normalizeSku($itemA->getSku());
-                $normalizedSkuB = $this->normalizeSku($itemB->getSku());
-                if ($normalizedSkuA != $normalizedSkuB) {
-                    $positionSkuA = array_search($normalizedSkuA, $itemsPositionForSku);
-                    $positionSkuB = array_search($normalizedSkuB, $itemsPositionForSku);
-                    return $positionSkuA < $positionSkuB ? -1 : 1;
-                }
+        if (!empty($mainSourceCodesForSkus)) {
+            $itemsPositionForSku = array_keys($mainSourceCodesForSkus);
+            // sort source items, where calcurate-recommended sourceCodes are first
+            usort($sourceItems,
+                function (SourceItemInterface $itemA, SourceItemInterface $itemB)
+                use ($mainSourceCodesForSkus, $itemsPositionForSku) {
+                    $normalizedSkuA = $this->normalizeSku($itemA->getSku());
+                    $normalizedSkuB = $this->normalizeSku($itemB->getSku());
+                    if ($normalizedSkuA != $normalizedSkuB) {
+                        $positionSkuA = array_search($normalizedSkuA, $itemsPositionForSku);
+                        $positionSkuB = array_search($normalizedSkuB, $itemsPositionForSku);
 
-                if ($mainSourceCodesForSkus[$normalizedSkuA] == $itemA->getSourceCode()) {
-                    return -1;
-                }
+                        return $positionSkuA <=> $positionSkuB;
+                    }
 
-                if ($mainSourceCodesForSkus[$normalizedSkuB] == $itemB->getSourceCode()) {
-                    return 1;
-                }
+                    $sourceCodeA = $mainSourceCodesForSkus[$normalizedSkuA] ?? "";
+                    $sourceCodeB = $mainSourceCodesForSkus[$normalizedSkuB] ?? "";
 
-                return 0;
-            }
-        );
+                    if ($sourceCodeA == $itemA->getSourceCode()) {
+                        return -1;
+                    }
+
+                    if ($sourceCodeB == $itemB->getSourceCode()) {
+                        return 1;
+                    }
+
+                    return 0;
+                }
+            );
+        }
 
         foreach ($sourceItems as $sourceItem) {
             $normalizedSku = $this->normalizeSku($sourceItem->getSku());

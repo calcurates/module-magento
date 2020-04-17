@@ -14,7 +14,6 @@ $girthEnabled = $block->isDisplayGirthValue() && $block->isGirthAllowed() ? 1 : 
 $helper = $this->helper(\Calcurates\ModuleMagento\Helper\ShipmentAddressHelper::class);
 $shipment = $block->getShipment();
 $order = $shipment->getOrder();
-// phpcs:disable Magento2.Security.IncludeFile.FoundIncludeFile
 ?>
 <?php /** fix for magento 2.3.3 validation styles. Remove after fixing in magento */ ?>
 <style type="text/css">
@@ -208,7 +207,10 @@ $order = $shipment->getOrder();
         }
     });
 </script>
-<?php include ($block->getTemplateFile('Magento_Shipping::order/packaging/popup_content.phtml')); ?>
+<?php
+// phpcs:ignore Magento2.Security.IncludeFile.FoundIncludeFile
+include ($block->getTemplateFile('Magento_Shipping::order/packaging/popup_content.phtml'));
+?>
 <div id="packaging_window_overview">
     <div class="message message-warning" style="display: none"></div>
     <div class="admin__page-section">
