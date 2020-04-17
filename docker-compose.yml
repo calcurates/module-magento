@@ -27,7 +27,22 @@ services:
       dockerfile: Dockerfile
     volumes:
       - 'Magento2DataVolume:/var/www/magento2'
-      - '.:/var/www/magento2/app/code/Calcurates/ModuleMagento'
+      - './Api:/var/www/magento2/app/code/Calcurates/ModuleMagento/Api'
+      - './Client:/var/www/magento2/app/code/Calcurates/ModuleMagento/Client'
+      - './etc:/var/www/magento2/app/code/Calcurates/ModuleMagento/etc'
+      - './Helper:/var/www/magento2/app/code/Calcurates/ModuleMagento/Helper'
+      - './i18n:/var/www/magento2/app/code/Calcurates/ModuleMagento/i18n'
+      - './Model:/var/www/magento2/app/code/Calcurates/ModuleMagento/Model'
+      - './Observer:/var/www/magento2/app/code/Calcurates/ModuleMagento/Observer'
+      - './Plugin:/var/www/magento2/app/code/Calcurates/ModuleMagento/Plugin'
+      - './Setup:/var/www/magento2/app/code/Calcurates/ModuleMagento/Setup'
+      - './view:/var/www/magento2/app/code/Calcurates/ModuleMagento/view'
+      - './.editorconfig:/var/www/magento2/app/code/Calcurates/ModuleMagento/.editorconfig'
+      - './composer.json:/var/www/magento2/app/code/Calcurates/ModuleMagento/composer.json'
+      - './installation_guide.pdf:/var/www/magento2/app/code/Calcurates/ModuleMagento/installation_guide.pdf'
+      - './LICENSE:/var/www/magento2/app/code/Calcurates/ModuleMagento/LICENSE'
+      - './README.md:/var/www/magento2/app/code/Calcurates/ModuleMagento/README.md'
+      - './registration.php:/var/www/magento2/app/code/Calcurates/ModuleMagento/registration.php'
       - './vendor:/var/www/magento2/vendor'
     container_name: magento2-php
     ports:
