@@ -88,7 +88,7 @@ ENV COMPOSER_HOME=/.composer
 
 # utilites
 RUN set -xe \
-    && apk --no-cache add gzip tar htop
+    && apk --no-cache add unzip gzip tar htop
 
 
 # template of magento2
