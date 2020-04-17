@@ -60,7 +60,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - 'Magento2DataVolume:/var/www/magento2'
-      - '.:/var/www/magento2/app/code/Calcurates/ModuleMagento'
+      - './vendor:/var/www/magento2/vendor'
     ports:
       - "80:80"
     container_name: magento2-nginx
