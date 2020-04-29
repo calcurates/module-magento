@@ -1,5 +1,10 @@
 FROM php:7.3-fpm-alpine
 
+# utilites
+RUN set -xe \
+    && apk --no-cache add unzip gzip tar htop curl
+
+
 # setup php
 RUN set -xe \
     && apk update \
@@ -80,14 +85,9 @@ COPY php.ini $PHP_INI_DIR/
 COPY auth.json /.composer/
 
 
-# utilites
-RUN set -xe \
-    && apk --no-cache add unzip gzip tar htop
-
-
 # Composer
 RUN curl -L -o /composer.phar https://github.com/composer/composer/releases/download/1.10.5/composer.phar \
-    && chmod 777 /composer.phar \
+    && chmod 777 /composer.phar
 ENV COMPOSER_HOME=/.composer
 
 
@@ -95,11 +95,11 @@ ENV COMPOSER_HOME=/.composer
 RUN set -xe \
     && mkdir /templates \
     && cd /templates \
-    && /composer.phar create-project --repository=https://repo.magento.com/ magento/project-community-edition:^2.3.4 mg234 \
-    && cd mg234 \
-    && tar -zcvf ../mg234.tar.gz * \
+    && /composer.phar create-project --repository=https://repo.magento.com/ magento/project-community-edition:^2.3.5 mg235 \
+    && cd mg235 \
+    && tar -zcvf ../mg235.tar.gz * \
     && cd .. \
-    && rm -rf mg234 \
+    && rm -rf mg235 \
     && /composer.phar clear-cache
 
 

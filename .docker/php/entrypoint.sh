@@ -14,9 +14,13 @@ isSourced=`mysql --silent --skip-column-names --user="$MYSQL_USER" --password="$
 
 if [ "$isSourced" -eq "0" ]; then
     echo "Copying the Magento2 template to the working directory..."
-    tar -zxvf /templates/mg234.tar.gz
+    rm -rf vendor/*
+    tar -zxvf /templates/mg235.tar.gz
 
-    chmod 755 bin/magento
+    chmod 777 bin/magento
+
+    # fix the fucking magento. https://magento.stackexchange.com/questions/221002/magento-2-1-cli-install-command-failed
+    bin/magento setup:uninstall
 
     bin/magento setup:install \
             --base-url=http://localhost/ \
@@ -51,7 +55,7 @@ if [ "$isSourced" -eq "0" ]; then
     php vendor/bin/phpcs --config-set default_standard Magento2
     php vendor/bin/phpcs --config-set colors 1
     php vendor/bin/phpcs --config-set installed_paths /var/www/magento2/vendor/magento/magento-coding-standard/
-    php vendor/bin/phpcs --config-set severity 8
+    php vendor/bin/phpcs --config-set severity 7
     php vendor/bin/phpcs --config-set show_progress 1
 
     echo "php ${PWD}/vendor/bin/phpcs ${PWD}/app/code/Calcurates/ModuleMagento -v" > /phpcs
