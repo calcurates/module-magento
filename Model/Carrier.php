@@ -495,7 +495,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             $error->setErrorMessage(!empty($response['message']) ? $response['message'] : __('Tracking getting error'));
             $result->append($error);
         }
-
     }
 
     /**
@@ -583,6 +582,5 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             && !empty($request->getDestRegionCode())
             && !empty($request->getDestPostcode())
             && !empty($request->getDestCountryId());
-
     }
 }

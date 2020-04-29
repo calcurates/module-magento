@@ -10,5 +10,4 @@ namespace Calcurates\ModuleMagento\Api\Fake;
 
 interface GetDefaultSourceSelectionAlgorithmCodeInterface
 {
-
 }

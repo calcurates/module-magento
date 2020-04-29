@@ -59,10 +59,6 @@ RUN set -xe \
     && docker-php-ext-install pdo_mysql \
     && docker-php-ext-enable pdo_mysql \
 
-    # Composer
-    && curl -L -o /composer.phar https://github.com/composer/composer/releases/download/1.10.5/composer.phar \
-    && chmod 777 /composer.phar \
-
 
     # Cleanup
     && apk del --no-cache .build-deps \
@@ -84,11 +80,15 @@ COPY php.ini $PHP_INI_DIR/
 COPY auth.json /.composer/
 
 
-ENV COMPOSER_HOME=/.composer
-
 # utilites
 RUN set -xe \
     && apk --no-cache add unzip gzip tar htop
+
+
+# Composer
+RUN curl -L -o /composer.phar https://github.com/composer/composer/releases/download/1.10.5/composer.phar \
+    && chmod 777 /composer.phar \
+ENV COMPOSER_HOME=/.composer
 
 
 # template of magento2

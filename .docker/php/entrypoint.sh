@@ -55,7 +55,14 @@ if [ "$isSourced" -eq "0" ]; then
     php vendor/bin/phpcs --config-set show_progress 1
 
     echo "php ${PWD}/vendor/bin/phpcs ${PWD}/app/code/Calcurates/ModuleMagento -v" > /phpcs
-    chmod 755 /phpcs
+    chmod 777 /phpcs
+
+
+    echo "Config php-cs-fixer..."
+    curl -L -o /php-cs-fixer.phar https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.16.3/php-cs-fixer.phar
+    chmod 777 /php-cs-fixer.phar
+    echo "php /php-cs-fixer.phar fix ${PWD}/app/code/Calcurates/ModuleMagento --rules=@PSR2" > /php-cs-fixer
+    chmod 777 /php-cs-fixer
 fi
 
 # avoid stupid docker initialization
