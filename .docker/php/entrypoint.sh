@@ -19,7 +19,7 @@ if [ "$isSourced" -eq "0" ]; then
 
     chmod 777 bin/magento
 
-    # fix the fucking magento. https://magento.stackexchange.com/questions/221002/magento-2-1-cli-install-command-failed
+    # fix the magento. https://magento.stackexchange.com/questions/221002/magento-2-1-cli-install-command-failed
     bin/magento setup:uninstall
 
     bin/magento setup:install \
