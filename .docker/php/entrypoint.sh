@@ -46,6 +46,16 @@ if [ "$isSourced" -eq "0" ]; then
     find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
     find var generated vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} +
     chown -R :www-data .
+
+    echo "Config phpcs..."
+    php vendor/bin/phpcs --config-set default_standard Magento2
+    php vendor/bin/phpcs --config-set colors 1
+    php vendor/bin/phpcs --config-set installed_paths /var/www/magento2/vendor/magento/magento-coding-standard/
+    php vendor/bin/phpcs --config-set severity 8
+    php vendor/bin/phpcs --config-set show_progress 1
+
+    echo "php ${PWD}/vendor/bin/phpcs ${PWD}/app/code/Calcurates/ModuleMagento -v" > /phpcs
+    chmod 755 /phpcs
 fi
 
 # avoid stupid docker initialization
