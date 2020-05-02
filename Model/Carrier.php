@@ -5,10 +5,11 @@
  * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @package Calcurates_ModuleMagento
  */
+
 namespace Calcurates\ModuleMagento\Model;
 
+use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
-use Calcurates\ModuleMagento\Client\CalcuratesClient;
 use Calcurates\ModuleMagento\Client\Request\RateRequestBuilder;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Request\ShippingLabelRequestBuilder;
@@ -60,7 +61,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     protected $trackingObject;
 
     /**
-     * @var CalcuratesClient
+     * @var CalcuratesClientInterface
      */
     private $calcuratesClient;
 
@@ -97,7 +98,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param \Magento\Directory\Helper\Data $directoryData
      * @param \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry
      * @param \Magento\Framework\Registry $registry
-     * @param CalcuratesClient $calcuratesClient
+     * @param CalcuratesClientInterface $calcuratesClient
      * @param RatesResponseProcessor $ratesResponseProcessor
      * @param RateRequestBuilder $rateRequestBuilder
      * @param ShippingLabelRequestBuilder $shippingLabelRequestBuilder
@@ -120,7 +121,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         \Magento\Directory\Helper\Data $directoryData,
         \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
         \Magento\Framework\Registry $registry,
-        CalcuratesClient $calcuratesClient,
+        CalcuratesClientInterface $calcuratesClient,
         RatesResponseProcessor $ratesResponseProcessor,
         RateRequestBuilder $rateRequestBuilder,
         ShippingLabelRequestBuilder $shippingLabelRequestBuilder,

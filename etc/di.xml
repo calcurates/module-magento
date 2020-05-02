@@ -18,6 +18,15 @@
     <preference for="Calcurates\ModuleMagento\Api\Data\ShippingDataInterface" type="Calcurates\ModuleMagento\Model\Data\ShippingData"/>
     <preference for="Calcurates\ModuleMagento\Api\Shipping\ShippingDataResolverInterface" type="Calcurates\ModuleMagento\Model\Shipment\ShippingDataResolver"/>
 
+    <preference for="Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface"
+                type="Calcurates\ModuleMagento\Model\Carrier\CacluratesCachedClient"/>
+
+    <type name="Calcurates\ModuleMagento\Model\Carrier\CacluratesCachedClient">
+        <arguments>
+            <argument name="calcuratesClient" xsi:type="object">Calcurates\ModuleMagento\Client\CalcuratesClient\Proxy</argument>
+        </arguments>
+    </type>
+
     <type name="Magento\Shipping\Model\Order\Track">
         <plugin name="Calcurates_ModuleMagento::Track" type="Calcurates\ModuleMagento\Plugin\Model\Order\TrackPlugin"/>
     </type>
@@ -35,7 +44,6 @@
 
     <type name="Calcurates\ModuleMagento\Model\Carrier">
         <arguments>
-            <argument name="calcuratesClient" xsi:type="object">Calcurates\ModuleMagento\Client\CalcuratesClient\Proxy</argument>
             <argument name="rateRequestBuilder" xsi:type="object">Calcurates\ModuleMagento\Client\Request\RateRequestBuilder\Proxy</argument>
             <argument name="shippingLabelRequestBuilder" xsi:type="object">Calcurates\ModuleMagento\Client\Request\ShippingLabelRequestBuilder\Proxy</argument>
         </arguments>
