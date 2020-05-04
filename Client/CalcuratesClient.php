@@ -8,11 +8,12 @@
 
 namespace Calcurates\ModuleMagento\Client;
 
+use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
 use Calcurates\ModuleMagento\Client\Http\HttpClient;
 use Calcurates\ModuleMagento\Model\Config;
 use Magento\Framework\Exception\LocalizedException;
 
-class CalcuratesClient
+class CalcuratesClient implements CalcuratesClientInterface
 {
     /**
      * @var Config
