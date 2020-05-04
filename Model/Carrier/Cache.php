@@ -16,7 +16,7 @@ class Cache
     const TYPE_IDENTIFIER = 'calcurates';
     const CACHE_TAG = 'calcurates';
     const RATES_IDENTIFIER = 'rates';
-    const LIFETIME = 600;
+    const LIFETIME = 60;
 
     /**
      * @var SerializerInterface
