@@ -58,8 +58,7 @@ class RatesResponseProcessor
         CalcuratesConfig $calcuratesConfig,
         RateBuilder $rateBuilder,
         SerializerInterface $serializer
-    )
-    {
+    ) {
         $this->rateFactory = $rateFactory;
         $this->rateErrorFactory = $rateErrorFactory;
         $this->calcuratesConfig = $calcuratesConfig;

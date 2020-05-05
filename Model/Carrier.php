@@ -5,13 +5,15 @@
  * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @package Calcurates_ModuleMagento
  */
+
 namespace Calcurates\ModuleMagento\Model;
 
+use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
-use Calcurates\ModuleMagento\Client\CalcuratesClient;
 use Calcurates\ModuleMagento\Client\Request\RateRequestBuilder;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Request\ShippingLabelRequestBuilder;
+use Calcurates\ModuleMagento\Model\Carrier\Validator\RateRequestValidator;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
@@ -60,7 +62,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     protected $trackingObject;
 
     /**
-     * @var CalcuratesClient
+     * @var CalcuratesClientInterface
      */
     private $calcuratesClient;
 
@@ -80,6 +82,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private $shippingLabelRequestBuilder;
 
     /**
+     * @var RateRequestValidator
+     */
+    private $rateRequestValidator;
+
+    /**
      * Carrier constructor.
      * @param ScopeConfigInterface $scopeConfig
      * @param ErrorFactory $rateErrorFactory
@@ -97,10 +104,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param \Magento\Directory\Helper\Data $directoryData
      * @param \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry
      * @param \Magento\Framework\Registry $registry
-     * @param CalcuratesClient $calcuratesClient
+     * @param CalcuratesClientInterface $calcuratesClient
      * @param RatesResponseProcessor $ratesResponseProcessor
      * @param RateRequestBuilder $rateRequestBuilder
      * @param ShippingLabelRequestBuilder $shippingLabelRequestBuilder
+     * @param RateRequestValidator $rateRequestValidator
      * @param array $data
      */
     public function __construct(
@@ -120,10 +128,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         \Magento\Directory\Helper\Data $directoryData,
         \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
         \Magento\Framework\Registry $registry,
-        CalcuratesClient $calcuratesClient,
+        CalcuratesClientInterface $calcuratesClient,
         RatesResponseProcessor $ratesResponseProcessor,
         RateRequestBuilder $rateRequestBuilder,
         ShippingLabelRequestBuilder $shippingLabelRequestBuilder,
+        RateRequestValidator $rateRequestValidator,
         array $data = []
     ) {
         parent::__construct(
@@ -149,6 +158,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->ratesResponseProcessor = $ratesResponseProcessor;
         $this->rateRequestBuilder = $rateRequestBuilder;
         $this->shippingLabelRequestBuilder = $shippingLabelRequestBuilder;
+        $this->rateRequestValidator = $rateRequestValidator;
     }
 
     /**
@@ -164,7 +174,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             return false;
         }
 
-        if ($this->validateRequest($request)) {
+        if ($this->rateRequestValidator->validate($request)) {
             $this->result = $this->getQuotes($request);
         } else {
             $result = $this->_rateFactory->create();
@@ -495,7 +505,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             $error->setErrorMessage(!empty($response['message']) ? $response['message'] : __('Tracking getting error'));
             $result->append($error);
         }
-
     }
 
     /**
@@ -570,19 +579,5 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     public function getContainerTypes(\Magento\Framework\DataObject $params = null)
     {
         return ['CUSTOM_PACKAGE' => __('Custom Package')];
-    }
-
-    /**
-     * @param RateRequest $request
-     * @return bool
-     */
-    private function validateRequest(RateRequest $request)
-    {
-        return !empty($request->getDestStreet())
-            && !empty($request->getDestCity())
-            && !empty($request->getDestRegionCode())
-            && !empty($request->getDestPostcode())
-            && !empty($request->getDestCountryId());
-
     }
 }

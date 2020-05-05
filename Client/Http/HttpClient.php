@@ -85,7 +85,7 @@ class HttpClient
      */
     public function get($url)
     {
-       return $this->request(self::TYPE_GET, $url);
+        return $this->request(self::TYPE_GET, $url);
     }
 
     /**

@@ -8,7 +8,7 @@
 
 namespace Calcurates\ModuleMagento\Helper;
 
-use Calcurates\ModuleMagento\Client\CalcuratesClient;
+use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
 use Calcurates\ModuleMagento\Model\Source\ShipmentServiceRetriever;
 use Calcurates\ModuleMagento\Model\Source\ShipmentSourceCodeRetriever;
 use Calcurates\ModuleMagento\Model\Source\SourceAddressService;
@@ -39,7 +39,7 @@ class ShipmentAddressHelper extends AbstractHelper
     private $addressFactory;
 
     /**
-     * @var CalcuratesClient
+     * @var CalcuratesClientInterface
      */
     private $calcuratesClient;
 
@@ -69,7 +69,7 @@ class ShipmentAddressHelper extends AbstractHelper
      * @param Address\Renderer $addressRenderer
      * @param \Magento\Backend\Model\Auth\Session $authSession
      * @param \Magento\Sales\Model\Order\AddressFactory $addressFactory
-     * @param CalcuratesClient $calcuratesClient
+     * @param CalcuratesClientInterface $calcuratesClient
      * @param SourceAddressService $sourceAddressService
      * @param \Magento\Directory\Model\RegionFactory $regionFactory
      * @param ShipmentSourceCodeRetriever $shipmentSourceCodeRetriever
@@ -80,7 +80,7 @@ class ShipmentAddressHelper extends AbstractHelper
         Address\Renderer $addressRenderer,
         \Magento\Backend\Model\Auth\Session $authSession,
         \Magento\Sales\Model\Order\AddressFactory $addressFactory,
-        CalcuratesClient $calcuratesClient,
+        CalcuratesClientInterface $calcuratesClient,
         SourceAddressService $sourceAddressService,
         \Magento\Directory\Model\RegionFactory $regionFactory,
         ShipmentSourceCodeRetriever $shipmentSourceCodeRetriever,

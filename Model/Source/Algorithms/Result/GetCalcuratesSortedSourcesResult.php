@@ -104,9 +104,9 @@ class GetCalcuratesSortedSourcesResult
         if (!empty($mainSourceCodesForSkus)) {
             $itemsPositionForSku = array_keys($mainSourceCodesForSkus);
             // sort source items, where calcurate-recommended sourceCodes are first
-            usort($sourceItems,
-                function (SourceItemInterface $itemA, SourceItemInterface $itemB)
-                use ($mainSourceCodesForSkus, $itemsPositionForSku) {
+            usort(
+                $sourceItems,
+                function (SourceItemInterface $itemA, SourceItemInterface $itemB) use ($mainSourceCodesForSkus, $itemsPositionForSku) {
                     $normalizedSkuA = $this->normalizeSku($itemA->getSku());
                     $normalizedSkuB = $this->normalizeSku($itemB->getSku());
                     if ($normalizedSkuA != $normalizedSkuB) {

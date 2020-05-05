@@ -10,7 +10,7 @@ namespace Calcurates\ModuleMagento\Model\Data;
 use Calcurates\ModuleMagento\Api\Data\ShippingDataInterface;
 use Magento\Framework\Api\AbstractExtensibleObject;
 
-class ShippingData  extends AbstractExtensibleObject implements ShippingDataInterface
+class ShippingData extends AbstractExtensibleObject implements ShippingDataInterface
 {
 
     /**

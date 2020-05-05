@@ -57,7 +57,7 @@ class OrderItemsRetriever
             foreach ($requestData as $item) {
                 $orderItems[] = $this->orderItemRepository->get($item['orderItem']);
             }
-        } elseif($orderId) {
+        } elseif ($orderId) {
             /** @var \Magento\Sales\Model\Order $order */
             $order = $this->orderRepository->get($orderId);
             foreach ($order->getAllItems() as $orderItem) {

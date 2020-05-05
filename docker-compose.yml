@@ -1,0 +1,68 @@
+version: '3.7'
+
+volumes:
+  Magento2DataVolume:
+
+services:
+  mysql:
+    build:
+      context: ./.docker/mysql
+      dockerfile: Dockerfile
+    command: [--innodb-use-native-aio=0]
+    container_name: magento2-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_PASSWORD=passwoRt
+      - MYSQL_USER=magento2
+      - MYSQL_DATABASE=magento2
+    volumes:
+      - './.docker/mysql/data:/var/lib/mysql'
+
+  php:
+    privileged: true
+    build:
+      context: ./.docker/php
+      dockerfile: Dockerfile
+    volumes:
+      - 'Magento2DataVolume:/var/www/magento2'
+      - './Api:/var/www/magento2/app/code/Calcurates/ModuleMagento/Api'
+      - './Client:/var/www/magento2/app/code/Calcurates/ModuleMagento/Client'
+      - './etc:/var/www/magento2/app/code/Calcurates/ModuleMagento/etc'
+      - './Helper:/var/www/magento2/app/code/Calcurates/ModuleMagento/Helper'
+      - './i18n:/var/www/magento2/app/code/Calcurates/ModuleMagento/i18n'
+      - './Model:/var/www/magento2/app/code/Calcurates/ModuleMagento/Model'
+      - './Observer:/var/www/magento2/app/code/Calcurates/ModuleMagento/Observer'
+      - './Plugin:/var/www/magento2/app/code/Calcurates/ModuleMagento/Plugin'
+      - './Setup:/var/www/magento2/app/code/Calcurates/ModuleMagento/Setup'
+      - './view:/var/www/magento2/app/code/Calcurates/ModuleMagento/view'
+      - './.editorconfig:/var/www/magento2/app/code/Calcurates/ModuleMagento/.editorconfig'
+      - './composer.json:/var/www/magento2/app/code/Calcurates/ModuleMagento/composer.json'
+      - './installation_guide.pdf:/var/www/magento2/app/code/Calcurates/ModuleMagento/installation_guide.pdf'
+      - './LICENSE:/var/www/magento2/app/code/Calcurates/ModuleMagento/LICENSE'
+      - './README.md:/var/www/magento2/app/code/Calcurates/ModuleMagento/README.md'
+      - './registration.php:/var/www/magento2/app/code/Calcurates/ModuleMagento/registration.php'
+      - './vendor:/var/www/magento2/vendor'
+    container_name: magento2-php
+    ports:
+      - "9000:9000"
+    environment:
+      - MYSQL_PASSWORD=passwoRt
+      - MYSQL_USER=magento2
+      - MYSQL_DATABASE=magento2
+    depends_on:
+      - mysql
+
+  nginx:
+    build:
+      context: ./.docker/nginx
+      dockerfile: Dockerfile
+    volumes:
+      - 'Magento2DataVolume:/var/www/magento2'
+      - './vendor:/var/www/magento2/vendor'
+    ports:
+      - "80:80"
+    container_name: magento2-nginx
+    depends_on:
+      - php
