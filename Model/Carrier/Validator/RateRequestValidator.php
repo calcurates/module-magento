@@ -8,6 +8,7 @@
 
 namespace Calcurates\ModuleMagento\Model\Carrier\Validator;
 
+use Magento\Directory\Helper\Data;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 
 class RateRequestValidator
@@ -18,12 +19,19 @@ class RateRequestValidator
     private $request;
 
     /**
+     * @var Data
+     */
+    private $helper;
+
+    /**
      * RequestRatesValidator constructor.
      * @param \Magento\Framework\App\RequestInterface $request
+     * @param Data $helper
      */
-    public function __construct(\Magento\Framework\App\RequestInterface $request)
+    public function __construct(\Magento\Framework\App\RequestInterface $request, Data $helper)
     {
         $this->request = $request;
+        $this->helper = $helper;
     }
 
     /**
@@ -57,10 +65,26 @@ class RateRequestValidator
      */
     private function validateRequest(RateRequest $request)
     {
+        $isRegionRequired = $this->isRegionRequired($request->getDestCountryId());
         return !empty($request->getDestStreet())
             && !empty($request->getDestCity())
-            && !empty($request->getDestRegionCode())
+            && (!$isRegionRequired || !empty($request->getDestRegionCode()))
             && !empty($request->getDestPostcode())
             && !empty($request->getDestCountryId());
+    }
+
+    /**
+     * @param string|null $country
+     * @return bool
+     */
+    private function isRegionRequired($country)
+    {
+        if (!$country) {
+            return false;
+        }
+
+        $countriesWithStatesRequired = $this->helper->getCountriesWithStatesRequired();
+
+        return in_array($country, $countriesWithStatesRequired);
     }
 }
