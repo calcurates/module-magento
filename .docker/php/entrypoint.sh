@@ -69,6 +69,6 @@ if [ "$isSourced" -eq "0" ]; then
     chmod 777 /php-cs-fixer
 fi
 
-# avoid stupid docker initialization
+# avoid the docker initialization
 # see https://github.com/docker/compose/issues/1809
 exec "$@"
