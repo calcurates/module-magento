@@ -151,7 +151,7 @@ class CalcuratesClient implements CalcuratesClientInterface
             );
             $response = \Zend_Json::decode($response);
         } catch (\Throwable $e) {
-            throw new LocalizedException(__('Cannot getting labels with API Calcurates %1', $e->getMessage()));
+            throw new LocalizedException(__('Cannot getting rates with API Calcurates %1', $e->getMessage()));
         }
 
         return $response;

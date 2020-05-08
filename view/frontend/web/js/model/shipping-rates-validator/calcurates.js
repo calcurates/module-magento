@@ -21,6 +21,8 @@ define([
          * @return {Boolean}
          */
         validate: function (address) {
+            var self = this;
+
             this.validationErrors = [];
             $.each(validationRules.getRules(), function (field, rule) {
 
@@ -32,10 +34,10 @@ define([
                         $.inArray(field, regionFields) === -1 ||
                         utils.isEmpty(address.region) && utils.isEmpty(address['region_id'])
                     ) {
-                        this.validationErrors.push(message);
+                        self.validationErrors.push(message);
                     }
                 }
-            }).bind(this);
+            });
 
             return !this.validationErrors.length;
         }
