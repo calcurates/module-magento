@@ -108,7 +108,7 @@ WORKDIR /var/www/magento2
 COPY entrypoint.sh /
 RUN chmod 777 /entrypoint.sh
 
-# avoid stupid docker initialization
+# avoid the docker initialization
 # see https://github.com/docker/compose/issues/1809
 ENTRYPOINT ["/entrypoint.sh"]
 EXPOSE 9000
