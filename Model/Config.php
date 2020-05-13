@@ -33,6 +33,8 @@ class Config implements ConfigProviderInterface
 
     const CONFIG_API_URL = 'api_url';
 
+    const CONFIG_DISPLAY_RATES_WITH_TAX = 'display_rates_with_tax';
+
     const CONFIG_ERROR_MESSAGE = 'specificerrmsg';
 
     const CONFIG_TITLE = 'specificerrmsg';
@@ -104,6 +106,17 @@ class Config implements ConfigProviderInterface
         );
 
         return $data;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDisplayRatesWithTax()
+    {
+        return (bool) $this->scopeConfig->getValue(
+            self::CONFIG_GROUP.self::CONFIG_DISPLAY_RATES_WITH_TAX,
+            ScopeInterface::SCOPE_WEBSITE
+        );
     }
 
     /**

@@ -9,11 +9,17 @@
 namespace Calcurates\ModuleMagento\Client;
 
 use Calcurates\ModuleMagento\Model\Carrier;
+use Calcurates\ModuleMagento\Model\Config;
 use Calcurates\ModuleMagento\Model\CurrencyConverter;
 use Magento\Quote\Model\Quote\Address\RateResult\MethodFactory;
 
 class RateBuilder
 {
+    /**
+     * @var Config
+     */
+    private $calcuratesConfig;
+
     /**
      * @var MethodFactory
      */
@@ -28,11 +34,13 @@ class RateBuilder
      * RateBuilder constructor.
      * @param MethodFactory $rateMethodFactory
      * @param CurrencyConverter $currencyConverter
+     * @param Config $calcuratesConfig
      */
-    public function __construct(MethodFactory $rateMethodFactory, CurrencyConverter $currencyConverter)
+    public function __construct(MethodFactory $rateMethodFactory, CurrencyConverter $currencyConverter, Config $calcuratesConfig)
     {
         $this->rateMethodFactory = $rateMethodFactory;
         $this->currencyConverter = $currencyConverter;
+        $this->calcuratesConfig = $calcuratesConfig;
     }
 
     /**
@@ -45,8 +53,13 @@ class RateBuilder
     {
         $rate = $this->rateMethodFactory->create();
 
+        $cost = $responseRate['rate']['cost'];
+        if ($this->calcuratesConfig->isDisplayRatesWithTax() && isset($responseRate['rate']['tax'])) {
+            $cost += $responseRate['rate']['tax'];
+        }
+
         $baseAmount = $this->currencyConverter->convertToBase(
-            $responseRate['rate']['cost'],
+            $cost,
             $responseRate['rate']['currency']
         );
         $rate->setCarrier(Carrier::CODE);

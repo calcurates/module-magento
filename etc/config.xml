@@ -12,6 +12,7 @@
                 <active>0</active>
                 <showmethod>1</showmethod>
                 <api_url>https://api.calcurates.com</api_url>
+                <display_rates_with_tax>1</display_rates_with_tax>
                 <model>Calcurates\ModuleMagento\Model\Carrier</model>
                 <calcurates_token backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
                 <specificerrmsg>This shipping method is not available. To use this shipping method, please contact us.</specificerrmsg>
