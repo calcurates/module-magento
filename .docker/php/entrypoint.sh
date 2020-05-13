@@ -17,7 +17,7 @@ if [ "$isSourced" -eq "0" ]; then
     rm -rf vendor/*
     tar -zxvf /templates/mg235.tar.gz
 
-    chmod 777 bin/magento
+    chmod 755 bin/magento
 
     # fix the magento. https://magento.stackexchange.com/questions/221002/magento-2-1-cli-install-command-failed
     bin/magento setup:uninstall
@@ -44,7 +44,8 @@ if [ "$isSourced" -eq "0" ]; then
 
     # bin/magento sampledata:deploy # not working. idk
     bin/magento setup:upgrade
-    bin/magento cache:clean
+    bin/magento cache:disable full_page
+    bin/magento cache:flush
 
     echo "Changing the file permissions..."
     find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
@@ -59,14 +60,14 @@ if [ "$isSourced" -eq "0" ]; then
     php vendor/bin/phpcs --config-set show_progress 1
 
     echo "php ${PWD}/vendor/bin/phpcs ${PWD}/app/code/Calcurates/ModuleMagento -v" > /phpcs
-    chmod 777 /phpcs
+    chmod 755 /phpcs
 
 
     echo "Config php-cs-fixer..."
     curl -L -o /php-cs-fixer.phar https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.16.3/php-cs-fixer.phar
-    chmod 777 /php-cs-fixer.phar
+    chmod 755 /php-cs-fixer.phar
     echo "php /php-cs-fixer.phar fix ${PWD}/app/code/Calcurates/ModuleMagento --rules=@PSR2" > /php-cs-fixer
-    chmod 777 /php-cs-fixer
+    chmod 755 /php-cs-fixer
 fi
 
 # avoid the docker initialization
