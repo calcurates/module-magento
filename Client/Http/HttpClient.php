@@ -26,6 +26,11 @@ class HttpClient
     private $additionalHeaders = [];
 
     /**
+     * @var int|null
+     */
+    private $timeout;
+
+    /**
      * HttpClient constructor.
      * @param ClientFactory $httpClientFactory
      */
@@ -54,6 +59,9 @@ class HttpClient
     public function request($type, $url, $requestData = null)
     {
         $client = $this->httpClientFactory->create();
+        if ($this->getTimeout()) {
+            $client->setTimeout($this->getTimeout());
+        }
         foreach ($this->additionalHeaders as $headerName => $headerValue) {
             $client->addHeader($headerName, $headerValue);
         }
@@ -61,10 +69,18 @@ class HttpClient
         $client->addHeader('Content-Type', 'application/json');
         switch ($type) {
             case self::TYPE_GET:
-                $client->get($url);
+                try {
+                    $client->get($url);
+                } catch (\Throwable $e) {
+                    throw new ApiException($e->getMessage(), $e->getCode(), $e);
+                }
                 break;
             case self::TYPE_POST:
-                $client->post($url, $requestData);
+                try {
+                    $client->post($url, $requestData);
+                } catch (\Throwable $e) {
+                    throw new ApiException($e->getMessage(), $e->getCode(), $e);
+                }
                 break;
             default:
                 throw new \InvalidArgumentException('Incorrect Request Type');
@@ -97,5 +113,21 @@ class HttpClient
     public function post($url, $data)
     {
         return $this->request(self::TYPE_POST, $url, $data);
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getTimeout()
+    {
+        return $this->timeout;
+    }
+
+    /**
+     * @param int|null $timeout
+     */
+    public function setTimeout($timeout)
+    {
+        $this->timeout = $timeout;
     }
 }
