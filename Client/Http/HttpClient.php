@@ -125,9 +125,12 @@ class HttpClient
 
     /**
      * @param int|null $timeout
+     * @return $this
      */
     public function setTimeout($timeout)
     {
         $this->timeout = $timeout;
+
+        return $this;
     }
 }
