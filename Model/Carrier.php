@@ -179,7 +179,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      */
     public function collectRates(RateRequest $request)
     {
-        if (!$this->getConfigFlag('active')) {
+        if (!$this->getConfigFlag('active') || $request->getSkipCalcurates()) {
             return false;
         }
 
