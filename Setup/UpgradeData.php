@@ -9,6 +9,7 @@
 namespace Calcurates\ModuleMagento\Setup;
 
 use Calcurates\ModuleMagento\Setup\Operation\AddCalcuratesServiceAndSourceFields;
+use Calcurates\ModuleMagento\Setup\Operation\AddCalcuratesShippingLabelDataField;
 use Calcurates\ModuleMagento\Setup\Operation\AddQuoteAndOrderOriginField;
 use Calcurates\ModuleMagento\Setup\Operation\RemoveQuoteAndOrderOriginField;
 use Magento\Framework\Setup\ModuleContextInterface;
@@ -33,19 +34,27 @@ class UpgradeData implements UpgradeDataInterface
     private $addCalcuratesServiceAndSourceFields;
 
     /**
+     * @var AddCalcuratesShippingLabelDataField
+     */
+    private $addCalcuratesShippingLabelDataField;
+
+    /**
      * UpgradeData constructor.
      * @param AddQuoteAndOrderOriginField $addQuoteAndOrderOriginField
      * @param RemoveQuoteAndOrderOriginField $removeQuoteAndOrderOriginField
      * @param AddCalcuratesServiceAndSourceFields $addCalcuratesServiceAndSourceFields
+     * @param AddCalcuratesShippingLabelDataField $addCalcuratesShippingLabelDataField
      */
     public function __construct(
         AddQuoteAndOrderOriginField $addQuoteAndOrderOriginField,
         RemoveQuoteAndOrderOriginField $removeQuoteAndOrderOriginField,
-        AddCalcuratesServiceAndSourceFields $addCalcuratesServiceAndSourceFields
+        AddCalcuratesServiceAndSourceFields $addCalcuratesServiceAndSourceFields,
+        AddCalcuratesShippingLabelDataField $addCalcuratesShippingLabelDataField
     ) {
         $this->addQuoteAndOrderOriginField = $addQuoteAndOrderOriginField;
         $this->removeQuoteAndOrderOriginField = $removeQuoteAndOrderOriginField;
         $this->addCalcuratesServiceAndSourceFields = $addCalcuratesServiceAndSourceFields;
+        $this->addCalcuratesShippingLabelDataField = $addCalcuratesShippingLabelDataField;
     }
 
     /**
@@ -65,6 +74,10 @@ class UpgradeData implements UpgradeDataInterface
         if (version_compare($context->getVersion(), '1.8.0', '<')) {
             $this->removeQuoteAndOrderOriginField->execute($setup);
             $this->addCalcuratesServiceAndSourceFields->execute($setup);
+        }
+
+        if (version_compare($context->getVersion(), '1.11.0', '<')) {
+            $this->addCalcuratesShippingLabelDataField->execute($setup);
         }
 
         $setup->endSetup();

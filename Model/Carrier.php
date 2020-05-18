@@ -14,6 +14,7 @@ use Calcurates\ModuleMagento\Client\Request\RateRequestBuilder;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Request\ShippingLabelRequestBuilder;
 use Calcurates\ModuleMagento\Model\Carrier\Validator\RateRequestValidator;
+use Calcurates\ModuleMagento\Model\Shipment\ShippingLabelSaver;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
@@ -87,6 +88,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private $rateRequestValidator;
 
     /**
+     * @var ShippingLabelSaver
+     */
+    private $shippingLabelSaver;
+
+    /**
      * Carrier constructor.
      * @param ScopeConfigInterface $scopeConfig
      * @param ErrorFactory $rateErrorFactory
@@ -109,6 +115,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param RateRequestBuilder $rateRequestBuilder
      * @param ShippingLabelRequestBuilder $shippingLabelRequestBuilder
      * @param RateRequestValidator $rateRequestValidator
+     * @param ShippingLabelSaver $shippingLabelSaver
      * @param array $data
      */
     public function __construct(
@@ -133,6 +140,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         RateRequestBuilder $rateRequestBuilder,
         ShippingLabelRequestBuilder $shippingLabelRequestBuilder,
         RateRequestValidator $rateRequestValidator,
+        ShippingLabelSaver $shippingLabelSaver,
         array $data = []
     ) {
         parent::__construct(
@@ -159,6 +167,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->rateRequestBuilder = $rateRequestBuilder;
         $this->shippingLabelRequestBuilder = $shippingLabelRequestBuilder;
         $this->rateRequestValidator = $rateRequestValidator;
+        $this->shippingLabelSaver = $shippingLabelSaver;
     }
 
     /**
@@ -170,7 +179,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      */
     public function collectRates(RateRequest $request)
     {
-        if (!$this->getConfigFlag('active')) {
+        if (!$this->getConfigFlag('active') || $request->getSkipCalcurates()) {
             return false;
         }
 
@@ -330,6 +339,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
 
         try {
             $response = $this->calcuratesClient->createShippingLabel($apiRequestBody, $this->getStore());
+            $this->shippingLabelSaver->addShippingLabelDataToShipment($request->getOrderShipment(), $response);
             $debugData['result'] = $response;
         } catch (LocalizedException $e) {
             $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];

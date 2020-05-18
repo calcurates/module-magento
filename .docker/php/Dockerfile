@@ -86,8 +86,8 @@ COPY auth.json /.composer/
 
 
 # Composer
-RUN curl -L -o /composer.phar https://github.com/composer/composer/releases/download/1.10.5/composer.phar \
-    && chmod 777 /composer.phar
+RUN curl -L -o /composer.phar https://github.com/composer/composer/releases/download/1.10.6/composer.phar \
+    && chmod 755 /composer.phar
 ENV COMPOSER_HOME=/.composer
 
 
@@ -106,9 +106,9 @@ RUN set -xe \
 WORKDIR /var/www/magento2
 
 COPY entrypoint.sh /
-RUN chmod 777 /entrypoint.sh
+RUN chmod 755 /entrypoint.sh
 
-# avoid stupid docker initialization
+# avoid the docker initialization
 # see https://github.com/docker/compose/issues/1809
 ENTRYPOINT ["/entrypoint.sh"]
 EXPOSE 9000

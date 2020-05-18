@@ -33,9 +33,15 @@ class Config implements ConfigProviderInterface
 
     const CONFIG_API_URL = 'api_url';
 
+    const CONFIG_DISPLAY_RATES_WITH_TAX = 'display_rates_with_tax';
+
     const CONFIG_ERROR_MESSAGE = 'specificerrmsg';
 
     const CONFIG_TITLE = 'specificerrmsg';
+
+    const OTHER_SHIPPING_METHODS_ACTION = 'other_shipping_methods_action';
+
+    const API_GET_RATES_TIMEOUT = 'api_get_rates_timeout';
 
     /**
      * @var ScopeConfigInterface
@@ -107,6 +113,17 @@ class Config implements ConfigProviderInterface
     }
 
     /**
+     * @return bool
+     */
+    public function isDisplayRatesWithTax()
+    {
+        return (bool) $this->scopeConfig->getValue(
+            self::CONFIG_GROUP.self::CONFIG_DISPLAY_RATES_WITH_TAX,
+            ScopeInterface::SCOPE_WEBSITE
+        );
+    }
+
+    /**
      * @return string
      */
     public function getCalcuratesToken()
@@ -165,6 +182,32 @@ class Config implements ConfigProviderInterface
     {
         return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP.self::CONFIG_ERROR_MESSAGE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @return int
+     */
+    public function getOtherShippingMethodsAction($storeId)
+    {
+        return (int)$this->scopeConfig->getValue(
+            self::CONFIG_GROUP.self::OTHER_SHIPPING_METHODS_ACTION,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @return int
+     */
+    public function getApiGetRatesTimeout($storeId)
+    {
+        return (int)$this->scopeConfig->getValue(
+            self::CONFIG_GROUP.self::API_GET_RATES_TIMEOUT,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );

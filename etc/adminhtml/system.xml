@@ -17,7 +17,7 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
 
-                <field id="calcurates_token" translate="label comment" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="calcurates_token" translate="label comment" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Calcurates API Token</label>
                     <comment><![CDATA[Token supplied by Calcurates]]></comment>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
@@ -27,6 +27,12 @@
                     <label>API URL</label>
                 </field>
 
+                <field id="display_rates_with_tax" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Display rates with tax and duties</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Affects international shipping rates from carriers]]></comment>
+                </field>
+
                 <field id="debug" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Enable Debug</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -34,6 +40,19 @@
 
                 <field id="specificerrmsg" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Default Error Message</label>
+                </field>
+
+                <field id="other_shipping_methods_action" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Active non-Calcurates shipping methods</label>
+                    <source_model>Calcurates\ModuleMagento\Model\Config\Source\OtherShippingMethodsActionSource</source_model>
+                </field>
+
+                <field id="api_get_rates_timeout" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>API Timeout (seconds)</label>
+                    <validate>validate-greater-than-zero validate-digits required-entry</validate>
+                    <depends>
+                        <field id="other_shipping_methods_action">2</field>
+                    </depends>
                 </field>
             </group>
         </section>

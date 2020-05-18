@@ -73,4 +73,8 @@
     <!-- change default source algorithm to calcurates -->
     <preference for="Magento\InventorySourceSelectionApi\Api\GetDefaultSourceSelectionAlgorithmCodeInterface"
                 type="Calcurates\ModuleMagento\Model\Source\Algorithms\GetDefaultSourceSelectionAlgorithmCode"/>
+
+    <type name="Magento\Shipping\Model\Shipping">
+        <plugin name="Calcurates_ModuleMagento::HideOtherCarriersIfRequired" type="Calcurates\ModuleMagento\Plugin\Model\Shipping\ShippingPlugin"/>
+    </type>
 </config>

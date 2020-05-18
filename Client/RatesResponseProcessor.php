@@ -226,13 +226,17 @@ class RatesResponseProcessor
 
                     continue;
                 }
+
                 $serviceIds = [];
                 $serviceNames = [];
                 $sourceToServiceId = [];
                 foreach ($responseRate['services'] as $service) {
-                    if (!in_array($service['id'], $serviceIds, true)) { // avoid duplication of service names
-                        $serviceNames[] = $service['name'];
+                    $name = $serviceNames[$service['name']] ?? $service['name'] . ' - ';
+                    if (isset($service['package']['name'])) {
+                        $name .= $service['package']['name'];
                     }
+
+                    $serviceNames[$service['name']] = $name;
                     $serviceIds[] = $service['id'];
 
                     $sourceCode = $service['origin']['targetValue']['targetId'] ?? null;
@@ -243,7 +247,9 @@ class RatesResponseProcessor
                 }
 
                 $responseRate['id'] = implode(',', $serviceIds);
-                $responseRate['name'] = implode(' ', $serviceNames);
+                $responseRate['name'] = implode(', ', array_map(static function ($serviceName) {
+                    return rtrim($serviceName, ' - ');
+                }, $serviceNames));
 
                 $carrierServicesToOrigins[$carrier['id']][$responseRate['id']] = $sourceToServiceId;
 

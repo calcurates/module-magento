@@ -1,0 +1,50 @@
+<?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2019-2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
+?>
+<?php /** @var $block \Magento\Shipping\Block\Adminhtml\Order\Packaging */ ?>
+<?php
+/** @var \Calcurates\ModuleMagento\Helper\ShipmentLabelDataHelper $helper */
+$helper = $this->helper(\Calcurates\ModuleMagento\Helper\ShipmentLabelDataHelper::class);
+$items = $helper->getLabelData($block->getShipment());
+if (!$items) {
+    return;
+}
+?>
+<div id="calcurates-shipping-label-data" style="display: none">
+    <div class="admin__page-section-item-title">
+        <span class="title"><?= __('Label Info') ?></span>
+    </div>
+    <table class="admin__table-secondary">
+        <tbody>
+            <?php foreach ($items as $item): ?>
+                <tr>
+                    <th><?= $item['label']?></th>
+                    <td><?= $item['value']?></td>
+                </tr>
+            <?php endforeach; ?>
+            <tr>
+                <th></th>
+                <td><a href="<?= $block->getUrl('adminhtml/order_shipment/printLabel', [
+                        'shipment_id' => $block->getShipment()->getId()
+                    ])?>"><?= __('Download label') ?></a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<script>
+    require([
+        "jquery",
+        "domReady!"
+    ], function (jQuery) {
+        var target = jQuery('#packed_window'),
+            element = jQuery('#calcurates-shipping-label-data');
+
+        target.append(element);
+        element.show();
+    });
+</script>
