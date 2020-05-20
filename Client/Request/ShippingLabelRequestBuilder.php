@@ -40,13 +40,14 @@ class ShippingLabelRequestBuilder
             'service' => $shippingData->getShippingServiceId(),
             'source' => $shippingData->getSourceCode(),
             'shipTo' => [
-                'name' => $request->getRecipientContactPersonName(),
-                'phone' => $request->getRecipientContactPhoneNumber(),
+                'contactName' => $request->getRecipientContactPersonName(),
+                'contactPhone' => $request->getRecipientContactPhoneNumber(),
                 'companyName' => $request->getRecipientContactCompanyName(),
                 'addressLine1' => $request->getRecipientAddressStreet1(),
                 'addressLine2' => $request->getRecipientAddressStreet2(),
                 'city' => $request->getRecipientAddressCity(),
-                'region' => $request->getRecipientAddressStateOrProvinceCode(),
+                'regionCode' => null, //todo: use region code
+                'regionName' => $request->getRecipientAddressStateOrProvinceCode(), //todo: use region name
                 'postalCode' => $request->getRecipientAddressPostalCode(),
                 'country' => $request->getRecipientAddressCountryCode(),
                 'addressResidentialIndicator' => 'unknown',
@@ -54,7 +55,22 @@ class ShippingLabelRequestBuilder
             'packages' => [],
             'testLabel' => $testLabel,
             'validateAddress' => 'no_validation',
+            'products' => [], //todo: add products
         ];
+
+        /** @var \Magento\Sales\Api\Data\ShipmentItemInterface $item */
+        /*foreach ($request->getOrderShipment()->getAllItems() as $item) {
+            $apiRequestBody['products'][] = [
+                'priceWithTax' => round($item->getBasePriceInclTax(), 2),
+                'priceWithoutTax' => round($item->getBasePrice(), 2),
+                'discountAmount' => round($item->getBaseDiscountAmount(), 2),
+                'quantity' => $item->getQty(),
+                'weight' => $item->getWeight(),
+                'sku' => $item->getSku(),
+                'categories' => $item->getProduct()->getCategoryIds(),
+                'attributes' => $this->getAttributes($item),
+            ];
+        }*/
 
         foreach ($request->getPackages() as $package) {
             $rawPackage = [
