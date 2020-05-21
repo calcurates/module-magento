@@ -179,7 +179,7 @@ class RateRequestBuilder
      */
     private function getAttributes(Item $item)
     {
-        $product = $this->productRepository->get($item->getSku());
+        $product = $this->productRepository->getById($item->getProductId());
         $data = [];
         foreach ($product->getData() as $key => $value) {
             if (is_object($value)) {
