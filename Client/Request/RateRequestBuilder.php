@@ -1,4 +1,10 @@
 <?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2019-2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
 
 namespace Calcurates\ModuleMagento\Client\Request;
 
@@ -43,25 +49,33 @@ class RateRequestBuilder
     private $getSourceCodesPerSkus;
 
     /**
+     * @var ProductAttributesService
+     */
+    private $productAttributesService;
+
+    /**
      * RateRequestBuilder constructor.
      * @param RegionFactory $regionFactory
      * @param RegionResource $regionResource
      * @param StoreManagerInterface $storeManager
      * @param ProductRepositoryInterface $productRepository
      * @param GetSourceCodesPerSkus $getSourceCodesPerSkus
+     * @param ProductAttributesService $productAttributesService
      */
     public function __construct(
         RegionFactory $regionFactory,
         RegionResource $regionResource,
         StoreManagerInterface $storeManager,
         ProductRepositoryInterface $productRepository,
-        GetSourceCodesPerSkus $getSourceCodesPerSkus
+        GetSourceCodesPerSkus $getSourceCodesPerSkus,
+        ProductAttributesService $productAttributesService
     ) {
         $this->regionFactory = $regionFactory;
         $this->regionResource = $regionResource;
         $this->storeManager = $storeManager;
         $this->productRepository = $productRepository;
         $this->getSourceCodesPerSkus = $getSourceCodesPerSkus;
+        $this->productAttributesService = $productAttributesService;
     }
 
     /**
@@ -109,6 +123,7 @@ class RateRequestBuilder
         $itemsSourceCodes = $this->getSourceCodesPerSkus->execute($itemsSkus);
 
         foreach ($items as $item) {
+            $product = $this->productRepository->getById($item->getProductId());
             $apiRequestBody['products'][] = [
                 'quoteItemId' => $item->getId(),
                 'priceWithTax' => round($item->getBasePriceInclTax(), 2),
@@ -118,7 +133,7 @@ class RateRequestBuilder
                 'weight' => $item->getWeight(),
                 'sku' => $item->getSku(),
                 'categories' => $item->getProduct()->getCategoryIds(),
-                'attributes' => $this->getAttributes($item),
+                'attributes' => $this->productAttributesService->getAttributes($product),
                 'sources' => $itemsSourceCodes[$item->getSku()] ?? []
             ];
         }
@@ -171,27 +186,5 @@ class RateRequestBuilder
         $customerData['contactPhone'] = $shipAddress->getTelephone();
 
         return $customerData;
-    }
-
-    /**
-     * @param Item $item
-     * @return array
-     */
-    private function getAttributes(Item $item)
-    {
-        $product = $this->productRepository->getById($item->getProductId());
-        $data = [];
-        foreach ($product->getData() as $key => $value) {
-            if (is_object($value)) {
-                continue;
-            }
-
-            $data[$key] = $value;
-        }
-        foreach ($product->getCustomAttributes() as $customAttribute) {
-            $data[$customAttribute->getAttributeCode()] = $customAttribute->getValue();
-        }
-
-        return $data;
     }
 }

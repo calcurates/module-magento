@@ -54,9 +54,15 @@ class RateRequestValidator
         $controller = method_exists($this->request, 'getControllerName') ?
             $this->request->getControllerName() :
             '';
-        return $this->request->getModuleName() === 'checkout'
+        $isAddToCart = $this->request->getModuleName() === 'checkout'
             && $controller === 'cart'
             && $this->request->getActionName() === 'add';
+
+        $isRemoveFromCart = $this->request->getModuleName() === 'checkout'
+            && $controller === 'sidebar'
+            && $this->request->getActionName() === 'removeItem';
+
+        return $isAddToCart || $isRemoveFromCart;
     }
 
     /**
