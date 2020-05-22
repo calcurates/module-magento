@@ -40,7 +40,8 @@ class ShippingPlugin
      * @param RateRequest $request
      * @return Shipping
      */
-    public function aroundCollectRates(Shipping $subject, \Closure $proceed, RateRequest $request) {
+    public function aroundCollectRates(Shipping $subject, \Closure $proceed, RateRequest $request)
+    {
         try {
             /**
              * @TODO: Need optimization: Calcurates API runs not always first, and when it answers with error,
