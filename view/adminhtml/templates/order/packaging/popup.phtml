@@ -208,8 +208,12 @@ $order = $shipment->getOrder();
     });
 </script>
 <?php
-// phpcs:ignore Magento2.Security.IncludeFile
-include ($block->getTemplateFile('Magento_Shipping::order/packaging/popup_content.phtml'));
+$block->assign([
+    'sizeSource' => $sizeSource,
+    'girthEnabled' => $girthEnabled
+]);
+
+echo /* @noEscape */ $block->fetchView($block->getTemplateFile('Magento_Shipping::order/packaging/popup_content.phtml'));
 ?>
 <div id="packaging_window_overview">
     <div class="message message-warning" style="display: none"></div>

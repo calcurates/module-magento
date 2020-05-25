@@ -2,10 +2,13 @@
 
 namespace Calcurates\ModuleMagento\Model\Source;
 
+use Calcurates\ModuleMagento\Model\ResourceModel\GetSourceCodesPerSkus as GetSourceCodesPerSkusResource;
+use Magento\Framework\Encryption\EncryptorInterface;
+
 class GetSourceCodesPerSkus
 {
     /**
-     * @var \Calcurates\ModuleMagento\Model\ResourceModel\GetSourceCodesPerSkus
+     * @var GetSourceCodesPerSkusResource
      */
     private $resource;
 
@@ -15,12 +18,19 @@ class GetSourceCodesPerSkus
     private $cache = [];
 
     /**
-     * GetSourceCodesPerSkus constructor.
-     * @param \Calcurates\ModuleMagento\Model\ResourceModel\GetSourceCodesPerSkus $resource
+     * @var EncryptorInterface
      */
-    public function __construct(\Calcurates\ModuleMagento\Model\ResourceModel\GetSourceCodesPerSkus $resource)
+    private $encryptor;
+
+    /**
+     * GetSourceCodesPerSkus constructor.
+     * @param GetSourceCodesPerSkusResource $resource
+     * @param EncryptorInterface $encryptor
+     */
+    public function __construct(GetSourceCodesPerSkusResource $resource, EncryptorInterface $encryptor)
     {
         $this->resource = $resource;
+        $this->encryptor = $encryptor;
     }
 
     /**
@@ -29,7 +39,7 @@ class GetSourceCodesPerSkus
      */
     public function execute(array $skus)
     {
-        $cacheKey = hash('sha256', json_encode($skus));
+        $cacheKey = $this->encryptor->hash(json_encode($skus));
 
         if (!array_key_exists($cacheKey, $this->cache)) {
             $this->cache[$cacheKey] = $this->resource->execute($skus);
