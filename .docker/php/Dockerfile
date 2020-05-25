@@ -79,9 +79,7 @@ RUN set -xe \
     && mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 
-# custom configs
-COPY opcache.ini $PHP_INI_DIR/conf.d/
-COPY php.ini $PHP_INI_DIR/
+# composer auth
 COPY auth.json /.composer/
 
 
@@ -93,8 +91,7 @@ ENV COMPOSER_HOME=/.composer
 
 # template of magento2
 RUN set -xe \
-    && mkdir /templates \
-    && cd /templates \
+    && cd / \
     && /composer.phar create-project --repository=https://repo.magento.com/ magento/project-community-edition:^2.3.5 mg235 \
     && cd mg235 \
     && tar -zcvf ../mg235.tar.gz * \

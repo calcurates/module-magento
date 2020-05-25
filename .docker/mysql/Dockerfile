@@ -5,5 +5,3 @@ RUN set -xe \
     && apt-get upgrade -y \
     && apt-get clean \
     && rm -rf /tmp/*
-
-COPY server.cnf /etc/mysql/conf.d/server.cnf
