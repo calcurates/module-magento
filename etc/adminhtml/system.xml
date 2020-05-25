@@ -51,6 +51,7 @@
                     <label>Show only if error or API timeout exceeded</label>
                     <source_model>Calcurates\ModuleMagento\Model\Config\Source\ActiveShippingMethodsSource</source_model>
                     <comment>Selected methods must be enabled. Leave empty to show all active methods</comment>
+                    <can_be_empty>1</can_be_empty>
                 </field>
             </group>
         </section>
