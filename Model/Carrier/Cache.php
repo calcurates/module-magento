@@ -83,9 +83,7 @@ class Cache
 
         $request['__store_id__'] = $storeId;
         $serializedRequest = $this->serializer->serialize($request);
-        // phpcs:ignore Magento2.Security.InsecureFunction
-        $cacheKey = md5($serializedRequest);
-
+        $cacheKey = hash('sha256', $serializedRequest);
 
         return static::TYPE_IDENTIFIER . '_' . static::RATES_IDENTIFIER . '_' . $cacheKey;
     }
