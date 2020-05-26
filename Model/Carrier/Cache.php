@@ -8,6 +8,7 @@
 
 namespace Calcurates\ModuleMagento\Model\Carrier;
 
+use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\App\CacheInterface;
 
@@ -29,13 +30,21 @@ class Cache
     private $cache;
 
     /**
+     * @var EncryptorInterface
+     */
+    private $encryptor;
+
+    /**
      * Cache constructor.
      * @param SerializerInterface $serializer
+     * @param CacheInterface $cache
+     * @param EncryptorInterface $encryptor
      */
-    public function __construct(SerializerInterface $serializer, CacheInterface $cache)
+    public function __construct(SerializerInterface $serializer, CacheInterface $cache, EncryptorInterface $encryptor)
     {
         $this->serializer = $serializer;
         $this->cache = $cache;
+        $this->encryptor = $encryptor;
     }
 
     /**
@@ -83,9 +92,7 @@ class Cache
 
         $request['__store_id__'] = $storeId;
         $serializedRequest = $this->serializer->serialize($request);
-        // phpcs:ignore Magento2.Security.InsecureFunction
-        $cacheKey = md5($serializedRequest);
-
+        $cacheKey = $this->encryptor->hash($serializedRequest);
 
         return static::TYPE_IDENTIFIER . '_' . static::RATES_IDENTIFIER . '_' . $cacheKey;
     }

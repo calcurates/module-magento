@@ -12,7 +12,6 @@ use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
 use Calcurates\ModuleMagento\Client\Http\ApiException;
 use Calcurates\ModuleMagento\Client\Http\HttpClient;
 use Calcurates\ModuleMagento\Model\Config;
-use Calcurates\ModuleMagento\Model\Config\Source\OtherShippingMethodsActionSource;
 use Magento\Framework\Exception\LocalizedException;
 
 class CalcuratesClient implements CalcuratesClientInterface
@@ -148,7 +147,6 @@ class CalcuratesClient implements CalcuratesClientInterface
     public function getRates($request, $storeId)
     {
         $timeout = $this->calcuratesConfig->getApiGetRatesTimeout($storeId);
-        $timeoutAction = $this->calcuratesConfig->getOtherShippingMethodsAction($storeId);
         try {
             $this->httpClient->setTimeout($timeout);
             $response = $this->httpClient->post(
@@ -158,10 +156,7 @@ class CalcuratesClient implements CalcuratesClientInterface
             $this->httpClient->setTimeout(null);
             $response = \Zend_Json::decode($response);
         } catch (ApiException $e) {
-            if ($timeoutAction == OtherShippingMethodsActionSource::SHOW_IF_ERROR_OR_EXCEEDS_TIMEOUT) {
-                throw $e;
-            }
-            throw new LocalizedException(__('Cannot getting rates with API Calcurates %1', $e->getMessage()));
+            throw $e;
         } catch (\Throwable $e) {
             throw new LocalizedException(__('Cannot getting rates with API Calcurates %1', $e->getMessage()));
         }

@@ -42,17 +42,16 @@
                     <label>Default Error Message</label>
                 </field>
 
-                <field id="other_shipping_methods_action" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
-                    <label>Active non-Calcurates shipping methods</label>
-                    <source_model>Calcurates\ModuleMagento\Model\Config\Source\OtherShippingMethodsActionSource</source_model>
-                </field>
-
-                <field id="api_get_rates_timeout" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="api_get_rates_timeout" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>API Timeout (seconds)</label>
                     <validate>validate-greater-than-zero validate-digits required-entry</validate>
-                    <depends>
-                        <field id="other_shipping_methods_action">2</field>
-                    </depends>
+                </field>
+
+                <field id="shipping_methods_for_fallback" translate="label" type="multiselect" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Show only if error or API timeout exceeded</label>
+                    <source_model>Calcurates\ModuleMagento\Model\Config\Source\ActiveShippingMethodsSource</source_model>
+                    <comment>Selected methods must be enabled. Leave empty to show all active methods</comment>
+                    <can_be_empty>1</can_be_empty>
                 </field>
             </group>
         </section>

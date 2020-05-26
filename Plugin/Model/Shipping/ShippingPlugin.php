@@ -9,9 +9,7 @@
 namespace Calcurates\ModuleMagento\Plugin\Model\Shipping;
 
 use Calcurates\ModuleMagento\Client\Http\ApiException;
-use Calcurates\ModuleMagento\Model\Carrier;
 use Calcurates\ModuleMagento\Model\Config;
-use Calcurates\ModuleMagento\Model\Config\Source\OtherShippingMethodsActionSource;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Shipping\Model\Shipping;
 
@@ -21,6 +19,11 @@ class ShippingPlugin
      * @var Config
      */
     private $config;
+
+    /**
+     * @var array
+     */
+    private $shippingMethodsForFallback = [];
 
     /**
      * ShippingPlugin constructor.
@@ -37,32 +40,52 @@ class ShippingPlugin
      * @param RateRequest $request
      * @return Shipping
      */
-    public function aroundCollectRates(
-        Shipping $subject,
-        \Closure $proceed,
-        RateRequest $request
-    ) {
-        $action = $this->config->getOtherShippingMethodsAction($request->getStoreId());
-
-        if ($action == OtherShippingMethodsActionSource::ALWAYS_SHOW) {
+    public function aroundCollectRates(Shipping $subject, \Closure $proceed, RateRequest $request)
+    {
+        try {
+            /**
+             * @TODO: Need optimization: Calcurates API runs not always first, and when it answers with error,
+             * before it, some rates could be already counted. Need collect Calcurates first.
+             */
             return $proceed($request);
-        }
-
-        if ($action == OtherShippingMethodsActionSource::ALWAYS_HIDE
-            || $action == OtherShippingMethodsActionSource::SHOW_IF_ERROR_OR_EXCEEDS_TIMEOUT
-        ) {
-            $request->setLimitCarrier(Carrier::CODE);
-        }
-
-        if ($action == OtherShippingMethodsActionSource::SHOW_IF_ERROR_OR_EXCEEDS_TIMEOUT) {
-            try {
-                return $proceed($request);
-            } catch (ApiException $e) {
-                $request->setLimitCarrier(null);
-                $request->setSkipCalcurates(true);
+        } catch (ApiException $e) {
+            $shippingMethodsForFallback = $this->getShippingMethodsForFallback($request->getStoreId());
+            if ($shippingMethodsForFallback) {
+                $request->setLimitCarrier($shippingMethodsForFallback);
             }
+            $request->setSkipCalcurates(true);
         }
 
         return $proceed($request);
+    }
+
+    /**
+     * @param Shipping $subject
+     * @param \Closure $proceed
+     * @param string $carrierCode
+     * @param RateRequest $request
+     * @return Shipping
+     */
+    public function aroundCollectCarrierRates(Shipping $subject, \Closure $proceed, $carrierCode, $request)
+    {
+        $shippingMethodsForFallback = $this->getShippingMethodsForFallback($request->getStoreId());
+        if (!$request->getSkipCalcurates() && in_array($carrierCode, $shippingMethodsForFallback)) {
+            return $subject;
+        }
+
+        return $proceed($carrierCode, $request);
+    }
+
+    /**
+     * @param int $storeId
+     * @return array
+     */
+    private function getShippingMethodsForFallback($storeId)
+    {
+        if (!array_key_exists($storeId, $this->shippingMethodsForFallback)) {
+            $this->shippingMethodsForFallback[$storeId] = $this->config->getShippingMethodsForFallback($storeId);
+        }
+
+        return $this->shippingMethodsForFallback[$storeId];
     }
 }

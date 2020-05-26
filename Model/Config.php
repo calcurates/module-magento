@@ -39,9 +39,9 @@ class Config implements ConfigProviderInterface
 
     const CONFIG_TITLE = 'specificerrmsg';
 
-    const OTHER_SHIPPING_METHODS_ACTION = 'other_shipping_methods_action';
-
     const API_GET_RATES_TIMEOUT = 'api_get_rates_timeout';
+
+    const SHIPPING_METHODS_FOR_FALLBACK = 'shipping_methods_for_fallback';
 
     /**
      * @var ScopeConfigInterface
@@ -117,8 +117,8 @@ class Config implements ConfigProviderInterface
      */
     public function isDisplayRatesWithTax()
     {
-        return (bool) $this->scopeConfig->getValue(
-            self::CONFIG_GROUP.self::CONFIG_DISPLAY_RATES_WITH_TAX,
+        return (bool)$this->scopeConfig->getValue(
+            self::CONFIG_GROUP . self::CONFIG_DISPLAY_RATES_WITH_TAX,
             ScopeInterface::SCOPE_WEBSITE
         );
     }
@@ -128,7 +128,7 @@ class Config implements ConfigProviderInterface
      */
     public function getCalcuratesToken()
     {
-        return $this->scopeConfig->getValue(self::CONFIG_GROUP.self::CONFIG_TOKEN, ScopeInterface::SCOPE_WEBSITE);
+        return $this->scopeConfig->getValue(self::CONFIG_GROUP . self::CONFIG_TOKEN, ScopeInterface::SCOPE_WEBSITE);
     }
 
     /**
@@ -138,7 +138,7 @@ class Config implements ConfigProviderInterface
     public function getApiUrl($storeId)
     {
         return $this->scopeConfig->getValue(
-            self::CONFIG_GROUP.self::CONFIG_API_URL,
+            self::CONFIG_GROUP . self::CONFIG_API_URL,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );
@@ -154,7 +154,7 @@ class Config implements ConfigProviderInterface
         if (!$composerPackage) {
             $composerPackage = ComposerFactory::create(
                 new BufferIO(),
-                __DIR__.'/../composer.json'
+                __DIR__ . '/../composer.json'
             )->getPackage();
         }
 
@@ -168,7 +168,7 @@ class Config implements ConfigProviderInterface
     public function getTitle($storeId)
     {
         return (string)$this->scopeConfig->getValue(
-            self::CONFIG_GROUP.self::CONFIG_TITLE,
+            self::CONFIG_GROUP . self::CONFIG_TITLE,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );
@@ -181,20 +181,7 @@ class Config implements ConfigProviderInterface
     public function getErrorMessage($storeId)
     {
         return (string)$this->scopeConfig->getValue(
-            self::CONFIG_GROUP.self::CONFIG_ERROR_MESSAGE,
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-            $storeId
-        );
-    }
-
-    /**
-     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
-     * @return int
-     */
-    public function getOtherShippingMethodsAction($storeId)
-    {
-        return (int)$this->scopeConfig->getValue(
-            self::CONFIG_GROUP.self::OTHER_SHIPPING_METHODS_ACTION,
+            self::CONFIG_GROUP . self::CONFIG_ERROR_MESSAGE,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );
@@ -207,9 +194,27 @@ class Config implements ConfigProviderInterface
     public function getApiGetRatesTimeout($storeId)
     {
         return (int)$this->scopeConfig->getValue(
-            self::CONFIG_GROUP.self::API_GET_RATES_TIMEOUT,
+            self::CONFIG_GROUP . self::API_GET_RATES_TIMEOUT,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @return array
+     */
+    public function getShippingMethodsForFallback($storeId)
+    {
+        $list = $this->scopeConfig->getValue(
+            self::CONFIG_GROUP . self::SHIPPING_METHODS_FOR_FALLBACK,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+
+        $list = explode(',', $list);
+        $list = array_filter($list);
+
+        return $list;
     }
 }
