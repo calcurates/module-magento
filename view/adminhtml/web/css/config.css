@@ -1,0 +1,22 @@
+.calcurates-info-block .module-version {
+    color: #ea7601;
+}
+
+.calcurates-info-block .module-version.last-version {
+    color: green;
+}
+
+.calcurates-logo {
+    position: relative;
+    bottom: -9px;
+    display: inline-block;
+    max-height: 30px;
+}
+
+.calcurates-info-block span.message {
+    display: block;
+}
+
+.calcurates-info-block .message.success {
+    background-color: #e9fbdb;
+}

@@ -8,14 +8,15 @@
 
 namespace Calcurates\ModuleMagento\Model\Carrier;
 
+use Calcurates\ModuleMagento\Api\CalcuratesCacheInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\App\CacheInterface;
 
-class Cache
+class RatesRequestCache
 {
-    const TYPE_IDENTIFIER = 'calcurates';
-    const CACHE_TAG = 'calcurates';
+    const TYPE_IDENTIFIER = CalcuratesCacheInterface::TYPE_IDENTIFIER;
+    const CACHE_TAG = 'calcurates_rates';
     const RATES_IDENTIFIER = 'rates';
     const LIFETIME = 60;
 
@@ -48,7 +49,7 @@ class Cache
     }
 
     /**
-     * @param $request
+     * @param array $request
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return array|bool
      */
@@ -67,6 +68,7 @@ class Cache
      * @param array $request
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @param array $response
+     * @return bool
      */
     public function saveCachedData($request, $storeId, $response)
     {

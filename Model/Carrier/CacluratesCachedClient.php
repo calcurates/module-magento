@@ -18,16 +18,16 @@ class CacluratesCachedClient implements CalcuratesClientInterface
     private $calcuratesClient;
 
     /**
-     * @var Cache
+     * @var RatesRequestCache
      */
     private $cache;
 
     /**
      * CacluratesCachedClient constructor.
      * @param CalcuratesClientInterface $calcuratesClient
-     * @param Cache $cache
+     * @param RatesRequestCache $cache
      */
-    public function __construct(CalcuratesClientInterface $calcuratesClient, Cache $cache)
+    public function __construct(CalcuratesClientInterface $calcuratesClient, RatesRequestCache $cache)
     {
         $this->calcuratesClient = $calcuratesClient;
         $this->cache = $cache;
