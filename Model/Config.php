@@ -43,6 +43,8 @@ class Config implements ConfigProviderInterface
 
     const SHIPPING_METHODS_FOR_FALLBACK = 'shipping_methods_for_fallback';
 
+    const ACTIVE = 'active';
+
     /**
      * @var ScopeConfigInterface
      */
@@ -216,5 +218,18 @@ class Config implements ConfigProviderInterface
         $list = array_filter($list);
 
         return $list;
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @return bool
+     */
+    public function isActive($storeId)
+    {
+        return $this->scopeConfig->isSetFlag(
+            self::CONFIG_GROUP . self::ACTIVE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
     }
 }
