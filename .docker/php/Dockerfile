@@ -73,10 +73,7 @@ RUN set -xe \
     && apk del --no-cache libxslt-dev \
     && apk del --no-cache zlib-dev libzip-dev \
     && apk del --no-cache libsodium-dev \
-    && rm -rf /tmp/* /var/cache/apk/* \
-
-    # Default php config
-    && mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+    && rm -rf /tmp/* /var/cache/apk/*
 
 
 # composer auth
