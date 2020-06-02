@@ -32,7 +32,7 @@ class ProductAttributesService
     {
         $attributes = [];
         foreach ($product->getData() as $key => $value) {
-            if (is_object($value)) {
+            if (is_object($value) || $key === 'options') {
                 continue;
             }
 
