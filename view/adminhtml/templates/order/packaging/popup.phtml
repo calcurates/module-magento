@@ -14,6 +14,7 @@ $girthEnabled = $block->isDisplayGirthValue() && $block->isGirthAllowed() ? 1 : 
 $helper = $this->helper(\Calcurates\ModuleMagento\Helper\ShipmentAddressHelper::class);
 $shipment = $block->getShipment();
 $order = $shipment->getOrder();
+$isShipmentNew = !$shipment->getId();
 ?>
 <?php /** fix for magento 2.3.3 validation styles. Remove after fixing in magento */ ?>
 <style type="text/css">
@@ -29,6 +30,7 @@ $order = $shipment->getOrder();
         "Magento_Shipping/order/packaging",
         "Magento_Ui/js/modal/modal"
     ], function (jQuery) {
+        var isShipmentNew = <?= $isShipmentNew ? 'true' : 'false' ?>;
         window.packaging = new Packaging(<?= /* @noEscape */ $block->getConfigDataJson() ?>);
         packaging.changeContainerType($$('select[name=package_container]')[0]);
         packaging.checkSizeAndGirthParameter(
@@ -60,7 +62,7 @@ $order = $shipment->getOrder();
         packaging.setItemQtyCallback(function (itemId) {
             var item = $$('[name="shipment[items]['+itemId+']"]')[0],
                 itemTitle = $('order_item_' + itemId + '_title');
-            if (!itemTitle && !item) {
+            if (isShipmentNew && !itemTitle && !item) {
                 return 0;
             }
             if (item && !isNaN(item.value)) {
