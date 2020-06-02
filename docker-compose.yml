@@ -31,6 +31,7 @@ services:
       - '.docker/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini'
       - 'Magento2DataVolume:/var/www/magento2'
       - './Api:/var/www/magento2/app/code/Calcurates/ModuleMagento/Api'
+      - './Block:/var/www/magento2/app/code/Calcurates/ModuleMagento/Block'
       - './Client:/var/www/magento2/app/code/Calcurates/ModuleMagento/Client'
       - './etc:/var/www/magento2/app/code/Calcurates/ModuleMagento/etc'
       - './Helper:/var/www/magento2/app/code/Calcurates/ModuleMagento/Helper'

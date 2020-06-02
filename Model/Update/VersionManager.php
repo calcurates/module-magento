@@ -53,7 +53,7 @@ class VersionManager
      */
     public function getLatestVersion()
     {
-        if (is_null($this->latestVersion)) {
+        if (null === $this->latestVersion) {
             $version = '';
             $composerPackage = $this->config->getComposerPackage();
             $packageData = $this->packageInfoLoader->getPackageData($composerPackage->getName());
@@ -63,7 +63,7 @@ class VersionManager
                         continue;
                     }
 
-                    if (is_null($version) || version_compare($version, $versionData['version'],'<')) {
+                    if (null === $version || version_compare($version, $versionData['version'], '<')) {
                         $version = $versionData['version'];
                     }
                 }

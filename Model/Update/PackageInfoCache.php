@@ -85,5 +85,4 @@ class PackageInfoCache
     {
         return static::TYPE_IDENTIFIER . '_' . static::PREFIX . '_' . $key;
     }
-
 }
