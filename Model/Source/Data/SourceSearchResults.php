@@ -13,5 +13,4 @@ use Calcurates\ModuleMagento\Api\Source\Data\SourceSearchResultsInterface;
 
 class SourceSearchResults extends SearchResults implements SourceSearchResultsInterface
 {
-
 }

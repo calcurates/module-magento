@@ -28,7 +28,7 @@ class ProductAttributesService
 
             $value = $product->getData($attributeCode);
 
-            if(null === $value) {
+            if (null === $value) {
                 $customAttribute = $product->getCustomAttribute($attributeCode);
                 if ($customAttribute) {
                     $value = $customAttribute->getValue();
