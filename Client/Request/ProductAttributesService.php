@@ -8,63 +8,44 @@
 
 namespace Calcurates\ModuleMagento\Client\Request;
 
-use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Framework\Stdlib\StringUtils;
 
 class ProductAttributesService
 {
-    /**
-     * @var StringUtils
-     */
-    private $stringUtils;
-
-    public function __construct(StringUtils $stringUtils)
-    {
-        $this->stringUtils = $stringUtils;
-    }
-
     /**
      * @param ProductInterface $product
      * @return array
      */
     public function getAttributes(ProductInterface $product)
     {
-        $attributes = [];
-        foreach ($product->getData() as $key => $value) {
-            if (is_object($value) || $key === 'options') {
+        $attributeValues = [];
+
+        /** @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute  $attribute */
+        foreach ($product->getAttributes() as $attributeCode => $attribute) {
+            if (in_array($attribute->getFrontendInput(), ['gallery', 'media_image'])) {
                 continue;
             }
 
-            $attributes[$key] = $value;
-        }
-        foreach ($product->getCustomAttributes() as $customAttribute) {
-            $attributes[$customAttribute->getAttributeCode()] = $customAttribute->getValue();
+            $value = $product->getData($attributeCode);
+
+            if(null === $value) {
+                $customAttribute = $product->getCustomAttribute($attributeCode);
+                if ($customAttribute) {
+                    $value = $customAttribute->getValue();
+                }
+            }
+
+            if (null === $value) {
+                continue;
+            }
+
+            if ($attribute->getIsHtmlAllowedOnFront()) {
+                $value = strip_tags($value);
+            }
+
+            $attributeValues[$attributeCode] = $value;
         }
 
-        if (isset($attributes[ProductAttributeInterface::CODE_DESCRIPTION])) {
-            $attributes[ProductAttributeInterface::CODE_DESCRIPTION] = $this->stripHtml(
-                $attributes[ProductAttributeInterface::CODE_DESCRIPTION],
-                100
-            );
-        }
-        if (isset($attributes[ProductAttributeInterface::CODE_SHORT_DESCRIPTION])) {
-            $attributes[ProductAttributeInterface::CODE_SHORT_DESCRIPTION] = $this->stripHtml(
-                $attributes[ProductAttributeInterface::CODE_SHORT_DESCRIPTION],
-                100
-            );
-        }
-
-        return $attributes;
-    }
-
-    /**
-     * @param string $value
-     * @param int|null $length [optional]
-     * @return string
-     */
-    protected function stripHtml($value, $length = null)
-    {
-        return $this->stringUtils->substr(strip_tags($value), 0, $length);
+        return $attributeValues;
     }
 }
