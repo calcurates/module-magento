@@ -77,4 +77,12 @@
     <type name="Magento\Shipping\Model\Shipping">
         <plugin name="Calcurates_ModuleMagento::HideOtherCarriersIfRequired" type="Calcurates\ModuleMagento\Plugin\Model\Shipping\ShippingPlugin"/>
     </type>
+
+    <!-- custom sources webapi -->
+    <preference for="Calcurates\ModuleMagento\Api\Source\SourceRepositoryInterface"
+                type="Calcurates\ModuleMagento\Model\Source\SourceRepository"/>
+    <preference for="Calcurates\ModuleMagento\Api\Source\Data\SourceSearchResultsInterface"
+                type="Calcurates\ModuleMagento\Model\Source\Data\SourceSearchResults"/>
+    <preference for="Calcurates\ModuleMagento\Api\Source\Data\SourceInterface"
+                type="Calcurates\ModuleMagento\Model\Source\Data\Source"/>
 </config>
