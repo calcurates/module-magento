@@ -73,10 +73,7 @@ RUN set -xe \
     && apk del --no-cache libxslt-dev \
     && apk del --no-cache zlib-dev libzip-dev \
     && apk del --no-cache libsodium-dev \
-    && rm -rf /tmp/* /var/cache/apk/* \
-
-    # Default php config
-    && mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+    && rm -rf /tmp/* /var/cache/apk/*
 
 
 # composer auth
@@ -84,7 +81,7 @@ COPY auth.json /.composer/
 
 
 # Composer
-RUN curl -L -o /composer.phar https://github.com/composer/composer/releases/download/1.10.6/composer.phar \
+RUN curl -L -o /composer.phar https://github.com/composer/composer/releases/download/1.10.7/composer.phar \
     && chmod 755 /composer.phar
 ENV COMPOSER_HOME=/.composer
 

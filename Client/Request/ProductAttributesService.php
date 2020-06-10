@@ -18,18 +18,34 @@ class ProductAttributesService
      */
     public function getAttributes(ProductInterface $product)
     {
-        $attributes = [];
-        foreach ($product->getData() as $key => $value) {
-            if (is_object($value)) {
+        $attributeValues = [];
+
+        /** @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute  $attribute */
+        foreach ($product->getAttributes() as $attributeCode => $attribute) {
+            if (in_array($attribute->getFrontendInput(), ['gallery', 'media_image'])) {
                 continue;
             }
 
-            $attributes[$key] = $value;
-        }
-        foreach ($product->getCustomAttributes() as $customAttribute) {
-            $attributes[$customAttribute->getAttributeCode()] = $customAttribute->getValue();
+            $value = $product->getData($attributeCode);
+
+            if (null === $value) {
+                $customAttribute = $product->getCustomAttribute($attributeCode);
+                if ($customAttribute) {
+                    $value = $customAttribute->getValue();
+                }
+            }
+
+            if (null === $value) {
+                continue;
+            }
+
+            if ($attribute->getIsHtmlAllowedOnFront()) {
+                $value = strip_tags($value);
+            }
+
+            $attributeValues[$attributeCode] = $value;
         }
 
-        return $attributes;
+        return $attributeValues;
     }
 }

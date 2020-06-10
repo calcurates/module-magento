@@ -69,7 +69,10 @@ class ShippingPlugin
     public function aroundCollectCarrierRates(Shipping $subject, \Closure $proceed, $carrierCode, $request)
     {
         $shippingMethodsForFallback = $this->getShippingMethodsForFallback($request->getStoreId());
-        if (!$request->getSkipCalcurates() && in_array($carrierCode, $shippingMethodsForFallback)) {
+        if ($this->config->isActive($request->getStoreId())
+            && !$request->getSkipCalcurates()
+            && in_array($carrierCode, $shippingMethodsForFallback)
+        ) {
             return $subject;
         }
 
