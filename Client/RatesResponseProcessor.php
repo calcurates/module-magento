@@ -236,8 +236,13 @@ class RatesResponseProcessor
                         $name .= $service['package']['name'];
                     }
 
+                    $id = $serviceIds[$service['id']] ?? $service['id'] . ' - ';
+                    if (isset($service['package']['id'])) {
+                        $id .= $service['package']['id'];
+                    }
+
                     $serviceNames[$service['name']] = $name;
-                    $serviceIds[] = $service['id'];
+                    $serviceIds[$service['id']] = $id;
 
                     $sourceCode = $service['origin']['targetValue']['targetId'] ?? null;
 
@@ -246,7 +251,9 @@ class RatesResponseProcessor
                     }
                 }
 
-                $responseRate['id'] = implode(',', $serviceIds);
+                $responseRate['id'] = implode(', ', array_map(static function ($serviceId) {
+                    return rtrim($serviceId, ' - ');
+                }, $serviceIds));
                 $responseRate['name'] = implode(', ', array_map(static function ($serviceName) {
                     return rtrim($serviceName, ' - ');
                 }, $serviceNames));
