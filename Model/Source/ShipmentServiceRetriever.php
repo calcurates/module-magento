@@ -3,6 +3,7 @@
 namespace Calcurates\ModuleMagento\Model\Source;
 
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
+use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Sales\Model\Order;
 
@@ -14,12 +15,18 @@ class ShipmentServiceRetriever
     private $serializer;
 
     /**
+     * @var ShippingMethodManager
+     */
+    private $shippingMethodManager;
+
+    /**
      * ShipmentServiceRetriever constructor.
      * @param SerializerInterface $serializer
      */
-    public function __construct(SerializerInterface $serializer)
+    public function __construct(SerializerInterface $serializer, ShippingMethodManager $shippingMethodManager)
     {
         $this->serializer = $serializer;
+        $this->shippingMethodManager = $shippingMethodManager;
     }
 
     /**
@@ -29,9 +36,15 @@ class ShipmentServiceRetriever
      */
     public function retrieve($order, $requestedSourceCode)
     {
-        $shippingMethod = $order->getShippingMethod(true);
-        list(, $carrierId, $shippingServices) = explode('_', $shippingMethod->getMethod());
-        $shippingServicesArray = explode(',', $shippingServices);
+        $carrierData = $this->shippingMethodManager->getCarrierData(
+            $order->getShippingMethod()
+        );
+        if (!$carrierData) {
+            return [];
+        }
+        $carrierId = $carrierData->getCarrierId();
+        $shippingServices = $carrierData->getServiceIdsString();
+        $shippingServicesArray = $carrierData->getServiceIds();
 
         try {
             $carrierServicesToOrigins = $order->getData(CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE);
