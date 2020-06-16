@@ -13,6 +13,7 @@ use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Client\Request\RateRequestBuilder;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Request\ShippingLabelRequestBuilder;
+use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Calcurates\ModuleMagento\Model\Carrier\Validator\RateRequestValidator;
 use Calcurates\ModuleMagento\Model\Shipment\ShippingLabelSaver;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -93,6 +94,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private $shippingLabelSaver;
 
     /**
+     * @var ShippingMethodManager
+     */
+    private $shippingMethodManager;
+
+    /**
      * Carrier constructor.
      * @param ScopeConfigInterface $scopeConfig
      * @param ErrorFactory $rateErrorFactory
@@ -116,6 +122,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param ShippingLabelRequestBuilder $shippingLabelRequestBuilder
      * @param RateRequestValidator $rateRequestValidator
      * @param ShippingLabelSaver $shippingLabelSaver
+     * @param ShippingMethodManager $shippingMethodManager
      * @param array $data
      */
     public function __construct(
@@ -141,6 +148,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         ShippingLabelRequestBuilder $shippingLabelRequestBuilder,
         RateRequestValidator $rateRequestValidator,
         ShippingLabelSaver $shippingLabelSaver,
+        ShippingMethodManager $shippingMethodManager,
         array $data = []
     ) {
         parent::__construct(
@@ -168,6 +176,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->shippingLabelRequestBuilder = $shippingLabelRequestBuilder;
         $this->rateRequestValidator = $rateRequestValidator;
         $this->shippingLabelSaver = $shippingLabelSaver;
+        $this->shippingMethodManager = $shippingMethodManager;
     }
 
     /**
@@ -424,7 +433,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             return false;
         }
         $method = $shipment->getOrder()->getShippingMethod(true);
-        return strpos($method->getMethod(), 'carrier_') === 0;
+        return strpos($method->getMethod(), ShippingMethodManager::CARRIER) === 0;
     }
 
     /**
@@ -477,8 +486,13 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         if (empty($serviceId)) {
             // backward compatibility
             $shippingMethod = $this->trackingObject->getShipment()->getOrder()->getShippingMethod(false);
-            $shippingMethod = explode('_', $shippingMethod);
-            $serviceId = end($shippingMethod);
+            $carrierData = $this->shippingMethodManager->getCarrierData(
+                $shippingMethod
+            );
+
+            if ($carrierData) {
+                $serviceId = $carrierData->getServiceIdsString();
+            }
         }
 
         $debugData = ['request' => $serviceId . ' - ' . $tracking, 'type' => 'tracking'];

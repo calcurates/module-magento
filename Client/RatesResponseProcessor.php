@@ -10,6 +10,7 @@ namespace Calcurates\ModuleMagento\Client;
 
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Model\Carrier;
+use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Calcurates\ModuleMagento\Model\Config as CalcuratesConfig;
 use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
 use Magento\Quote\Model\Quote\Item;
@@ -134,7 +135,7 @@ class RatesResponseProcessor
             }
 
             $rate = $this->rateBuilder->build(
-                'flatRates_' . $responseRate['id'],
+                ShippingMethodManager::FLAT_RATES . '_' . $responseRate['id'],
                 $responseRate
             );
             $result->append($rate);
@@ -161,7 +162,7 @@ class RatesResponseProcessor
             ];
 
             $rate = $this->rateBuilder->build(
-                'freeShipping' . $responseRate['id'],
+                ShippingMethodManager::FREE_SHIPPING . '_' . $responseRate['id'],
                 $responseRate
             );
             $result->append($rate);
@@ -193,7 +194,7 @@ class RatesResponseProcessor
                 }
 
                 $rate = $this->rateBuilder->build(
-                    'tableRate_' . $tableRate['id'] . '_' . $responseRate['id'],
+                    ShippingMethodManager::TABLE_RATE . '_' . $tableRate['id'] . '_' . $responseRate['id'],
                     $responseRate
                 );
                 $result->append($rate);
@@ -218,6 +219,7 @@ class RatesResponseProcessor
                 continue;
             }
 
+            $existingMethodIds = [];
             foreach ($carrier['rates'] as $responseRate) {
                 if (!$responseRate['success']) {
                     if ($responseRate['message']) {
@@ -236,13 +238,8 @@ class RatesResponseProcessor
                         $name .= $service['package']['name'];
                     }
 
-                    $id = $serviceIds[$service['id']] ?? $service['id'] . ' - ';
-                    if (isset($service['package']['id'])) {
-                        $id .= $service['package']['id'];
-                    }
-
                     $serviceNames[$service['name']] = $name;
-                    $serviceIds[$service['id']] = $id;
+                    $serviceIds[] = $service['id'];
 
                     $sourceCode = $service['origin']['targetValue']['targetId'] ?? null;
 
@@ -251,17 +248,22 @@ class RatesResponseProcessor
                     }
                 }
 
-                $responseRate['id'] = implode(', ', array_map(static function ($serviceId) {
-                    return rtrim($serviceId, ' - ');
-                }, $serviceIds));
+                $serviceIdsString = implode(',', $serviceIds);
                 $responseRate['name'] = implode(', ', array_map(static function ($serviceName) {
                     return rtrim($serviceName, ' - ');
                 }, $serviceNames));
 
-                $carrierServicesToOrigins[$carrier['id']][$responseRate['id']] = $sourceToServiceId;
+                $carrierServicesToOrigins[$carrier['id']][$serviceIdsString] = $sourceToServiceId;
+
+                $methodId = $this->getUniqueMethodId(
+                    ShippingMethodManager::CARRIER . '_' . $carrier['id'] . '_' . $serviceIdsString,
+                    $existingMethodIds
+                );
+
+                $existingMethodIds[$methodId] = true;
 
                 $rate = $this->rateBuilder->build(
-                    'carrier_' . $carrier['id'] . '_' . $responseRate['id'],
+                    $methodId,
                     $responseRate,
                     $carrier['name']
                 );
@@ -270,6 +272,23 @@ class RatesResponseProcessor
         }
 
         $quote->setData(CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE, $this->serializer->serialize($carrierServicesToOrigins));
+    }
+
+    /**
+     * @param string $baseMethodId
+     * @param array $listExistingMethods
+     * @return string
+     */
+    private function getUniqueMethodId(string $baseMethodId, array $listExistingMethods): string
+    {
+        $i = 1;
+        $methodId = $baseMethodId;
+        while (isset($listExistingMethods[$methodId])) {
+            $methodId = $baseMethodId . '_' . $i;
+            $i++;
+        }
+
+        return $methodId;
     }
 
     /**
