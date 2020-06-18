@@ -209,9 +209,22 @@ class RatesResponseProcessor
      */
     private function processCarriers(array $carriers, Result $result, $quote)
     {
+        $isHaveRates = static function (array $carrier) {
+            if ($carrier['success']) {
+                return true;
+            }
+            foreach ($carrier['rates'] as $rate) {
+                if ($rate['message']) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+
         $carrierServicesToOrigins = [];
         foreach ($carriers as $carrier) {
-            if (!$carrier['success']) {
+            if (!$isHaveRates($carrier)) {
                 if ($carrier['message']) {
                     $this->processFailedRate($carrier['name'], $result, $carrier['message']);
                 }
