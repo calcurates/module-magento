@@ -228,10 +228,14 @@ echo /* @noEscape */ $block->fetchView($block->getTemplateFile('Magento_Shipping
                 <div class="admin__page-section-item-content">
                     <?php $shippingServiceId = $helper->getShippingServiceId($order, $shipment); ?>
                     <select name="calcurates_change_shipping_method_select" id="calcurates_change_shipping_method_select" class="select admin__control-select carrier" disabled="disabled">
-                        <?php foreach ($helper->getShippingServices($order, $shipment) as $shippingService): ?>
-                            <option value="<?= $block->escapeHtml($shippingService['value']) ?>"<?= $shippingService['value'] == $shippingServiceId ? ' selected="selected"' : '' ?>>
-                                <?= $block->escapeHtml($shippingService['label']) ?>
-                            </option>
+                        <?php foreach ($helper->getShippingCarriersWithServices($order, $shipment) as $shippingCarrier): ?>
+                            <optgroup label="<?= $block->escapeHtml($shippingCarrier['label']) ?>">
+                            <?php foreach ($shippingCarrier['services'] as $shippingService): ?>
+                                <option value="<?= $block->escapeHtml($shippingService['value']) ?>"<?= $shippingService['value'] == $shippingServiceId ? ' selected="selected"' : '' ?>>
+                                    <?= $block->escapeHtml($shippingService['label']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                            </optgroup>
                         <?php endforeach; ?>
                     </select>
                     <div class="actions" style="display: inline-block;margin-left: 0.5rem;">

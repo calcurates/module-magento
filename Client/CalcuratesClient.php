@@ -78,6 +78,41 @@ class CalcuratesClient implements CalcuratesClientInterface
     }
 
     /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @return array
+     */
+    public function getShippingCarriersWithServices($storeId)
+    {
+        try {
+            $response = $this->httpClient->get(
+                $this->getAPIUrl($storeId) . '/shipping-options/carriers'
+            );
+            $response = \Zend_Json::decode($response);
+        } catch (\Throwable $e) {
+            $response = [];
+        }
+
+        $shippingCarriers = [];
+        foreach ($response as $item) {
+            $shippingCarrier = [
+                'label' => $item['carrierType'], // @TODO carrier label
+                'services' => []
+            ];
+
+            foreach ($item['services'] as $service) {
+                $shippingCarrier['services'][] = [
+                    'value' => $service['id'],
+                    'label' => $service['name']
+                ];
+            }
+
+            $shippingCarriers[] = $shippingCarrier;
+        }
+
+        return $shippingCarriers;
+    }
+
+    /**
      * @param string $url
      * @return string
      * @throws LocalizedException

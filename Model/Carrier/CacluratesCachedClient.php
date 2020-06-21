@@ -44,6 +44,15 @@ class CacluratesCachedClient implements CalcuratesClientInterface
     }
 
     /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @return array
+     */
+    public function getShippingCarriersWithServices($storeId)
+    {
+        return $this->calcuratesClient->getShippingCarriersWithServices($storeId);
+    }
+
+    /**
      * @param string $url
      * @return string
      */

@@ -143,29 +143,33 @@ class ShipmentAddressHelper extends AbstractHelper
      * @param Shipment $shipment
      * @return array
      */
-    public function getShippingServices(Order $order, $shipment)
+    public function getShippingCarriersWithServices(Order $order, $shipment)
     {
         $carrierData = $this->shippingMethodManager->getCarrierData($order->getShippingMethod());
         if (!$carrierData) {
             return [];
         }
 
-        $shippingServices = $this->calcuratesClient->getShippingServices(
-            $carrierData->getCarrierId(),
-            $order->getStoreId()
-        );
+        $shippingCarriersWithServices = $this->calcuratesClient->getShippingCarriersWithServices($order->getStoreId());
 
-        if (empty($shippingServices)) {
+        if (empty($shippingCarriersWithServices)) {
             $shippingServiceLabel = explode('-', $order->getShippingDescription());
             $shippingServiceLabel = end($shippingServiceLabel);
             $shippingServiceValue = $this->getShippingServiceId($order, $shipment);
-            $shippingServices[] = [
-                'value' => $shippingServiceValue,
-                'label' => $shippingServiceLabel
+            $shippingCarriersWithServices = [
+                [
+                    'label' => __('Default'),
+                    'services' => [
+                        [
+                            'value' => $shippingServiceValue,
+                            'label' => $shippingServiceLabel
+                        ]
+                    ]
+                ]
             ];
         }
 
-        return $shippingServices;
+        return $shippingCarriersWithServices;
     }
 
     /**
