@@ -63,8 +63,7 @@ class GetSourceCodesPerSkus
 
             $quantity = null;
             if ($manageStock) {
-                // @TODO: now API works only with integer, but magento qty can be decimal
-                $quantity = $row['status'] == SourceItemInterface::STATUS_IN_STOCK ? (int)$row['quantity'] : 0;
+                $quantity = $row['status'] == SourceItemInterface::STATUS_IN_STOCK ? floor($row['quantity']) : 0;
             }
             $sourcesBySkus[$row['sku']][] = [
                 'source' => $row['source_code'],
