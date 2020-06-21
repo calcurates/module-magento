@@ -95,7 +95,7 @@ class CalcuratesClient implements CalcuratesClientInterface
         $shippingCarriers = [];
         foreach ($response as $item) {
             $shippingCarrier = [
-                'label' => $item['carrierType'], // @TODO carrier label
+                'label' => $item['carrierName'],
                 'services' => []
             ];
 
