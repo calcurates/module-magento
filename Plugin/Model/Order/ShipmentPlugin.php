@@ -11,6 +11,7 @@ namespace Calcurates\ModuleMagento\Plugin\Model\Order;
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Api\Shipping\ShippingDataResolverInterface;
 use Calcurates\ModuleMagento\Model\Carrier;
+use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Magento\Sales\Model\Order\Shipment;
 
 class ShipmentPlugin
@@ -41,7 +42,7 @@ class ShipmentPlugin
             $order = $subject->getOrder();
             $shippingMethod = $order->getShippingMethod(true);
 
-            if (strpos($shippingMethod->getMethod(), 'carrier_') === 0) {
+            if (strpos($shippingMethod->getMethod(), ShippingMethodManager::CARRIER) === 0) {
                 $title = explode('-', $order->getShippingDescription());
                 $title = trim(current($title));
                 $track->setTitle($title);

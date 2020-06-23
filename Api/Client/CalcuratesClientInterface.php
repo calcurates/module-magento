@@ -20,6 +20,12 @@ interface CalcuratesClientInterface
     public function getShippingServices($shippingCarrierId, $storeId);
 
     /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @return array
+     */
+    public function getShippingCarriersWithServices($storeId);
+
+    /**
      * @param string $url
      * @return string
      * @throws LocalizedException

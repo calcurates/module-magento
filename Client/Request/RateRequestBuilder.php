@@ -134,7 +134,7 @@ class RateRequestBuilder
                 'sku' => $item->getSku(),
                 'categories' => $item->getProduct()->getCategoryIds(),
                 'attributes' => $this->productAttributesService->getAttributes($product),
-                'sources' => $itemsSourceCodes[$item->getSku()] ?? []
+                'inventories' => $itemsSourceCodes[$item->getSku()] ?? []
             ];
         }
 
