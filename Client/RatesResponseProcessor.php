@@ -213,9 +213,11 @@ class RatesResponseProcessor
             if ($carrier['success']) {
                 return true;
             }
-            foreach ($carrier['rates'] as $rate) {
-                if ($rate['message']) {
-                    return true;
+            if ($carrier['rates']) {
+                foreach ($carrier['rates'] as $rate) {
+                    if ($rate['message']) {
+                        return true;
+                    }
                 }
             }
 
