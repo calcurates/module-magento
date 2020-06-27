@@ -602,6 +602,16 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      */
     public function getContainerTypes(\Magento\Framework\DataObject $params = null)
     {
-        return ['CUSTOM_PACKAGE' => __('Custom Package')];
+        $customPackages = $this->calcuratesClient->getCustomPackages($this->getStore());
+        if ($customPackages) {
+            $containerTypes = [];
+            foreach ($customPackages as $customPackage) {
+                $containerTypes[$customPackage['id']] = $customPackage['name'];
+            }
+        } else {
+            $containerTypes = ['CUSTOM_PACKAGE' => __('Custom Package')];
+        }
+
+        return $containerTypes;
     }
 }

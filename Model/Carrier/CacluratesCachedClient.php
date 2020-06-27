@@ -97,4 +97,13 @@ class CacluratesCachedClient implements CalcuratesClientInterface
 
         return $rates;
     }
+
+    /**
+     * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
+     * @return array
+     */
+    public function getCustomPackages($storeId)
+    {
+        return $this->calcuratesClient->getCustomPackages($storeId);
+    }
 }
