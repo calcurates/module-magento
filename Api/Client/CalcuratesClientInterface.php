@@ -56,4 +56,11 @@ interface CalcuratesClientInterface
      * @throws LocalizedException
      */
     public function getRates($request, $storeId);
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @return array
+     * @throws LocalizedException
+     */
+    public function getCustomPackages($storeId);
 }
