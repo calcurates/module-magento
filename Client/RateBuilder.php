@@ -68,6 +68,7 @@ class RateBuilder
         $rate->setCarrierTitle($carrierTitle);
         $rate->setInfoMessageEnabled((bool)$responseRate['message']);
         $rate->setInfoMessage($responseRate['message']);
+        $rate->setPriority($responseRate['priority']);
         $rate->setCost($baseAmount);
         $rate->setPrice($baseAmount);
 
