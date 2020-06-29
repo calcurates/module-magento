@@ -9,7 +9,9 @@
 namespace Calcurates\ModuleMagento\Plugin\Model\Shipping;
 
 use Calcurates\ModuleMagento\Client\Http\ApiException;
+use Calcurates\ModuleMagento\Model\Carrier;
 use Calcurates\ModuleMagento\Model\Config;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Shipping\Model\Shipping;
 
@@ -26,12 +28,19 @@ class ShippingPlugin
     private $shippingMethodsForFallback = [];
 
     /**
+     * @var ScopeConfigInterface
+     */
+    private $scopeConfig;
+
+    /**
      * ShippingPlugin constructor.
      * @param Config $config
+     * @param ScopeConfigInterface $scopeConfig
      */
-    public function __construct(Config $config)
+    public function __construct(Config $config, ScopeConfigInterface $scopeConfig)
     {
         $this->config = $config;
+        $this->scopeConfig = $scopeConfig;
     }
 
     /**
@@ -43,10 +52,11 @@ class ShippingPlugin
     public function aroundCollectRates(Shipping $subject, \Closure $proceed, RateRequest $request)
     {
         try {
-            /**
-             * @TODO: Need optimization: Calcurates API runs not always first, and when it answers with error,
-             * before it, some rates could be already counted. Need collect Calcurates first.
-             */
+            // make Calurates as first carrier for process
+            $allCarriers = $this->getAllCarrierCodesCalcuratesFirst($request->getStoreId());
+            if (!$request->getLimitCarrier()) {
+                $request->setLimitCarrier($allCarriers);
+            }
             return $proceed($request);
         } catch (ApiException $e) {
             $shippingMethodsForFallback = $this->getShippingMethodsForFallback($request->getStoreId());
@@ -90,5 +100,24 @@ class ShippingPlugin
         }
 
         return $this->shippingMethodsForFallback[$storeId];
+    }
+
+    /**
+     * @param int $storeId
+     * @return array
+     */
+    private function getAllCarrierCodesCalcuratesFirst($storeId)
+    {
+        $carriers = $this->scopeConfig->getValue(
+            'carriers',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+
+        unset($carriers[Carrier::CODE]);
+        $carriers = array_keys($carriers);
+        array_unshift($carriers, Carrier::CODE);
+
+        return $carriers;
     }
 }
