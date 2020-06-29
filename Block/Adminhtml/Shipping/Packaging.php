@@ -9,12 +9,14 @@
 namespace Calcurates\ModuleMagento\Block\Adminhtml\Shipping;
 
 use Calcurates\ModuleMagento\Model\Carrier;
+use Calcurates\ModuleMagento\Model\Shipment\CustomPackagesProvider;
 use Magento\Backend\Block\Template;
 use Magento\Backend\Block\Template\Context;
 use Magento\Framework\Registry;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Sales\Model\Order\Shipment;
 
-class Create extends Template
+class Packaging extends Template
 {
     /**
      * @var Registry
@@ -22,18 +24,34 @@ class Create extends Template
     private $coreRegistry;
 
     /**
+     * @var CustomPackagesProvider
+     */
+    private $customPackagesProvider;
+
+    /**
+     * @var Json
+     */
+    private $jsonSerializer;
+
+    /**
      * Create constructor.
      * @param Context $context
      * @param Registry $coreRegistry
+     * @param CustomPackagesProvider $customPackagesProvider
+     * @param Json $jsonSerializer
      * @param array $data
      */
     public function __construct(
         Context $context,
         Registry $coreRegistry,
+        CustomPackagesProvider $customPackagesProvider,
+        Json $jsonSerializer,
         array $data = []
     ) {
         parent::__construct($context, $data);
         $this->coreRegistry = $coreRegistry;
+        $this->customPackagesProvider = $customPackagesProvider;
+        $this->jsonSerializer = $jsonSerializer;
     }
 
     /**
@@ -49,7 +67,7 @@ class Create extends Template
     /**
      * @return bool
      */
-    public function isNeedReplaceCheckboxLabel()
+    public function shippingMethodIsCalcurates()
     {
         $order = $this->getShipment()->getOrder();
         $shippingMethod = $order->getShippingMethod(true);
@@ -58,5 +76,23 @@ class Create extends Template
         }
 
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCustomPackagesJson()
+    {
+        $customPackagesData = [];
+        foreach ($this->customPackagesProvider->getCustomPackages() as $customPackageData) {
+            $customPackageData['weightUnit'] = $customPackageData['weightUnit'] == 'lb' ?
+                \Zend_Measure_Weight::POUND : \Zend_Measure_Weight::KILOGRAM;
+
+            $customPackageData['dimensionsUnit'] = $customPackageData['dimensionsUnit'] == 'in' ?
+                \Zend_Measure_Length::INCH : \Zend_Measure_Length::CENTIMETER;
+
+            $customPackagesData[] = $customPackageData;
+        }
+        return $this->jsonSerializer->serialize($customPackagesData);
     }
 }

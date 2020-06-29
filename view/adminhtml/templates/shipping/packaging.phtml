@@ -1,0 +1,125 @@
+<?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2019-2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
+?>
+<?php /** @var $block \Calcurates\ModuleMagento\Block\Adminhtml\Shipping\Create */?>
+
+<?php if ($block->shippingMethodIsCalcurates()): ?>
+    <script>
+        require([
+            "jquery",
+            "prototype",
+            "Magento_Shipping/order/packaging"
+        ], function(jQuery){
+            var checkboxLabel = jQuery('label[for=create_shipping_label] span'),
+                text = "<?= $block->escapeHtml(__('Create Shipping Label with Calcurates')) ?>",
+                customPackagesData = <?= $block->getCustomPackagesJson() ?>;
+
+            if (checkboxLabel.length > 0) {
+                checkboxLabel.text(text);
+            }
+
+            if (customPackagesData.length > 0) {
+                window.Packaging = Class.create(Packaging, {
+                    changeContainerType: function($super, elem) {
+                        $super(elem);
+                        var packageId = jQuery(elem).val(),
+                            packageBlock = jQuery(elem).closest('[id^="package_block"]'),
+                            templateReplacement = false;
+
+                        if (packageBlock.length === 0) {
+                            packageBlock = jQuery(elem).closest('#package_template');
+                            templateReplacement = true
+                        }
+
+                        this.updatePackageFields(packageId, packageBlock, templateReplacement);
+                        if (!templateReplacement) {
+                            this.recalcContainerWeightAndCustomsValue(elem);
+                        }
+                    },
+
+                    changeMeasures: function ($super, obj) {
+                        // do nothing
+                    },
+
+                    _recalcContainerWeightAndCustomsValue: function ($super, container) {
+                        $super(container);
+                        var packageBlock = jQuery(container).closest('[id^="package_block"]'),
+                            packageId = packageBlock.find('select[name=package_container]').val(),
+                            packageData = this.getPackageData(packageId);
+
+                        if (packageData) {
+                            this.appendPackageTareWeight(packageBlock, packageData.weightTare, false);
+                        }
+                    },
+
+                    getPackageData: function (packageId) {
+                        var result;
+                        customPackagesData.forEach(function (packageData) {
+                            if (packageData.id == packageId) {
+                                result = packageData
+                            }
+                        });
+
+                        return result;
+                    },
+
+                    updatePackageFields: function (packageId, packageBlock, templateReplacement) {
+                        var lengthField = packageBlock.find('input[name="container_length"]'),
+                            widthField = packageBlock.find('input[name="container_width"]'),
+                            heightField = packageBlock.find('input[name="container_height"]'),
+                            dimensionUnitsField = packageBlock.find('select[name="container_dimension_units"]'),
+                            weightUnitsField = packageBlock.find('select[name="container_weight_units"]'),
+                            packageData = this.getPackageData(packageId);
+
+                        if (packageData) {
+                            lengthField.val(packageData.dimensionsLength);
+                            widthField.val(packageData.dimensionsWidth);
+                            heightField.val(packageData.dimensionsHeight);
+
+                            if (templateReplacement) {
+                                this.replaceSelectedOption(dimensionUnitsField, packageData.dimensionsUnit);
+                                this.replaceSelectedOption(weightUnitsField, packageData.weightUnit);
+                            } else {
+                                dimensionUnitsField.val(packageData.dimensionsUnit);
+                                weightUnitsField.val(packageData.weightUnit);
+                            }
+                            this.appendPackageTareWeight(packageBlock, packageData.weightTare, true);
+                        }
+                    },
+
+                    replaceSelectedOption: function (select, value) {
+                        select.find('option').each(function () {
+                            var elem = jQuery(this);
+                            if (elem.attr('value') == value) {
+                                elem.attr('selected', 'selected')
+                            } else {
+                                elem.removeAttr('selected');
+                            }
+                        })
+                    },
+
+                    appendPackageTareWeight: function (packageBlock, weightTare, resetCurrentValue) {
+                        var containerWeight = packageBlock.find('input[name="container_weight"]')[0],
+                            currentValue = resetCurrentValue ? 0 : parseFloat(containerWeight.value);
+
+                        if (weightTare <= 0) {
+                            return;
+                        }
+
+                        if (isNaN(currentValue)) {
+                            currentValue = 0;
+                        }
+
+                        containerWeight.value = currentValue + weightTare;
+                        containerWeight.value = parseFloat(parseFloat(Math.round(containerWeight.value + 'e+4') + 'e-4').toFixed(4));
+                    }
+                });
+            }
+        });
+    </script>
+<?php endif; ?>

@@ -8,7 +8,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="content">
-            <block class="Calcurates\ModuleMagento\Block\Adminhtml\Shipping\Create" name="calcurates_shipping_create" template="Calcurates_ModuleMagento::shipping/create.phtml" />
+            <block class="Calcurates\ModuleMagento\Block\Adminhtml\Shipping\Packaging" name="calcurates_shipping_packaging" template="Calcurates_ModuleMagento::shipping/packaging.phtml" />
         </referenceContainer>
     </body>
 </page>
