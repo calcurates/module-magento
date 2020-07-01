@@ -3,6 +3,7 @@
     <body>
         <referenceContainer name="content">
             <block class="Magento\Shipping\Block\Adminhtml\Order\Packaging" name="calcurates_shipment_data" template="Calcurates_ModuleMagento::order/packaging/label_data.phtml"/>
+            <block class="Calcurates\ModuleMagento\Block\Adminhtml\Shipping\Packaging" name="calcurates_shipping_packaging" template="Calcurates_ModuleMagento::shipping/packaging.phtml" />
         </referenceContainer>
     </body>
 </page>
