@@ -202,7 +202,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         }
 
         if ($this->rateRequestValidator->validate($request)) {
-            $this->result = $this->getQuotes($request);
+            $result = $this->getQuotes($request);
+            if ($result === false) {
+                return false;
+            }
+            $this->result = $result;
         } else {
             $result = $this->_rateFactory->create();
             $this->ratesResponseProcessor->processFailedRate(
@@ -263,12 +267,15 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     /**
      * @param RateRequest $request
      *
-     * @return Result
+     * @return Result|bool
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function getQuotes(RateRequest $request)
     {
         $items = $this->getAllItems($request);
+        if (!count($items)) {
+            return false;
+        }
         $quote = current($items)->getQuote();
         $apiRequestBody = $this->rateRequestBuilder->build(
             $request,
