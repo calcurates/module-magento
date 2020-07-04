@@ -85,4 +85,8 @@
                 type="Calcurates\ModuleMagento\Model\Source\Data\SourceSearchResults"/>
     <preference for="Calcurates\ModuleMagento\Api\Source\Data\SourceInterface"
                 type="Calcurates\ModuleMagento\Model\Source\Data\Source"/>
+
+    <type name="Magento\Shipping\Model\Rate\CarrierResult">
+        <plugin name="Calcurates_ModuleMagento::ChangeCalcurateRatesSorting" type="Calcurates\ModuleMagento\Plugin\Model\Shipping\CarrierResultPlugin"/>
+    </type>
 </config>

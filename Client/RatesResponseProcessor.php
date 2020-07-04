@@ -103,46 +103,8 @@ class RatesResponseProcessor
         $this->processTableRates($shippingOptions['tableRates'], $result);
         $this->processCarriers($shippingOptions['carriers'], $result, $quote);
 
-        return $this->sortRates($result);
+        return $result;
     }
-
-    /**
-     * @see SAAS-1244
-     * @param Result $result
-     * @return Result
-     */
-    private function sortRates(Result $result)
-    {
-        $rates = $result->getAllRates();
-        usort($rates, static function (\Magento\Quote\Model\Quote\Address\RateResult\AbstractResult $a, \Magento\Quote\Model\Quote\Address\RateResult\AbstractResult $b) {
-            if ($a instanceof \Magento\Quote\Model\Quote\Address\RateResult\Error) {
-                return 1;
-            }
-            if ($b instanceof \Magento\Quote\Model\Quote\Address\RateResult\Error) {
-                return -1;
-            }
-
-            if ($a->getData('priority') === $b->getData('priority')) {
-                return $a->getData('price') <=> $b->getData('price');
-            }
-            if (null === $a->getData('priority')) {
-                return 1;
-            }
-            if (null === $b->getData('priority')) {
-                return -1;
-            }
-
-            return $a->getData('priority') <=> $b->getData('priority');
-        });
-
-        $sortedResult = $this->rateFactory->create();
-        foreach ($rates as $rate) {
-            $sortedResult->append($rate);
-        }
-
-        return $sortedResult;
-    }
-
 
     /**
      * @param string $rateName
