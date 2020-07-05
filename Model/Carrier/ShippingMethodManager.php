@@ -35,9 +35,10 @@ class ShippingMethodManager
 
     /**
      * @param string $shippingMethodFull
+     * @param string $orderShippingDescription
      * @return CarrierData|null
      */
-    public function getCarrierData(string $shippingMethodFull): ?CarrierData
+    public function getCarrierData(string $shippingMethodFull, string $orderShippingDescription = ""): ?CarrierData
     {
         list($carrierCode, $method) = explode('_', $shippingMethodFull, 2);
 
@@ -55,11 +56,17 @@ class ShippingMethodManager
 
         $serviceIdsArray = explode(',', $serviceIds);
 
+        $titleArray = explode('-', $orderShippingDescription);
+        $carrierLabel = trim(current($titleArray));
+        $serviceLabel = trim(end($titleArray));
+
         return $this->carrierDataFactory->create([
             'data' => [
                 CarrierData::CARRIER_ID => $carrierId,
                 CarrierData::SERVICE_IDS_ARRAY => $serviceIdsArray,
                 CarrierData::SERVICE_IDS_STRING => $serviceIds,
+                CarrierData::CARRIER_LABEL => $carrierLabel,
+                CarrierData::SERVICE_LABEL => $serviceLabel
             ]
         ]);
     }

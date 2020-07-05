@@ -8,33 +8,16 @@
 ?>
 <?php /** @var $block \Magento\Shipping\Block\Adminhtml\Order\Packaging */ ?>
 <?php
-/** @var \Calcurates\ModuleMagento\Helper\ShipmentLabelDataHelper $helper */
-$helper = $this->helper(\Calcurates\ModuleMagento\Helper\ShipmentLabelDataHelper::class);
-$items = $helper->getLabelData($block->getShipment());
-if (!$items) {
+$labelData = $block->getShipment()->getData(\Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface::LABEL_DATA);
+$printUrl = $block->getUrl('adminhtml/order_shipment/printLabel', [
+    'shipment_id' => $block->getShipment()->getId()
+]);
+if (!$labelData) {
     return;
 }
 ?>
-<div id="calcurates-shipping-label-data" style="display: none">
-    <div class="admin__page-section-item-title">
-        <span class="title"><?= __('Label Info') ?></span>
-    </div>
-    <table class="admin__table-secondary">
-        <tbody>
-            <?php foreach ($items as $item): ?>
-                <tr>
-                    <th><?= $item['label']?></th>
-                    <td><?= $item['value']?></td>
-                </tr>
-            <?php endforeach; ?>
-            <tr>
-                <th></th>
-                <td><a href="<?= $block->getUrl('adminhtml/order_shipment/printLabel', [
-                        'shipment_id' => $block->getShipment()->getId()
-                    ])?>"><?= __('Download label') ?></a></td>
-            </tr>
-        </tbody>
-    </table>
+<div id="calcurates-shipping-label-data">
+    <?= $block->getChildBlock('label_data_renderer')->render($labelData, $printUrl) ?>
 </div>
 <script>
     require([

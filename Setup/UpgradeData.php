@@ -80,6 +80,8 @@ class UpgradeData implements UpgradeDataInterface
             $this->addCalcuratesShippingLabelDataField->execute($setup);
         }
 
+        // @TODO: migrate old data to calcurates shipment table, and use it instead of attributes
+
         $setup->endSetup();
     }
 }
