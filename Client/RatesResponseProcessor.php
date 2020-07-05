@@ -96,6 +96,7 @@ class RatesResponseProcessor
         }
 
         $this->processOrigins($response['origins'], $quote);
+
         $shippingOptions = $response['shippingOptions'];
         $this->processFreeShipping($shippingOptions['freeShipping'], $result);
         $this->processFlatRates($shippingOptions['flatRates'], $result);
@@ -184,18 +185,19 @@ class RatesResponseProcessor
                 continue;
             }
 
-            foreach ($tableRate['methods'] as $responseRate) {
-                if (!$responseRate['success']) {
-                    if ($responseRate['message']) {
-                        $this->processFailedRate($responseRate['name'], $result, $responseRate['message']);
+            foreach ($tableRate['methods'] as $responseRateMethod) {
+                if (!$responseRateMethod['success']) {
+                    if ($responseRateMethod['message']) {
+                        $this->processFailedRate($responseRateMethod['name'], $result, $responseRateMethod['message']);
                     }
 
                     continue;
                 }
 
+                $responseRateMethod['priority'] = $tableRate['priority'];
                 $rate = $this->rateBuilder->build(
-                    ShippingMethodManager::TABLE_RATE . '_' . $tableRate['id'] . '_' . $responseRate['id'],
-                    $responseRate
+                    ShippingMethodManager::TABLE_RATE . '_' . $tableRate['id'] . '_' . $responseRateMethod['id'],
+                    $responseRateMethod
                 );
                 $result->append($rate);
             }
@@ -235,10 +237,10 @@ class RatesResponseProcessor
             }
 
             $existingMethodIds = [];
-            foreach ($carrier['rates'] as $responseRate) {
-                if (!$responseRate['success']) {
-                    if ($responseRate['message']) {
-                        $this->processFailedRate($responseRate['name'], $result, $responseRate['message']);
+            foreach ($carrier['rates'] as $responseCarrierRate) {
+                if (!$responseCarrierRate['success']) {
+                    if ($responseCarrierRate['message']) {
+                        $this->processFailedRate($responseCarrierRate['name'], $result, $responseCarrierRate['message']);
                     }
 
                     continue;
@@ -247,7 +249,7 @@ class RatesResponseProcessor
                 $serviceIds = [];
                 $serviceNames = [];
                 $sourceToServiceId = [];
-                foreach ($responseRate['services'] as $service) {
+                foreach ($responseCarrierRate['services'] as $service) {
                     $name = $serviceNames[$service['name']] ?? $service['name'] . ' - ';
                     if (isset($service['package']['name'])) {
                         $name .= $service['package']['name'];
@@ -264,7 +266,7 @@ class RatesResponseProcessor
                 }
 
                 $serviceIdsString = implode(',', $serviceIds);
-                $responseRate['name'] = implode(', ', array_map(static function ($serviceName) {
+                $responseCarrierRate['name'] = implode(', ', array_map(static function ($serviceName) {
                     return rtrim($serviceName, ' - ');
                 }, $serviceNames));
 
@@ -277,9 +279,10 @@ class RatesResponseProcessor
 
                 $existingMethodIds[$methodId] = true;
 
+                $responseCarrierRate['priority'] = $carrier['priority'];
                 $rate = $this->rateBuilder->build(
                     $methodId,
-                    $responseRate,
+                    $responseCarrierRate,
                     $carrier['name']
                 );
                 $result->append($rate);
