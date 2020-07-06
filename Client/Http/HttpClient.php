@@ -67,6 +67,7 @@ class HttpClient
         }
 
         $client->addHeader('Content-Type', 'application/json');
+        $client->addHeader('Expect', '');
         switch ($type) {
             case self::TYPE_GET:
                 try {
