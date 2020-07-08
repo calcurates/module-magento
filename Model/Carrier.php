@@ -15,6 +15,7 @@ use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Request\ShippingLabelRequestBuilder;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Calcurates\ModuleMagento\Model\Carrier\Validator\RateRequestValidator;
+use Calcurates\ModuleMagento\Model\Shipment\CustomPackagesProvider;
 use Calcurates\ModuleMagento\Model\Shipment\ShippingLabelSaver;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
@@ -99,6 +100,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private $shippingMethodManager;
 
     /**
+     * @var CustomPackagesProvider
+     */
+    private $customPackagesProvider;
+
+    /**
      * Carrier constructor.
      * @param ScopeConfigInterface $scopeConfig
      * @param ErrorFactory $rateErrorFactory
@@ -123,6 +129,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param RateRequestValidator $rateRequestValidator
      * @param ShippingLabelSaver $shippingLabelSaver
      * @param ShippingMethodManager $shippingMethodManager
+     * @param CustomPackagesProvider $customPackagesProvider
      * @param array $data
      */
     public function __construct(
@@ -149,6 +156,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         RateRequestValidator $rateRequestValidator,
         ShippingLabelSaver $shippingLabelSaver,
         ShippingMethodManager $shippingMethodManager,
+        CustomPackagesProvider $customPackagesProvider,
         array $data = []
     ) {
         parent::__construct(
@@ -177,6 +185,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->rateRequestValidator = $rateRequestValidator;
         $this->shippingLabelSaver = $shippingLabelSaver;
         $this->shippingMethodManager = $shippingMethodManager;
+        $this->customPackagesProvider = $customPackagesProvider;
     }
 
     /**
@@ -609,6 +618,16 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      */
     public function getContainerTypes(\Magento\Framework\DataObject $params = null)
     {
-        return ['CUSTOM_PACKAGE' => __('Custom Package')];
+        $customPackages = $this->customPackagesProvider->getCustomPackages($this->getStore());
+        if ($customPackages) {
+            $containerTypes = [];
+            foreach ($customPackages as $customPackage) {
+                $containerTypes[$customPackage['id']] = $customPackage['name'];
+            }
+        } else {
+            $containerTypes = ['CUSTOM_PACKAGE' => __('Custom Package')];
+        }
+
+        return $containerTypes;
     }
 }

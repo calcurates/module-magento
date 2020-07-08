@@ -18,8 +18,8 @@ services:
       - MYSQL_USER=magento2
       - MYSQL_DATABASE=magento2
     volumes:
-      - '.docker/mysql/data:/var/lib/mysql'
-      - '.docker/mysql/server.cnf:/etc/mysql/conf.d/server.cnf'
+      - './.docker/mysql/data:/var/lib/mysql'
+      - './.docker/mysql/server.cnf:/etc/mysql/conf.d/server.cnf'
 
   php:
     privileged: true
@@ -42,7 +42,11 @@ services:
       - './Setup:/var/www/magento2/app/code/Calcurates/ModuleMagento/Setup'
       - './view:/var/www/magento2/app/code/Calcurates/ModuleMagento/view'
       - './.editorconfig:/var/www/magento2/app/code/Calcurates/ModuleMagento/.editorconfig'
+      - './.gitattributes:/var/www/magento2/app/code/Calcurates/ModuleMagento/.gitattributes'
+      - './.gitignore:/var/www/magento2/app/code/Calcurates/ModuleMagento/.gitignore'
+      - './.gitlab-ci.yml:/var/www/magento2/app/code/Calcurates/ModuleMagento/.gitlab-ci.yml'
       - './composer.json:/var/www/magento2/app/code/Calcurates/ModuleMagento/composer.json'
+      - './docker-compose.yml:/var/www/magento2/app/code/Calcurates/ModuleMagento/docker-compose.yml'
       - './installation_guide.pdf:/var/www/magento2/app/code/Calcurates/ModuleMagento/installation_guide.pdf'
       - './LICENSE:/var/www/magento2/app/code/Calcurates/ModuleMagento/LICENSE'
       - './README.md:/var/www/magento2/app/code/Calcurates/ModuleMagento/README.md'
@@ -67,7 +71,7 @@ services:
     volumes:
       - 'Magento2DataVolume:/var/www/magento2'
       - './vendor:/var/www/magento2/vendor'
-      - '.docker/nginx/magento2.conf:/etc/nginx/conf.d/default.conf'
+      - './.docker/nginx/magento2.conf:/etc/nginx/conf.d/default.conf'
     ports:
       - "80:80"
     container_name: magento2-nginx

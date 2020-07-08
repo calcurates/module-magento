@@ -105,8 +105,9 @@ class CalcuratesClient implements CalcuratesClientInterface
                     'label' => $service['name']
                 ];
             }
-
-            $shippingCarriers[] = $shippingCarrier;
+            if ($shippingCarrier['services']) {
+                $shippingCarriers[] = $shippingCarrier;
+            }
         }
 
         return $shippingCarriers;
@@ -206,5 +207,23 @@ class CalcuratesClient implements CalcuratesClientInterface
     protected function getApiUrl($storeId)
     {
         return rtrim($this->calcuratesConfig->getApiUrl($storeId), '/') . '/api/v1';
+    }
+
+    /**
+     * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
+     * @return array
+     */
+    public function getCustomPackages($storeId)
+    {
+        try {
+            $response = $this->httpClient->get(
+                $this->getAPIUrl($storeId) . '/custom-packages'
+            );
+            $response = \Zend_Json::decode($response);
+        } catch (\Throwable $e) {
+            $response = [];
+        }
+
+        return $response;
     }
 }
