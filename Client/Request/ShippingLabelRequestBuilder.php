@@ -92,7 +92,7 @@ class ShippingLabelRequestBuilder
             $apiRequestBody['products'][] = [
                 'priceWithTax' => round($item->getBasePriceInclTax(), 2),
                 'priceWithoutTax' => round($item->getBasePrice(), 2),
-                'discountAmount' => round($item->getBaseDiscountAmount(), 2),
+                'discountAmount' => round($item->getBaseDiscountAmount() / $item->getQty(), 2),
                 'quantity' => (float)$item->getQty(),
                 'weight' => $item->getWeight(),
                 'sku' => $item->getSku(),
