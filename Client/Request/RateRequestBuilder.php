@@ -129,11 +129,12 @@ class RateRequestBuilder
                 null,
                 true
             );
+
             $apiRequestBody['products'][] = [
                 'quoteItemId' => $item->getId(),
-                'priceWithTax' => round($item->getBasePriceInclTax(), 2),
-                'priceWithoutTax' => round($item->getBasePrice(), 2),
-                'discountAmount' => round($item->getBaseDiscountAmount(), 2),
+                'priceWithTax' => round($product->getPrice() + $item->getBaseTaxBeforeDiscount(), 2),
+                'priceWithoutTax' => round($product->getPrice(), 2),
+                'discountAmount' => round($item->getBaseDiscountAmount() / $item->getQty(), 2),
                 'quantity' => $item->getQty(),
                 'weight' => $item->getWeight(),
                 'sku' => $item->getSku(),
