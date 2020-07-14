@@ -10,6 +10,7 @@ namespace Calcurates\ModuleMagento\Model;
 
 use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
+use Calcurates\ModuleMagento\Client\Command\CreateShippingLabelCommand;
 use Calcurates\ModuleMagento\Client\Request\RateRequestBuilder;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Request\ShippingLabelRequestBuilder;
@@ -80,19 +81,9 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private $rateRequestBuilder;
 
     /**
-     * @var ShippingLabelRequestBuilder
-     */
-    private $shippingLabelRequestBuilder;
-
-    /**
      * @var RateRequestValidator
      */
     private $rateRequestValidator;
-
-    /**
-     * @var ShippingLabelSaver
-     */
-    private $shippingLabelSaver;
 
     /**
      * @var ShippingMethodManager
@@ -103,6 +94,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @var CustomPackagesProvider
      */
     private $customPackagesProvider;
+
+    /**
+     * @var CreateShippingLabelCommand
+     */
+    private $createShippingLabelCommand;
 
     /**
      * Carrier constructor.
@@ -130,6 +126,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param ShippingLabelSaver $shippingLabelSaver
      * @param ShippingMethodManager $shippingMethodManager
      * @param CustomPackagesProvider $customPackagesProvider
+     * @param CreateShippingLabelCommand $createShippingLabelCommand
      * @param array $data
      */
     public function __construct(
@@ -152,11 +149,10 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         CalcuratesClientInterface $calcuratesClient,
         RatesResponseProcessor $ratesResponseProcessor,
         RateRequestBuilder $rateRequestBuilder,
-        ShippingLabelRequestBuilder $shippingLabelRequestBuilder,
         RateRequestValidator $rateRequestValidator,
-        ShippingLabelSaver $shippingLabelSaver,
         ShippingMethodManager $shippingMethodManager,
         CustomPackagesProvider $customPackagesProvider,
+        CreateShippingLabelCommand $createShippingLabelCommand,
         array $data = []
     ) {
         parent::__construct(
@@ -181,11 +177,10 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->calcuratesClient = $calcuratesClient;
         $this->ratesResponseProcessor = $ratesResponseProcessor;
         $this->rateRequestBuilder = $rateRequestBuilder;
-        $this->shippingLabelRequestBuilder = $shippingLabelRequestBuilder;
         $this->rateRequestValidator = $rateRequestValidator;
-        $this->shippingLabelSaver = $shippingLabelSaver;
         $this->shippingMethodManager = $shippingMethodManager;
         $this->customPackagesProvider = $customPackagesProvider;
+        $this->createShippingLabelCommand = $createShippingLabelCommand;
     }
 
     /**
@@ -349,69 +344,9 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      */
     protected function _doShipmentRequest(\Magento\Framework\DataObject $request)
     {
-        /** @var \Magento\Shipping\Model\Shipment\Request $request */
-        $this->_prepareShipmentRequest($request);
+        $this->createShippingLabelCommand->setStore($this->getStore());
 
-        $apiRequestBody = $this->shippingLabelRequestBuilder->build(
-            $request,
-            (bool)$this->getDebugFlag()
-        );
-
-        $debugData = [
-            'request' => $apiRequestBody,
-            'type' => 'shippingLabelCreate'
-        ];
-
-        try {
-            $response = $this->calcuratesClient->createShippingLabel($apiRequestBody, $this->getStore());
-            $this->shippingLabelSaver->addShippingLabelDataToShipment($request->getOrderShipment(), $response);
-            $debugData['result'] = $response;
-        } catch (LocalizedException $e) {
-            $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
-            $this->_debug($debugData);
-            throw $e;
-        }
-        $this->_debug($debugData);
-
-        return $this->prepareShippingLabelContent($response);
-    }
-
-    /**
-     * @param array $labelData
-     * @return array
-     * @throws LocalizedException
-     */
-    protected function prepareShippingLabelContent(array $labelData)
-    {
-        $labelContent = '';
-        if (!empty($labelData['labelDownload'])) {
-            $labelContent = $this->downloadLabelContent($labelData['labelDownload']);
-        }
-        return [
-            'tracking_number' => !empty($labelData['trackingNumber']) ? $labelData['trackingNumber'] : '',
-            'label_content' => $labelContent
-        ];
-    }
-
-    /**
-     * @param string $url
-     * @return string
-     * @throws LocalizedException
-     */
-    protected function downloadLabelContent($url)
-    {
-        $debugData = ['request' => $url, 'type' => 'shippingLabelDownload'];
-        try {
-            $result = $this->calcuratesClient->getLabelContent($url);
-            $debugData['result'] = $result;
-        } catch (LocalizedException $e) {
-            $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
-            $this->_debug($debugData);
-            throw $e;
-        }
-        $this->_debug($debugData);
-
-        return $result;
+        return $this->createShippingLabelCommand->execute($request);
     }
 
     /**
@@ -501,9 +436,10 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $serviceId = $this->trackingObject->getData(CustomSalesAttributesInterface::SERVICE_ID);
         if (empty($serviceId)) {
             // backward compatibility
-            $shippingMethod = $this->trackingObject->getShipment()->getOrder()->getShippingMethod(false);
+            $order = $this->trackingObject->getShipment()->getOrder();
             $carrierData = $this->shippingMethodManager->getCarrierData(
-                $shippingMethod
+                $order->getShippingMethod(false),
+                $order->getShippingDescription()
             );
 
             if ($carrierData) {

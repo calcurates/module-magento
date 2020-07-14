@@ -45,7 +45,7 @@
     <type name="Calcurates\ModuleMagento\Model\Carrier">
         <arguments>
             <argument name="rateRequestBuilder" xsi:type="object">Calcurates\ModuleMagento\Client\Request\RateRequestBuilder\Proxy</argument>
-            <argument name="shippingLabelRequestBuilder" xsi:type="object">Calcurates\ModuleMagento\Client\Request\ShippingLabelRequestBuilder\Proxy</argument>
+            <argument name="createShippingLabelCommand" xsi:type="object">Calcurates\ModuleMagento\Client\Command\CreateShippingLabelCommand\Proxy</argument>
         </arguments>
     </type>
 
@@ -89,4 +89,15 @@
     <type name="Magento\Shipping\Model\Rate\CarrierResult">
         <plugin name="Calcurates_ModuleMagento::ChangeCalcurateRatesSorting" type="Calcurates\ModuleMagento\Plugin\Model\Shipping\CarrierResultPlugin"/>
     </type>
+
+    <type name="Calcurates\ModuleMagento\Client\Command\CreateShippingLabelCommand">
+        <arguments>
+            <argument name="logger" xsi:type="object">Magento\Shipping\Model\Method\VirtualLogger</argument>
+        </arguments>
+    </type>
+
+    <preference for="Calcurates\ModuleMagento\Api\Data\ShippingLabelInterface"
+                type="Calcurates\ModuleMagento\Model\ShippingLabel"/>
+    <preference for="Calcurates\ModuleMagento\Api\ShippingLabelRepositoryInterface"
+                type="Calcurates\ModuleMagento\Model\Repository\ShippingLabelRepository"/>
 </config>

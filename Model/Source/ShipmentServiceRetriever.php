@@ -37,10 +37,11 @@ class ShipmentServiceRetriever
     public function retrieve($order, $requestedSourceCode)
     {
         $carrierData = $this->shippingMethodManager->getCarrierData(
-            $order->getShippingMethod()
+            $order->getShippingMethod(),
+            $order->getShippingDescription()
         );
         if (!$carrierData) {
-            return [];
+            return "";
         }
         $carrierId = $carrierData->getCarrierId();
         $shippingServices = $carrierData->getServiceIdsString();

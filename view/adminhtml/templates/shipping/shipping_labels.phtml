@@ -1,0 +1,65 @@
+<?php
+/** @var $block \Calcurates\ModuleMagento\Block\Adminhtml\Shipping\ViewListLabels */
+
+$shippingLabels = $block->getShippingLabels();
+
+if ($shippingLabels->getSize() < 2) {
+    return;
+}
+?>
+
+<section class="admin__page-section inventory">
+    <div class="admin__page-section-title">
+        <span class="title"><?= /* @noEscape */ $block->escapeHtml(__('All Shipping Labels')) ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <table class="data-table admin__control-table">
+            <thead>
+            <tr class="headings">
+                <th class="col-date"><?= /* @noEscape */  $block->escapeHtml(__('Date')) ?></th>
+                <th class="col-carrier"><?= /* @noEscape */  $block->escapeHtml(__('Carrier & Service')) ?></th>
+                <th class="col-actions"><?= /* @noEscape */ $block->escapeHtml(__('Actions')) ?></th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php $i = 0; foreach ($shippingLabels as $shippingLabel): $i++ ?>
+                <tr class="<?= /* @noEscape */ ($i%2 == 0) ? 'even' : 'odd' ?>">
+                    <td class="col-date"><?= /* @noEscape */ $block->formatDate($shippingLabel->getCreatedAt(), \IntlDateFormatter::MEDIUM, true) ?></td>
+                    <td class="col-carrier"><?= /* @noEscape */ $block->escapeHtml($shippingLabel->getShippingCarrierLabel() . ' - ' . $shippingLabel->getShippingServiceLabel()) ?></td>
+                    <td class="col-actions">
+                        <?php
+                            $shippingLabelUrl = $block->getUrl('adminhtml/order_shipment/printCalcuratesLabel', [
+                                'shipment_id' => $block->getShipment()->getId(),
+                                'shipping_label_id' => $shippingLabel->getId()
+                            ]);
+                        ?>
+                        <button title="<?= /* @noEscape */ $block->escapeHtml(__('Print Shipping Label')) ?>"
+                                type="button"
+                                class="action-default scalable"
+                                onclick="setLocation('<?= /* @noEscape */ $block->escapeUrl($shippingLabelUrl) ?>')"
+                                data-ui-id="widget-button-1">
+                            <span><?= /* @noEscape */ $block->escapeHtml(__('Print Shipping Label')) ?></span>
+                        </button>
+                        <button
+                                title="<?= /* @noEscape */ $block->escapeHtml(__('Show Packages')) ?>"
+                                type="button"
+                                class="action-default scalable"
+                                onclick="showCalcuratesPackedWindow(<?= $shippingLabel->getId() ?>)"
+                                data-ui-id="widget-button-2">
+                            <span><?= /* @noEscape */ $block->escapeHtml(__('Show Packages')) ?></span> <?php // @TODO show packages ?>
+                        </button>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</section>
+<?php foreach ($shippingLabels as $shippingLabel): ?>
+    <?= $block->getChildBlock('calcurates_shipping_label_packages_renderer')->render($shippingLabel) ?>
+<?php endforeach; ?>
+<script>
+    function showCalcuratesPackedWindow(labelId) {
+        jQuery('#packed_window_' + labelId).modal('openModal');
+    }
+</script>
