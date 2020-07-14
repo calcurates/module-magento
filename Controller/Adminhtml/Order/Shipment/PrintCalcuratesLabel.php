@@ -117,5 +117,4 @@ class PrintCalcuratesLabel extends \Magento\Backend\App\Action
             ['shipment_id' => $this->getRequest()->getParam('shipment_id')]
         );
     }
-
 }

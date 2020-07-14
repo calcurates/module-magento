@@ -33,6 +33,7 @@ services:
       - './Api:/var/www/magento2/app/code/Calcurates/ModuleMagento/Api'
       - './Block:/var/www/magento2/app/code/Calcurates/ModuleMagento/Block'
       - './Client:/var/www/magento2/app/code/Calcurates/ModuleMagento/Client'
+      - './Controller:/var/www/magento2/app/code/Calcurates/ModuleMagento/Controller'
       - './etc:/var/www/magento2/app/code/Calcurates/ModuleMagento/etc'
       - './Helper:/var/www/magento2/app/code/Calcurates/ModuleMagento/Helper'
       - './i18n:/var/www/magento2/app/code/Calcurates/ModuleMagento/i18n'

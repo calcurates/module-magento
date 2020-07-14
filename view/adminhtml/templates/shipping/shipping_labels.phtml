@@ -46,7 +46,7 @@ if ($shippingLabels->getSize() < 2) {
                                 class="action-default scalable"
                                 onclick="showCalcuratesPackedWindow(<?= $shippingLabel->getId() ?>)"
                                 data-ui-id="widget-button-2">
-                            <span><?= /* @noEscape */ $block->escapeHtml(__('Show Packages')) ?></span> <? // @TODO show packages ?>
+                            <span><?= /* @noEscape */ $block->escapeHtml(__('Show Packages')) ?></span> <?php // @TODO show packages ?>
                         </button>
                     </td>
                 </tr>

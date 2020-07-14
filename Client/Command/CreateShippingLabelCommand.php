@@ -262,5 +262,4 @@ class CreateShippingLabelCommand
             $this->logger->debug(var_export($debugData, true));
         }
     }
-
 }
