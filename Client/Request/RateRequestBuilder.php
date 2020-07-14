@@ -123,16 +123,22 @@ class RateRequestBuilder
         $itemsSourceCodes = $this->getSourceCodesPerSkus->execute($itemsSkus);
 
         foreach ($items as $item) {
-            $product = $this->productRepository->getById($item->getProductId());
+            $product = $this->productRepository->getById(
+                $item->getProductId(),
+                false,
+                null,
+                true
+            );
+
             $apiRequestBody['products'][] = [
                 'quoteItemId' => $item->getId(),
                 'priceWithTax' => round($item->getBasePriceInclTax(), 2),
                 'priceWithoutTax' => round($item->getBasePrice(), 2),
-                'discountAmount' => round($item->getBaseDiscountAmount(), 2),
+                'discountAmount' => round($item->getBaseDiscountAmount() / $item->getQty(), 2),
                 'quantity' => $item->getQty(),
                 'weight' => $item->getWeight(),
                 'sku' => $item->getSku(),
-                'categories' => $item->getProduct()->getCategoryIds(),
+                'categories' => $product->getCategoryIds(),
                 'attributes' => $this->productAttributesService->getAttributes($product),
                 'inventories' => $itemsSourceCodes[$item->getSku()] ?? []
             ];
