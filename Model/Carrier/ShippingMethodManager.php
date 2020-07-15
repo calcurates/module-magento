@@ -57,8 +57,8 @@ class ShippingMethodManager
         $serviceIdsArray = explode(',', $serviceIds);
 
         $titleArray = explode('-', $orderShippingDescription);
-        $carrierLabel = trim(current($titleArray));
-        $serviceLabel = trim(end($titleArray));
+        $carrierLabel = trim(array_shift($titleArray));
+        $serviceLabel = trim(implode('-', $titleArray));
 
         return $this->carrierDataFactory->create([
             'data' => [

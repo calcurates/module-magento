@@ -46,10 +46,9 @@ class ShipmentSaveAfterObserver implements ObserverInterface
         /** @var ShippingLabel|null $shippingLabel */
         $shippingLabel = $shipment->getData(self::SHIPPING_LABEL_KEY);
 
-        if ($shippingLabel) {
+        if ($shippingLabel && !$shippingLabel->getId()) {
             $shippingLabel->setShipmentId((int)$shipment->getId());
             $this->shippingLabelRepository->save($shippingLabel);
-            $shipment->unsetData(self::SHIPPING_LABEL_KEY);
         }
     }
 }
