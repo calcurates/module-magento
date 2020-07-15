@@ -11,6 +11,8 @@ namespace Calcurates\ModuleMagento\Plugin\Model\Order;
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Api\Shipping\ShippingDataResolverInterface;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
+use Calcurates\ModuleMagento\Model\ShippingLabel;
+use Calcurates\ModuleMagento\Observer\ShipmentSaveAfterObserver;
 use Magento\Sales\Model\Order\Shipment;
 
 class ShipmentPlugin
@@ -54,7 +56,16 @@ class ShipmentPlugin
         );
 
         if ($carrierData) {
-            $track->setTitle($carrierData->getCarrierLabel() . ' - ' . $carrierData->getServiceLabel());
+            /** @var ShippingLabel|null $shippingLabel */
+            $shippingLabel = $subject->getData(ShipmentSaveAfterObserver::SHIPPING_LABEL_KEY);
+
+            if ($shippingLabel) {
+                $track->setTitle(
+                    $shippingLabel->getShippingCarrierLabel() . ' - ' . $shippingLabel->getShippingServiceLabel()
+                );
+            } else {
+                $track->setTitle($carrierData->getCarrierLabel() . ' - ' . $carrierData->getServiceLabel());
+            }
 
             $shippingData = $this->shippingDataResolver->getShippingData($subject);
             $track->setData(CustomSalesAttributesInterface::SERVICE_ID, $shippingData->getShippingServiceId());
