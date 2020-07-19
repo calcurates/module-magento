@@ -9,6 +9,7 @@
     <default>
         <carriers>
             <calcurates>
+                <title>Calcurates</title>
                 <active>0</active>
                 <showmethod>1</showmethod>
                 <api_url>https://api.calcurates.com</api_url>
