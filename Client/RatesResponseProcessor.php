@@ -205,6 +205,7 @@ class RatesResponseProcessor
     }
 
     /**
+     * @TODO: awful method, refactor that
      * @param array $carriers
      * @param Result $result
      * @param \Magento\Quote\Model\Quote $quote
@@ -240,7 +241,13 @@ class RatesResponseProcessor
             foreach ($carrier['rates'] as $responseCarrierRate) {
                 if (!$responseCarrierRate['success']) {
                     if ($responseCarrierRate['message']) {
-                        $this->processFailedRate($responseCarrierRate['name'], $result, $responseCarrierRate['message']);
+                        $serviceNames = [];
+                        $rateServices = $responseCarrierRate['services'] ?? [];
+                        foreach ($rateServices as $rateService) {
+                            $serviceNames[] =  $rateService['name'];
+                        }
+                        $rateName = implode(' ', $serviceNames);
+                        $this->processFailedRate($rateName, $result, $responseCarrierRate['message']);
                     }
 
                     continue;
