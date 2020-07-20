@@ -10,8 +10,9 @@ namespace Calcurates\ModuleMagento\Plugin\Model\Order;
 
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Api\Shipping\ShippingDataResolverInterface;
-use Calcurates\ModuleMagento\Model\Carrier;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
+use Calcurates\ModuleMagento\Model\ShippingLabel;
+use Calcurates\ModuleMagento\Observer\ShipmentSaveAfterObserver;
 use Magento\Sales\Model\Order\Shipment;
 
 class ShipmentPlugin
@@ -22,30 +23,48 @@ class ShipmentPlugin
     private $shippingDataResolver;
 
     /**
+     * @var ShippingMethodManager
+     */
+    private $shippingMethodManager;
+
+    /**
      * ShipmentPlugin constructor.
      * @param ShippingDataResolverInterface $shippingDataResolver
+     * @param ShippingMethodManager $shippingMethodManager
      */
-    public function __construct(ShippingDataResolverInterface $shippingDataResolver)
-    {
+    public function __construct(
+        ShippingDataResolverInterface $shippingDataResolver,
+        ShippingMethodManager $shippingMethodManager
+    ) {
         $this->shippingDataResolver = $shippingDataResolver;
+        $this->shippingMethodManager = $shippingMethodManager;
     }
 
     /**
      * Workaround to set track title
+     * @TODO: remove all and get info from shipping label table
      *
      * @param Shipment $subject
      * @param Shipment\Track $track
      */
     public function beforeAddTrack(Shipment $subject, \Magento\Sales\Model\Order\Shipment\Track $track)
     {
-        if ($track->getCarrierCode() === Carrier::CODE && empty($track->getTitle())) {
-            $order = $subject->getOrder();
-            $shippingMethod = $order->getShippingMethod(true);
+        $order = $subject->getOrder();
+        $carrierData = $this->shippingMethodManager->getCarrierData(
+            $order->getShippingMethod(false),
+            $order->getShippingDescription()
+        );
 
-            if (strpos($shippingMethod->getMethod(), ShippingMethodManager::CARRIER) === 0) {
-                $title = explode('-', $order->getShippingDescription());
-                $title = trim(current($title));
-                $track->setTitle($title);
+        if ($carrierData) {
+            /** @var ShippingLabel|null $shippingLabel */
+            $shippingLabel = $subject->getData(ShipmentSaveAfterObserver::SHIPPING_LABEL_KEY);
+
+            if ($shippingLabel) {
+                $track->setTitle(
+                    $shippingLabel->getShippingCarrierLabel() . ' - ' . $shippingLabel->getShippingServiceLabel()
+                );
+            } else {
+                $track->setTitle($carrierData->getCarrierLabel() . ' - ' . $carrierData->getServiceLabel());
             }
 
             $shippingData = $this->shippingDataResolver->getShippingData($subject);

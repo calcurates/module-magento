@@ -39,10 +39,6 @@ $isShipmentNew = !$shipment->getId();
         );
         packaging.setConfirmPackagingCallback(function () {
             packaging.setParamsCreateLabelRequest($('edit_form').serialize(true));
-            packaging.setParamsCreateLabelRequest({
-                calcuratesShippingServiceId: jQuery('#calcurates_change_shipping_method_select').val()
-            });
-
             packaging.sendCreateLabelRequest();
         });
         packaging.setLabelCreatedCallback(function (response) {
@@ -96,6 +92,9 @@ $isShipmentNew = !$shipment->getId();
             'attr': {'data-action':'save-packages'},
             'class': 'action-primary',
             click: function () {
+                packaging.setParamsCreateLabelRequest({
+                    calcuratesShippingServiceId: jQuery('#calcurates_change_shipping_method_select').val()
+                });
                 packaging.confirmPackaging();
             }
         }, {
@@ -162,7 +161,6 @@ $isShipmentNew = !$shipment->getId();
             jQuery('#calcurates_change_shipping_method_select').prop('disabled', false);
             return false;
         });
-
 
         function updatePackagesContentOverview() {
             var $packagesContent = jQuery('#packages_content_overview');

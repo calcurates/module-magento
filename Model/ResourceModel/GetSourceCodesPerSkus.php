@@ -51,7 +51,13 @@ class GetSourceCodesPerSkus
         $query = $connection
             ->select()
             ->distinct()
-            ->from($tableName, ['source_code', 'sku', 'quantity', 'status'])
+            ->from(['t' => $tableName], ['source_code', 'sku', 'quantity', 'status'])
+            ->joinInner(
+                [
+                    's' => $this->resourceConnection->getTableName('inventory_source')
+                ],
+                't.source_code = s.source_code AND s.enabled = 1'
+            )
             ->where('sku IN (?)', $skus);
 
         $rows = $connection->fetchAll($query);

@@ -6,17 +6,15 @@
  * @package Calcurates_ModuleMagento
  */
 
-namespace Calcurates\ModuleMagento\Helper;
+declare(strict_types=1);
 
-use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
+namespace Calcurates\ModuleMagento\Model\Shipment;
+
 use Magento\Directory\Model\CurrencyFactory;
-use Magento\Framework\App\Helper\AbstractHelper;
-use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Serialize\SerializerInterface;
-use Magento\Sales\Model\Order\Shipment;
 
-class ShipmentLabelDataHelper extends AbstractHelper
+class LabelDataParser
 {
     /**
      * @var SerializerInterface
@@ -35,33 +33,28 @@ class ShipmentLabelDataHelper extends AbstractHelper
 
     /**
      * ShipmentLabelDataHelper constructor.
-     * @param Context $context
      * @param SerializerInterface $serializer
      * @param PriceCurrencyInterface $priceCurrency
      * @param CurrencyFactory $currencyFactory
      */
     public function __construct(
-        Context $context,
         SerializerInterface $serializer,
         PriceCurrencyInterface $priceCurrency,
         CurrencyFactory $currencyFactory
     ) {
-        parent::__construct($context);
         $this->serializer = $serializer;
         $this->priceCurrency = $priceCurrency;
         $this->currencyFactory = $currencyFactory;
     }
 
     /**
-     * @param Shipment $orderShipment
-     * @return array|null
+     * @param string $shippingLabelData
+     * @return array
      */
-    public function getLabelData(Shipment $orderShipment)
+    public function parse(string $shippingLabelData): array
     {
-        $shippingLabelData = $orderShipment->getData(CustomSalesAttributesInterface::LABEL_DATA);
-
         if (!$shippingLabelData) {
-            return null;
+            return [];
         }
 
         $shippingLabelData = $this->serializer->unserialize($shippingLabelData);

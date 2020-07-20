@@ -15,6 +15,8 @@ class CarrierData extends DataObject
     const CARRIER_ID = 'carrier_id';
     const SERVICE_IDS_STRING = 'service_ids_string';
     const SERVICE_IDS_ARRAY = 'service_ids_array';
+    const CARRIER_LABEL = 'carrier_label';
+    const SERVICE_LABEL = 'service_label';
 
     /**
      * @return string
@@ -38,5 +40,21 @@ class CarrierData extends DataObject
     public function getServiceIdsString(): string
     {
         return (string)$this->getData(self::SERVICE_IDS_STRING);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCarrierLabel(): string
+    {
+        return (string)$this->getData(self::CARRIER_LABEL);
+    }
+
+    /**
+     * @return string
+     */
+    public function getServiceLabel(): string
+    {
+        return (string)$this->getData(self::SERVICE_LABEL);
     }
 }

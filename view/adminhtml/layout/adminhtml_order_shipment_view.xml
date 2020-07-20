@@ -2,8 +2,30 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="content">
-            <block class="Magento\Shipping\Block\Adminhtml\Order\Packaging" name="calcurates_shipment_data" template="Calcurates_ModuleMagento::order/packaging/label_data.phtml"/>
+            <block class="Magento\Shipping\Block\Adminhtml\Order\Packaging"
+                   name="calcurates_shipment_data"
+                   template="Calcurates_ModuleMagento::order/packaging/label_data.phtml">
+                <block class="Calcurates\ModuleMagento\Block\Adminhtml\Shipping\LabelDataRenderer"
+                       name="shipment.calcurates_label_data_renderer"
+                       as="label_data_renderer"
+                       template="Calcurates_ModuleMagento::shipping/label_data_renderer.phtml" />
+            </block>
             <block class="Calcurates\ModuleMagento\Block\Adminhtml\Shipping\Packaging" name="calcurates_shipping_packaging" template="Calcurates_ModuleMagento::shipping/packaging.phtml" />
+        </referenceContainer>
+
+        <referenceContainer name="extra_shipment_info">
+            <block class="Calcurates\ModuleMagento\Block\Adminhtml\Shipping\ViewListLabels"
+                   name="calcurates_additional_shipping_labels"
+                   template="Calcurates_ModuleMagento::shipping/shipping_labels.phtml">
+                <block class="Calcurates\ModuleMagento\Block\Adminhtml\Shipping\PackageRenderer"
+                       name="calcurates_shipping_label_packages_renderer"
+                       template="Calcurates_ModuleMagento::shipping/packed.phtml">
+                    <block class="Calcurates\ModuleMagento\Block\Adminhtml\Shipping\LabelDataRenderer"
+                           name="shipping_label.calcurates_label_data_renderer"
+                           as="label_data_renderer"
+                           template="Calcurates_ModuleMagento::shipping/label_data_renderer.phtml" />
+                </block>
+            </block>
         </referenceContainer>
     </body>
 </page>

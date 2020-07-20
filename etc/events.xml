@@ -10,4 +10,8 @@
         <observer name="calcurates_sales_model_service_quote_submit_before"
                   instance="Calcurates\ModuleMagento\Observer\SaveOrderBeforeSalesModelQuoteObserver" />
     </event>
+    <event name="sales_order_shipment_save_after">
+        <observer name="calcurates_save_shipment_after"
+                  instance="Calcurates\ModuleMagento\Observer\ShipmentSaveAfterObserver" />
+    </event>
 </config>
