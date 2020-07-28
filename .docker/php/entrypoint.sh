@@ -12,11 +12,11 @@ done
 
 isSourced=`mysql --silent --skip-column-names --user="$MYSQL_USER" --password="$MYSQL_PASSWORD" --host="mysql" --port="3306" -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$MYSQL_DATABASE';"`
 
-if [[ -f "/mg235.tar.gz" || "${isSourced}" -eq "0" ]]; then
+if [[ -f "/mg23.tar.gz" || "${isSourced}" -eq "0" ]]; then
     echo "Copying the Magento2 template to the working directory..."
     rm -rf "vendor/*"
-    tar -zxvf "/mg235.tar.gz"
-    rm "/mg235.tar.gz"
+    tar -zxvf "/mg23.tar.gz"
+    rm "/mg23.tar.gz"
 
     chmod 755 bin/magento
 
@@ -48,12 +48,12 @@ if [[ -f "/mg235.tar.gz" || "${isSourced}" -eq "0" ]]; then
     bin/magento cache:disable full_page
     bin/magento cache:flush
 
-    echo "Changing the file permissions..."
+    echo "Changing the permissions..."
     find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
     find var generated vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} +
     chown -R :www-data .
 
-    echo "Config phpcs..."
+    echo "Configuring the phpcs..."
     php vendor/bin/phpcs --config-set default_standard Magento2
     php vendor/bin/phpcs --config-set colors 1
     php vendor/bin/phpcs --config-set installed_paths /var/www/magento2/vendor/magento/magento-coding-standard/
@@ -64,7 +64,7 @@ if [[ -f "/mg235.tar.gz" || "${isSourced}" -eq "0" ]]; then
     chmod 755 /phpcs
 
 
-    echo "Config php-cs-fixer..."
+    echo "Configuring the php-cs-fixer..."
     curl -L -o /php-cs-fixer.phar https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.16.3/php-cs-fixer.phar
     chmod 755 /php-cs-fixer.phar
     echo "php /php-cs-fixer.phar fix ${PWD}/app/code/Calcurates/ModuleMagento --rules=@PSR2" > /php-cs-fixer
