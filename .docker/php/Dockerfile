@@ -84,7 +84,7 @@ COPY auth.json /.composer/
 
 
 # Composer
-RUN curl -L -o /composer.phar https://github.com/composer/composer/releases/download/1.10.9/composer.phar \
+RUN curl -L -o /composer.phar https://github.com/composer/composer/releases/download/1.10.10/composer.phar \
     && chmod 755 /composer.phar
 ENV COMPOSER_HOME=/.composer
 
