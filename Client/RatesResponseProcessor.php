@@ -135,9 +135,12 @@ class RatesResponseProcessor
                 continue;
             }
 
+            $carrierTitle = $responseRate['name'];
+            $responseRate['name'] = __('Flat Rate');
             $rate = $this->rateBuilder->build(
                 ShippingMethodManager::FLAT_RATES . '_' . $responseRate['id'],
-                $responseRate
+                $responseRate,
+                $carrierTitle
             );
             $result->append($rate);
         }
@@ -162,9 +165,12 @@ class RatesResponseProcessor
                 'currency' => null,
             ];
 
+            $carrierTitle = $responseRate['name'];
+            $responseRate['name'] = __('Free Shipping');
             $rate = $this->rateBuilder->build(
                 ShippingMethodManager::FREE_SHIPPING . '_' . $responseRate['id'],
-                $responseRate
+                $responseRate,
+                $carrierTitle
             );
             $result->append($rate);
         }
@@ -197,7 +203,8 @@ class RatesResponseProcessor
                 $responseRateMethod['priority'] = $tableRate['priority'];
                 $rate = $this->rateBuilder->build(
                     ShippingMethodManager::TABLE_RATE . '_' . $tableRate['id'] . '_' . $responseRateMethod['id'],
-                    $responseRateMethod
+                    $responseRateMethod,
+                    $tableRate['name']
                 );
                 $result->append($rate);
             }
