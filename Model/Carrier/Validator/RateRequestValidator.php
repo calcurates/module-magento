@@ -72,9 +72,7 @@ class RateRequestValidator
     private function validateRequest(RateRequest $request)
     {
         $isRegionRequired = $this->isRegionRequired($request->getDestCountryId());
-        return !empty($request->getDestStreet())
-            && !empty($request->getDestCity())
-            && (!$isRegionRequired || !empty($request->getDestRegionCode()))
+        return (!$isRegionRequired || !empty($request->getDestRegionCode()))
             && !empty($request->getDestPostcode())
             && !empty($request->getDestCountryId());
     }

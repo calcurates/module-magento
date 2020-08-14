@@ -112,6 +112,7 @@ class RateRequestBuilder
             // storeId in $request - from quote, and not correct if we open store via store url
             // setting "Use store codes in URL"
             'storeView' => $this->storeManager->getStore()->getId(),
+            'promoCode' => (string)$quote->getCouponCode(),
         ];
 
         $itemsSkus = [];
@@ -136,7 +137,7 @@ class RateRequestBuilder
                 'priceWithoutTax' => round($item->getBasePrice(), 2),
                 'discountAmount' => round($item->getBaseDiscountAmount() / $item->getQty(), 2),
                 'quantity' => $item->getQty(),
-                'weight' => $item->getWeight(),
+                'weight' => $product->isVirtual() ? 0 : $item->getWeight(),
                 'sku' => $item->getSku(),
                 'categories' => $product->getCategoryIds(),
                 'attributes' => $this->productAttributesService->getAttributes($product),
