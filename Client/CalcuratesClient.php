@@ -227,4 +227,36 @@ class CalcuratesClient implements CalcuratesClientInterface
 
         return $response;
     }
+
+    /**
+     *
+     * @param string $type
+     * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
+     * @return array
+     * @throws \InvalidArgumentException
+     */
+    public function getShippingOptions(string $type, $storeId): array
+    {
+        $allowedTypes = [
+            self::TYPE_CARRIERS,
+            self::TYPE_TABLE_RATES,
+            self::TYPE_FREE_SHIPPING,
+            self::TYPE_FLAT_RATES,
+        ];
+
+        if (!in_array($type, $allowedTypes)) {
+            throw new \InvalidArgumentException('Invalid type ' . $type);
+        }
+
+        try {
+            $response = $this->httpClient->get(
+                $this->getAPIUrl($storeId) . '/shipping-options/' . $type
+            );
+            $response = \Zend_Json::decode($response);
+        } catch (\Throwable $e) {
+            $response = [];
+        }
+
+        return $response;
+    }
 }

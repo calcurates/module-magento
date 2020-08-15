@@ -11,6 +11,7 @@ namespace Calcurates\ModuleMagento\Model;
 use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Client\Command\CreateShippingLabelCommand;
+use Calcurates\ModuleMagento\Client\Command\GetAllShippingOptionsCommand;
 use Calcurates\ModuleMagento\Client\Request\RateRequestBuilder;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Request\ShippingLabelRequestBuilder;
@@ -101,6 +102,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private $createShippingLabelCommand;
 
     /**
+     * @var GetAllShippingOptionsCommand
+     */
+    private $getAllShippingOptionsCommand;
+
+    /**
      * Carrier constructor.
      * @param ScopeConfigInterface $scopeConfig
      * @param ErrorFactory $rateErrorFactory
@@ -121,12 +127,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param CalcuratesClientInterface $calcuratesClient
      * @param RatesResponseProcessor $ratesResponseProcessor
      * @param RateRequestBuilder $rateRequestBuilder
-     * @param ShippingLabelRequestBuilder $shippingLabelRequestBuilder
      * @param RateRequestValidator $rateRequestValidator
-     * @param ShippingLabelSaver $shippingLabelSaver
      * @param ShippingMethodManager $shippingMethodManager
      * @param CustomPackagesProvider $customPackagesProvider
      * @param CreateShippingLabelCommand $createShippingLabelCommand
+     * @param GetAllShippingOptionsCommand $getAllShippingOptionsCommand
      * @param array $data
      */
     public function __construct(
@@ -153,6 +158,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         ShippingMethodManager $shippingMethodManager,
         CustomPackagesProvider $customPackagesProvider,
         CreateShippingLabelCommand $createShippingLabelCommand,
+        GetAllShippingOptionsCommand $getAllShippingOptionsCommand,
         array $data = []
     ) {
         parent::__construct(
@@ -181,6 +187,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->shippingMethodManager = $shippingMethodManager;
         $this->customPackagesProvider = $customPackagesProvider;
         $this->createShippingLabelCommand = $createShippingLabelCommand;
+        $this->getAllShippingOptionsCommand = $getAllShippingOptionsCommand;
     }
 
     /**
@@ -297,7 +304,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      */
     public function getAllowedMethods()
     {
-        return [];
+        return $this->getAllShippingOptionsCommand->getShippingOptions($this->getStore());
     }
 
     /**
