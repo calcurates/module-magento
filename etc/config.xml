@@ -20,6 +20,7 @@
                 <debug>0</debug>
                 <other_shipping_methods_action>2</other_shipping_methods_action>
                 <api_get_rates_timeout>10</api_get_rates_timeout>
+                <ignore_virtual>1</ignore_virtual>
             </calcurates>
         </carriers>
     </default>

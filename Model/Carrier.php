@@ -236,19 +236,20 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     public function getAllItems(RateRequest $request)
     {
         $items = [];
-
+        $ignoreVirtual = $this->getConfigFlag('ignore_virtual');
         if ($request->getAllItems()) {
             foreach ($request->getAllItems() as $item) {
                 /* @var $item Item */
-                if ($item->getParentItem()) {
+                if ($item->getParentItem() || ($ignoreVirtual && $item->getProduct()->isVirtual())) {
                     continue;
                 }
 
                 if ($item->getHasChildren() && $item->isShipSeparately()) {
                     foreach ($item->getChildren() as $child) {
-                        if (!$child->getFreeShipping()) {
-                            $items[] = $child;
+                        if ($child->getFreeShipping() || ($ignoreVirtual && $item->getProduct()->isVirtual())) {
+                            continue;
                         }
+                        $items[] = $child;
                     }
                 } else {
                     $items[] = $item;

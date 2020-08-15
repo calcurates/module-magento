@@ -30,7 +30,8 @@
                     <label>API URL</label>
                 </field>
 
-                <field id="display_rates_with_tax" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="display_rates_with_tax" translate="label comment" type="select" sortOrder="50"
+                       showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Display rates with tax and duties</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[Affects international shipping rates from carriers]]></comment>
@@ -50,11 +51,18 @@
                     <validate>validate-greater-than-zero validate-digits required-entry</validate>
                 </field>
 
-                <field id="shipping_methods_for_fallback" translate="label" type="multiselect" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="shipping_methods_for_fallback" translate="label comment" type="multiselect" sortOrder="100"
+                       showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Show only if error or API timeout exceeded</label>
                     <source_model>Calcurates\ModuleMagento\Model\Config\Source\ActiveShippingMethodsSource</source_model>
                     <comment>Selected methods must be enabled. Leave empty to show all active methods</comment>
                     <can_be_empty>1</can_be_empty>
+                </field>
+
+                <field id="ignore_virtual" translate="label" type="select" sortOrder="110" showInDefault="1"
+                       showInWebsite="1" showInStore="0">
+                    <label>Ignore Virtual Products</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
         </section>
