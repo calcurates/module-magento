@@ -10,8 +10,16 @@ namespace Calcurates\ModuleMagento\Api\Client;
 
 use Magento\Framework\Exception\LocalizedException;
 
+/**
+ * @TODO bad implementation. No "client" use, refactor to independent command for each API method
+ */
 interface CalcuratesClientInterface
 {
+    const TYPE_CARRIERS = 'carriers';
+    const TYPE_TABLE_RATES = 'table-rates';
+    const TYPE_FLAT_RATES = 'flat-rates';
+    const TYPE_FREE_SHIPPING = 'free-shipping';
+
     /**
      * @param string $shippingCarrierId
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
@@ -63,4 +71,11 @@ interface CalcuratesClientInterface
      * @throws LocalizedException
      */
     public function getCustomPackages($storeId);
+
+    /**
+     * @param string $type
+     * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
+     * @return array
+     */
+    public function getShippingOptions(string $type, $storeId): array;
 }

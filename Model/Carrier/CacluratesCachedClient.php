@@ -106,4 +106,15 @@ class CacluratesCachedClient implements CalcuratesClientInterface
     {
         return $this->calcuratesClient->getCustomPackages($storeId);
     }
+
+    /**
+     *
+     * @param string $type
+     * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
+     * @return array
+     */
+    public function getShippingOptions(string $type, $storeId): array
+    {
+        return $this->calcuratesClient->getShippingOptions($type, $storeId);
+    }
 }
