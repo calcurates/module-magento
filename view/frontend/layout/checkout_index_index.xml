@@ -17,6 +17,11 @@
                                     <item name="children" xsi:type="array">
                                         <item name="shipping-step" xsi:type="array">
                                             <item name="children" xsi:type="array">
+                                                <item name="shippingAddress" xsi:type="array">
+                                                    <item name="config" xsi:type="array">
+                                                        <item name="shippingMethodItemTemplate" xsi:type="string">Calcurates_ModuleMagento/shipping-address/shipping-method-item</item>
+                                                    </item>
+                                                </item>
                                                 <item name="step-config" xsi:type="array">
                                                     <item name="children" xsi:type="array">
                                                         <item name="shipping-rates-validation" xsi:type="array">
