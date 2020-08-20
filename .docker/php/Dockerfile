@@ -64,6 +64,9 @@ RUN set -xe \
     && docker-php-ext-install pdo_mysql \
     && docker-php-ext-enable pdo_mysql \
 
+    # Sockets
+    && docker-php-ext-install sockets \
+    && docker-php-ext-enable sockets \
 
     # Cleanup
     && apk del --no-cache .build-deps \
@@ -81,7 +84,7 @@ COPY auth.json /.composer/
 
 
 # Composer
-RUN curl -L -o /composer.phar https://github.com/composer/composer/releases/download/1.10.8/composer.phar \
+RUN curl -L -o /composer.phar https://github.com/composer/composer/releases/download/1.10.10/composer.phar \
     && chmod 755 /composer.phar
 ENV COMPOSER_HOME=/.composer
 
@@ -89,11 +92,11 @@ ENV COMPOSER_HOME=/.composer
 # template of magento2
 RUN set -xe \
     && cd / \
-    && /composer.phar create-project --repository=https://repo.magento.com/ magento/project-community-edition:^2.3.5 mg235 \
-    && cd mg235 \
-    && tar -zcvf ../mg235.tar.gz * \
+    && /composer.phar create-project --repository=https://repo.magento.com/ magento/project-community-edition:2.3.* mg23 \
+    && cd mg23 \
+    && tar -zcvf ../mg23.tar.gz * \
     && cd .. \
-    && rm -rf mg235 \
+    && rm -rf mg23 \
     && /composer.phar clear-cache
 
 

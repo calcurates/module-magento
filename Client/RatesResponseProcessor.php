@@ -20,6 +20,8 @@ use Magento\Framework\Serialize\SerializerInterface;
 
 class RatesResponseProcessor
 {
+    const CALCURATES_TOOLTIP_MESSAGE = 'calcurates_tooltip';
+
     /**
      * @var ResultFactory
      */
@@ -135,10 +137,15 @@ class RatesResponseProcessor
                 continue;
             }
 
+            $carrierTitle = $responseRate['name'];
+            $responseRate['name'] = __('Flat Rate');
             $rate = $this->rateBuilder->build(
                 ShippingMethodManager::FLAT_RATES . '_' . $responseRate['id'],
-                $responseRate
+                $responseRate,
+                $carrierTitle
             );
+
+            $rate->setData(self::CALCURATES_TOOLTIP_MESSAGE, $responseRate['message']);
             $result->append($rate);
         }
     }
@@ -162,10 +169,15 @@ class RatesResponseProcessor
                 'currency' => null,
             ];
 
+            $carrierTitle = $responseRate['name'];
+            $responseRate['name'] = __('Free Shipping');
             $rate = $this->rateBuilder->build(
                 ShippingMethodManager::FREE_SHIPPING . '_' . $responseRate['id'],
-                $responseRate
+                $responseRate,
+                $carrierTitle
             );
+
+            $rate->setData(self::CALCURATES_TOOLTIP_MESSAGE, $responseRate['message']);
             $result->append($rate);
         }
     }
@@ -197,8 +209,11 @@ class RatesResponseProcessor
                 $responseRateMethod['priority'] = $tableRate['priority'];
                 $rate = $this->rateBuilder->build(
                     ShippingMethodManager::TABLE_RATE . '_' . $tableRate['id'] . '_' . $responseRateMethod['id'],
-                    $responseRateMethod
+                    $responseRateMethod,
+                    $tableRate['name']
                 );
+
+                $rate->setData(self::CALCURATES_TOOLTIP_MESSAGE, $responseRateMethod['message']);
                 $result->append($rate);
             }
         }
@@ -292,6 +307,8 @@ class RatesResponseProcessor
                     $responseCarrierRate,
                     $carrier['name']
                 );
+
+                $rate->setData(self::CALCURATES_TOOLTIP_MESSAGE, $responseCarrierRate['message']);
                 $result->append($rate);
             }
         }

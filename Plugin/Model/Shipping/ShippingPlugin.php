@@ -54,11 +54,15 @@ class ShippingPlugin
         try {
             // make Calurates as first carrier for process
             $allCarriers = $this->getAllCarrierCodesCalcuratesFirst($request->getStoreId());
+            $request->setIsAllCarriersCalcuratesFirst(false);
             if (!$request->getLimitCarrier()) {
                 $request->setLimitCarrier($allCarriers);
+                $request->setIsAllCarriersCalcuratesFirst(true);
             }
+
             return $proceed($request);
         } catch (ApiException $e) {
+            $request->setIsAllCarriersCalcuratesFirst(false);
             $shippingMethodsForFallback = $this->getShippingMethodsForFallback($request->getStoreId());
             if ($shippingMethodsForFallback) {
                 $request->setLimitCarrier($shippingMethodsForFallback);
@@ -80,8 +84,8 @@ class ShippingPlugin
     {
         $shippingMethodsForFallback = $this->getShippingMethodsForFallback($request->getStoreId());
         if ($this->config->isActive($request->getStoreId())
-            && !$request->getSkipCalcurates()
             && in_array($carrierCode, $shippingMethodsForFallback)
+            && $request->getIsAllCarriersCalcuratesFirst()
         ) {
             return $subject;
         }

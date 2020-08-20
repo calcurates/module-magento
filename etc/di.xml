@@ -99,5 +99,19 @@
     <preference for="Calcurates\ModuleMagento\Api\Data\ShippingLabelInterface"
                 type="Calcurates\ModuleMagento\Model\ShippingLabel"/>
     <preference for="Calcurates\ModuleMagento\Api\ShippingLabelRepositoryInterface"
-                type="Calcurates\ModuleMagento\Model\Repository\ShippingLabelRepository"/>
+                type="Calcurates\ModuleMagento\Model\Repository\ShippingLabelRepository" />
+
+    <type name="Magento\SalesRule\Model\Rule\Condition\Address">
+        <plugin name="Calcurates_ModuleMagento::FixShippingAddressValidation"
+                type="Calcurates\ModuleMagento\Plugin\Model\Rule\Condition\AddressPlugin" />
+    </type>
+
+    <type name="Magento\Quote\Model\Cart\ShippingMethodConverter">
+        <plugin name="Calcurates_ModuleMagento::AddCalcuratesTooltip"
+                type="Calcurates\ModuleMagento\Plugin\Model\Cart\ShippingMethodConverterPlugin" />
+    </type>
+    <type name="Magento\Quote\Model\Quote\Address\Rate">
+        <plugin name="Calcurates_ModuleMagento::AddCalcuratesTooltipToImport"
+                type="Calcurates\ModuleMagento\Plugin\Model\Quote\Address\RatePlugin" />
+    </type>
 </config>
