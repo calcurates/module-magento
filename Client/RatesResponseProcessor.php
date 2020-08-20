@@ -20,6 +20,8 @@ use Magento\Framework\Serialize\SerializerInterface;
 
 class RatesResponseProcessor
 {
+    const CALCURATES_TOOLTIP_MESSAGE = 'calcurates_tooltip';
+
     /**
      * @var ResultFactory
      */
@@ -142,6 +144,8 @@ class RatesResponseProcessor
                 $responseRate,
                 $carrierTitle
             );
+
+            $rate->setData(self::CALCURATES_TOOLTIP_MESSAGE, $responseRate['message']);
             $result->append($rate);
         }
     }
@@ -172,6 +176,8 @@ class RatesResponseProcessor
                 $responseRate,
                 $carrierTitle
             );
+
+            $rate->setData(self::CALCURATES_TOOLTIP_MESSAGE, $responseRate['message']);
             $result->append($rate);
         }
     }
@@ -206,6 +212,8 @@ class RatesResponseProcessor
                     $responseRateMethod,
                     $tableRate['name']
                 );
+
+                $rate->setData(self::CALCURATES_TOOLTIP_MESSAGE, $responseRateMethod['message']);
                 $result->append($rate);
             }
         }
@@ -299,6 +307,8 @@ class RatesResponseProcessor
                     $responseCarrierRate,
                     $carrier['name']
                 );
+
+                $rate->setData(self::CALCURATES_TOOLTIP_MESSAGE, $responseCarrierRate['message']);
                 $result->append($rate);
             }
         }
