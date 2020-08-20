@@ -22,7 +22,6 @@ class GetAllShippingOptionsCommand
 
     public function __construct(CalcuratesClientInterface $calcuratesClient)
     {
-
         $this->calcuratesClient = $calcuratesClient;
     }
 
@@ -34,8 +33,10 @@ class GetAllShippingOptionsCommand
     {
         $carriers = $this->calcuratesClient->getShippingOptions(CalcuratesClientInterface::TYPE_CARRIERS, $storeId);
         $tableRates = $this->calcuratesClient->getShippingOptions(CalcuratesClientInterface::TYPE_TABLE_RATES, $storeId);
-        $freeShipping = $this->calcuratesClient->getShippingOptions(CalcuratesClientInterface::TYPE_FREE_SHIPPING,
-            $storeId);
+        $freeShipping = $this->calcuratesClient->getShippingOptions(
+            CalcuratesClientInterface::TYPE_FREE_SHIPPING,
+            $storeId
+        );
         $flatRates = $this->calcuratesClient->getShippingOptions(CalcuratesClientInterface::TYPE_FLAT_RATES, $storeId);
 
         $shippingOptions = [];
