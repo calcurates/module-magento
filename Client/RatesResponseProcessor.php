@@ -271,10 +271,15 @@ class RatesResponseProcessor
                 $serviceIds = [];
                 $serviceNames = [];
                 $sourceToServiceId = [];
+                $message = [];
                 foreach ($responseCarrierRate['services'] as $service) {
                     $name = $serviceNames[$service['name']] ?? $service['name'] . ' - ';
                     if (isset($service['package']['name'])) {
                         $name .= $service['package']['name'];
+                    }
+
+                    if (!empty($service['message'])) {
+                        $message[] = $service['message'];
                     }
 
                     $serviceNames[$service['name']] = $name;
@@ -308,7 +313,7 @@ class RatesResponseProcessor
                     $carrier['name']
                 );
 
-                $rate->setData(self::CALCURATES_TOOLTIP_MESSAGE, $responseCarrierRate['message']);
+                $rate->setData(self::CALCURATES_TOOLTIP_MESSAGE, implode(' ', $message));
                 $result->append($rate);
             }
         }
