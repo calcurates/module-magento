@@ -60,9 +60,30 @@
                 </field>
 
                 <field id="ignore_virtual" translate="label" type="select" sortOrder="110" showInDefault="1"
-                       showInWebsite="1" showInStore="0">
+                       showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Ignore Virtual Products</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="delivery_date_display" translate="label comment" type="select" sortOrder="120"
+                       showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Delivery dates display settings</label>
+                    <source_model>Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplaySource</source_model>
+                    <comment><![CDATA[Warning: existing tooltip messages will be ignored if “Show in the tooltip“ is selected.
+                    Ignore this setting if you don’t have
+                    <a href="https://my.calcurates.com/cabinet/marketplace" target="_blank">“Delivery Dates” feature</a>
+                    activated for your Calcurates account.]]></comment>
+                </field>
+
+                <field id="delivery_date_display_type" translate="label comment" type="select" sortOrder="120"
+                       showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Delivery dates display format</label>
+                    <source_model>Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplayTypeSource</source_model>
+                    <comment><![CDATA[Qty of days in transit example: “3 days“ or “3-4 days“.
+                    Estimated delivery dates: specific date or range of dates will be displayed.
+                    Ignore this setting if you don’t have
+                    <a href="https://my.calcurates.com/cabinet/marketplace" target="_blank">“Delivery Dates” feature</a>
+                    activated for your Calcurates account.]]></comment>
                 </field>
             </group>
         </section>
