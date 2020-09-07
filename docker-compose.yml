@@ -1,14 +1,24 @@
-version: '3.7'
+version: '3.8'
 
 volumes:
   Magento2DataVolume:
 
 services:
+  elasticsearch:
+    build:
+      context: ./.docker/elasticsearch
+      dockerfile: Dockerfile
+    environment:
+      - discovery.type=single-node
+    container_name: magento2-elasticsearch
+    ports:
+      - "9200:9200"
+
   mysql:
     build:
       context: ./.docker/mysql
       dockerfile: Dockerfile
-    command: [--innodb-use-native-aio=0]
+    command: [--default-authentication-plugin=mysql_native_password, --innodb-use-native-aio=0, --skip-mysqlx]
     container_name: magento2-mysql
     ports:
       - "3306:3306"
@@ -20,6 +30,8 @@ services:
     volumes:
       - './.docker/mysql/data:/var/lib/mysql'
       - './.docker/mysql/server.cnf:/etc/mysql/conf.d/server.cnf'
+    security_opt:
+      - seccomp:unconfined
 
   php:
     privileged: true
@@ -62,6 +74,7 @@ services:
       - MYSQL_DATABASE=magento2
     depends_on:
       - mysql
+      - elasticsearch
     expose:
       - "9001" # xdebug
 

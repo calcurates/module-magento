@@ -12,11 +12,11 @@ done
 
 isSourced=`mysql --silent --skip-column-names --user="$MYSQL_USER" --password="$MYSQL_PASSWORD" --host="mysql" --port="3306" -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$MYSQL_DATABASE';"`
 
-if [[ -f "/mg23.tar.gz" || "${isSourced}" -eq "0" ]]; then
+if [[ -f "/mg24.tar.gz" || "${isSourced}" -eq "0" ]]; then
     echo "Copying the Magento2 template to the working directory..."
     rm -rf "vendor/*"
-    tar -zxvf "/mg23.tar.gz"
-    rm "/mg23.tar.gz"
+    tar -zxvf "/mg24.tar.gz"
+    rm "/mg24.tar.gz"
 
     chmod 755 bin/magento
 
@@ -39,12 +39,18 @@ if [[ -f "/mg23.tar.gz" || "${isSourced}" -eq "0" ]]; then
             --currency=USD \
             --timezone=Europe/Minsk \
             --use-rewrites=1 \
-            --use-secure=0
+            --use-secure=0 \
+            --search-engine=elasticsearch7 \
+            --elasticsearch-host=elasticsearch \
+            --elasticsearch-port=9200 \
+            --elasticsearch-enable-auth=false
 
     bin/magento deploy:mode:set developer
 
     # bin/magento sampledata:deploy # not working. idk
     bin/magento setup:upgrade
+    # disable TwoFactorAuth
+    bin/magento module:disable Magento_TwoFactorAuth
     bin/magento cache:disable full_page
     bin/magento cache:flush
 
@@ -65,7 +71,7 @@ if [[ -f "/mg23.tar.gz" || "${isSourced}" -eq "0" ]]; then
 
 
     echo "Configuring the php-cs-fixer..."
-    curl -L -o /php-cs-fixer.phar https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.16.3/php-cs-fixer.phar
+    curl -L -o /php-cs-fixer.phar https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.16.4/php-cs-fixer.phar
     chmod 755 /php-cs-fixer.phar
     echo "php /php-cs-fixer.phar fix ${PWD}/app/code/Calcurates/ModuleMagento --rules=@PSR2" > /php-cs-fixer
     chmod 755 /php-cs-fixer
