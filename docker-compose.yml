@@ -53,6 +53,7 @@ services:
       - './Observer:/var/www/magento2/app/code/Calcurates/ModuleMagento/Observer'
       - './Plugin:/var/www/magento2/app/code/Calcurates/ModuleMagento/Plugin'
       - './Setup:/var/www/magento2/app/code/Calcurates/ModuleMagento/Setup'
+      - './Test:/var/www/magento2/app/code/Calcurates/ModuleMagento/Test'
       - './view:/var/www/magento2/app/code/Calcurates/ModuleMagento/view'
       - './.editorconfig:/var/www/magento2/app/code/Calcurates/ModuleMagento/.editorconfig'
       - './.gitattributes:/var/www/magento2/app/code/Calcurates/ModuleMagento/.gitattributes'
