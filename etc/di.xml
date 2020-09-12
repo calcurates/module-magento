@@ -114,4 +114,22 @@
         <plugin name="Calcurates_ModuleMagento::AddCalcuratesTooltipToImport"
                 type="Calcurates\ModuleMagento\Plugin\Model\Quote\Address\RatePlugin" />
     </type>
+
+    <type name="Calcurates\ModuleMagento\Client\Response\CompositeProcessor">
+        <arguments>
+            <argument name="processors" xsi:type="array">
+                <item name="origin_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\OriginProcessor</item>
+                <item name="free_shipping_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\FreeShippingProcessor</item>
+                <item name="flat_rate_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\FlatRateProcessor</item>
+                <item name="table_rate_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\TableRateProcessor</item>
+                <item name="carrier_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\CarrierProcessor</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Calcurates\ModuleMagento\Client\RatesResponseProcessor">
+        <arguments>
+            <argument name="responseProcessor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\CompositeProcessor</argument>
+        </arguments>
+    </type>
 </config>

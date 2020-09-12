@@ -71,6 +71,12 @@ class RateBuilder
         $rate->setPriority($responseRate['priority']);
         $rate->setCost($baseAmount);
         $rate->setPrice($baseAmount);
+        if (!empty($responseRate['rate']['estimatedDeliveryDate'])) {
+            $rate->setData(
+                RatesResponseProcessor::CALCURATES_DELIVERY_DATES,
+                $responseRate['rate']['estimatedDeliveryDate']
+            );
+        }
 
         return $rate;
     }
