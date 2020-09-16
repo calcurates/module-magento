@@ -75,7 +75,7 @@
                     activated for your Calcurates account.]]></comment>
                 </field>
 
-                <field id="delivery_date_display_type" translate="label comment" type="select" sortOrder="120"
+                <field id="delivery_date_display_type" translate="label comment" type="select" sortOrder="130"
                        showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Delivery dates display format</label>
                     <source_model>Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplayTypeSource</source_model>
@@ -84,6 +84,12 @@
                     Ignore this setting if you don’t have
                     <a href="https://my.calcurates.com/cabinet/marketplace" target="_blank">“Delivery Dates” feature</a>
                     activated for your Calcurates account.]]></comment>
+                </field>
+
+                <field id="sort_order" translate="label" type="text" sortOrder="140" showInDefault="1"
+                       showInWebsite="1" showInStore="0">
+                    <label>Sort Order</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
                 </field>
             </group>
         </section>
