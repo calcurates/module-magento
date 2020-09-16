@@ -27,9 +27,15 @@ class RatePlugin
         $result,
         \Magento\Quote\Model\Quote\Address\RateResult\AbstractResult $rate
     ) {
-        $tooltip = $rate->getData(RatesResponseProcessor::CALCURATES_TOOLTIP_MESSAGE);
-        if ($tooltip) {
-            $result->setData(RatesResponseProcessor::CALCURATES_TOOLTIP_MESSAGE, $tooltip);
+        $arrayToImport = [
+            RatesResponseProcessor::CALCURATES_TOOLTIP_MESSAGE,
+            RatesResponseProcessor::CALCURATES_DELIVERY_DATES,
+        ];
+        foreach ($arrayToImport as $key) {
+            $value = $rate->getData($key);
+            if ($value !== null) {
+                $result->setData($key, $value);
+            }
         }
 
         return $result;
