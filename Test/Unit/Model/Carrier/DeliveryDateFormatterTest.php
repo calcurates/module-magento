@@ -29,7 +29,7 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
      */
     private $configProviderMock;
 
-    public function setUp()
+    public function setUp(): void
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->configProviderMock = $this->createMock(Config::class);
@@ -101,8 +101,8 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
             ],
             'emptyToDaysQtyOneDay' => [
                 'displayType' => 'days_qty',
-                'from' => null,
-                'to' => $oneDay->format(\DateTimeInterface::ATOM),
+                'from' => $oneDay->format(\DateTimeInterface::ATOM),
+                'to' => null,
                 'expectedResult' => '1 day',
             ],
             'sameFromToDaysQtyOneDay' => [

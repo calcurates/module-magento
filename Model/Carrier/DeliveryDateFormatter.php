@@ -59,10 +59,10 @@ class DeliveryDateFormatter
         if ($to) {
             $to = new \DateTime($to);
         } else {
-            $to = new \DateTime($from);
+            $to = $from;
         }
 
-        if ($from && $to && $from > $to) {
+        if ($from > $to) {
             $fromTmp = $from;
             $from = $to;
             $to = $fromTmp;
