@@ -60,10 +60,8 @@ class FreeShippingProcessor implements ResponseProcessorInterface
                 continue;
             }
 
-            $responseRate['rate'] = [
-                'cost' => 0,
-                'currency' => null,
-            ];
+            $responseRate['rate']['cost'] = 0;
+            $responseRate['rate']['currency'] = null;
 
             $carrierTitle = $responseRate['name'];
             $responseRate['name'] = __('Free Shipping');

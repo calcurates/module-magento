@@ -16,7 +16,7 @@ use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 
 class DeliveryDateFormatter
 {
-    const DATE_FORMAT = '%d/%m/%Y (%l)';
+    const DATE_FORMAT = 'd/m/Y (l)';
 
     /**
      * @var Config
