@@ -30,18 +30,14 @@ class Config implements ConfigProviderInterface
     const CONFIG_GROUP = 'carriers/calcurates/';
 
     const CONFIG_TOKEN = 'calcurates_token';
-
     const CONFIG_API_URL = 'api_url';
-
     const CONFIG_DISPLAY_RATES_WITH_TAX = 'display_rates_with_tax';
-
     const CONFIG_ERROR_MESSAGE = 'specificerrmsg';
-
     const CONFIG_TITLE = 'specificerrmsg';
-
     const API_GET_RATES_TIMEOUT = 'api_get_rates_timeout';
-
     const SHIPPING_METHODS_FOR_FALLBACK = 'shipping_methods_for_fallback';
+    const DELIVERY_DATE_DISPLAY = 'delivery_date_display';
+    const DELIVERY_DATE_DISPLAY_TYPE = 'delivery_date_display_type';
 
     const ACTIVE = 'active';
     const DEBUG = 'debug';
@@ -242,6 +238,32 @@ class Config implements ConfigProviderInterface
     {
         return $this->scopeConfig->isSetFlag(
             self::CONFIG_GROUP . self::DEBUG,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
+     * @return string
+     */
+    public function getDeliveryDateDisplay($storeId = null)
+    {
+        return $this->scopeConfig->getValue(
+            self::CONFIG_GROUP . self::DELIVERY_DATE_DISPLAY,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
+     * @return string
+     */
+    public function getDeliveryDateDisplayType($storeId = null)
+    {
+        return $this->scopeConfig->getValue(
+            self::CONFIG_GROUP . self::DELIVERY_DATE_DISPLAY_TYPE,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );

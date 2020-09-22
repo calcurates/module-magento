@@ -11,10 +11,34 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Plugin\Model\Cart;
 
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
+use Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter;
+use Calcurates\ModuleMagento\Model\Config;
+use Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplaySource;
 use Magento\Quote\Model\Cart\ShippingMethodConverter;
 
 class ShippingMethodConverterPlugin
 {
+    /**
+     * @var Config
+     */
+    private $configProvider;
+
+    /**
+     * @var DeliveryDateFormatter
+     */
+    private $deliveryDateFormatter;
+
+    /**
+     * ShippingMethodConverterPlugin constructor.
+     * @param Config $configProvider
+     * @param DeliveryDateFormatter $deliveryDateFormatter
+     */
+    public function __construct(Config $configProvider, DeliveryDateFormatter $deliveryDateFormatter)
+    {
+        $this->configProvider = $configProvider;
+        $this->deliveryDateFormatter = $deliveryDateFormatter;
+    }
+
     /**
      * @param ShippingMethodConverter $subject
      * @param \Magento\Quote\Api\Data\ShippingMethodInterface  $result
@@ -29,6 +53,40 @@ class ShippingMethodConverterPlugin
             $result->getExtensionAttributes()->setCalcuratesTooltip($tooltip);
         }
 
+        if ($this->configProvider->getDeliveryDateDisplay() === DeliveryDateDisplaySource::DO_NOT_SHOW) {
+            return $result;
+        }
+
+        $this->addDeliveryDates($rateModel, $result);
+
         return $result;
+    }
+
+    /**
+     * @param \Magento\Quote\Model\Quote\Address\Rate $rateModel
+     * @param \Magento\Quote\Api\Data\ShippingMethodInterface $shippingMethod
+     */
+    private function addDeliveryDates($rateModel, $shippingMethod)
+    {
+        $deliveryDatesData = $rateModel->getData(RatesResponseProcessor::CALCURATES_DELIVERY_DATES);
+
+        $deliveryDatesString = $this->deliveryDateFormatter->formatDeliveryDate(
+            $deliveryDatesData['from'] ?? null,
+            $deliveryDatesData['to'] ?? null
+        );
+
+        if (!$deliveryDatesString) {
+            return;
+        }
+
+        if ($this->configProvider->getDeliveryDateDisplay() === DeliveryDateDisplaySource::AFTER_METHOD_NAME) {
+            $shippingMethod->setMethodTitle(
+                $shippingMethod->getMethodTitle() . ', ' . $deliveryDatesString
+            );
+
+            return;
+        }
+
+        $shippingMethod->getExtensionAttributes()->setCalcuratesTooltip($deliveryDatesString);
     }
 }

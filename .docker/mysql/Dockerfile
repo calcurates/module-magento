@@ -1,4 +1,4 @@
-FROM mysql:5.7
+FROM mysql:8
 
 RUN set -xe \
     && apt-get update \

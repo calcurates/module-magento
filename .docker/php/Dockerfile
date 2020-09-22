@@ -1,4 +1,4 @@
-FROM php:7.3-fpm-alpine
+FROM php:7.4-fpm-alpine
 
 # utilites
 RUN set -xe \
@@ -17,11 +17,8 @@ RUN set -xe \
     && docker-php-ext-enable sodium \
 
     # ZIP
-    && apk add --no-cache zip zlib libzip zlib-dev libzip-dev \
-    && docker-php-ext-configure zip \
-        --with-libzip=/usr/include/ \
-    && NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
-    && docker-php-ext-install -j${NPROC} zip \
+    && apk add --no-cache libzip libzip-dev \
+    && docker-php-ext-install zip \
     && docker-php-ext-enable zip \
 
     # XSLT
@@ -42,11 +39,10 @@ RUN set -xe \
     # GD
     && apk add --no-cache freetype libpng libwebp libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev libwebp-dev \
     && docker-php-ext-configure gd \
-        --with-gd \
-        --with-freetype-dir=/usr/include/ \
-        --with-png-dir=/usr/include/ \
-        --with-webp-dir=/usr/include/ \
-        --with-jpeg-dir=/usr/include/ \
+        --enable-gd \
+        --with-freetype \
+        --with-webp \
+        --with-jpeg \
     && NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
     && docker-php-ext-install -j${NPROC} gd \
     && docker-php-ext-enable gd \
@@ -74,7 +70,7 @@ RUN set -xe \
     && apk del --no-cache icu-dev \
     && apk del --no-cache libxml2-dev \
     && apk del --no-cache libxslt-dev \
-    && apk del --no-cache zlib-dev libzip-dev \
+    && apk del --no-cache libzip-dev \
     && apk del --no-cache libsodium-dev \
     && rm -rf /tmp/* /var/cache/apk/*
 
@@ -84,7 +80,8 @@ COPY auth.json /.composer/
 
 
 # Composer
-RUN curl -L -o /composer.phar https://github.com/composer/composer/releases/download/1.10.10/composer.phar \
+RUN set -xe \
+    && curl -L -o /composer.phar https://github.com/composer/composer/releases/download/1.10.13/composer.phar \
     && chmod 755 /composer.phar
 ENV COMPOSER_HOME=/.composer
 
@@ -92,11 +89,11 @@ ENV COMPOSER_HOME=/.composer
 # template of magento2
 RUN set -xe \
     && cd / \
-    && /composer.phar create-project --repository=https://repo.magento.com/ magento/project-community-edition:2.3.* mg23 \
-    && cd mg23 \
-    && tar -zcvf ../mg23.tar.gz * \
+    && /composer.phar create-project --repository=https://repo.magento.com/ magento/project-community-edition:2.4.* mg24 \
+    && cd mg24 \
+    && tar -zcvf ../mg24.tar.gz * \
     && cd .. \
-    && rm -rf mg23 \
+    && rm -rf mg24 \
     && /composer.phar clear-cache
 
 
