@@ -136,7 +136,7 @@ class RateRequestBuilder
                 'priceWithTax' => round($item->getBasePriceInclTax(), 2),
                 'priceWithoutTax' => round($item->getBasePrice(), 2),
                 'discountAmount' => round($item->getBaseDiscountAmount() / $item->getQty(), 2),
-                'quantity' => $item->getQty(),
+                'quantity' => round($item->getQty(), 0),
                 'weight' => $product->isVirtual() ? 0 : $item->getWeight(),
                 'sku' => $item->getSku(),
                 'categories' => $product->getCategoryIds(),
