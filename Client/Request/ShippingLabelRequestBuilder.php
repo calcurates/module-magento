@@ -93,7 +93,7 @@ class ShippingLabelRequestBuilder
                 'priceWithTax' => round($item->getBasePriceInclTax(), 2),
                 'priceWithoutTax' => round($item->getBasePrice(), 2),
                 'discountAmount' => round($item->getBaseDiscountAmount() / $item->getQty(), 2),
-                'quantity' => (float)$item->getQty(),
+                'quantity' => round($item->getQty(), 0),
                 'weight' => $item->getWeight(),
                 'sku' => $item->getSku(),
                 'categories' => $product->getCategoryIds(),
