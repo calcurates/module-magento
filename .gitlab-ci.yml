@@ -8,11 +8,15 @@ stages:
     - deploy
 
 test:
+    tags:
+        - calcurates
     stage: test
     script:
         - echo "No tests"
 
 deploy_staging:
+    tags:
+        - calcurates
     stage: deploy
     script:
         - echo "Deploy to staging server"
@@ -23,6 +27,8 @@ deploy_staging:
         - dev
 
 deploy_demo:
+    tags:
+        - calcurates
     stage: deploy
     script:
         - echo "Deploy to demo server"
