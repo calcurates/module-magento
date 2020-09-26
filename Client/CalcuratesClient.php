@@ -43,11 +43,12 @@ class CalcuratesClient implements CalcuratesClientInterface
     /**
      * initialize http client
      */
-    protected function init()
+    protected function init(): void
     {
         $composerPackage = $this->calcuratesConfig->getComposerPackage();
-        $this->httpClient->addHeader('User-Agent', $composerPackage->getName() . '/' . $composerPackage->getVersion());
-        $this->httpClient->addHeader('X-API-Key', $this->calcuratesConfig->getCalcuratesToken());
+        $this->httpClient
+            ->addHeader('User-Agent', $composerPackage->getName() . '/' . $composerPackage->getVersion())
+            ->addHeader('X-API-Key', $this->calcuratesConfig->getCalcuratesToken());
     }
 
     /**
