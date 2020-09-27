@@ -70,7 +70,9 @@ class HttpClient
         }
 
         // compression
-        $client->setOption(defined('CURLOPT_ENCODING') ? CURLOPT_ENCODING : '', '');
+        if (defined('CURLOPT_ENCODING')) {
+            $client->setOption(CURLOPT_ENCODING, '');
+        }
 
         $client->addHeader('Content-Type', 'application/json');
         $client->addHeader('Expect', '');
