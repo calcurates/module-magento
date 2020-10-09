@@ -88,6 +88,11 @@ class ShippingMethodConverterPlugin
             $calcuratesRateData->setMapLink($mapLink);
         }
 
+        $isDisplayImage = $this->configProvider->isDisplayImages();
+        if ($isDisplayImage && $imageUrl = $rateModel->getData(RatesResponseProcessor::CALCURATES_IMAGE_URL)) {
+            $calcuratesRateData->setImageUrl($imageUrl);
+        }
+
         $result->getExtensionAttributes()->setCalcuratesData($calcuratesRateData);
 
         return $result;

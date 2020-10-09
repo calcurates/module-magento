@@ -77,6 +77,7 @@ class TableRateProcessor implements ResponseProcessorInterface
                 }
 
                 $responseRateMethod['priority'] = $tableRate['priority'];
+                $responseRateMethod['imageUri'] = $tableRate['imageUri'];
                 $rate = $this->rateBuilder->build(
                     ShippingMethodManager::TABLE_RATE . '_' . $tableRate['id'] . '_' . $responseRateMethod['id'],
                     $responseRateMethod,

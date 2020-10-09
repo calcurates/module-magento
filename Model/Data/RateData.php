@@ -46,4 +46,20 @@ class RateData extends AbstractSimpleObject implements RateDataInterface
     {
         $this->setData(self::MAP_LINK, $mapLink);
     }
+
+    /**
+     * @return string|null
+     */
+    public function getImageUrl(): ?string
+    {
+        return $this->_get(self::IMAGE_URL);
+    }
+
+    /**
+     * @param string $imageUrl
+     */
+    public function setImageUrl(string $imageUrl): void
+    {
+        $this->setData(self::IMAGE_URL, $imageUrl);
+    }
 }
