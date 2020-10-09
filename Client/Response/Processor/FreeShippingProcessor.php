@@ -53,7 +53,8 @@ class FreeShippingProcessor implements ResponseProcessorInterface
                 if ($responseRate['message']) {
                     $failedRate = $this->failedRateBuilder->build(
                         $responseRate['name'],
-                        $responseRate['message']
+                        $responseRate['message'],
+                        $responseRate['priority']
                     );
                     $result->append($failedRate);
                 }

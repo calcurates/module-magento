@@ -82,7 +82,8 @@ class CarrierProcessor implements ResponseProcessorInterface
                 if ($carrier['message']) {
                     $failedRate = $this->failedRateBuilder->build(
                         $carrier['name'],
-                        $carrier['message']
+                        $carrier['message'],
+                        $carrier['priority']
                     );
                     $result->append($failedRate);
                 }
@@ -104,7 +105,8 @@ class CarrierProcessor implements ResponseProcessorInterface
 
                         $failedRate = $this->failedRateBuilder->build(
                             $rateName,
-                            $responseCarrierRate['message']
+                            $responseCarrierRate['message'],
+                            $carrier['priority']
                         );
                         $result->append($failedRate);
                     }

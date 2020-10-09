@@ -64,7 +64,8 @@ class InStorePickupProcessor implements ResponseProcessorInterface
                 if ($shippingOption['message']) {
                     $failedRate = $this->failedRateBuilder->build(
                         $shippingOption['name'],
-                        $shippingOption['message']
+                        $shippingOption['message'],
+                        $shippingOption['priority']
                     );
                     $result->append($failedRate);
                 }
@@ -77,7 +78,8 @@ class InStorePickupProcessor implements ResponseProcessorInterface
                     if ($store['message']) {
                         $failedRate = $this->failedRateBuilder->build(
                             $store['name'],
-                            $store['message']
+                            $store['message'],
+                            $shippingOption['priority']
                         );
                         $result->append($failedRate);
                     }
