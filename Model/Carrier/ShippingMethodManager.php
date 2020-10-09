@@ -18,6 +18,7 @@ class ShippingMethodManager
     const FREE_SHIPPING = 'freeShipping';
     const TABLE_RATE = 'tableRate';
     const CARRIER = 'carrier';
+    const IN_STORE_PICKUP = 'inStorePickup';
 
     /**
      * @var CarrierDataFactory

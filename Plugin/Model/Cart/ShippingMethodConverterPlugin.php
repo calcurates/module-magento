@@ -10,11 +10,14 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Plugin\Model\Cart;
 
+use Calcurates\ModuleMagento\Api\Data\RateDataInterface;
+use Calcurates\ModuleMagento\Api\Data\RateDataInterfaceFactory;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter;
 use Calcurates\ModuleMagento\Model\Config;
 use Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplaySource;
 use Magento\Quote\Model\Cart\ShippingMethodConverter;
+use tests\unit\Magento\FunctionalTestFramework\DataGenerator\Handlers\DataObjectHandlerTest;
 
 class ShippingMethodConverterPlugin
 {
@@ -29,14 +32,23 @@ class ShippingMethodConverterPlugin
     private $deliveryDateFormatter;
 
     /**
+     * @var RateDataInterfaceFactory
+     */
+    private $rateDataFactory;
+
+    /**
      * ShippingMethodConverterPlugin constructor.
      * @param Config $configProvider
      * @param DeliveryDateFormatter $deliveryDateFormatter
      */
-    public function __construct(Config $configProvider, DeliveryDateFormatter $deliveryDateFormatter)
-    {
+    public function __construct(
+        Config $configProvider,
+        DeliveryDateFormatter $deliveryDateFormatter,
+        RateDataInterfaceFactory $rateDataFactory
+    ) {
         $this->configProvider = $configProvider;
         $this->deliveryDateFormatter = $deliveryDateFormatter;
+        $this->rateDataFactory = $rateDataFactory;
     }
 
     /**
@@ -48,25 +60,43 @@ class ShippingMethodConverterPlugin
      */
     public function afterModelToDataObject(ShippingMethodConverter $subject, $result, $rateModel, $quoteCurrencyCode)
     {
+        /** @var RateDataInterface $calcuratesRateData */
+        $calcuratesRateData = $result->getExtensionAttributes()->getCalcuratesData();
+        if (!$calcuratesRateData) {
+            $calcuratesRateData = $this->rateDataFactory->create();
+        }
+
         $tooltip = $rateModel->getData(RatesResponseProcessor::CALCURATES_TOOLTIP_MESSAGE);
+        if ($deliveryDatesString = $this->getDeliveryDates($rateModel)) {
+            switch ($this->configProvider->getDeliveryDateDisplay()) {
+                case DeliveryDateDisplaySource::AFTER_METHOD_NAME:
+                    $result->setMethodTitle(
+                        $result->getMethodTitle() . ', ' . $deliveryDatesString
+                    );
+                    break;
+                case DeliveryDateDisplaySource::TOOLTIP:
+                    $tooltip = $deliveryDatesString;
+                    break;
+            }
+        }
+
         if ($tooltip) {
-            $result->getExtensionAttributes()->setCalcuratesTooltip($tooltip);
+            $calcuratesRateData->setTooltipMessage($tooltip);
         }
 
-        if ($this->configProvider->getDeliveryDateDisplay() === DeliveryDateDisplaySource::DO_NOT_SHOW) {
-            return $result;
+        if ($mapLink = $rateModel->getData(RatesResponseProcessor::CALCURATES_MAP_LINK)) {
+            $calcuratesRateData->setMapLink($mapLink);
         }
 
-        $this->addDeliveryDates($rateModel, $result);
+        $result->getExtensionAttributes()->setCalcuratesData($calcuratesRateData);
 
         return $result;
     }
 
     /**
      * @param \Magento\Quote\Model\Quote\Address\Rate $rateModel
-     * @param \Magento\Quote\Api\Data\ShippingMethodInterface $shippingMethod
      */
-    private function addDeliveryDates($rateModel, $shippingMethod)
+    private function getDeliveryDates($rateModel): ?string
     {
         $deliveryDatesData = $rateModel->getData(RatesResponseProcessor::CALCURATES_DELIVERY_DATES);
 
@@ -76,17 +106,9 @@ class ShippingMethodConverterPlugin
         );
 
         if (!$deliveryDatesString) {
-            return;
+            return null;
         }
 
-        if ($this->configProvider->getDeliveryDateDisplay() === DeliveryDateDisplaySource::AFTER_METHOD_NAME) {
-            $shippingMethod->setMethodTitle(
-                $shippingMethod->getMethodTitle() . ', ' . $deliveryDatesString
-            );
-
-            return;
-        }
-
-        $shippingMethod->getExtensionAttributes()->setCalcuratesTooltip($deliveryDatesString);
+        return $deliveryDatesString;
     }
 }

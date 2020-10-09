@@ -22,6 +22,7 @@ class RatesResponseProcessor
 {
     const CALCURATES_TOOLTIP_MESSAGE = 'calcurates_tooltip';
     const CALCURATES_DELIVERY_DATES = 'calcurates_delivery_dates';
+    const CALCURATES_MAP_LINK = 'calcurates_map_link';
 
     /**
      * @var ResultFactory
