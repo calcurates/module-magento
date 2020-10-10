@@ -32,14 +32,16 @@ class FailedRateBuilder
     /**
      * @param string $rateName
      * @param string $message
+     * @param int|null $priority
      * @return \Magento\Quote\Model\Quote\Address\RateResult\Error
      */
-    public function build(string $rateName, string $message = '')
+    public function build(string $rateName, string $message = '', ?int $priority = null)
     {
         $failedRate = $this->rateErrorFactory->create();
         $failedRate->setCarrier(Carrier::CODE);
         $failedRate->setCarrierTitle($rateName);
         $failedRate->setErrorMessage($message);
+        $failedRate->setPriority($priority);
 
         return $failedRate;
     }

@@ -53,7 +53,8 @@ class TableRateProcessor implements ResponseProcessorInterface
                 if ($tableRate['message']) {
                     $failedRate = $this->failedRateBuilder->build(
                         $tableRate['name'],
-                        $tableRate['message']
+                        $tableRate['message'],
+                        $tableRate['priority']
                     );
                     $result->append($failedRate);
                 }
@@ -66,7 +67,8 @@ class TableRateProcessor implements ResponseProcessorInterface
                     if ($responseRateMethod['message']) {
                         $failedRate = $this->failedRateBuilder->build(
                             $responseRateMethod['name'],
-                            $responseRateMethod['message']
+                            $responseRateMethod['message'],
+                            $tableRate['priority']
                         );
                         $result->append($failedRate);
                     }
