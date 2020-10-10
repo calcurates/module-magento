@@ -17,7 +17,6 @@ use Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter;
 use Calcurates\ModuleMagento\Model\Config;
 use Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplaySource;
 use Magento\Quote\Model\Cart\ShippingMethodConverter;
-use tests\unit\Magento\FunctionalTestFramework\DataGenerator\Handlers\DataObjectHandlerTest;
 
 class ShippingMethodConverterPlugin
 {

@@ -8,11 +8,8 @@
 
 namespace Calcurates\ModuleMagento\Client;
 
-use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
-use Calcurates\ModuleMagento\Model\Carrier;
-use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Calcurates\ModuleMagento\Model\Config as CalcuratesConfig;
 use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
 use Magento\Shipping\Model\Rate\Result;

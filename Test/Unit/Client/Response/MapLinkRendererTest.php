@@ -48,10 +48,10 @@ class MapLinkRendererTest extends \PHPUnit\Framework\TestCase
                 'originData' => [
                     'latitude' => 2.521,
                     'longitude' => 29.321,
-                    'googlePlaceId' => 8
+                    'googlePlaceId' => 'test'
                 ],
                 'expectedResult' => 'https://www.google.com/maps/search/'
-                . '?api=1&query=2.521,29.321&query_place_id=8'
+                . '?api=1&query=2.521,29.321&query_place_id=test'
             ],
             'customTemplate' => [
                 'urlTemplate' => 'asdasdasd{aaaa},{bbb},{ccc}',

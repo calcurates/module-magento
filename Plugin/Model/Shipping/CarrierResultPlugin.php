@@ -2,7 +2,6 @@
 
 namespace Calcurates\ModuleMagento\Plugin\Model\Shipping;
 
-use Calcurates\ModuleMagento\Model\Carrier;
 use Magento\Shipping\Model\Rate\CarrierResult;
 
 class CarrierResultPlugin
