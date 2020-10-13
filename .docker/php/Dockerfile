@@ -81,7 +81,7 @@ COPY auth.json /.composer/
 
 # Composer
 RUN set -xe \
-    && curl -L -o /composer.phar https://github.com/composer/composer/releases/download/1.10.13/composer.phar \
+    && curl -L -o /composer.phar https://github.com/composer/composer/releases/download/1.10.15/composer.phar \
     && chmod 755 /composer.phar
 ENV COMPOSER_HOME=/.composer
 
@@ -89,7 +89,7 @@ ENV COMPOSER_HOME=/.composer
 # template of magento2
 RUN set -xe \
     && cd / \
-    && /composer.phar create-project --repository=https://repo.magento.com/ magento/project-community-edition:2.4.* mg24 \
+    && php -d memory_limit=-1 /composer.phar create-project --repository=https://repo.magento.com/ magento/project-community-edition:2.4.* mg24 \
     && cd mg24 \
     && tar -zcvf ../mg24.tar.gz * \
     && cd .. \
