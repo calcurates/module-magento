@@ -243,6 +243,7 @@ class CalcuratesClient implements CalcuratesClientInterface
             self::TYPE_TABLE_RATES,
             self::TYPE_FREE_SHIPPING,
             self::TYPE_FLAT_RATES,
+            self::TYPE_IN_STORE_PICKUP,
         ];
 
         if (!in_array($type, $allowedTypes)) {
