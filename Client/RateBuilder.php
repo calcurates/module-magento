@@ -69,6 +69,7 @@ class RateBuilder
         $rate->setInfoMessageEnabled((bool)$responseRate['message']);
         $rate->setInfoMessage($responseRate['message']);
         $rate->setPriority($responseRate['priority']);
+        $rate->setData(RatesResponseProcessor::CALCURATES_IMAGE_URL, $responseRate['imageUri']);
         $rate->setCost($baseAmount);
         $rate->setPrice($baseAmount);
         if (!empty($responseRate['rate']['estimatedDeliveryDate'])) {

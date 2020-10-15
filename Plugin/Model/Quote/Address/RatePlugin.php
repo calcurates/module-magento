@@ -30,7 +30,8 @@ class RatePlugin
         $arrayToImport = [
             RatesResponseProcessor::CALCURATES_TOOLTIP_MESSAGE,
             RatesResponseProcessor::CALCURATES_DELIVERY_DATES,
-            RatesResponseProcessor::CALCURATES_MAP_LINK
+            RatesResponseProcessor::CALCURATES_MAP_LINK,
+            RatesResponseProcessor::CALCURATES_IMAGE_URL
         ];
         foreach ($arrayToImport as $key) {
             $value = $rate->getData($key);

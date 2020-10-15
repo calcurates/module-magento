@@ -153,6 +153,7 @@ class CarrierProcessor implements ResponseProcessorInterface
                 $existingMethodIds[$methodId] = true;
 
                 $responseCarrierRate['priority'] = $carrier['priority'];
+                $responseCarrierRate['imageUri'] = $carrier['imageUri'];
                 $rate = $this->rateBuilder->build(
                     $methodId,
                     $responseCarrierRate,

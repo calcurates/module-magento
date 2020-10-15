@@ -14,6 +14,7 @@ interface RateDataInterface
 {
     const TOOLTIP_MESSAGE = 'tooltip_message';
     const MAP_LINK = 'map_link';
+    const IMAGE_URL = 'image_url';
 
     /**
      * @return string|null
@@ -36,4 +37,15 @@ interface RateDataInterface
      * @return void
      */
     public function setMapLink(string $mapLink): void;
+
+    /**
+     * @return string|null
+     */
+    public function getImageUrl(): ?string;
+
+    /**
+     * @param string $imageUrl
+     * @return void
+     */
+    public function setImageUrl(string $imageUrl): void;
 }
