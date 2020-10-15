@@ -33,6 +33,10 @@ class GetAllShippingOptionsCommand
     {
         $carriers = $this->calcuratesClient->getShippingOptions(CalcuratesClientInterface::TYPE_CARRIERS, $storeId);
         $tableRates = $this->calcuratesClient->getShippingOptions(CalcuratesClientInterface::TYPE_TABLE_RATES, $storeId);
+        $inStorePickup = $this->calcuratesClient->getShippingOptions(
+            CalcuratesClientInterface::TYPE_IN_STORE_PICKUP,
+            $storeId
+        );
         $freeShipping = $this->calcuratesClient->getShippingOptions(
             CalcuratesClientInterface::TYPE_FREE_SHIPPING,
             $storeId
@@ -45,6 +49,15 @@ class GetAllShippingOptionsCommand
                 $key = ShippingMethodManager::TABLE_RATE . '_' . $shippingOption['shippingOption']['id'] . '_' .
                     $method['id'];
                 $title = $shippingOption['shippingOption']['name'] . ' - ' . $method['name'];
+                $shippingOptions[$key] = $title;
+            }
+        }
+
+        foreach ($inStorePickup as $shippingOption) {
+            foreach ($shippingOption['stores'] as $store) {
+                $key = ShippingMethodManager::IN_STORE_PICKUP . '_' . $shippingOption['shippingOption']['id'] . '_' .
+                    $store['id'];
+                $title = $shippingOption['shippingOption']['name'] . ' - ' . $store['name'];
                 $shippingOptions[$key] = $title;
             }
         }
