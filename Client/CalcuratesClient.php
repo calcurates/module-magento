@@ -43,11 +43,12 @@ class CalcuratesClient implements CalcuratesClientInterface
     /**
      * initialize http client
      */
-    protected function init()
+    protected function init(): void
     {
         $composerPackage = $this->calcuratesConfig->getComposerPackage();
-        $this->httpClient->addHeader('User-Agent', $composerPackage->getName() . '/' . $composerPackage->getVersion());
-        $this->httpClient->addHeader('X-API-Key', $this->calcuratesConfig->getCalcuratesToken());
+        $this->httpClient
+            ->addHeader('User-Agent', $composerPackage->getName() . '/' . $composerPackage->getVersion())
+            ->addHeader('X-API-Key', $this->calcuratesConfig->getCalcuratesToken());
     }
 
     /**
@@ -242,6 +243,7 @@ class CalcuratesClient implements CalcuratesClientInterface
             self::TYPE_TABLE_RATES,
             self::TYPE_FREE_SHIPPING,
             self::TYPE_FLAT_RATES,
+            self::TYPE_IN_STORE_PICKUP,
         ];
 
         if (!in_array($type, $allowedTypes)) {

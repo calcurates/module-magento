@@ -42,10 +42,13 @@ class HttpClient
     /**
      * @param string $name
      * @param string $value
+     * @return $this
      */
     public function addHeader($name, $value)
     {
         $this->additionalHeaders[$name] = $value;
+
+        return $this;
     }
 
     /**
@@ -64,6 +67,11 @@ class HttpClient
         }
         foreach ($this->additionalHeaders as $headerName => $headerValue) {
             $client->addHeader($headerName, $headerValue);
+        }
+
+        // compression
+        if (defined('CURLOPT_ENCODING')) {
+            $client->setOption(CURLOPT_ENCODING, '');
         }
 
         $client->addHeader('Content-Type', 'application/json');

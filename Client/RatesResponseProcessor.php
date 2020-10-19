@@ -8,11 +8,8 @@
 
 namespace Calcurates\ModuleMagento\Client;
 
-use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
-use Calcurates\ModuleMagento\Model\Carrier;
-use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Calcurates\ModuleMagento\Model\Config as CalcuratesConfig;
 use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
 use Magento\Shipping\Model\Rate\Result;
@@ -22,6 +19,8 @@ class RatesResponseProcessor
 {
     const CALCURATES_TOOLTIP_MESSAGE = 'calcurates_tooltip';
     const CALCURATES_DELIVERY_DATES = 'calcurates_delivery_dates';
+    const CALCURATES_MAP_LINK = 'calcurates_map_link';
+    const CALCURATES_IMAGE_URL = 'calcurates_image_url';
 
     /**
      * @var ResultFactory

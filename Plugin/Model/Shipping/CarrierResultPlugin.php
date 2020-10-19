@@ -2,7 +2,6 @@
 
 namespace Calcurates\ModuleMagento\Plugin\Model\Shipping;
 
-use Calcurates\ModuleMagento\Model\Carrier;
 use Magento\Shipping\Model\Rate\CarrierResult;
 
 class CarrierResultPlugin
@@ -32,17 +31,6 @@ class CarrierResultPlugin
             \Magento\Quote\Model\Quote\Address\RateResult\AbstractResult $a,
             \Magento\Quote\Model\Quote\Address\RateResult\AbstractResult $b
         ) {
-            if ($a->getCarrier() !== Carrier::CODE || $b->getCarrier() !== Carrier::CODE) {
-                return 0;
-            }
-
-            if ($a instanceof \Magento\Quote\Model\Quote\Address\RateResult\Error) {
-                return 1;
-            }
-            if ($b instanceof \Magento\Quote\Model\Quote\Address\RateResult\Error) {
-                return -1;
-            }
-
             if ($a->getData('priority') === $b->getData('priority')) {
                 return $a->getData('price') <=> $b->getData('price');
             }

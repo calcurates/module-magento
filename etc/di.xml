@@ -10,6 +10,7 @@
 
     <preference for="Calcurates\ModuleMagento\Api\ConfigProviderInterface" type="Calcurates\ModuleMagento\Model\Config"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\ConfigDataInterface" type="Calcurates\ModuleMagento\Model\Config\Data"/>
+    <preference for="Calcurates\ModuleMagento\Api\Data\RateDataInterface" type="Calcurates\ModuleMagento\Model\Data\RateData"/>
 
     <preference for="Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataInterface" type="Calcurates\ModuleMagento\Model\Catalog\Product\Attribute\CustomData"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataOptionInterface" type="Calcurates\ModuleMagento\Model\Catalog\Product\Attribute\CustomDataOption"/>
@@ -123,6 +124,7 @@
                 <item name="flat_rate_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\FlatRateProcessor</item>
                 <item name="table_rate_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\TableRateProcessor</item>
                 <item name="carrier_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\CarrierProcessor</item>
+                <item name="in_store_pickup_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\InStorePickupProcessor</item>
             </argument>
         </arguments>
     </type>

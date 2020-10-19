@@ -13,8 +13,17 @@
         <each args="element.getRegion('price')" render="" />
     </td>
     <td class="col col-method"
-        attr="'id': 'label_method_' + method.method_code + '_' + method.carrier_code"
-        text="method.method_title" />
+        attr="'id': 'label_method_' + method.method_code + '_' + method.carrier_code">
+        <span text="method.method_title" />
+        <span if="method.extension_attributes && method.extension_attributes.calcurates_data.map_link" text="' - '" />
+        <a if="method.extension_attributes && method.extension_attributes.calcurates_data.map_link"
+           attr="'href': method.extension_attributes.calcurates_data.map_link"
+           target="_blank"
+           translate="'see on the map'" />
+        <img if="method.extension_attributes && method.extension_attributes.calcurates_data.image_url"
+             class="calcurates-rate-img"
+             attr="'src': method.extension_attributes.calcurates_data.image_url"/>
+    </td>
     <td class="col col-carrier"
         attr="'id': 'label_carrier_' + method.method_code + '_' + method.carrier_code"
         text="method.carrier_title">
@@ -22,7 +31,7 @@
     <td>
         <div class="field-tooltip toggle"
              style="position: relative"
-             if="method.extension_attributes && method.extension_attributes.calcurates_tooltip">
+             if="method.extension_attributes && method.extension_attributes.calcurates_data.tooltip_message">
 
             <span id="tooltip-label" class="label"><!-- ko i18n: 'Tooltip' --><!-- /ko --></span>
             <span
@@ -36,7 +45,7 @@
          </span>
 
             <div class="field-tooltip-content"
-                 data-target="dropdown" translate="method.extension_attributes.calcurates_tooltip">
+                 data-target="dropdown" translate="method.extension_attributes.calcurates_data.tooltip_message">
             </div>
         </div>
     </td>

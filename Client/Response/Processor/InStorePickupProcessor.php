@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Calcurates Team
- * @copyright Copyright © 2019-2020 Calcurates (https://www.calcurates.com)
+ * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
  * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @package Calcurates_ModuleMagento
  */
@@ -13,12 +13,13 @@ namespace Calcurates\ModuleMagento\Client\Response\Processor;
 use Calcurates\ModuleMagento\Client\RateBuilder;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
+use Calcurates\ModuleMagento\Client\Response\MapLinkRenderer;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Shipping\Model\Rate\Result;
 
-class TableRateProcessor implements ResponseProcessorInterface
+class InStorePickupProcessor implements ResponseProcessorInterface
 {
     /**
      * @var FailedRateBuilder
@@ -31,14 +32,24 @@ class TableRateProcessor implements ResponseProcessorInterface
     private $rateBuilder;
 
     /**
-     * TableRateProcessor constructor.
+     * @var MapLinkRenderer
+     */
+    private $mapLinkRenderer;
+
+    /**
+     * InStorePickupProcessor constructor.
      * @param FailedRateBuilder $failedRateBuilder
      * @param RateBuilder $rateBuilder
+     * @param MapLinkRenderer $mapLinkRenderer
      */
-    public function __construct(FailedRateBuilder $failedRateBuilder, RateBuilder $rateBuilder)
-    {
+    public function __construct(
+        FailedRateBuilder $failedRateBuilder,
+        RateBuilder $rateBuilder,
+        MapLinkRenderer $mapLinkRenderer
+    ) {
         $this->failedRateBuilder = $failedRateBuilder;
         $this->rateBuilder = $rateBuilder;
+        $this->mapLinkRenderer = $mapLinkRenderer;
     }
 
     /**
@@ -48,13 +59,13 @@ class TableRateProcessor implements ResponseProcessorInterface
      */
     public function process(Result $result, array $response, CartInterface $quote): void
     {
-        foreach ($response['shippingOptions']['tableRates'] as $tableRate) {
-            if (!$tableRate['success']) {
-                if ($tableRate['message']) {
+        foreach ($response['shippingOptions']['inStorePickups'] as $shippingOption) {
+            if (!$shippingOption['success']) {
+                if ($shippingOption['message']) {
                     $failedRate = $this->failedRateBuilder->build(
-                        $tableRate['name'],
-                        $tableRate['message'],
-                        $tableRate['priority']
+                        $shippingOption['name'],
+                        $shippingOption['message'],
+                        $shippingOption['priority']
                     );
                     $result->append($failedRate);
                 }
@@ -62,13 +73,13 @@ class TableRateProcessor implements ResponseProcessorInterface
                 continue;
             }
 
-            foreach ($tableRate['methods'] as $responseRateMethod) {
-                if (!$responseRateMethod['success']) {
-                    if ($responseRateMethod['message']) {
+            foreach ($shippingOption['stores'] as $store) {
+                if (!$store['success']) {
+                    if ($store['message']) {
                         $failedRate = $this->failedRateBuilder->build(
-                            $responseRateMethod['name'],
-                            $responseRateMethod['message'],
-                            $tableRate['priority']
+                            $store['name'],
+                            $store['message'],
+                            $shippingOption['priority']
                         );
                         $result->append($failedRate);
                     }
@@ -76,15 +87,16 @@ class TableRateProcessor implements ResponseProcessorInterface
                     continue;
                 }
 
-                $responseRateMethod['priority'] = $tableRate['priority'];
-                $responseRateMethod['imageUri'] = $tableRate['imageUri'];
+                $store['priority'] = $shippingOption['priority'];
+                $store['imageUri'] = $shippingOption['imageUri'];
                 $rate = $this->rateBuilder->build(
-                    ShippingMethodManager::TABLE_RATE . '_' . $tableRate['id'] . '_' . $responseRateMethod['id'],
-                    $responseRateMethod,
-                    $tableRate['name']
+                    ShippingMethodManager::IN_STORE_PICKUP . '_' . $shippingOption['id'] . '_' . $store['id'],
+                    $store,
+                    $shippingOption['name']
                 );
 
-                $rate->setData(RatesResponseProcessor::CALCURATES_TOOLTIP_MESSAGE, $responseRateMethod['message']);
+                $rate->setData(RatesResponseProcessor::CALCURATES_TOOLTIP_MESSAGE, $store['message']);
+                $rate->setData(RatesResponseProcessor::CALCURATES_MAP_LINK, $this->mapLinkRenderer->render($store['origin']));
                 $result->append($rate);
             }
         }

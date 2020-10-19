@@ -38,6 +38,7 @@ class Config implements ConfigProviderInterface
     const SHIPPING_METHODS_FOR_FALLBACK = 'shipping_methods_for_fallback';
     const DELIVERY_DATE_DISPLAY = 'delivery_date_display';
     const DELIVERY_DATE_DISPLAY_TYPE = 'delivery_date_display_type';
+    const DISPLAY_IMAGES = 'display_shipping_options_images';
 
     const ACTIVE = 'active';
     const DEBUG = 'debug';
@@ -264,6 +265,19 @@ class Config implements ConfigProviderInterface
     {
         return $this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::DELIVERY_DATE_DISPLAY_TYPE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @return bool
+     */
+    public function isDisplayImages($storeId = null)
+    {
+        return $this->scopeConfig->isSetFlag(
+            self::CONFIG_GROUP . self::DISPLAY_IMAGES,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );
