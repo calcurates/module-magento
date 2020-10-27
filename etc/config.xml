@@ -23,6 +23,7 @@
                 <ignore_virtual>1</ignore_virtual>
                 <delivery_date_display>do_not_show</delivery_date_display>
                 <delivery_date_display_type>days_qty</delivery_date_display_type>
+                <display_package_name_for_carrier>1</display_package_name_for_carrier>
             </calcurates>
         </carriers>
     </default>

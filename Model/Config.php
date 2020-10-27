@@ -39,6 +39,7 @@ class Config implements ConfigProviderInterface
     const DELIVERY_DATE_DISPLAY = 'delivery_date_display';
     const DELIVERY_DATE_DISPLAY_TYPE = 'delivery_date_display_type';
     const DISPLAY_IMAGES = 'display_shipping_options_images';
+    const DISPLAY_PACKAGE_NAME_FOR_CARRIER = 'display_package_name_for_carrier';
 
     const ACTIVE = 'active';
     const DEBUG = 'debug';
@@ -278,6 +279,19 @@ class Config implements ConfigProviderInterface
     {
         return $this->scopeConfig->isSetFlag(
             self::CONFIG_GROUP . self::DISPLAY_IMAGES,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @return bool
+     */
+    public function isDisplayPackageNameForCarrier($storeId = null): bool
+    {
+        return $this->scopeConfig->isSetFlag(
+            self::CONFIG_GROUP . self::DISPLAY_PACKAGE_NAME_FOR_CARRIER,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );
