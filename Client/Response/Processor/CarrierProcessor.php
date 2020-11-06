@@ -129,8 +129,11 @@ class CarrierProcessor implements ResponseProcessorInterface
                 $message = [];
                 foreach ($responseCarrierRate['services'] as $service) {
                     $name = $serviceNames[$service['name']] ?? $service['name'] . ' - ';
-                    if ($this->configProvider->isDisplayPackageNameForCarrier() && isset($service['package']['name'])) {
-                        $name .= $service['package']['name'];
+                    if ($this->configProvider->isDisplayPackageNameForCarrier() && isset($service['packages']) && is_array($service['packages'])) {
+                        foreach ($service['packages'] as $servicePackage) {
+                            $name .= $servicePackage['name'] . ';';
+                        }
+                        $name = rtrim($name, ';');
                     }
 
                     if (!empty($service['message'])) {
