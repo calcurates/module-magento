@@ -16,6 +16,7 @@ use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
+use Calcurates\ModuleMagento\Model\Config;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Shipping\Model\Rate\Result;
@@ -38,19 +39,27 @@ class CarrierProcessor implements ResponseProcessorInterface
     private $serializer;
 
     /**
+     * @var Config
+     */
+    private $configProvider;
+
+    /**
      * CarrierProcessor constructor.
      * @param FailedRateBuilder $failedRateBuilder
      * @param RateBuilder $rateBuilder
      * @param SerializerInterface $serializer
+     * @param Config $configProvider
      */
     public function __construct(
         FailedRateBuilder $failedRateBuilder,
         RateBuilder $rateBuilder,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        Config $configProvider
     ) {
         $this->failedRateBuilder = $failedRateBuilder;
         $this->rateBuilder = $rateBuilder;
         $this->serializer = $serializer;
+        $this->configProvider = $configProvider;
     }
 
     /**
@@ -120,8 +129,11 @@ class CarrierProcessor implements ResponseProcessorInterface
                 $message = [];
                 foreach ($responseCarrierRate['services'] as $service) {
                     $name = $serviceNames[$service['name']] ?? $service['name'] . ' - ';
-                    if (isset($service['package']['name'])) {
-                        $name .= $service['package']['name'];
+                    if ($this->configProvider->isDisplayPackageNameForCarrier() && isset($service['packages']) && is_array($service['packages'])) {
+                        foreach ($service['packages'] as $servicePackage) {
+                            $name .= $servicePackage['name'] . ';';
+                        }
+                        $name = rtrim($name, ';');
                     }
 
                     if (!empty($service['message'])) {
