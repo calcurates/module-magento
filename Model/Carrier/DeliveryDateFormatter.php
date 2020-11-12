@@ -13,6 +13,7 @@ namespace Calcurates\ModuleMagento\Model\Carrier;
 use Calcurates\ModuleMagento\Model\Config;
 use Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplayTypeSource;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
+use Magento\Store\Model\ScopeInterface;
 
 class DeliveryDateFormatter
 {
@@ -68,16 +69,27 @@ class DeliveryDateFormatter
             $to = $fromTmp;
         }
 
-        $timezoneString = $this->timezone->getConfigTimezone(\Magento\Store\Model\ScopeInterface::SCOPE_STORES);
+        $timezoneString = $this->timezone->getConfigTimezone(ScopeInterface::SCOPE_STORES);
         $timezone = new \DateTimeZone($timezoneString);
         $from->setTimezone($timezone);
         $to->setTimezone($timezone);
 
-        if ($this->configProvider->getDeliveryDateDisplayType() === DeliveryDateDisplayTypeSource::DAYS_QTY) {
-            return $this->formatDays($from, $to);
+        $datesDisplayType = $this->configProvider->getDeliveryDateDisplayType();
+
+        switch ($datesDisplayType) {
+            case DeliveryDateDisplayTypeSource::DAYS_QTY:
+                $value = $this->formatDays($from, $to);
+                break;
+            case DeliveryDateDisplayTypeSource::DATES_MAGENTO_FORMAT:
+                $value = $this->formatDatesMagentoLocale($from, $to);
+                break;
+            case DeliveryDateDisplayTypeSource::DATES:
+            default:
+                $value = $this->formatDates($from, $to);
+                break;
         }
 
-        return $this->formatDates($from, $to);
+        return $value;
     }
 
     /**
@@ -112,5 +124,19 @@ class DeliveryDateFormatter
         }
 
         return $from->format($format) . ' - ' . $to->format($format);
+    }
+
+    /**
+     * @param \DateTime $from
+     * @param \DateTime $to
+     * @return string
+     */
+    private function formatDatesMagentoLocale(\DateTime $from, \DateTime $to): string
+    {
+        if ($from == $to) {
+            return $this->timezone->formatDateTime($from);
+        }
+
+        return $this->timezone->formatDateTime($from) . ' - ' .  $this->timezone->formatDateTime($to);
     }
 }
