@@ -84,7 +84,7 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
         $twoDaysUtc = clone $twoDays;
         $twoDaysUtc->setTimezone(new \DateTimeZone('UTC'));
 
-        $format = 'd/m/Y (l)';
+        $format = 'l (d/m/Y)';
 
         return [
             'emptyDates' => [
