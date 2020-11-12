@@ -29,12 +29,17 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
      */
     private $configProviderMock;
 
+    /**
+     * @var TimezoneInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $timezoneMock;
+
     public function setUp(): void
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->configProviderMock = $this->createMock(Config::class);
-        $timezoneMock = $this->createMock(TimezoneInterface::class);
-        $timezoneMock->expects($this->any())
+        $this->timezoneMock = $this->createMock(TimezoneInterface::class);
+        $this->timezoneMock->expects($this->any())
             ->method('getConfigTimezone')
             ->willReturn('UTC');
 
@@ -42,13 +47,13 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
             DeliveryDateFormatter::class,
             [
                 'configProvider' => $this->configProviderMock,
-                'timezone' => $timezoneMock,
+                'timezone' => $this->timezoneMock,
             ]
         );
     }
 
     /**
-     * @covers \Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter::formatDeliveryDate
+     * @covers       \Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter::formatDeliveryDate
      * @dataProvider dataProvider
      * @param string $displayType
      * @param string|null $from
@@ -64,6 +69,33 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
         $this->configProviderMock->expects($this->any())
             ->method('getDeliveryDateDisplayType')
             ->willReturn($displayType);
+
+        $actualResult = $this->model->formatDeliveryDate($from, $to);
+
+        $this->assertSame($expectedResult, $actualResult);
+    }
+
+    /**
+     * @covers       \Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter::formatDeliveryDate
+     * @dataProvider dataProviderForMagentoLocale
+     * @param string $from
+     * @param string $to
+     * @param string $formatResult
+     * @param string $expectedResult
+     */
+    public function testFormatDeliveryDateMagentoLocale(
+        string $from,
+        string $to,
+        string $formatResult,
+        string $expectedResult
+    ) {
+        $this->configProviderMock->expects($this->any())
+            ->method('getDeliveryDateDisplayType')
+            ->willReturn('dates_magento_format');
+
+        $this->timezoneMock->expects($this->any())
+            ->method('formatDateTime')
+            ->willReturn($formatResult);
 
         $actualResult = $this->model->formatDeliveryDate($from, $to);
 
@@ -140,6 +172,27 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
                 'from' => $oneDay->format(\DateTimeInterface::ATOM),
                 'to' => $twoDays->format(\DateTimeInterface::ATOM),
                 'expectedResult' => $oneDayUtc->format($format) . ' - ' . $twoDaysUtc->format($format),
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProviderForMagentoLocale(): array
+    {
+        return [
+            'fromToEqual' => [
+                'from' => '2020-02-02',
+                'to' => '2020-02-02',
+                'formatResult' => '02-02-2020',
+                'expectedResult' => '02-02-2020'
+            ],
+            'fromToDifferent' => [
+                'from' => '2020-02-02',
+                'to' => '2020-02-03',
+                'formatResult' => '02-02-2020', // it's quite difficult to add formats to both dates, and we return single for each
+                'expectedResult' => '02-02-2020 - 02-02-2020', // and check
             ],
         ];
     }
