@@ -16,6 +16,16 @@ use Magento\Shipping\Block\Adminhtml\Order\Packaging;
 class PackagingPlugin
 {
     /**
+     * @var \Calcurates\ModuleMagento\ViewModel\SmartPackaging
+     */
+    private $smartPackaging;
+
+    public function __construct(\Calcurates\ModuleMagento\ViewModel\SmartPackaging $smartPackaging)
+    {
+        $this->smartPackaging = $smartPackaging;
+    }
+
+    /**
      * @param Packaging $subject
      */
     public function beforeToHtml(Packaging $subject)
@@ -44,5 +54,6 @@ class PackagingPlugin
         }
 
         $subject->setTemplate('Calcurates_ModuleMagento::order/packaging/popup.phtml');
+        $subject->setData('calcurates_smart_packaging', $this->smartPackaging);
     }
 }

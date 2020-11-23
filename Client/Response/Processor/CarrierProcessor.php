@@ -85,7 +85,7 @@ class CarrierProcessor implements ResponseProcessorInterface
             return false;
         };
 
-        $carrierServicesToOrigins = [];
+        $carrierServicesToOrigins = $carrierRatesToPackages = [];
         foreach ($response['shippingOptions']['carriers'] as $carrier) {
             if (!$isHaveRates($carrier)) {
                 if ($carrier['message']) {
@@ -127,13 +127,16 @@ class CarrierProcessor implements ResponseProcessorInterface
                 $serviceNames = [];
                 $sourceToServiceId = [];
                 $message = [];
+                $packages = [];
                 foreach ($responseCarrierRate['services'] as $service) {
                     $name = $serviceNames[$service['name']] ?? $service['name'] . ' - ';
-                    if ($this->configProvider->isDisplayPackageNameForCarrier() && isset($service['packages']) && is_array($service['packages'])) {
-                        foreach ($service['packages'] as $servicePackage) {
-                            $name .= $servicePackage['name'] . ';';
-                        }
-                        $name = rtrim($name, ';');
+                    $packageNames = [];
+                    foreach ($service['packages'] ?? [] as $package) {
+                        $packageNames[] = $package['name'];
+                        $packages[] = $package;
+                    }
+                    if ($this->configProvider->isDisplayPackageNameForCarrier()) {
+                        $name .= implode(';', $packageNames);
                     }
 
                     if (!empty($service['message'])) {
@@ -156,6 +159,7 @@ class CarrierProcessor implements ResponseProcessorInterface
                 }, $serviceNames));
 
                 $carrierServicesToOrigins[$carrier['id']][$serviceIdsString] = $sourceToServiceId;
+                $carrierRatesToPackages[$carrier['id']][$serviceIdsString] = $packages;
 
                 $methodId = $this->getUniqueMethodId(
                     ShippingMethodManager::CARRIER . '_' . $carrier['id'] . '_' . $serviceIdsString,
@@ -181,6 +185,7 @@ class CarrierProcessor implements ResponseProcessorInterface
         }
 
         $quote->setData(CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE, $this->serializer->serialize($carrierServicesToOrigins));
+        $quote->setData(CustomSalesAttributesInterface::CARRIER_PACKAGES, $this->serializer->serialize($carrierRatesToPackages));
     }
 
     /**
