@@ -166,14 +166,17 @@ class CarrierProcessor implements ResponseProcessorInterface
 
                 $responseCarrierRate['priority'] = $carrier['priority'];
                 $responseCarrierRate['imageUri'] = $carrier['imageUri'];
-                $rate = $this->rateBuilder->build(
+                $responseCarrierRate['message'] = implode(' ', $message);
+                $rates = $this->rateBuilder->build(
                     $methodId,
                     $responseCarrierRate,
                     $carrier['name']
                 );
 
-                $rate->setData(RatesResponseProcessor::CALCURATES_TOOLTIP_MESSAGE, implode(' ', $message));
-                $result->append($rate);
+                foreach ($rates as $rate) {
+                    $result->append($rate);
+                }
+
             }
         }
 
