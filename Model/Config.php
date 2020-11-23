@@ -114,11 +114,11 @@ class Config implements ConfigProviderInterface
     }
 
     /**
-     * @return bool
+     * @return int
      */
-    public function isDisplayRatesWithTax()
+    public function getRatesTaxDisplayType(): int
     {
-        return (bool)$this->scopeConfig->getValue(
+        return (int)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::CONFIG_DISPLAY_RATES_WITH_TAX,
             ScopeInterface::SCOPE_WEBSITE
         );

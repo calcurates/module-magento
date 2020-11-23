@@ -33,7 +33,7 @@
                 <field id="display_rates_with_tax" translate="label comment" type="select" sortOrder="50"
                        showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Display rates with tax and duties</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <source_model>Calcurates\ModuleMagento\Model\Config\Source\RateTaxDisplaySource</source_model>
                     <comment><![CDATA[Affects international shipping rates from carriers]]></comment>
                 </field>
 

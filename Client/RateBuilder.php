@@ -10,6 +10,7 @@ namespace Calcurates\ModuleMagento\Client;
 
 use Calcurates\ModuleMagento\Model\Carrier;
 use Calcurates\ModuleMagento\Model\Config;
+use Calcurates\ModuleMagento\Model\Config\Source\RateTaxDisplaySource;
 use Calcurates\ModuleMagento\Model\CurrencyConverter;
 use Magento\Quote\Model\Quote\Address\RateResult\MethodFactory;
 
@@ -49,17 +50,43 @@ class RateBuilder
      * @param string $carrierTitle
      * @return \Magento\Quote\Model\Quote\Address\RateResult\Method
      */
-    public function build($methodId, array $responseRate, $carrierTitle = '')
+    public function build(string $methodId, array $responseRate, $carrierTitle = ''): array
     {
-        $rate = $this->rateMethodFactory->create();
+        $displayRatesType = $this->calcuratesConfig->getRatesTaxDisplayType();
+        $tax = $responseRate['rate']['tax'] ?? null;
 
-        $cost = $responseRate['rate']['cost'];
-        if ($this->calcuratesConfig->isDisplayRatesWithTax() && isset($responseRate['rate']['tax'])) {
-            $cost += $responseRate['rate']['tax'];
+        if ($displayRatesType === RateTaxDisplaySource::BOTH && $tax) {
+            $responseRateWithTax = $responseRate;
+            $responseRateWithTax['rate']['cost'] += $tax;
+            $responseRateWithTax['name'] .= __(' - duties & tax included');
+            $rateWithTax = $this->createRate($methodId, $responseRateWithTax, $carrierTitle);
+
+            $responseRateWithoutTax = $responseRate;
+            $responseRateWithoutTax['name'] .= __(' -- without duties & tax');
+            $rateWithoutTax = $this->createRate($methodId, $responseRateWithoutTax, $carrierTitle);
+
+            return [$rateWithTax, $rateWithoutTax];
         }
 
+        if ($displayRatesType === RateTaxDisplaySource::TAX_INCLUDED && $tax) {
+            $responseRate['rate']['cost'] += $tax;
+            $responseRate['name'] .= __(' - duties & tax included');
+        }
+
+        return [$this->createRate($methodId, $responseRate, $carrierTitle)];
+    }
+
+    /**
+     * @param string $methodId
+     * @param array $responseRate
+     * @param string $carrierTitle
+     * @return \Magento\Quote\Model\Quote\Address\RateResult\Method
+     */
+    private function createRate(string $methodId, array $responseRate, $carrierTitle = '')
+    {
+        $rate = $this->rateMethodFactory->create();
         $baseAmount = $this->currencyConverter->convertToBase(
-            $cost,
+            $responseRate['rate']['cost'],
             $responseRate['rate']['currency']
         );
         $rate->setCarrier(Carrier::CODE);
@@ -72,6 +99,7 @@ class RateBuilder
         $rate->setData(RatesResponseProcessor::CALCURATES_IMAGE_URL, $responseRate['imageUri']);
         $rate->setCost($baseAmount);
         $rate->setPrice($baseAmount);
+        $rate->setData(RatesResponseProcessor::CALCURATES_TOOLTIP_MESSAGE, $responseRate['message']);
         if (!empty($responseRate['rate']['estimatedDeliveryDate'])) {
             $rate->setData(
                 RatesResponseProcessor::CALCURATES_DELIVERY_DATES,

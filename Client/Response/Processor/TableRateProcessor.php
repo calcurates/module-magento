@@ -78,14 +78,15 @@ class TableRateProcessor implements ResponseProcessorInterface
 
                 $responseRateMethod['priority'] = $tableRate['priority'];
                 $responseRateMethod['imageUri'] = $tableRate['imageUri'];
-                $rate = $this->rateBuilder->build(
+                $rates = $this->rateBuilder->build(
                     ShippingMethodManager::TABLE_RATE . '_' . $tableRate['id'] . '_' . $responseRateMethod['id'],
                     $responseRateMethod,
                     $tableRate['name']
                 );
 
-                $rate->setData(RatesResponseProcessor::CALCURATES_TOOLTIP_MESSAGE, $responseRateMethod['message']);
-                $result->append($rate);
+                foreach ($rates as $rate) {
+                    $result->append($rate);
+                }
             }
         }
     }
