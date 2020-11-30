@@ -127,7 +127,7 @@ class RateRequestBuilder
             $product = $this->productRepository->getById(
                 $item->getProductId(),
                 false,
-                null,
+                $this->storeManager->getStore()->getId(),
                 true
             );
 

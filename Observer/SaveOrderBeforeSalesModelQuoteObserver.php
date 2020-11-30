@@ -8,12 +8,22 @@
 
 namespace Calcurates\ModuleMagento\Observer;
 
-use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
+use Calcurates\ModuleMagento\Model\CheckoutConverter\QuoteToOrderConverter;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 
 class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
 {
+    /**
+     * @var QuoteToOrderConverter
+     */
+    private $quoteToOrderConverter;
+
+    public function __construct(QuoteToOrderConverter $quoteToOrderConverter)
+    {
+        $this->quoteToOrderConverter = $quoteToOrderConverter;
+    }
+
     /**
      * @param Observer $observer
      * @return $this
@@ -25,10 +35,7 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
         /* @var \Magento\Quote\Model\Quote $quote */
         $quote = $observer->getEvent()->getData('quote');
 
-        $order->setData(
-            CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE,
-            $quote->getData(CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE)
-        );
+        $this->quoteToOrderConverter->convert($quote, $order);
 
         return $this;
     }

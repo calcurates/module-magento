@@ -15,6 +15,10 @@ $helper = $this->helper(\Calcurates\ModuleMagento\Helper\ShipmentAddressHelper::
 $shipment = $block->getShipment();
 $order = $shipment->getOrder();
 $isShipmentNew = !$shipment->getId();
+
+/** @var \Calcurates\ModuleMagento\ViewModel\SmartPackaging $smartPackaging */
+$smartPackaging = $block->getCalcuratesSmartPackaging();
+$smartPackages = $smartPackaging->getPackages($shipment);
 ?>
 <?php /** fix for magento 2.3.3 validation styles. Remove after fixing in magento */ ?>
 <style type="text/css">
@@ -26,11 +30,13 @@ $isShipmentNew = !$shipment->getId();
 <script>
     require([
         "jquery",
+        "Calcurates_ModuleMagento/js/model/smart-packaging",
         "prototype",
         "Magento_Shipping/order/packaging",
         "Magento_Ui/js/modal/modal"
-    ], function (jQuery) {
-        var isShipmentNew = <?= $isShipmentNew ? 'true' : 'false' ?>;
+    ], function (jQuery, smartPackaging) {
+        var isShipmentNew = <?= $isShipmentNew ? 'true' : 'false' ?>,
+            smartPackages = <?= $smartPackages ?>;
         window.packaging = new Packaging(<?= /* @noEscape */ $block->getConfigDataJson() ?>);
         packaging.changeContainerType($$('select[name=package_container]')[0]);
         packaging.checkSizeAndGirthParameter(
@@ -204,6 +210,10 @@ $isShipmentNew = !$shipment->getId();
                 template = template.replace("{" + paramKey + "}", params[paramKey]);
             }
             return template;
+        }
+
+        if (smartPackages) {
+            smartPackaging.init(window.packaging, smartPackages);
         }
     });
 </script>
