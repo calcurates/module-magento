@@ -44,9 +44,7 @@ class ConvertPackages
         $orderPackages = [];
         foreach ($packages as $package) {
             $orderItemIds = [];
-            $package['weightTare'] = $package['weightValue'];
             foreach ($package['products'] as $product) {
-                $package['weightTare'] -= $product['weight'];
                 $orderItemIds[] = [
                     'item_id' => $quoteItemIdToOrderItemId[$product['quoteItemId']] ?? null,
                     'qty' => $product['quantity']
