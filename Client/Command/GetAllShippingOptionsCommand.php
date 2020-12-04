@@ -43,10 +43,15 @@ class GetAllShippingOptionsCommand
         );
         $flatRates = $this->calcuratesClient->getShippingOptions(CalcuratesClientInterface::TYPE_FLAT_RATES, $storeId);
 
+        $rateShopping = $this->calcuratesClient->getShippingOptions(
+            CalcuratesClientInterface::TYPE_RATE_SHOPPING,
+            $storeId
+        );
+
         $shippingOptions = [];
         foreach ($tableRates as $shippingOption) {
             foreach ($shippingOption['methods'] as $method) {
-                $key = ShippingMethodManager::TABLE_RATE . '_' . $shippingOption['shippingOption']['id'] . '_' .
+                $key = ShippingMethodManager::TABLE_RATE . '_' . $shippingOption['id'] . '_' .
                     $method['id'];
                 $title = $shippingOption['shippingOption']['name'] . ' - ' . $method['name'];
                 $shippingOptions[$key] = $title;
@@ -55,7 +60,7 @@ class GetAllShippingOptionsCommand
 
         foreach ($inStorePickup as $shippingOption) {
             foreach ($shippingOption['stores'] as $store) {
-                $key = ShippingMethodManager::IN_STORE_PICKUP . '_' . $shippingOption['shippingOption']['id'] . '_' .
+                $key = ShippingMethodManager::IN_STORE_PICKUP . '_' . $shippingOption['id'] . '_' .
                     $store['id'];
                 $title = $shippingOption['shippingOption']['name'] . ' - ' . $store['name'];
                 $shippingOptions[$key] = $title;
@@ -63,23 +68,35 @@ class GetAllShippingOptionsCommand
         }
 
         foreach ($flatRates as $shippingOption) {
-            $key = ShippingMethodManager::FLAT_RATES . '_' . $shippingOption['shippingOption']['id'];
+            $key = ShippingMethodManager::FLAT_RATES . '_' . $shippingOption['id'];
             $title = $shippingOption['shippingOption']['name'];
             $shippingOptions[$key] = $title;
         }
 
         foreach ($freeShipping as $shippingOption) {
-            $key = ShippingMethodManager::FREE_SHIPPING . '_' . $shippingOption['shippingOption']['id'];
+            $key = ShippingMethodManager::FREE_SHIPPING . '_' . $shippingOption['id'];
             $title = $shippingOption['shippingOption']['name'];
             $shippingOptions[$key] = $title;
         }
 
         foreach ($carriers as $shippingOption) {
             foreach ($shippingOption['services'] as $method) {
-                $key = ShippingMethodManager::CARRIER . '_' . $shippingOption['shippingOption']['id'] .
+                $key = ShippingMethodManager::CARRIER . '_' . $shippingOption['id'] .
                     '_' . $method['id'];
                 $title = $shippingOption['shippingOption']['name'] . ' - ' . $method['name'];
                 $shippingOptions[$key] = $title;
+            }
+        }
+
+        foreach ($rateShopping as $shippingOption) {
+            foreach ($shippingOption['carriers'] as $carrier) {
+                foreach ($carrier['services'] as $method) {
+                    $key = ShippingMethodManager::RATE_SHOPPING . '_' . $shippingOption['id'] .
+                        '_' . $carrier['id'] . '_' . $method['id'];
+                    $title = $shippingOption['shippingOption']['name'] . ' - ' . $carrier['carrierName']
+                        . ' - ' . $method['name'];
+                    $shippingOptions[$key] = $title;
+                }
             }
         }
 
