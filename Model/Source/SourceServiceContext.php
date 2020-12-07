@@ -2,13 +2,32 @@
 
 namespace Calcurates\ModuleMagento\Model\Source;
 
+use Magento\Framework\Module\Manager;
+
 class SourceServiceContext
 {
     /**
+     * @var Manager
+     */
+    private $moduleManager;
+
+    public function __construct(Manager $moduleManager)
+    {
+        $this->moduleManager = $moduleManager;
+    }
+
+    /**
      * @return bool
      */
-    public static function doesSourceExist()
+    public function isInventoryEnabled(): bool
     {
-        return interface_exists(\Magento\InventoryApi\Api\SourceRepositoryInterface::class);
+        return $this->moduleManager->isEnabled('Magento_Inventory') &&
+            $this->moduleManager->isEnabled('Magento_InventoryApi');
+    }
+
+    public function isSourceSelectionEnabled(): bool
+    {
+        return $this->moduleManager->isEnabled('Magento_InventorySourceSelection') &&
+            $this->moduleManager->isEnabled('Magento_InventorySourceSelectionApi');
     }
 }

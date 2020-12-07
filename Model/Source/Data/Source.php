@@ -308,20 +308,4 @@ class Source extends AbstractSimpleObject implements SourceInterface
     {
         $this->setData(self::USE_DEFAULT_CARRIER_CONFIG, $useDefaultCarrierConfig);
     }
-
-    /**
-     * @return array|null
-     */
-    public function getCarrierLinks(): ?array
-    {
-        return $this->_get(self::CARRIER_LINKS);
-    }
-
-    /**
-     * @param array|null $carrierLinks
-     */
-    public function setCarrierLinks(?array $carrierLinks): void
-    {
-        $this->setData(self::CARRIER_LINKS, $carrierLinks);
-    }
 }
