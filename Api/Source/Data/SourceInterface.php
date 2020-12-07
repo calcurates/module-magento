@@ -31,7 +31,6 @@ interface SourceInterface
     const PHONE = 'phone';
     const FAX = 'fax';
     const USE_DEFAULT_CARRIER_CONFIG = 'use_default_carrier_config';
-    const CARRIER_LINKS = 'carrier_links';
 
     /**
      * Get source code
@@ -300,15 +299,4 @@ interface SourceInterface
      * @return void
      */
     public function setUseDefaultCarrierConfig(?bool $useDefaultCarrierConfig): void;
-
-    /**
-     * @return \Magento\InventoryApi\Api\Data\SourceCarrierLinkInterface[]|null
-     */
-    public function getCarrierLinks(): ?array;
-
-    /**
-     * @param \Magento\InventoryApi\Api\Data\SourceCarrierLinkInterface[]|null $carrierLinks
-     * @return void
-     */
-    public function setCarrierLinks(?array $carrierLinks): void;
 }

@@ -40,16 +40,23 @@ class SourceRepository implements SourceRepositoryInterface
      */
     private $regionCollectionFactory;
 
+    /**
+     * @var SourceServiceContext
+     */
+    private $sourceServiceContext;
+
     public function __construct(
         ObjectManagerInterface $objectManager,
         SourceSearchResultsInterfaceFactory $sourceSearchResultsFactory,
         SourceInterfaceFactory $sourceFactory,
-        RegionCollectionFactory $regionCollectionFactory
+        RegionCollectionFactory $regionCollectionFactory,
+        SourceServiceContext $sourceServiceContext
     ) {
         $this->objectManager = $objectManager;
         $this->sourceSearchResultsFactory = $sourceSearchResultsFactory;
         $this->sourceFactory = $sourceFactory;
         $this->regionCollectionFactory = $regionCollectionFactory;
+        $this->sourceServiceContext = $sourceServiceContext;
     }
 
     /**
@@ -62,7 +69,7 @@ class SourceRepository implements SourceRepositoryInterface
         /** @var SourceSearchResultsInterface $searchResult */
         $searchResult = $this->sourceSearchResultsFactory->create();
 
-        if (!interface_exists(GetListInterface::class)) {
+        if (!$this->sourceServiceContext->isInventoryEnabled()) {
             if (null !== $searchCriteria) {
                 $searchResult->setSearchCriteria($searchCriteria);
             }

@@ -8,10 +8,9 @@
 
 namespace Calcurates\ModuleMagento\Model\Source\Algorithms;
 
-use Calcurates\ModuleMagento\Model\Source\SourceServiceContext;
 use Magento\InventorySourceSelectionApi\Api\GetDefaultSourceSelectionAlgorithmCodeInterface;
 
-if (!SourceServiceContext::doesSourceExist()) {
+if (!interface_exists(\Magento\InventorySourceSelectionApi\Api\GetDefaultSourceSelectionAlgorithmCodeInterface::class)) {
     class_alias(
         \Calcurates\ModuleMagento\Api\Fake\GetDefaultSourceSelectionAlgorithmCodeInterface::class,
         \Magento\InventorySourceSelectionApi\Api\GetDefaultSourceSelectionAlgorithmCodeInterface::class
