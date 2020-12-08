@@ -17,10 +17,15 @@ class SmartPackaging implements ArgumentInterface
 {
     /**
      * @param \Magento\Sales\Model\Order\Shipment $shipment
-     * @return float|mixed|null
+     * @return string
      */
     public function getPackages(\Magento\Sales\Model\Order\Shipment $shipment): ?string
     {
-        return $shipment->getOrder()->getData(CustomSalesAttributesInterface::CARRIER_PACKAGES);
+        $smartPackages = $shipment->getOrder()->getData(CustomSalesAttributesInterface::CARRIER_PACKAGES);
+        if (empty($smartPackages)) {
+            $smartPackages = "[]";
+        }
+
+        return $smartPackages;
     }
 }
