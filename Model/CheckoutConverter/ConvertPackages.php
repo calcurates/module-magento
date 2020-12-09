@@ -43,15 +43,21 @@ class ConvertPackages
         $quoteItemIdToOrderItemId = $this->getOrderItemIdToQuoteItemIdMap($order);
         $orderPackages = [];
         foreach ($packages as $package) {
-            $orderItemIds = [];
+            $orderItemsWithQtys = [];
             foreach ($package['products'] as $product) {
-                $orderItemIds[] = [
-                    'item_id' => $quoteItemIdToOrderItemId[$product['quoteItemId']] ?? null,
-                    'qty' => $product['quantity']
-                ];
+                $orderItemId = $quoteItemIdToOrderItemId[$product['quoteItemId']] ?? null;
+
+                if (isset($orderItemsWithQtys[$orderItemId])) {
+                    $orderItemsWithQtys[$orderItemId]['qty'] += 1;
+                } else {
+                    $orderItemsWithQtys[$orderItemId] = [
+                        'item_id' => $orderItemId,
+                        'qty' => 1
+                    ];
+                }
             }
 
-            $package['products'] = $orderItemIds;
+            $package['products'] = array_values($orderItemsWithQtys);
             $orderPackages[] = $package;
         }
 
