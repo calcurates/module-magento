@@ -83,16 +83,10 @@ class Packaging extends Template
      */
     public function getCustomPackagesJson()
     {
-        $customPackagesData = [];
-        foreach ($this->customPackagesProvider->getCustomPackages() as $customPackageData) {
-            $customPackageData['weightUnit'] = $customPackageData['weightUnit'] == 'lb' ?
-                \Zend_Measure_Weight::POUND : \Zend_Measure_Weight::KILOGRAM;
+        $customPackagesData = $this->customPackagesProvider->getCustomPackages(
+            $this->getShipment()
+        );
 
-            $customPackageData['dimensionsUnit'] = $customPackageData['dimensionsUnit'] == 'in' ?
-                \Zend_Measure_Length::INCH : \Zend_Measure_Length::CENTIMETER;
-
-            $customPackagesData[] = $customPackageData;
-        }
         return $this->jsonSerializer->serialize($customPackagesData);
     }
 }

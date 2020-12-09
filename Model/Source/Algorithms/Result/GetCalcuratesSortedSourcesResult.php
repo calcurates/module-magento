@@ -43,11 +43,13 @@ class GetCalcuratesSortedSourcesResult
     /**
      * GetCalcuratesSortedSourcesResult constructor.
      * @param ObjectManagerInterface $objectManager
+     * @param SourceServiceContext $sourceServiceContext
      */
     public function __construct(
-        ObjectManagerInterface $objectManager
+        ObjectManagerInterface $objectManager,
+        SourceServiceContext $sourceServiceContext
     ) {
-        if (SourceServiceContext::doesSourceExist()) {
+        if ($sourceServiceContext->isInventoryEnabled() && $sourceServiceContext->isSourceSelectionEnabled()) {
             $this->sourceSelectionItemFactory = $objectManager->get(SourceSelectionItemInterfaceFactory::class);
             $this->sourceSelectionResultFactory = $objectManager->get(SourceSelectionResultInterfaceFactory::class);
             $this->getInStockSourceItemsBySkusAndSortedSource = $objectManager->get(

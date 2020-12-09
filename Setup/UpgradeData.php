@@ -10,6 +10,7 @@ namespace Calcurates\ModuleMagento\Setup;
 
 use Calcurates\ModuleMagento\Setup\Operation\AddCalcuratesServiceAndSourceFields;
 use Calcurates\ModuleMagento\Setup\Operation\AddCalcuratesShippingLabelDataField;
+use Calcurates\ModuleMagento\Setup\Operation\AddPackagesField;
 use Calcurates\ModuleMagento\Setup\Operation\AddQuoteAndOrderOriginField;
 use Calcurates\ModuleMagento\Setup\Operation\RemoveQuoteAndOrderOriginField;
 use Magento\Framework\Setup\ModuleContextInterface;
@@ -39,6 +40,11 @@ class UpgradeData implements UpgradeDataInterface
     private $addCalcuratesShippingLabelDataField;
 
     /**
+     * @var AddPackagesField
+     */
+    private $addPackagesField;
+
+    /**
      * UpgradeData constructor.
      * @param AddQuoteAndOrderOriginField $addQuoteAndOrderOriginField
      * @param RemoveQuoteAndOrderOriginField $removeQuoteAndOrderOriginField
@@ -49,12 +55,14 @@ class UpgradeData implements UpgradeDataInterface
         AddQuoteAndOrderOriginField $addQuoteAndOrderOriginField,
         RemoveQuoteAndOrderOriginField $removeQuoteAndOrderOriginField,
         AddCalcuratesServiceAndSourceFields $addCalcuratesServiceAndSourceFields,
-        AddCalcuratesShippingLabelDataField $addCalcuratesShippingLabelDataField
+        AddCalcuratesShippingLabelDataField $addCalcuratesShippingLabelDataField,
+        AddPackagesField $addPackagesField
     ) {
         $this->addQuoteAndOrderOriginField = $addQuoteAndOrderOriginField;
         $this->removeQuoteAndOrderOriginField = $removeQuoteAndOrderOriginField;
         $this->addCalcuratesServiceAndSourceFields = $addCalcuratesServiceAndSourceFields;
         $this->addCalcuratesShippingLabelDataField = $addCalcuratesShippingLabelDataField;
+        $this->addPackagesField = $addPackagesField;
     }
 
     /**
@@ -78,6 +86,10 @@ class UpgradeData implements UpgradeDataInterface
 
         if (version_compare($context->getVersion(), '1.11.0', '<')) {
             $this->addCalcuratesShippingLabelDataField->execute($setup);
+        }
+
+        if (version_compare($context->getVersion(), '1.22.0', '<')) {
+            $this->addPackagesField->execute($setup);
         }
 
         // @TODO: migrate old data to calcurates shipment table, and use it instead of attributes

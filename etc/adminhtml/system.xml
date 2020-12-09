@@ -33,7 +33,7 @@
                 <field id="display_rates_with_tax" translate="label comment" type="select" sortOrder="50"
                        showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Display rates with tax and duties</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <source_model>Calcurates\ModuleMagento\Model\Config\Source\RateTaxDisplaySource</source_model>
                     <comment><![CDATA[Affects international shipping rates from carriers]]></comment>
                 </field>
 
@@ -79,8 +79,9 @@
                        showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Delivery dates display format</label>
                     <source_model>Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplayTypeSource</source_model>
-                    <comment><![CDATA[Qty of days in transit example: “3 days“ or “3-4 days“.
-                    Estimated delivery dates: specific date or range of dates will be displayed.
+                    <comment><![CDATA[Qty of days in transit example: “3 days“ or “3-4 days“.<br>
+                    Estimated delivery dates: specific date or range of dates will be displayed.<br>
+                    Estimated delivery dates (Magento format): Date format from Magento settings will be applied.<br>
                     Ignore this setting if you don’t have
                     <a href="https://my.calcurates.com/cabinet/marketplace" target="_blank">“Delivery Dates” feature</a>
                     activated for your Calcurates account.]]></comment>

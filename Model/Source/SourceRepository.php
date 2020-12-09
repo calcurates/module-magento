@@ -40,16 +40,23 @@ class SourceRepository implements SourceRepositoryInterface
      */
     private $regionCollectionFactory;
 
+    /**
+     * @var SourceServiceContext
+     */
+    private $sourceServiceContext;
+
     public function __construct(
         ObjectManagerInterface $objectManager,
         SourceSearchResultsInterfaceFactory $sourceSearchResultsFactory,
         SourceInterfaceFactory $sourceFactory,
-        RegionCollectionFactory $regionCollectionFactory
+        RegionCollectionFactory $regionCollectionFactory,
+        SourceServiceContext $sourceServiceContext
     ) {
         $this->objectManager = $objectManager;
         $this->sourceSearchResultsFactory = $sourceSearchResultsFactory;
         $this->sourceFactory = $sourceFactory;
         $this->regionCollectionFactory = $regionCollectionFactory;
+        $this->sourceServiceContext = $sourceServiceContext;
     }
 
     /**
@@ -62,7 +69,7 @@ class SourceRepository implements SourceRepositoryInterface
         /** @var SourceSearchResultsInterface $searchResult */
         $searchResult = $this->sourceSearchResultsFactory->create();
 
-        if (!interface_exists(GetListInterface::class)) {
+        if (!$this->sourceServiceContext->isInventoryEnabled()) {
             if (null !== $searchCriteria) {
                 $searchResult->setSearchCriteria($searchCriteria);
             }
@@ -99,20 +106,25 @@ class SourceRepository implements SourceRepositoryInterface
             $regionIds[$regionId] = $regionId;
         }
 
-        /** @var RegionCollection $regionCollection */
-        $regionCollection = $this->regionCollectionFactory->create();
-        $regionCollection->addFieldToFilter('main_table.region_id', array_values($regionIds));
+        $hasRegions = (bool)count($regionIds);
+        if ($hasRegions) {
+            $regionCollection = $this->regionCollectionFactory->create();
+            /** @var RegionCollection $regionCollection */
+            $regionCollection->addFieldToFilter('main_table.region_id', array_values($regionIds));
+        }
 
         // load regions
         $resultItems = [];
         foreach ($items as $item) {
             /** @var SourceInterface $resultItem */
             $resultItem = $this->sourceFactory->create(['data' => $item->getData()]);
-            $region = $regionCollection->getItemById($item->getRegionId());
-            if ($region) {
-                $resultItem->setRegionCode($region->getCode());
-                if (!$resultItem->getRegion()) {
-                    $resultItem->setRegion($region->getDefaultName());
+            if ($hasRegions) {
+                $region = $regionCollection->getItemById($item->getRegionId());
+                if ($region) {
+                    $resultItem->setRegionCode($region->getCode());
+                    if (!$resultItem->getRegion()) {
+                        $resultItem->setRegion($region->getDefaultName());
+                    }
                 }
             }
             $resultItems[] = $resultItem;

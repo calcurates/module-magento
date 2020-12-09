@@ -88,16 +88,17 @@ class InStorePickupProcessor implements ResponseProcessorInterface
                 }
 
                 $store['priority'] = $shippingOption['priority'];
-                $store['imageUri'] = $shippingOption['imageUri'];
-                $rate = $this->rateBuilder->build(
+                $store['imageUri'] = $store['imageUri'] ?: $shippingOption['imageUri'];
+                $rates = $this->rateBuilder->build(
                     ShippingMethodManager::IN_STORE_PICKUP . '_' . $shippingOption['id'] . '_' . $store['id'],
                     $store,
                     $shippingOption['name']
                 );
 
-                $rate->setData(RatesResponseProcessor::CALCURATES_TOOLTIP_MESSAGE, $store['message']);
-                $rate->setData(RatesResponseProcessor::CALCURATES_MAP_LINK, $this->mapLinkRenderer->render($store['origin']));
-                $result->append($rate);
+                foreach ($rates as $rate) {
+                    $rate->setData(RatesResponseProcessor::CALCURATES_MAP_LINK, $this->mapLinkRenderer->render($store['origin']));
+                    $result->append($rate);
+                }
             }
         }
     }

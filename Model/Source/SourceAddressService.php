@@ -19,16 +19,24 @@ class SourceAddressService
     private $objectManager;
 
     /**
+     * @var SourceServiceContext
+     */
+    private $sourceServiceContext;
+
+    /**
      * SourceAddressService constructor.
      * @param ShipmentSourceCodeRetriever $shipmentSourceCodeRetriever
      * @param ObjectManagerInterface $objectManager
+     * @param SourceServiceContext $sourceServiceContext
      */
     public function __construct(
         ShipmentSourceCodeRetriever $shipmentSourceCodeRetriever,
-        ObjectManagerInterface $objectManager
+        ObjectManagerInterface $objectManager,
+        SourceServiceContext $sourceServiceContext
     ) {
         $this->shipmentSourceCodeRetriever = $shipmentSourceCodeRetriever;
         $this->objectManager = $objectManager;
+        $this->sourceServiceContext = $sourceServiceContext;
     }
 
     /**
@@ -39,7 +47,7 @@ class SourceAddressService
     {
         $sourceCode = $this->shipmentSourceCodeRetriever->retrieve($shipment);
         $addressData = null;
-        if (SourceServiceContext::doesSourceExist() && !empty($sourceCode)) {
+        if ($this->sourceServiceContext->isInventoryEnabled() && !empty($sourceCode)) {
             $addressData = $this->getBySourceCode($sourceCode);
         }
 

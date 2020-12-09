@@ -14,4 +14,5 @@ interface CustomSalesAttributesInterface
     const SOURCE_CODE = 'calcurates_source_code';
     const SERVICE_ID = 'calcurates_service_id';
     const LABEL_DATA = 'calcurates_label_data';
+    const CARRIER_PACKAGES = 'calcurates_carrier_packages';
 }

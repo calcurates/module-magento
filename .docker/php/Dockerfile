@@ -47,8 +47,8 @@ RUN set -xe \
     && docker-php-ext-install -j${NPROC} gd \
     && docker-php-ext-enable gd \
 
-    # Xdebug
-    && pecl install xdebug \
+    # Xdebug (use latest 2.x)
+    && pecl install xdebug-2.9.8 \
     && docker-php-ext-enable xdebug \
 
     # Bcmath
@@ -81,7 +81,7 @@ COPY auth.json /.composer/
 
 # Composer
 RUN set -xe \
-    && curl -L -o /composer.phar https://github.com/composer/composer/releases/download/1.10.17/composer.phar \
+    && curl -L -o /composer.phar https://github.com/composer/composer/releases/download/1.10.19/composer.phar \
     && chmod 755 /composer.phar
 ENV COMPOSER_HOME=/.composer
 

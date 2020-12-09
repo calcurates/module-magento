@@ -20,6 +20,7 @@ interface CalcuratesClientInterface
     const TYPE_FLAT_RATES = 'flat-rates';
     const TYPE_FREE_SHIPPING = 'free-shipping';
     const TYPE_IN_STORE_PICKUP = 'in-store-pickups';
+    const TYPE_RATE_SHOPPING = 'rate-shopping';
 
     /**
      * @param string $shippingCarrierId

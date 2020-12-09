@@ -14,6 +14,9 @@ use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Client\RateBuilder;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
+use Calcurates\ModuleMagento\Client\Response\Processor\Utils\CarrierRateNameBuilder;
+use Calcurates\ModuleMagento\Client\Response\Processor\Utils\ChildChecker;
+use Calcurates\ModuleMagento\Client\Response\Processor\Utils\StringUniqueIncrement;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Calcurates\ModuleMagento\Model\Config;
@@ -44,22 +47,46 @@ class CarrierProcessor implements ResponseProcessorInterface
     private $configProvider;
 
     /**
+     * @var ChildChecker
+     */
+    private $childChecker;
+
+    /**
+     * @var CarrierRateNameBuilder
+     */
+    private $carrierRateNameBuilder;
+
+    /**
+     * @var StringUniqueIncrement
+     */
+    private $stringUniqueIncrement;
+
+    /**
      * CarrierProcessor constructor.
      * @param FailedRateBuilder $failedRateBuilder
      * @param RateBuilder $rateBuilder
      * @param SerializerInterface $serializer
      * @param Config $configProvider
+     * @param ChildChecker $childChecker
+     * @param CarrierRateNameBuilder $carrierRateNameBuilder
+     * @param StringUniqueIncrement $stringUniqueIncrement
      */
     public function __construct(
         FailedRateBuilder $failedRateBuilder,
         RateBuilder $rateBuilder,
         SerializerInterface $serializer,
-        Config $configProvider
+        Config $configProvider,
+        ChildChecker $childChecker,
+        CarrierRateNameBuilder $carrierRateNameBuilder,
+        StringUniqueIncrement $stringUniqueIncrement
     ) {
         $this->failedRateBuilder = $failedRateBuilder;
         $this->rateBuilder = $rateBuilder;
         $this->serializer = $serializer;
         $this->configProvider = $configProvider;
+        $this->childChecker = $childChecker;
+        $this->carrierRateNameBuilder = $carrierRateNameBuilder;
+        $this->stringUniqueIncrement = $stringUniqueIncrement;
     }
 
     /**
@@ -70,24 +97,9 @@ class CarrierProcessor implements ResponseProcessorInterface
      */
     public function process(Result $result, array $response, CartInterface $quote): void
     {
-        $isHaveRates = static function (array $carrier) {
-            if ($carrier['success']) {
-                return true;
-            }
-            if ($carrier['rates']) {
-                foreach ($carrier['rates'] as $rate) {
-                    if ($rate['message']) {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        };
-
-        $carrierServicesToOrigins = [];
+        $carrierServicesToOrigins = $carrierRatesToPackages = [];
         foreach ($response['shippingOptions']['carriers'] as $carrier) {
-            if (!$isHaveRates($carrier)) {
+            if (!$this->childChecker->isHaveRates($carrier, 'rates')) {
                 if ($carrier['message']) {
                     $failedRate = $this->failedRateBuilder->build(
                         $carrier['name'],
@@ -104,13 +116,10 @@ class CarrierProcessor implements ResponseProcessorInterface
             foreach ($carrier['rates'] as $responseCarrierRate) {
                 if (!$responseCarrierRate['success']) {
                     if ($responseCarrierRate['message']) {
-                        $serviceNames = [];
-                        $rateServices = $responseCarrierRate['services'] ?? [];
-                        foreach ($rateServices as $rateService) {
-                            $serviceNames[] =  $rateService['name'];
-                        }
-                        $rateName = implode(' ', $serviceNames);
-
+                        $rateName = $this->carrierRateNameBuilder->buildName(
+                            $responseCarrierRate,
+                            $this->configProvider->isDisplayPackageNameForCarrier()
+                        );
 
                         $failedRate = $this->failedRateBuilder->build(
                             $rateName,
@@ -124,23 +133,18 @@ class CarrierProcessor implements ResponseProcessorInterface
                 }
 
                 $serviceIds = [];
-                $serviceNames = [];
                 $sourceToServiceId = [];
                 $message = [];
+                $packages = [];
                 foreach ($responseCarrierRate['services'] as $service) {
-                    $name = $serviceNames[$service['name']] ?? $service['name'] . ' - ';
-                    if ($this->configProvider->isDisplayPackageNameForCarrier() && isset($service['packages']) && is_array($service['packages'])) {
-                        foreach ($service['packages'] as $servicePackage) {
-                            $name .= $servicePackage['name'] . ';';
-                        }
-                        $name = rtrim($name, ';');
+                    foreach ($service['packages'] ?? [] as $package) {
+                        $packages[] = $package;
                     }
 
                     if (!empty($service['message'])) {
                         $message[] = $service['message'];
                     }
 
-                    $serviceNames[$service['name']] = $name;
                     $serviceIds[] = $service['id'];
 
                     $sourceCode = $service['origin']['targetValue']['targetId'] ?? null;
@@ -151,13 +155,15 @@ class CarrierProcessor implements ResponseProcessorInterface
                 }
 
                 $serviceIdsString = implode(',', $serviceIds);
-                $responseCarrierRate['name'] = implode(', ', array_map(static function ($serviceName) {
-                    return rtrim($serviceName, ' - ');
-                }, $serviceNames));
+                $responseCarrierRate['name'] = $this->carrierRateNameBuilder->buildName(
+                    $responseCarrierRate,
+                    $this->configProvider->isDisplayPackageNameForCarrier()
+                );
 
                 $carrierServicesToOrigins[$carrier['id']][$serviceIdsString] = $sourceToServiceId;
+                $carrierRatesToPackages[$carrier['id']][$serviceIdsString] = $packages;
 
-                $methodId = $this->getUniqueMethodId(
+                $methodId = $this->stringUniqueIncrement->getUniqueString(
                     ShippingMethodManager::CARRIER . '_' . $carrier['id'] . '_' . $serviceIdsString,
                     $existingMethodIds
                 );
@@ -166,34 +172,21 @@ class CarrierProcessor implements ResponseProcessorInterface
 
                 $responseCarrierRate['priority'] = $carrier['priority'];
                 $responseCarrierRate['imageUri'] = $carrier['imageUri'];
-                $rate = $this->rateBuilder->build(
+                $responseCarrierRate['message'] = implode(' ', $message);
+                $rates = $this->rateBuilder->build(
                     $methodId,
                     $responseCarrierRate,
                     $carrier['name']
                 );
 
-                $rate->setData(RatesResponseProcessor::CALCURATES_TOOLTIP_MESSAGE, implode(' ', $message));
-                $result->append($rate);
+                foreach ($rates as $rate) {
+                    $result->append($rate);
+                }
+
             }
         }
 
         $quote->setData(CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE, $this->serializer->serialize($carrierServicesToOrigins));
-    }
-
-    /**
-     * @param string $baseMethodId
-     * @param array $listExistingMethods
-     * @return string
-     */
-    private function getUniqueMethodId(string $baseMethodId, array $listExistingMethods): string
-    {
-        $i = 1;
-        $methodId = $baseMethodId;
-        while (isset($listExistingMethods[$methodId])) {
-            $methodId = $baseMethodId . '_' . $i;
-            $i++;
-        }
-
-        return $methodId;
+        $quote->setData(CustomSalesAttributesInterface::CARRIER_PACKAGES, $this->serializer->serialize($carrierRatesToPackages));
     }
 }

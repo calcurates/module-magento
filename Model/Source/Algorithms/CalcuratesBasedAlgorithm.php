@@ -17,9 +17,8 @@ use Magento\InventoryApi\Api\GetSourcesAssignedToStockOrderedByPriorityInterface
 use Magento\InventorySourceSelectionApi\Api\Data\InventoryRequestInterface;
 use Magento\InventorySourceSelectionApi\Api\Data\SourceSelectionResultInterface;
 use Magento\InventorySourceSelectionApi\Model\SourceSelectionInterface;
-use Magento\Sales\Api\OrderItemRepositoryInterface;
 
-if (!SourceServiceContext::doesSourceExist()) {
+if (!interface_exists(\Magento\InventorySourceSelectionApi\Model\SourceSelectionInterface::class)) {
     class_alias(
         \Calcurates\ModuleMagento\Api\Fake\SourceSelectionInterface::class,
         \Magento\InventorySourceSelectionApi\Model\SourceSelectionInterface::class
@@ -48,14 +47,16 @@ class CalcuratesBasedAlgorithm implements SourceSelectionInterface
      * @param GetCalcuratesSortedSourcesResult $getCalcuratesSortedSourcesResult
      * @param ObjectManagerInterface $objectManager
      * @param OrderItemsRetriever $orderItemsRetriever
+     * @param SourceServiceContext $sourceServiceContext
      */
     public function __construct(
         GetCalcuratesSortedSourcesResult $getCalcuratesSortedSourcesResult,
         ObjectManagerInterface $objectManager,
-        OrderItemsRetriever $orderItemsRetriever
+        OrderItemsRetriever $orderItemsRetriever,
+        SourceServiceContext $sourceServiceContext
     ) {
         $this->getCalcuratesSortedSourcesResult = $getCalcuratesSortedSourcesResult;
-        if (SourceServiceContext::doesSourceExist()) {
+        if ($sourceServiceContext->isInventoryEnabled()) {
             $this->getSourcesAssignedToStockOrderedByPriority = $objectManager->get(
                 GetSourcesAssignedToStockOrderedByPriorityInterface::class
             );
