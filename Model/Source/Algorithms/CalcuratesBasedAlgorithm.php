@@ -18,12 +18,16 @@ use Magento\InventorySourceSelectionApi\Api\Data\InventoryRequestInterface;
 use Magento\InventorySourceSelectionApi\Api\Data\SourceSelectionResultInterface;
 use Magento\InventorySourceSelectionApi\Model\SourceSelectionInterface;
 
-if (!interface_exists(\Magento\InventorySourceSelectionApi\Model\SourceSelectionInterface::class)) {
-    class_alias(
-        \Calcurates\ModuleMagento\Api\Fake\SourceSelectionInterface::class,
-        \Magento\InventorySourceSelectionApi\Model\SourceSelectionInterface::class
-    );
+// fix for correct working of \Magento\Setup\Module\Di\Code\Reader\FileClassScanner
+if (true) {
+    if (!interface_exists(\Magento\InventorySourceSelectionApi\Model\SourceSelectionInterface::class)) {
+        class_alias(
+            \Calcurates\ModuleMagento\Api\Fake\SourceSelectionInterface::class,
+            \Magento\InventorySourceSelectionApi\Model\SourceSelectionInterface::class
+        );
+    }
 }
+
 
 class CalcuratesBasedAlgorithm implements SourceSelectionInterface
 {
