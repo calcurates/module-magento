@@ -10,11 +10,14 @@ namespace Calcurates\ModuleMagento\Model\Source\Algorithms;
 
 use Magento\InventorySourceSelectionApi\Api\GetDefaultSourceSelectionAlgorithmCodeInterface;
 
-if (!interface_exists(\Magento\InventorySourceSelectionApi\Api\GetDefaultSourceSelectionAlgorithmCodeInterface::class)) {
-    class_alias(
-        \Calcurates\ModuleMagento\Api\Fake\GetDefaultSourceSelectionAlgorithmCodeInterface::class,
-        \Magento\InventorySourceSelectionApi\Api\GetDefaultSourceSelectionAlgorithmCodeInterface::class
-    );
+// fix for correct working of \Magento\Setup\Module\Di\Code\Reader\FileClassScanner
+if (true) {
+    if (!interface_exists(\Magento\InventorySourceSelectionApi\Api\GetDefaultSourceSelectionAlgorithmCodeInterface::class)) {
+        class_alias(
+            \Calcurates\ModuleMagento\Api\Fake\GetDefaultSourceSelectionAlgorithmCodeInterface::class,
+            \Magento\InventorySourceSelectionApi\Api\GetDefaultSourceSelectionAlgorithmCodeInterface::class
+        );
+    }
 }
 
 class GetDefaultSourceSelectionAlgorithmCode implements GetDefaultSourceSelectionAlgorithmCodeInterface
