@@ -19,9 +19,10 @@ class ToOrderItemPlugin
      */
     public function afterConvert(ToOrderItem $subject, $result, $item, $data = [])
     {
+        $quoteItem = $item->getQuoteItem() ? $item->getQuoteItem() : $item;
         $result->setData(
             CustomSalesAttributesInterface::SOURCE_CODE,
-            $item->getData(CustomSalesAttributesInterface::SOURCE_CODE)
+            $quoteItem->getData(CustomSalesAttributesInterface::SOURCE_CODE)
         );
 
         return $result;

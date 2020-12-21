@@ -182,7 +182,6 @@ class CarrierProcessor implements ResponseProcessorInterface
                 foreach ($rates as $rate) {
                     $result->append($rate);
                 }
-
             }
         }
 

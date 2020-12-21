@@ -132,7 +132,7 @@ class RateRequestBuilder
             );
 
             $apiRequestBody['products'][] = [
-                'quoteItemId' => $item->getId(),
+                'quoteItemId' => $item->getItemId() ?? $item->getQuoteItemId(),
                 'priceWithTax' => round($item->getBasePriceInclTax(), 2),
                 'priceWithoutTax' => round($item->getBasePrice(), 2),
                 'discountAmount' => round($item->getBaseDiscountAmount() / $item->getQty(), 2),
