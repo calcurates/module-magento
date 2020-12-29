@@ -164,7 +164,7 @@ class CalcuratesClient implements CalcuratesClientInterface
     {
         try {
             $response = $this->httpClient->post(
-                $this->getAPIUrl($storeId) . '/labels/magento2',
+                $this->getAPIUrl($storeId) . '/labels',
                 \Zend_Json::encode($request)
             );
             $response = \Zend_Json::decode($response);
@@ -188,7 +188,7 @@ class CalcuratesClient implements CalcuratesClientInterface
         try {
             $this->httpClient->setTimeout($timeout);
             $response = $this->httpClient->post(
-                $this->getAPIUrl($storeId) . '/rates/magento2',
+                $this->getAPIUrl($storeId) . '/rates',
                 \Zend_Json::encode($request)
             );
             $this->httpClient->setTimeout(null);
@@ -208,7 +208,7 @@ class CalcuratesClient implements CalcuratesClientInterface
      */
     protected function getApiUrl($storeId)
     {
-        return rtrim($this->calcuratesConfig->getApiUrl($storeId), '/') . '/api/v1';
+        return rtrim($this->calcuratesConfig->getApiUrl($storeId), '/') . '/api/magento2';
     }
 
     /**
