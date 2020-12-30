@@ -1,0 +1,24 @@
+<?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
+/** @var $block \Calcurates\ModuleMagento\Block\Adminhtml\Order\View\DeliveryDate */
+/** @var $viewModel \Calcurates\ModuleMagento\ViewModel\OrderDeliveryDate */
+$viewModel = $block->getViewModel();
+
+$deliveryDatesString = $viewModel->getDeliveryDatesString($block->getOrder());
+?>
+
+<?php if ($deliveryDatesString): ?>
+    <section class="admin__page-section order-view-billing-shipping">
+        <div class="admin__page-section-title">
+            <span class="title"><?= $block->escapeHtml(__('Delivery Dates')) ?></span>
+        </div>
+        <div class="admin__page-section-content">
+            <?= $deliveryDatesString ?>
+        </div>
+    </section>
+<?php endif; ?>
