@@ -1,0 +1,9 @@
+type CalcuratesRateData {
+    tooltip_message: String @doc(description: "Could be null")
+    map_link: String @doc(description: "Could be null")
+    image_url: String @doc(description: "Could be null")
+}
+
+type AvailableShippingMethod {
+    calcurates_data: CalcuratesRateData @resolver(class: "\\Calcurates\\ModuleMagento\\Model\\Resolver\\RatesDataResolver")
+}
