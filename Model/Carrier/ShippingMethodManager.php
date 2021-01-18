@@ -36,12 +36,16 @@ class ShippingMethodManager
     }
 
     /**
-     * @param string $shippingMethodFull
+     * @param string|null $shippingMethodFull
      * @param string $orderShippingDescription
      * @return CarrierData|null
      */
-    public function getCarrierData(string $shippingMethodFull, string $orderShippingDescription = ""): ?CarrierData
+    public function getCarrierData(?string $shippingMethodFull, string $orderShippingDescription = ""): ?CarrierData
     {
+        if (!$shippingMethodFull) {
+            return null;
+        }
+
         list($carrierCode, $method) = explode('_', $shippingMethodFull, 2);
 
         if ($carrierCode !== Carrier::CODE) {
