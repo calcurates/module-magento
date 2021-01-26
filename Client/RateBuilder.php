@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @author Calcurates Team
  * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
@@ -16,6 +17,8 @@ use Magento\Quote\Model\Quote\Address\RateResult\MethodFactory;
 
 class RateBuilder
 {
+    const METHOD_WITH_TAX_SUFFIX = '_tax';
+
     /**
      * @var Config
      */
@@ -37,8 +40,11 @@ class RateBuilder
      * @param CurrencyConverter $currencyConverter
      * @param Config $calcuratesConfig
      */
-    public function __construct(MethodFactory $rateMethodFactory, CurrencyConverter $currencyConverter, Config $calcuratesConfig)
-    {
+    public function __construct(
+        MethodFactory $rateMethodFactory,
+        CurrencyConverter $currencyConverter,
+        Config $calcuratesConfig
+    ) {
         $this->rateMethodFactory = $rateMethodFactory;
         $this->currencyConverter = $currencyConverter;
         $this->calcuratesConfig = $calcuratesConfig;
@@ -48,19 +54,21 @@ class RateBuilder
      * @param string $methodId
      * @param array $responseRate
      * @param string $carrierTitle
-     * @return \Magento\Quote\Model\Quote\Address\RateResult\Method
+     * @return \Magento\Quote\Model\Quote\Address\RateResult\Method[]
      */
     public function build(string $methodId, array $responseRate, $carrierTitle = ''): array
     {
         $displayRatesType = $this->calcuratesConfig->getRatesTaxDisplayType();
         $tax = $responseRate['rate']['tax'] ?? null;
-
         if ($displayRatesType === RateTaxDisplaySource::BOTH && $tax) {
             $responseRateWithTax = $responseRate;
             $responseRateWithTax['rate']['cost'] += $tax;
             $responseRateWithTax['name'] .= __(' - duties & tax included');
-            $rateWithTax = $this->createRate($methodId, $responseRateWithTax, $carrierTitle);
-
+            $rateWithTax = $this->createRate(
+                $methodId . self::METHOD_WITH_TAX_SUFFIX,
+                $responseRateWithTax,
+                $carrierTitle
+            );
             $responseRateWithoutTax = $responseRate;
             $responseRateWithoutTax['name'] .= __(' - without duties & tax');
             $rateWithoutTax = $this->createRate($methodId, $responseRateWithoutTax, $carrierTitle);
