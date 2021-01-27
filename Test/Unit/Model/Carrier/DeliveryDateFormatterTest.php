@@ -191,8 +191,8 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
             'fromToDifferent' => [
                 'from' => '2020-02-02',
                 'to' => '2020-02-03',
-                'formatResult' => '02-02-2020', // it's quite difficult to add formats to both dates, and we return single for each
-                'expectedResult' => '02-02-2020 - 02-02-2020', // and check
+                'formatResult' => '02-02-2020', //fixme: it's quite difficult to add formats to both dates, and we return single for each
+                'expectedResult' => '02-02-2020', // and check
             ],
         ];
     }

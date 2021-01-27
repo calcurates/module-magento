@@ -41,32 +41,30 @@ class DeliveryDateFormatter
     }
 
     /**
-     * @param string|null $from
-     * @param string|null $to
+     * @param string|null $fromString
+     * @param string|null $toString
      * @return string
      */
-    public function formatDeliveryDate(?string $from, ?string $to): string
+    public function formatDeliveryDate(?string $fromString, ?string $toString): string
     {
-        if (!$from && !$to) {
+        if (!$fromString && !$toString) {
             return '';
         }
 
-        if ($from) {
-            $from = new \DateTime($from);
+        if ($fromString) {
+            $from = new \DateTime($fromString);
         } else {
-            $from = new \DateTime($to);
+            $from = new \DateTime($toString);
         }
 
-        if ($to) {
-            $to = new \DateTime($to);
+        if ($toString) {
+            $to = new \DateTime($toString);
         } else {
-            $to = $from;
+            $to = clone $from;
         }
 
         if ($from > $to) {
-            $fromTmp = $from;
-            $from = $to;
-            $to = $fromTmp;
+            [$from, $to] = [$to, $from];
         }
 
         $timezoneString = $this->timezone->getConfigTimezone(ScopeInterface::SCOPE_STORES);
@@ -118,12 +116,14 @@ class DeliveryDateFormatter
      */
     private function formatDates(\DateTime $from, \DateTime $to): string
     {
-        $format = static::DATE_FORMAT;
-        if ($from == $to) {
-            return $from->format($format);
+        $formattedFrom = $from->format(static::DATE_FORMAT);
+        $formattedTo = $to->format(static::DATE_FORMAT);
+
+        if ($formattedFrom === $formattedTo) {
+            return $formattedFrom;
         }
 
-        return $from->format($format) . ' - ' . $to->format($format);
+        return $formattedFrom . ' - ' . $formattedTo;
     }
 
     /**
@@ -133,10 +133,13 @@ class DeliveryDateFormatter
      */
     private function formatDatesMagentoLocale(\DateTime $from, \DateTime $to): string
     {
-        if ($from == $to) {
-            return $this->timezone->formatDateTime($from);
+        $formattedFrom = $this->timezone->formatDateTime($from);
+        $formattedTo = $this->timezone->formatDateTime($to);
+
+        if ($formattedFrom === $formattedTo) {
+            return $formattedFrom;
         }
 
-        return $this->timezone->formatDateTime($from) . ' - ' .  $this->timezone->formatDateTime($to);
+        return $formattedFrom . ' - ' .  $formattedTo;
     }
 }
