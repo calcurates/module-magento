@@ -128,49 +128,49 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
             'emptyFromDaysQtyOneDay' => [
                 'displayType' => 'days_qty',
                 'from' => null,
-                'to' => $oneDay->format(\DateTimeInterface::ATOM),
+                'to' => $oneDay->format(\DateTime::ATOM),
                 'expectedResult' => '1 day',
             ],
             'emptyToDaysQtyOneDay' => [
                 'displayType' => 'days_qty',
-                'from' => $oneDay->format(\DateTimeInterface::ATOM),
+                'from' => $oneDay->format(\DateTime::ATOM),
                 'to' => null,
                 'expectedResult' => '1 day',
             ],
             'sameFromToDaysQtyOneDay' => [
                 'displayType' => 'days_qty',
-                'from' => $twoDays->format(\DateTimeInterface::ATOM),
-                'to' => $twoDays->format(\DateTimeInterface::ATOM),
+                'from' => $twoDays->format(\DateTime::ATOM),
+                'to' => $twoDays->format(\DateTime::ATOM),
                 'expectedResult' => '2 days',
             ],
             'differentFromToDaysQty' => [
                 'displayType' => 'days_qty',
-                'from' => $oneDay->format(\DateTimeInterface::ATOM),
-                'to' => $twoDays->format(\DateTimeInterface::ATOM),
+                'from' => $oneDay->format(\DateTime::ATOM),
+                'to' => $twoDays->format(\DateTime::ATOM),
                 'expectedResult' => '1-2 days',
             ],
             'emptyFromDates' => [
                 'displayType' => 'dates',
                 'from' => null,
-                'to' => $oneDay->format(\DateTimeInterface::ATOM),
+                'to' => $oneDay->format(\DateTime::ATOM),
                 'expectedResult' => $oneDayUtc->format($format),
             ],
             'emptyToDatesTwoDays' => [
                 'displayType' => 'dates',
                 'from' => null,
-                'to' => $twoDays->format(\DateTimeInterface::ATOM),
+                'to' => $twoDays->format(\DateTime::ATOM),
                 'expectedResult' => $twoDaysUtc->format($format),
             ],
             'sameFromToDatesOneDay' => [
                 'displayType' => 'dates',
-                'from' => $twoDays->format(\DateTimeInterface::ATOM),
-                'to' => $twoDays->format(\DateTimeInterface::ATOM),
+                'from' => $twoDays->format(\DateTime::ATOM),
+                'to' => $twoDays->format(\DateTime::ATOM),
                 'expectedResult' => $twoDaysUtc->format($format),
             ],
             'differentFromToDates' => [
                 'displayType' => 'dates',
-                'from' => $oneDay->format(\DateTimeInterface::ATOM),
-                'to' => $twoDays->format(\DateTimeInterface::ATOM),
+                'from' => $oneDay->format(\DateTime::ATOM),
+                'to' => $twoDays->format(\DateTime::ATOM),
                 'expectedResult' => $oneDayUtc->format($format) . ' - ' . $twoDaysUtc->format($format),
             ],
         ];
@@ -191,8 +191,8 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
             'fromToDifferent' => [
                 'from' => '2020-02-02',
                 'to' => '2020-02-03',
-                'formatResult' => '02-02-2020', // it's quite difficult to add formats to both dates, and we return single for each
-                'expectedResult' => '02-02-2020 - 02-02-2020', // and check
+                'formatResult' => '02-02-2020', //fixme: it's quite difficult to add formats to both dates, and we return single for each
+                'expectedResult' => '02-02-2020', // and check
             ],
         ];
     }
