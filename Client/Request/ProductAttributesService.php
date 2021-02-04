@@ -8,6 +8,7 @@
 
 namespace Calcurates\ModuleMagento\Client\Request;
 
+use Calcurates\ModuleMagento\Api\Catalog\Product\ProductAttributesListInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
 
 class ProductAttributesService
@@ -22,7 +23,7 @@ class ProductAttributesService
 
         /** @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute  $attribute */
         foreach ($product->getAttributes() as $attributeCode => $attribute) {
-            if (in_array($attribute->getFrontendInput(), ['gallery', 'media_image'])) {
+            if (in_array($attribute->getFrontendInput(), ProductAttributesListInterface::BANNED_INPUT_TYPES, true)) {
                 continue;
             }
 
