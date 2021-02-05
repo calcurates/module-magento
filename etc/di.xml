@@ -135,8 +135,4 @@
             <argument name="responseProcessor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\CompositeProcessor</argument>
         </arguments>
     </type>
-
-    <type name="Magento\Quote\Model\Quote\TotalsCollector">
-        <plugin name="Calcurates_ModuleMagento::SetRateInfoToQuote" type="Calcurates\ModuleMagento\Plugin\Model\Quote\SetRateInfoToQuote" />
-    </type>
 </config>

@@ -10,6 +10,10 @@
         <observer name="calcurates_convert_quote_to_order"
                   instance="Calcurates\ModuleMagento\Observer\SaveOrderBeforeSalesModelQuoteObserver" />
     </event>
+    <event name="paypal_express_place_order_success">
+        <observer name="calcurates_convert_quote_to_order"
+                  instance="Calcurates\ModuleMagento\Observer\SaveOrderBeforeSalesModelQuoteObserver" />
+    </event>
     <event name="sales_order_shipment_save_after">
         <observer name="calcurates_save_shipment_after"
                   instance="Calcurates\ModuleMagento\Observer\ShipmentSaveAfterObserver" />
