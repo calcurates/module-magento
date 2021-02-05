@@ -8,9 +8,11 @@
 
 namespace Calcurates\ModuleMagento\Client;
 
+use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Calcurates\ModuleMagento\Model\Config as CalcuratesConfig;
+use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
 use Magento\Shipping\Model\Rate\Result;
 use Magento\Shipping\Model\Rate\ResultFactory;
@@ -43,22 +45,30 @@ class RatesResponseProcessor
     private $failedRateBuilder;
 
     /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    /**
      * RatesResponseProcessor constructor.
      * @param ResultFactory $resultFactory
      * @param CalcuratesConfig $calcuratesConfig
      * @param ResponseProcessorInterface $responseProcessor
      * @param FailedRateBuilder $failedRateBuilder
+     * @param SerializerInterface $serializer
      */
     public function __construct(
         ResultFactory $resultFactory,
         CalcuratesConfig $calcuratesConfig,
         ResponseProcessorInterface $responseProcessor,
-        FailedRateBuilder $failedRateBuilder
+        FailedRateBuilder $failedRateBuilder,
+        SerializerInterface $serializer
     ) {
         $this->resultFactory = $resultFactory;
         $this->calcuratesConfig = $calcuratesConfig;
         $this->responseProcessor = $responseProcessor;
         $this->failedRateBuilder = $failedRateBuilder;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -90,6 +100,20 @@ class RatesResponseProcessor
         }
 
         $this->responseProcessor->process($result, $response, $quote);
+
+        // @TODO: temporary fix, need refactoring and external table storage for rates data
+        $deliveryDates = [];
+        foreach ($result->getAllRates() as $rate) {
+            $rateDeliveryDates = $rate->getData(self::CALCURATES_DELIVERY_DATES);
+            if ($rateDeliveryDates) {
+                $deliveryDates[$rate->getCarrier() . '_' . $rate->getMethod()] = $rateDeliveryDates;
+            }
+        }
+
+        $quote->setData(
+            CustomSalesAttributesInterface::DELIVERY_DATES,
+            $this->serializer->serialize($deliveryDates)
+        );
 
         return $result;
     }
