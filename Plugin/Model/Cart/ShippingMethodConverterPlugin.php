@@ -39,6 +39,7 @@ class ShippingMethodConverterPlugin
      * ShippingMethodConverterPlugin constructor.
      * @param Config $configProvider
      * @param DeliveryDateFormatter $deliveryDateFormatter
+     * @param RateDataInterfaceFactory $rateDataFactory
      */
     public function __construct(
         Config $configProvider,

@@ -12,6 +12,7 @@ namespace Calcurates\ModuleMagento\Model\CheckoutConverter;
 
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
+use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
@@ -38,16 +39,23 @@ class QuoteToOrderConverter
      */
     private $orderRepository;
 
+    /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
     public function __construct(
         ConvertPackages $convertPackages,
         ConvertServicesSources $convertServicesSources,
         ShippingMethodManager $shippingMethodManager,
-        OrderRepositoryInterface $orderRepository
+        OrderRepositoryInterface $orderRepository,
+        SerializerInterface $serializer
     ) {
         $this->convertPackages = $convertPackages;
         $this->convertServicesSources = $convertServicesSources;
         $this->shippingMethodManager = $shippingMethodManager;
         $this->orderRepository = $orderRepository;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -56,11 +64,19 @@ class QuoteToOrderConverter
      */
     public function convert(Quote $quote, Order $order): void
     {
+        // @TODO: store all data in external table
         $orderChanged = false;
         $deliveryDates = $quote->getData(CustomSalesAttributesInterface::DELIVERY_DATES);
         if ($deliveryDates) {
-            $order->setData(CustomSalesAttributesInterface::DELIVERY_DATES, $deliveryDates);
-            $orderChanged = true;
+            $deliveryDates = $this->serializer->unserialize($deliveryDates);
+            $deliveryDates = $deliveryDates[$order->getShippingMethod(false)] ?? null;
+            if ($deliveryDates) {
+                $order->setData(
+                    CustomSalesAttributesInterface::DELIVERY_DATES,
+                    $this->serializer->serialize($deliveryDates)
+                );
+                $orderChanged = true;
+            }
         }
 
         $carrierData = $this->shippingMethodManager->getCarrierData($order->getShippingMethod(false));

@@ -66,6 +66,10 @@ class AttributesList implements ProductAttributesListInterface
         $result = [];
         /** @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute\Interceptor $attributesItem */
         foreach ($attributesItems as $attributesItem) {
+            if (in_array($attributesItem->getFrontendInput(), ProductAttributesListInterface::BANNED_INPUT_TYPES, true)) {
+                continue;
+            }
+
             $values = [];
             foreach ($attributesItem->getSource()->getAllOptions() as $option) {
                 if (empty($option['value'])) {

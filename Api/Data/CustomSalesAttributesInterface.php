@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @author Calcurates Team
  * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
