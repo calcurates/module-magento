@@ -43,12 +43,12 @@ class DeliveryDateFormatter
     /**
      * @param string|null $fromString
      * @param string|null $toString
-     * @return string
+     * @return array(\DateTime|null, \DateTime|null) Prepared dates
      */
-    public function formatDeliveryDate(?string $fromString, ?string $toString): string
+    public function prepareDates(?string $fromString, ?string $toString): array
     {
         if (!$fromString && !$toString) {
-            return '';
+            return [null, null];
         }
 
         if ($fromString) {
@@ -71,6 +71,46 @@ class DeliveryDateFormatter
         $timezone = new \DateTimeZone($timezoneString);
         $from->setTimezone($timezone);
         $to->setTimezone($timezone);
+
+        return [$from, $to];
+    }
+
+    /**
+     * @param \DateTime $dateTime
+     * @return string
+     */
+    public function formatSingleDate(\DateTime $dateTime): string
+    {
+        $datesDisplayType = $this->configProvider->getDeliveryDateDisplayType();
+
+        switch ($datesDisplayType) {
+            case DeliveryDateDisplayTypeSource::DAYS_QTY:
+                $value = $this->formatDay($dateTime);
+                break;
+            case DeliveryDateDisplayTypeSource::DATES_MAGENTO_FORMAT:
+                $value = $this->formatDateMagentoLocale($dateTime);
+                break;
+            case DeliveryDateDisplayTypeSource::DATES:
+            default:
+                $value = $this->formatDate($dateTime);
+                break;
+        }
+
+        return $value;
+    }
+
+    /**
+     * @param string|null $fromString
+     * @param string|null $toString
+     * @return string
+     */
+    public function formatDeliveryDate(?string $fromString, ?string $toString): string
+    {
+        if (!$fromString && !$toString) {
+            return '';
+        }
+
+        [$from, $to] = $this->prepareDates($fromString, $toString);
 
         $datesDisplayType = $this->configProvider->getDeliveryDateDisplayType();
 
@@ -97,16 +137,54 @@ class DeliveryDateFormatter
      */
     private function formatDays(\DateTime $from, \DateTime $to): string
     {
-        $current = new \DateTime('now', $from->getTimezone());
-
-        $diffDaysFrom = abs(ceil(($from->getTimestamp() - $current->getTimestamp()) / (60*60*24)));
-        $diffDaysTo = abs(ceil(($to->getTimestamp() - $current->getTimestamp()) / (60*60*24)));
+        $diffDaysFrom = $this->getDiffDays($from);
+        $diffDaysTo = $this->getDiffDays($to);
 
         if ($diffDaysFrom === $diffDaysTo) {
-            return $diffDaysFrom === 1.0 ? (string)__('%1 day', $diffDaysFrom) : (string)__('%1 days', $diffDaysFrom);
+            return $diffDaysFrom === 1 ? (string)__('%1 day', $diffDaysFrom) : (string)__('%1 days', $diffDaysFrom);
         }
 
         return (string)__('%1-%2 days', $diffDaysFrom, $diffDaysTo);
+    }
+
+    /**
+     * @param \DateTime $date
+     * @return string
+     */
+    private function formatDay(\DateTime $date): string
+    {
+        $diffDays = $this->getDiffDays($date);
+
+        return $diffDays === 1 ? (string)__('%1 day', $diffDays) : (string)__('%1 days', $diffDays);
+    }
+
+    /**
+     * @param \DateTime $dateTime
+     * @return string
+     */
+    private function formatDate(\DateTime $dateTime): string
+    {
+        return $dateTime->format(static::DATE_FORMAT);
+    }
+
+    /**
+     * @param \DateTime $dateTime
+     * @return string
+     */
+    private function formatDateMagentoLocale(\DateTime $dateTime): string
+    {
+        return $this->timezone->formatDateTime($dateTime);
+    }
+
+    /**
+     * @param \DateTime $dateTime
+     * @return int
+     */
+    private function getDiffDays(\DateTime $dateTime): int
+    {
+        $current = new \DateTime('now', $dateTime->getTimezone());
+
+        return (int)abs(ceil(($dateTime->getTimestamp() - $current->getTimestamp()) / (60*60*24)));
     }
 
     /**
@@ -116,8 +194,8 @@ class DeliveryDateFormatter
      */
     private function formatDates(\DateTime $from, \DateTime $to): string
     {
-        $formattedFrom = $from->format(static::DATE_FORMAT);
-        $formattedTo = $to->format(static::DATE_FORMAT);
+        $formattedFrom = $this->formatDate($from);
+        $formattedTo = $this->formatDate($to);
 
         if ($formattedFrom === $formattedTo) {
             return $formattedFrom;
@@ -133,8 +211,8 @@ class DeliveryDateFormatter
      */
     private function formatDatesMagentoLocale(\DateTime $from, \DateTime $to): string
     {
-        $formattedFrom = $this->timezone->formatDateTime($from);
-        $formattedTo = $this->timezone->formatDateTime($to);
+        $formattedFrom = $this->formatDateMagentoLocale($from);
+        $formattedTo = $this->formatDateMagentoLocale($to);
 
         if ($formattedFrom === $formattedTo) {
             return $formattedFrom;

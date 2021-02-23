@@ -135,4 +135,8 @@
             <argument name="responseProcessor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\CompositeProcessor</argument>
         </arguments>
     </type>
+    
+    <preference for="Calcurates\ModuleMagento\Api\EstimateShippingByProductsGuestInterface" type="Calcurates\ModuleMagento\Model\Estimate\EstimateShippingByProductsGuest"/>
+    <preference for="Calcurates\ModuleMagento\Api\EstimateShippingByProductsInterface" type="Calcurates\ModuleMagento\Model\Estimate\EstimateShippingByProducts"/>
+    <preference for="Calcurates\ModuleMagento\Api\Data\SimpleRateInterface" type="Calcurates\ModuleMagento\Model\Estimate\SimpleRate"/>
 </config>

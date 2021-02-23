@@ -1,0 +1,21 @@
+
+
+<div class="calcurates-rates-container">
+    <div class="calcurates-rates-title">
+        <span translate="'Estimated Delivery'"></span>
+    </div>
+
+    <ifnot args="rates().length">
+        <div class="calcurates-rates-container">
+            <span text="fallbackMessage"></span>
+        </div>
+    </ifnot>
+
+    <if args="rates().length">
+        <div class="calcurates-rates-list">
+            <each args="data: rates(), as: 'rate'">
+                <div class="calcurates-rate-item" data-bind="template: { name: $parent.getRateTemplate(rate) }"></div>
+            </each>
+        </div>
+    </if>
+</div>
