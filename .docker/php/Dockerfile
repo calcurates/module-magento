@@ -43,8 +43,7 @@ RUN set -xe \
         --with-freetype \
         --with-webp \
         --with-jpeg \
-    && NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
-    && docker-php-ext-install -j${NPROC} gd \
+    && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-enable gd \
 
     # Xdebug
