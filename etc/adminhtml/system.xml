@@ -101,6 +101,23 @@
                     <label>Display package name next to Carrier method name</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+
+                <field id="shipping_on_product_enabled" translate="label comment" type="select" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Display Shipping on Product Pages</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Ignore this setting if you don’t have
+                     <a href="https://my.calcurates.com/cabinet/marketplace" target="_blank">“Shipping on Product Pages” feature</a>
+                     activated for your Calcurates account.]]></comment>
+                </field>
+                <field id="shipping_on_product_fallback_message" translate="label comment" type="text" sortOrder="210" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Fallback Message for Shipping on Product Pages</label>
+                    <comment><![CDATA[Ignore this setting if you don’t have
+                     <a href="https://my.calcurates.com/cabinet/marketplace" target="_blank">“Shipping on Product Pages” feature</a>
+                     activated for your Calcurates account.]]></comment>
+                    <depends>
+                        <field id="shipping_on_product_enabled">1</field>
+                    </depends>
+                </field>
             </group>
         </section>
     </system>

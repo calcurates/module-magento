@@ -8,6 +8,7 @@
 
 namespace Calcurates\ModuleMagento\Api\Client;
 
+use Calcurates\ModuleMagento\Client\Http\ApiException;
 use Magento\Framework\Exception\LocalizedException;
 
 /**
@@ -64,8 +65,18 @@ interface CalcuratesClientInterface
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return array
      * @throws LocalizedException
+     * @throws ApiException
      */
     public function getRates($request, $storeId);
+
+    /**
+     * @param array $request
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @return array
+     * @throws LocalizedException
+     * @throws ApiException
+     */
+    public function getRatesSimple(array $request, $storeId): array;
 
     /**
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId

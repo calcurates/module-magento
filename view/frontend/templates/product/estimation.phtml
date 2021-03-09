@@ -1,0 +1,27 @@
+<?php
+/**
+ * @var $block \Calcurates\ModuleMagento\Block\Product\View\Estimation
+ * @var $viewModel \Calcurates\ModuleMagento\ViewModel\Estimation
+ * @var $escaper \Magento\Framework\Escaper
+ */
+$viewModel = $block->getViewModel();
+
+if (!$viewModel->isEnabled()) {
+    return;
+}
+$loaderIcon = $escaper->escapeUrl($block->getViewFileUrl('images/loader-2.gif'));
+?>
+<div class="calcurates-estimate-block"
+     data-bind="scope: 'calcurates_rates'"
+     data-mage-init='{"loader": { "icon": "<?= /* @noEscape */ $loaderIcon ?>"}}'
+     data-calcurates-js="rates-container">
+    <!-- ko template: getTemplate() --><!-- /ko -->
+</div>
+
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magento_Ui/js/core/app": <?= /* @noEscape */ $block->getJsLayout();?>
+        }
+    }
+</script>
