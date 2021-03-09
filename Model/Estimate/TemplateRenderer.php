@@ -16,7 +16,8 @@ class TemplateRenderer
         $vars = array_map(
             static function ($field) {
                 return "{{$field}}";
-            }, array_keys($variables)
+            },
+            array_keys($variables)
         );
         $values = array_values($variables);
 

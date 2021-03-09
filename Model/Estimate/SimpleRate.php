@@ -9,7 +9,6 @@ use Magento\Framework\Api\AbstractSimpleObject;
 
 class SimpleRate extends AbstractSimpleObject implements SimpleRateInterface
 {
-
     public function getRenderedTemplate(): string
     {
         return $this->_get(self::RENDERED_TEMPLATE);

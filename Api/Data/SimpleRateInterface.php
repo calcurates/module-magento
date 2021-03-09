@@ -89,5 +89,4 @@ interface SimpleRateInterface
      * @return void
      */
     public function setType(string $type): void;
-
 }
