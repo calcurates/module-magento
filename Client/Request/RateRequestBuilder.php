@@ -10,6 +10,7 @@ namespace Calcurates\ModuleMagento\Client\Request;
 
 use Calcurates\ModuleMagento\Model\Source\GetSourceCodesPerSkus;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Directory\Model\RegionFactory;
 use Magento\Directory\Model\ResourceModel\Region as RegionResource;
 use Magento\Quote\Model\Quote\Address\RateRequest;
@@ -124,12 +125,25 @@ class RateRequestBuilder
         $itemsSourceCodes = $this->getSourceCodesPerSkus->execute($itemsSkus);
 
         foreach ($items as $item) {
-            $product = $this->productRepository->getById(
-                $item->getProductId(),
+            $attributedProductId = $item->getProductId();
+
+            // for configurable - load all attributes from child
+            if ($item->getProductType() === Configurable::TYPE_CODE) {
+                $childItem = current($item->getChildren());
+                if ($childItem && $childItem->getProductId()) {
+                    $attributedProductId = $childItem->getProductId();
+                }
+            }
+
+            $attributedProduct = $this->productRepository->getById(
+                $attributedProductId,
                 false,
                 $this->storeManager->getStore()->getId(),
                 true
             );
+
+            $attributes = $this->productAttributesService->getAttributes($attributedProduct);
+            $attributes['category_ids'] = $item->getProduct()->getCategoryIds(); // get category ids always from parent
 
             $apiRequestBody['products'][] = [
                 'quoteItemId' => $item->getItemId() ?? $item->getQuoteItemId(),
@@ -137,10 +151,9 @@ class RateRequestBuilder
                 'priceWithoutTax' => round($item->getBasePrice(), 2),
                 'discountAmount' => round($item->getBaseDiscountAmount() / $item->getQty(), 2),
                 'quantity' => round($item->getQty(), 0),
-                'weight' => $product->isVirtual() ? 0 : $item->getWeight(),
+                'weight' => $item->getIsVirtual() ? 0 : $item->getWeight(),
                 'sku' => $item->getSku(),
-                'categories' => $product->getCategoryIds(),
-                'attributes' => $this->productAttributesService->getAttributes($product),
+                'attributes' => $attributes,
                 'inventories' => $itemsSourceCodes[$item->getSku()] ?? []
             ];
         }
