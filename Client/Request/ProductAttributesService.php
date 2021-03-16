@@ -17,7 +17,7 @@ class ProductAttributesService
      * @param ProductInterface $product
      * @return array
      */
-    public function getAttributes(ProductInterface $product)
+    public function getAttributes(ProductInterface $product): array
     {
         $attributeValues = [];
 

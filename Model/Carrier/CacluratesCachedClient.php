@@ -99,6 +99,16 @@ class CacluratesCachedClient implements CalcuratesClientInterface
     }
 
     /**
+     * @param array $request
+     * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
+     * @return array
+     */
+    public function getRatesSimple(array $request, $storeId): array
+    {
+        return $this->calcuratesClient->getRatesSimple($request, $storeId);
+    }
+
+    /**
      * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
      * @return array
      */

@@ -3,3 +3,51 @@
   display: block;
   margin-top: 10px;
 }
+
+//
+//  Common
+//  -------------------------------------------
+
+& when (@media-common = true) {
+  .calcurates-rates-container {
+    & {
+      margin-top: 20px;
+      padding: 20px;
+      background: #f6f6f6;
+    }
+
+    .calcurates-rates-title {
+      margin: 0 0 15px 15px;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .calcurates-rates-list {
+      margin: 0 0 15px 15px;
+    }
+
+    .calcurates-rate-item {
+      margin: 0 0 15px 0;
+    }
+  }
+
+  .calcurates-estimate-block {
+    & {
+      position: relative;
+      margin-bottom: 20px;
+      min-height: 70px;
+    }
+
+    &.-hidden {
+      display: none;
+    }
+
+    > .loading-mask {
+      position: absolute;
+    }
+
+    > .loading-mask > .loader > img {
+      position: absolute;
+    }
+  }
+}

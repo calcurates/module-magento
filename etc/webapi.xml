@@ -39,4 +39,21 @@
             <resource ref="Magento_InventoryApi::source"/>
         </resources>
     </route>
+
+    <route url="/V1/calcurates/estimate" method="GET">
+        <service class="Calcurates\ModuleMagento\Api\EstimateShippingByProductsInterface" method="estimate"/>
+        <resources>
+            <resource ref="self" />
+        </resources>
+        <data>
+            <parameter name="customerId" force="true">%customer_id%</parameter>
+        </data>
+    </route>
+
+    <route url="/V1/calcurates/estimate-guest" method="GET">
+        <service class="Calcurates\ModuleMagento\Api\EstimateShippingByProductsGuestInterface" method="estimate"/>
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
 </routes>

@@ -1,0 +1,96 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Calcurates\ModuleMagento\Model\Estimate;
+
+use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
+use Calcurates\ModuleMagento\Api\Data\SimpleRateInterfaceFactory;
+use Calcurates\ModuleMagento\Api\EstimateShippingByProductsInterface;
+use Calcurates\ModuleMagento\Client\Http\ApiException;
+use Calcurates\ModuleMagento\Client\Request\ProductRateRequestBuilder;
+use Calcurates\ModuleMagento\Model\Config;
+use Calcurates\ModuleMagento\Model\Config\Source\RateTaxDisplaySource;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Store\Model\StoreManagerInterface;
+
+class EstimateShippingByProducts implements EstimateShippingByProductsInterface
+{
+    /**
+     * @var ProductRateRequestBuilder
+     */
+    private $productRateRequestBuilder;
+
+    /**
+     * @var CalcuratesClientInterface
+     */
+    private $calcuratesClient;
+
+    /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
+     * @var Config
+     */
+    private $calcuratesConfig;
+
+    /**
+     * @var SimpleRateBuilder
+     */
+    private $simpleRateBuilder;
+
+    public function __construct(
+        ProductRateRequestBuilder $productRateRequestBuilder,
+        CalcuratesClientInterface $calcuratesClient,
+        StoreManagerInterface $storeManager,
+        Config $calcuratesConfig,
+        SimpleRateBuilder $simpleRateBuilder
+    ) {
+        $this->productRateRequestBuilder = $productRateRequestBuilder;
+        $this->calcuratesClient = $calcuratesClient;
+        $this->storeManager = $storeManager;
+        $this->calcuratesConfig = $calcuratesConfig;
+        $this->simpleRateBuilder = $simpleRateBuilder;
+    }
+
+    /**
+     * @param int[] $productIds
+     * @param int $customerId
+     * @return \Calcurates\ModuleMagento\Api\Data\SimpleRateInterface[]
+     * @throws LocalizedException
+     */
+    public function estimate(array $productIds, int $customerId): array
+    {
+        $request = $this->productRateRequestBuilder->build($productIds, $customerId);
+        try {
+            $ratesData = $this->calcuratesClient->getRatesSimple($request, $this->storeManager->getStore()->getId());
+        } catch (ApiException $e) {
+            throw new LocalizedException(__('Something went wrong with Calcurates API'));
+        }
+
+        $displayRatesType = $this->calcuratesConfig->getRatesTaxDisplayType();
+        $isDisplayBoth = $displayRatesType === RateTaxDisplaySource::BOTH;
+        $isDisplayTaxIncluded = $displayRatesType === RateTaxDisplaySource::TAX_INCLUDED;
+
+        $rates = [];
+        foreach ($ratesData as $rateData) {
+            if ($isDisplayBoth && $rateData['tax']) {
+                $rateDataWithTax = $rateData;
+                $rateDataWithTax['cost'] += $rateData['tax'];
+                $rateDataWithTax['name'] .= __(' - duties & tax included');
+
+                $rates[] = $this->simpleRateBuilder->build($rateDataWithTax);
+            }
+
+            if ($isDisplayTaxIncluded && $rateData['tax']) {
+                $rateData['cost'] += $rateData['tax'];
+                $rateData['name'] .= __(' - duties & tax included');
+            }
+            $rates[] = $this->simpleRateBuilder->build($rateData);
+        }
+
+        return $rates;
+    }
+}

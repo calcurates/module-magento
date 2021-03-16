@@ -10,8 +10,10 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Test\Unit\Model\Carrier;
 
+use Amasty\RecurringPayments\Model\Subscription\Scheduler\DateTimeInterval;
 use Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter;
 use Calcurates\ModuleMagento\Model\Config;
+use Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplayTypeSource;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 
 /**
@@ -91,7 +93,7 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
     ) {
         $this->configProviderMock->expects($this->any())
             ->method('getDeliveryDateDisplayType')
-            ->willReturn('dates_magento_format');
+            ->willReturn(DeliveryDateDisplayTypeSource::DATES_MAGENTO_FORMAT);
 
         $this->timezoneMock->expects($this->any())
             ->method('formatDateTime')
@@ -100,6 +102,70 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
         $actualResult = $this->model->formatDeliveryDate($from, $to);
 
         $this->assertSame($expectedResult, $actualResult);
+    }
+
+    /**
+     * Test format single date to days
+     * @covers \Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter::formatSingleDate
+     */
+    public function testFormatSingleDateDays()
+    {
+        $this->configProviderMock
+            ->method('getDeliveryDateDisplayType')
+            ->willReturn(DeliveryDateDisplayTypeSource::DAYS_QTY);
+        $date = new \DateTime('now');
+
+        $date->add(new \DateInterval('P1D'));
+        $this->assertSame('1 day', $this->model->formatSingleDate($date));
+
+        $date->add(new \DateInterval('P1D'));
+        $this->assertSame('2 days', $this->model->formatSingleDate($date));
+
+        $date->add(new \DateInterval('P5D'));
+        $this->assertSame('7 days', $this->model->formatSingleDate($date));
+
+        // test up rounding 7.001 is also 8 days
+        $date->add(new \DateInterval('PT60S'));
+        $this->assertSame('8 days', $this->model->formatSingleDate($date));
+    }
+
+    /**
+     * Test format single date to magento format
+     * @covers \Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter::formatSingleDate
+     */
+    public function testFormatSingleDateMagentoLocale()
+    {
+        $formattedResult = '20.02.2021';
+        $this->configProviderMock
+            ->method('getDeliveryDateDisplayType')
+            ->willReturn(DeliveryDateDisplayTypeSource::DATES_MAGENTO_FORMAT);
+
+        $this->timezoneMock
+            ->method('formatDateTime')
+            ->willReturn($formattedResult);
+
+        $dateTime = new \DateTime('2021-02-20');
+
+        $result = $this->model->formatSingleDate($dateTime);
+
+        $this->assertSame($formattedResult, $result);
+    }
+
+    /**
+     * Test format single date to default
+     * @covers \Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter::formatSingleDate
+     */
+    public function testFormatSingleDateDefaultFormat()
+    {
+        $this->configProviderMock
+            ->method('getDeliveryDateDisplayType')
+            ->willReturn(DeliveryDateDisplayTypeSource::DATES);
+
+        $dateTime = new \DateTime('2021-02-20');
+
+        $result = $this->model->formatSingleDate($dateTime);
+
+        $this->assertSame($dateTime->format(DeliveryDateFormatter::DATE_FORMAT), $result);
     }
 
     /**
@@ -120,55 +186,55 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
 
         return [
             'emptyDates' => [
-                'displayType' => 'days_qty',
+                'displayType' => DeliveryDateDisplayTypeSource::DAYS_QTY,
                 'from' => null,
                 'to' => null,
                 'expectedResult' => '',
             ],
             'emptyFromDaysQtyOneDay' => [
-                'displayType' => 'days_qty',
+                'displayType' => DeliveryDateDisplayTypeSource::DAYS_QTY,
                 'from' => null,
                 'to' => $oneDay->format(\DateTime::ATOM),
                 'expectedResult' => '1 day',
             ],
             'emptyToDaysQtyOneDay' => [
-                'displayType' => 'days_qty',
+                'displayType' => DeliveryDateDisplayTypeSource::DAYS_QTY,
                 'from' => $oneDay->format(\DateTime::ATOM),
                 'to' => null,
                 'expectedResult' => '1 day',
             ],
             'sameFromToDaysQtyOneDay' => [
-                'displayType' => 'days_qty',
+                'displayType' => DeliveryDateDisplayTypeSource::DAYS_QTY,
                 'from' => $twoDays->format(\DateTime::ATOM),
                 'to' => $twoDays->format(\DateTime::ATOM),
                 'expectedResult' => '2 days',
             ],
             'differentFromToDaysQty' => [
-                'displayType' => 'days_qty',
+                'displayType' => DeliveryDateDisplayTypeSource::DAYS_QTY,
                 'from' => $oneDay->format(\DateTime::ATOM),
                 'to' => $twoDays->format(\DateTime::ATOM),
                 'expectedResult' => '1-2 days',
             ],
             'emptyFromDates' => [
-                'displayType' => 'dates',
+                'displayType' => DeliveryDateDisplayTypeSource::DATES,
                 'from' => null,
                 'to' => $oneDay->format(\DateTime::ATOM),
                 'expectedResult' => $oneDayUtc->format($format),
             ],
             'emptyToDatesTwoDays' => [
-                'displayType' => 'dates',
+                'displayType' => DeliveryDateDisplayTypeSource::DATES,
                 'from' => null,
                 'to' => $twoDays->format(\DateTime::ATOM),
                 'expectedResult' => $twoDaysUtc->format($format),
             ],
             'sameFromToDatesOneDay' => [
-                'displayType' => 'dates',
+                'displayType' => DeliveryDateDisplayTypeSource::DATES,
                 'from' => $twoDays->format(\DateTime::ATOM),
                 'to' => $twoDays->format(\DateTime::ATOM),
                 'expectedResult' => $twoDaysUtc->format($format),
             ],
             'differentFromToDates' => [
-                'displayType' => 'dates',
+                'displayType' => DeliveryDateDisplayTypeSource::DATES,
                 'from' => $oneDay->format(\DateTime::ATOM),
                 'to' => $twoDays->format(\DateTime::ATOM),
                 'expectedResult' => $oneDayUtc->format($format) . ' - ' . $twoDaysUtc->format($format),
