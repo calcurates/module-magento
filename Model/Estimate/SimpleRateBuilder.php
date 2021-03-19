@@ -51,6 +51,11 @@ class SimpleRateBuilder
         $this->simpleRateFactory = $simpleRateFactory;
     }
 
+    /**
+     * Build rate object from rate data array
+     * @param array $rateData
+     * @return SimpleRateInterface
+     */
     public function build(array $rateData): SimpleRateInterface
     {
         $baseAmount = $this->currencyConverter->convertToBase(
@@ -61,7 +66,9 @@ class SimpleRateBuilder
         $amount = $this->priceCurrency->convertAndFormat($baseAmount, false);
 
         $fromDate = $toDate = '';
-        if ($rateData['estimatedDeliveryDate']['from'] || $rateData['estimatedDeliveryDate']['to']) {
+        if (isset($rateData['estimatedDeliveryDate'])
+            && ($rateData['estimatedDeliveryDate']['from'] || $rateData['estimatedDeliveryDate']['to'])
+        ) {
             [$fromDate, $toDate] = $this->deliveryDateFormatter->prepareDates(
                 $rateData['estimatedDeliveryDate']['from'],
                 $rateData['estimatedDeliveryDate']['to']
