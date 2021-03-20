@@ -65,7 +65,6 @@ class FreeShippingProcessor implements ResponseProcessorInterface
             $responseRate['rate']['currency'] = null;
 
             $carrierTitle = $responseRate['name'];
-            $responseRate['name'] = __('Free Shipping');
             $rates = $this->rateBuilder->build(
                 ShippingMethodManager::FREE_SHIPPING . '_' . $responseRate['id'],
                 $responseRate,
