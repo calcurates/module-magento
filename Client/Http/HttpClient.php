@@ -10,6 +10,7 @@ namespace Calcurates\ModuleMagento\Client\Http;
 
 use Magento\Framework\HTTP\ClientFactory;
 
+// @TODO: service class can't contain setters and logic together! Refactor that
 class HttpClient
 {
     const TYPE_GET = 'GET';

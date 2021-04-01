@@ -9,6 +9,7 @@
 namespace Calcurates\ModuleMagento\Client\Request;
 
 use Calcurates\ModuleMagento\Api\Shipping\ShippingDataResolverInterface;
+use Calcurates\ModuleMagento\Model\Source\ShipmentSourceCodeRetriever;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Directory\Model\RegionFactory;
 
@@ -35,38 +36,41 @@ class ShippingLabelRequestBuilder
     private $productAttributesService;
 
     /**
-     * ShippingLabelRequestBuilder constructor.
-     * @param ShippingDataResolverInterface $shippingDataResolver
-     * @param RegionFactory $regionFactory
-     * @param ProductRepositoryInterface $productRepository
+     * @var ShipmentSourceCodeRetriever
      */
+    private $shipmentSourceCodeRetriever;
+
     public function __construct(
         ShippingDataResolverInterface $shippingDataResolver,
         RegionFactory $regionFactory,
         ProductRepositoryInterface $productRepository,
-        ProductAttributesService $productAttributesService
+        ProductAttributesService $productAttributesService,
+        ShipmentSourceCodeRetriever $shipmentSourceCodeRetriever
     ) {
         $this->shippingDataResolver = $shippingDataResolver;
         $this->regionFactory = $regionFactory;
         $this->productRepository = $productRepository;
         $this->productAttributesService = $productAttributesService;
+        $this->shipmentSourceCodeRetriever = $shipmentSourceCodeRetriever;
     }
 
     /**
-     * @param \Magento\Framework\DataObject $request
+     * @param \Magento\Framework\DataObject|\Magento\Shipping\Model\Shipment\Request $request
      * @param bool $testLabel
      * @return array
      */
     public function build(\Magento\Framework\DataObject $request, $testLabel = false)
     {
-        /** @var \Magento\Shipping\Model\Shipment\Request $request */
-        $shippingData = $this->shippingDataResolver->getShippingData($request->getOrderShipment());
         $shippingAddress = $request->getOrderShipment()->getOrder()->getShippingAddress();
         $regionModel = $this->getRegionModel($shippingAddress);
 
+        $sourceCode = $this->shipmentSourceCodeRetriever->retrieve($request->getOrderShipment());
+
         $apiRequestBody = [
-            'service' => $shippingData->getShippingServiceId(),
-            'source' => $shippingData->getSourceCode(),
+            'source' => $sourceCode,
+            'serviceCode' => $request->getData('calcurates_service_code'),
+            'carrierCode' => $request->getData('calcurates_carrier_code'),
+            'providerCode' => $request->getData('calcurates_provider_code'),
             'shipTo' => [
                 'contactName' => $request->getRecipientContactPersonName(),
                 'contactPhone' => $request->getRecipientContactPhoneNumber(),
@@ -128,10 +132,10 @@ class ShippingLabelRequestBuilder
     {
         switch ($weightUnits) {
             case \Zend_Measure_Weight::POUND:
-                $weightUnits = 'pound';
+                $weightUnits = 'lb';
                 break;
             case \Zend_Measure_Weight::KILOGRAM:
-                $weightUnits = 'kilogram';
+                $weightUnits = 'kg';
                 break;
             case \Zend_Measure_Weight::OUNCE:
                 $weightUnits = 'ounce';
@@ -154,10 +158,10 @@ class ShippingLabelRequestBuilder
     {
         switch ($dimensionUnits) {
             case \Zend_Measure_Length::INCH:
-                $dimensionUnits = 'inch';
+                $dimensionUnits = 'in';
                 break;
             case \Zend_Measure_Length::CENTIMETER:
-                $dimensionUnits = 'centimeter';
+                $dimensionUnits = 'cm';
                 break;
             default:
                 throw new \InvalidArgumentException('Invalid dimension units');

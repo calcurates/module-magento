@@ -9,4 +9,9 @@
     <type name="Magento\Shipping\Block\Adminhtml\Order\Packaging">
         <plugin name="Calcurates_ModuleMagento::ChangePackagingLogic" type="Calcurates\ModuleMagento\Plugin\Block\Adminhtml\Order\PackagingPlugin"/>
     </type>
+
+    <type name="Magento\Shipping\Model\Shipping\LabelGenerator">
+        <plugin name="Calcurates_ModuleMagento::AddAdditionalDataFromRequestToLabelGenerator"
+                type="Calcurates\ModuleMagento\Plugin\ShippingLabel\Model\LabelGeneratorPlugin" />
+    </type>
 </config>

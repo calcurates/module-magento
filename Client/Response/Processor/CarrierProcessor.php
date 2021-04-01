@@ -147,7 +147,7 @@ class CarrierProcessor implements ResponseProcessorInterface
 
                     $serviceIds[] = $service['id'];
 
-                    $sourceCode = $service['origin']['targetValue']['targetId'] ?? null;
+                    $sourceCode = $service['origin']['syncedTargetOriginCode'] ?? null;
 
                     if ($sourceCode) {
                         $sourceToServiceId[$sourceCode] = $service['id'];

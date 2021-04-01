@@ -9,22 +9,20 @@
 namespace Calcurates\ModuleMagento\Plugin\Model\Order;
 
 use Calcurates\ModuleMagento\Model\Carrier;
+use Calcurates\ModuleMagento\Model\Carrier\Tracking\TrackingInfoProvider;
 use Magento\Shipping\Model\Order\Track;
 
 class TrackPlugin
 {
     /**
-     * @var \Magento\Shipping\Model\CarrierFactory
+     * @var TrackingInfoProvider
      */
-    private $carrierFactory;
+    private $trackingInfoProvider;
 
-    /**
-     * TrackPlugin constructor.
-     * @param \Magento\Shipping\Model\CarrierFactory $carrierFactory
-     */
-    public function __construct(\Magento\Shipping\Model\CarrierFactory $carrierFactory)
-    {
-        $this->carrierFactory = $carrierFactory;
+    public function __construct(
+        TrackingInfoProvider $trackingInfoProvider
+    ) {
+        $this->trackingInfoProvider = $trackingInfoProvider;
     }
 
     /**
@@ -37,22 +35,7 @@ class TrackPlugin
     public function aroundGetNumberDetail(Track $subject, \Closure $proceed)
     {
         if ($subject->getCarrierCode() === Carrier::CODE) {
-            $carrierInstance = $this->carrierFactory->create($subject->getCarrierCode());
-            if (!$carrierInstance) {
-                $custom = [];
-                $custom['title'] = $subject->getTitle();
-                $custom['number'] = $subject->getTrackNumber();
-                return $custom;
-            }
-
-            $carrierInstance->setStore($subject->getStore());
-
-            $trackingInfo = $carrierInstance->getTrackingInfo($subject->getNumber(), $subject);
-            if (!$trackingInfo) {
-                return __('No detail for number "%1"', $subject->getNumber());
-            }
-
-            return $trackingInfo;
+            return $this->trackingInfoProvider->getTrackingInfo($subject);
         }
 
         return $proceed();

@@ -21,6 +21,8 @@ interface ShippingLabelInterface
     const LABEL_DATA = 'label_data';
     const PACKAGES = 'packages';
     const CREATED_AT = 'created_at';
+    const CARRIER_CODE = 'carrier_code';
+    const CARRIER_PROVIDER_CODE = 'carrier_provider_code';
 
     /**
      * @return int|null
@@ -131,4 +133,26 @@ interface ShippingLabelInterface
      * @param string $createdAt
      */
     public function setCreatedAt(string $createdAt): void;
+
+    /**
+     * Calcurates carrier code
+     * @return string|null
+     */
+    public function getCarrierCode(): ?string;
+
+    /**
+     * @param string $carrierCode
+     */
+    public function setCarrierCode(string $carrierCode): void;
+
+    /**
+     * Calcurates Carrier Provider Code
+     * @return string|null
+     */
+    public function getCarrierProviderCode(): ?string;
+
+    /**
+     * @param string $carrierProviderCode
+     */
+    public function setCarrierProviderCode(string $carrierProviderCode): void;
 }

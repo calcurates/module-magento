@@ -52,46 +52,12 @@ class CalcuratesClient implements CalcuratesClientInterface
     }
 
     /**
-     * @param string $shippingCarrierId
-     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
-     * @return array
-     */
-    public function getShippingServices($shippingCarrierId, $storeId)
-    {
-        try {
-            $response = $this->httpClient->get(
-                $this->getAPIUrl($storeId) . '/shipping-options/' . $shippingCarrierId . '/services'
-            );
-            $response = \Zend_Json::decode($response);
-        } catch (\Throwable $e) {
-            $response = [];
-        }
-
-        $shippingServices = [];
-        foreach ($response as $item) {
-            $shippingServices[] = [
-                'value' => $item['id'],
-                'label' => $item['name']
-            ];
-        }
-
-        return $shippingServices;
-    }
-
-    /**
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return array
      */
     public function getShippingCarriersWithServices($storeId)
     {
-        try {
-            $response = $this->httpClient->get(
-                $this->getAPIUrl($storeId) . '/shipping-options/carriers'
-            );
-            $response = \Zend_Json::decode($response);
-        } catch (\Throwable $e) {
-            $response = [];
-        }
+        $response = $this->getShippingOptions(self::TYPE_CARRIERS, $storeId);
 
         $shippingCarriers = [];
         foreach ($response as $item) {
