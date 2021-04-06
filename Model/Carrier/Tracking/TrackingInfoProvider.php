@@ -160,5 +160,4 @@ class TrackingInfoProvider
         }
         return \DateTime::createFromFormat(\DateTime::RFC3339, $timestamp);
     }
-
 }

@@ -10,7 +10,6 @@ use Calcurates\ModuleMagento\Model\Config;
 
 class ApiClientProvider
 {
-
     private $httpClients = [];
 
     /**

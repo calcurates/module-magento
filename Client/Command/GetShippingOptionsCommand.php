@@ -52,5 +52,4 @@ class GetShippingOptionsCommand
 
         return \Zend_Json::decode($response);
     }
-
 }
