@@ -6,5 +6,5 @@
   @package Calcurates_ModuleMagento
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="Calcurates_ModuleMagento" setup_version="1.23.0" />
+    <module name="Calcurates_ModuleMagento" setup_version="1.28.0" />
 </config>

@@ -395,165 +395,16 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         return strpos($method->getMethod(), ShippingMethodManager::CARRIER) === 0;
     }
 
-    /**
-     * Get tracking information
-     *
-     * @param string $tracking
-     * @param \Magento\Shipping\Model\Order\Track|null $trackObject
-     * @return string|false
-     * @throws LocalizedException
-     * @api
-     */
-    public function getTrackingInfo($tracking, $trackObject = null)
-    {
-        $this->trackingObject = $trackObject;
-        return parent::getTrackingInfo($tracking);
-    }
 
     /**
      * Get tracking
      *
      * @param @param string|string[] $trackings
      * @return \Magento\Shipping\Model\Tracking\Result|null
-     * @throws LocalizedException
      */
     public function getTracking($trackings)
     {
-        if (!is_array($trackings)) {
-            $trackings = [$trackings];
-        }
-
-        $result = $this->_trackFactory->create();
-
-        if (!empty($this->trackingObject)) {
-            foreach ($trackings as $tracking) {
-                $this->loadTracking($tracking, $result);
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param string $tracking
-     * @param \Magento\Shipping\Model\Tracking\Result $result
-     * @throws LocalizedException
-     */
-    protected function loadTracking($tracking, $result)
-    {
-        $serviceId = $this->trackingObject->getData(CustomSalesAttributesInterface::SERVICE_ID);
-        if (empty($serviceId)) {
-            // backward compatibility
-            $order = $this->trackingObject->getShipment()->getOrder();
-            $carrierData = $this->shippingMethodManager->getCarrierData(
-                $order->getShippingMethod(false),
-                $order->getShippingDescription()
-            );
-
-            if ($carrierData) {
-                $serviceId = $carrierData->getServiceIdsString();
-            }
-        }
-
-        $debugData = ['request' => $serviceId . ' - ' . $tracking, 'type' => 'tracking'];
-        $response = [];
-        try {
-            $response = $this->calcuratesClient->getTrackingInfo($serviceId, $tracking, $this->getStore());
-            $debugData['result'] = $response;
-        } catch (\Throwable $e) {
-            $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
-        }
-        $this->_debug($debugData);
-        $this->parseTrackingData($response, $result);
-    }
-
-    /**
-     * @param array $response
-     * @param \Magento\Shipping\Model\Tracking\Result $result
-     */
-    protected function parseTrackingData(array $response, $result)
-    {
-        $carrierTitle = $this->trackingObject->getTitle();
-        if (!empty($response['trackingNumber'])) {
-            $tracking = $this->_trackStatusFactory->create();
-            $tracking->setCarrier(self::CODE);
-            $tracking->setCarrierTitle($carrierTitle);
-            $tracking->setTracking($response['trackingNumber']);
-            $tracking->addData($this->processTrackingDetails($response));
-            $result->append($tracking);
-        } else {
-            $error = $this->_trackErrorFactory->create();
-            $error->setCarrier(self::CODE);
-            $error->setCarrierTitle($carrierTitle);
-            $error->setTracking($this->trackingObject->getTrackNumber());
-            $error->setErrorMessage(!empty($response['message']) ? $response['message'] : __('Tracking getting error'));
-            $result->append($error);
-        }
-    }
-
-    /**
-     * @param array $response
-     * @return array
-     */
-    protected function processTrackingDetails($response)
-    {
-        $result = [
-            'shippedDate' => null,
-            'deliverydate' => null,
-            'deliverytime' => null,
-            'deliverylocation' => null,
-            'weight' => null,
-            'progressdetail' => [],
-        ];
-        $datetime = $this->parseDate(!empty($response['shipDate']) ? $response['shipDate'] : null);
-        if ($datetime) {
-            $result['shippedDate'] = gmdate('Y-m-d', $datetime->getTimestamp());
-        }
-
-        $field = 'estimatedDeliveryDate';
-        // if delivered - get actual date
-        if (!empty($response['statusCode']) && $response['statusCode'] === 'DE') {
-            $field = 'actualDeliveryDate';
-        }
-        $datetime = $this->parseDate(!empty($response[$field]) ? $response[$field] : null);
-        if ($datetime) {
-            $result['deliverydate'] = gmdate('Y-m-d', $datetime->getTimestamp());
-            $result['deliverytime'] = gmdate('H:i:s', $datetime->getTimestamp());
-        }
-
-        if (!empty($response['events']) && is_array($response['events'])) {
-            foreach ($response['events'] as $event) {
-                $item = [
-                    'activity' => !empty($event['description']) ? (string)$event['description'] : '',
-                    'deliverydate' => null,
-                    'deliverytime' => null,
-                    'deliverylocation' => null
-                ];
-                $datetime = $this->parseDate(!empty($event['occurredAt']) ? $event['occurredAt'] : null);
-                if ($datetime) {
-                    $item['deliverydate'] = gmdate('Y-m-d', $datetime->getTimestamp());
-                    $item['deliverytime'] = gmdate('H:i:s', $datetime->getTimestamp());
-                }
-
-                $result['progressdetail'][] = $item;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Parses datetime string
-     *
-     * @param string $timestamp
-     * @return bool|\DateTime
-     */
-    private function parseDate($timestamp)
-    {
-        if ($timestamp === null) {
-            return false;
-        }
-        return \DateTime::createFromFormat(\DateTime::RFC3339, $timestamp);
+        return null;
     }
 
     /**

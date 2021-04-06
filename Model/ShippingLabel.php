@@ -179,4 +179,24 @@ class ShippingLabel extends \Magento\Framework\Model\AbstractModel implements Sh
     {
         $this->setData(self::CREATED_AT, $createdAt);
     }
+
+    public function getCarrierCode(): ?string
+    {
+        return $this->getData(self::CARRIER_CODE);
+    }
+
+    public function setCarrierCode(string $carrierCode): void
+    {
+        $this->setData(self::CARRIER_CODE, $carrierCode);
+    }
+
+    public function getCarrierProviderCode(): ?string
+    {
+        return $this->getData(self::CARRIER_PROVIDER_CODE);
+    }
+
+    public function setCarrierProviderCode(string $carrierProviderCode): void
+    {
+        $this->setData(self::CARRIER_PROVIDER_CODE, $carrierProviderCode);
+    }
 }

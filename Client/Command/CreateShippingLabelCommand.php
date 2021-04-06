@@ -12,13 +12,12 @@ use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Api\Data\ShippingLabelInterface;
 use Calcurates\ModuleMagento\Api\Data\ShippingLabelInterfaceFactory;
-use Calcurates\ModuleMagento\Api\ShippingLabelRepositoryInterface;
 use Calcurates\ModuleMagento\Client\Request\ShippingLabelRequestBuilder;
-use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Calcurates\ModuleMagento\Model\Config;
 use Calcurates\ModuleMagento\Observer\ShipmentSaveAfterObserver;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 
 class CreateShippingLabelCommand
@@ -54,49 +53,38 @@ class CreateShippingLabelCommand
     private $shippingLabelFactory;
 
     /**
-     * @var ShippingLabelRepositoryInterface
-     */
-    private $shippingLabelRepository;
-
-    /**
      * @var SerializerInterface
      */
     private $serializer;
 
     /**
-     * @var ShippingMethodManager
+     * @var GetShippingOptionsCommand
      */
-    private $shippingMethodManager;
+    private $getShippingOptionsCommand;
 
     /**
-     * CreateShippingLabelCommand constructor.
-     * @param LoggerInterface $logger
-     * @param Config $config
-     * @param ShippingLabelRequestBuilder $shippingLabelRequestBuilder
-     * @param CalcuratesClientInterface $calcuratesClient
-     * @param ShippingLabelInterfaceFactory $shippingLabelFactory
-     * @param ShippingLabelRepositoryInterface $shippingLabelRepository
-     * @param SerializerInterface $serializer
-     * @param ShippingMethodManager $shippingMethodManager
+     * @var StoreManagerInterface
      */
+    private $storeManager;
+
     public function __construct(
         LoggerInterface $logger,
         Config $config,
         ShippingLabelRequestBuilder $shippingLabelRequestBuilder,
         CalcuratesClientInterface $calcuratesClient,
         ShippingLabelInterfaceFactory $shippingLabelFactory,
-        ShippingLabelRepositoryInterface $shippingLabelRepository,
         SerializerInterface $serializer,
-        ShippingMethodManager $shippingMethodManager
+        GetShippingOptionsCommand $getShippingOptionsCommand,
+        StoreManagerInterface $storeManager
     ) {
         $this->logger = $logger;
         $this->config = $config;
         $this->shippingLabelRequestBuilder = $shippingLabelRequestBuilder;
         $this->calcuratesClient = $calcuratesClient;
         $this->shippingLabelFactory = $shippingLabelFactory;
-        $this->shippingLabelRepository = $shippingLabelRepository;
         $this->serializer = $serializer;
-        $this->shippingMethodManager = $shippingMethodManager;
+        $this->getShippingOptionsCommand = $getShippingOptionsCommand;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -124,6 +112,16 @@ class CreateShippingLabelCommand
     {
         /** @var \Magento\Shipping\Model\Shipment\Request $request */
         $this->prepareShipmentRequest($request);
+
+        $shippingServiceId = $request->getOrderShipment()->getData('calcuratesShippingServiceId');
+        $shippingCarrierData = $this->getDataByShippingServiceId($shippingServiceId);
+        if (!$shippingCarrierData) {
+            throw new LocalizedException(__('Incorrect shipping service'));
+        }
+
+        $request->setData('calcurates_carrier_code', $shippingCarrierData['carrierType']);
+        $request->setData('calcurates_provider_code', $shippingCarrierData['carrierProvider']);
+        $request->setData('calcurates_service_code', $shippingCarrierData['service']['code']);
 
         $apiRequestBody = $this->shippingLabelRequestBuilder->build(
             $request,
@@ -158,34 +156,12 @@ class CreateShippingLabelCommand
         $shippingLabelDataSerialized = $this->serializer->serialize($shippingLabelResponse);
         $shippingLabel->setLabelData($shippingLabelDataSerialized);
 
-        $serviceId = $apiRequestBody['service'];
-        $shippingLabel->setShippingServiceId($serviceId);
-        $carriersWithServices = $this->calcuratesClient->getShippingCarriersWithServices($this->getStore());
-        $serviceFound = false;
-        if ($carriersWithServices) {
-            foreach ($carriersWithServices as $carrier) {
-                foreach ($carrier['services'] as $service) {
-                    if ($service['value'] == $serviceId) {
-                        $shippingLabel->setShippingCarrierId((string)$carrier['id']);
-                        $shippingLabel->setShippingCarrierLabel((string)$carrier['label']);
-                        $shippingLabel->setShippingServiceLabel((string)$service['label']);
-                        $serviceFound = true;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (!$serviceFound) {
-            $carrierData = $this->shippingMethodManager->getCarrierData(
-                $order->getShippingMethod(false),
-                $order->getShippingDescription()
-            );
-
-            $shippingLabel->setShippingCarrierId((string)$carrierData->getCarrierId());
-            $shippingLabel->setShippingCarrierLabel((string)$carrierData->getCarrierLabel());
-            $shippingLabel->setShippingServiceLabel((string)$carrierData->getServiceLabel());
-        }
+        $shippingLabel->setShippingServiceId($shippingServiceId);
+        $shippingLabel->setShippingCarrierId((string)$shippingCarrierData['id']);
+        $shippingLabel->setShippingCarrierLabel((string)$shippingCarrierData['shippingOption']['name']);
+        $shippingLabel->setShippingServiceLabel((string)$shippingCarrierData['service']['name']);
+        $shippingLabel->setCarrierCode($shippingCarrierData['carrierType']);
+        $shippingLabel->setCarrierProviderCode($shippingCarrierData['carrierProvider']);
 
         $trackingNumber = !empty($shippingLabelResponse['trackingNumber'])
             ? $shippingLabelResponse['trackingNumber'] : '';
@@ -200,6 +176,35 @@ class CreateShippingLabelCommand
             'tracking_number' => $trackingNumber,
             'label_content' => $labelContent
         ];
+    }
+
+    /**
+     * @param int $shippingServiceId
+     * @return array|null
+     */
+    private function getDataByShippingServiceId(int $shippingServiceId): ?array
+    {
+        $storeId = (int)$this->storeManager->getStore($this->getStore())->getId();
+        $carriersWithServices = $this->getShippingOptionsCommand->get(
+            GetShippingOptionsCommand::TYPE_CARRIERS,
+            $storeId
+        );
+
+        $result = null;
+        if ($carriersWithServices) {
+            foreach ($carriersWithServices as $carrier) {
+                foreach ($carrier['services'] as $service) {
+                    if ($service['id'] === $shippingServiceId) {
+                        $result = $carrier;
+                        $result['service'] = $service;
+                        unset($result['services']);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
