@@ -27,7 +27,7 @@ interface CalcuratesClientInterface
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return array
      * @deprecated  since 1.28.0
-     * @see \Calcurates\ModuleMagento\Client\Command\GetShippingOptionsCommand
+     * @see \Calcurates\ModuleMagento\Gateway\CarriersServicesOptionSource
      */
     public function getShippingCarriersWithServices($storeId);
 

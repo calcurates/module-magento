@@ -8,8 +8,7 @@
 
 namespace Calcurates\ModuleMagento\Helper;
 
-use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
-use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
+use Calcurates\ModuleMagento\Gateway\CarriersServicesOptionSource;
 use Calcurates\ModuleMagento\Model\Source\ShipmentServiceRetriever;
 use Calcurates\ModuleMagento\Model\Source\ShipmentSourceCodeRetriever;
 use Calcurates\ModuleMagento\Model\Source\SourceAddressService;
@@ -40,11 +39,6 @@ class ShipmentAddressHelper extends AbstractHelper
     private $addressFactory;
 
     /**
-     * @var CalcuratesClientInterface
-     */
-    private $calcuratesClient;
-
-    /**
      * @var SourceAddressService
      */
     private $sourceAddressService;
@@ -65,45 +59,30 @@ class ShipmentAddressHelper extends AbstractHelper
     private $shipmentServiceRetriever;
 
     /**
-     * @var ShippingMethodManager
+     * @var CarriersServicesOptionSource
      */
-    private $shippingMethodManager;
+    private $carriersServicesOptionSource;
 
-    /**
-     * ShipmentAddressHelper constructor.
-     * @param Context $context
-     * @param Address\Renderer $addressRenderer
-     * @param \Magento\Backend\Model\Auth\Session $authSession
-     * @param \Magento\Sales\Model\Order\AddressFactory $addressFactory
-     * @param CalcuratesClientInterface $calcuratesClient
-     * @param SourceAddressService $sourceAddressService
-     * @param \Magento\Directory\Model\RegionFactory $regionFactory
-     * @param ShipmentSourceCodeRetriever $shipmentSourceCodeRetriever
-     * @param ShipmentServiceRetriever $shipmentServiceRetriever
-     * @param ShippingMethodManager $shippingMethodManager
-     */
     public function __construct(
         Context $context,
         Address\Renderer $addressRenderer,
         \Magento\Backend\Model\Auth\Session $authSession,
         \Magento\Sales\Model\Order\AddressFactory $addressFactory,
-        CalcuratesClientInterface $calcuratesClient,
         SourceAddressService $sourceAddressService,
         \Magento\Directory\Model\RegionFactory $regionFactory,
         ShipmentSourceCodeRetriever $shipmentSourceCodeRetriever,
         ShipmentServiceRetriever $shipmentServiceRetriever,
-        ShippingMethodManager $shippingMethodManager
+        CarriersServicesOptionSource $carriersServicesOptionSource
     ) {
         parent::__construct($context);
         $this->addressRenderer = $addressRenderer;
         $this->authSession = $authSession;
         $this->addressFactory = $addressFactory;
-        $this->calcuratesClient = $calcuratesClient;
         $this->sourceAddressService = $sourceAddressService;
         $this->regionFactory = $regionFactory;
         $this->shipmentSourceCodeRetriever = $shipmentSourceCodeRetriever;
         $this->shipmentServiceRetriever = $shipmentServiceRetriever;
-        $this->shippingMethodManager = $shippingMethodManager;
+        $this->carriersServicesOptionSource = $carriersServicesOptionSource;
     }
 
     /**
@@ -139,38 +118,12 @@ class ShipmentAddressHelper extends AbstractHelper
     }
 
     /**
-     * @param Order $order
-     * @param Shipment $shipment
+     * @param int $storeId
      * @return array
      */
-    public function getShippingCarriersWithServices(Order $order, $shipment)
+    public function getShippingCarriersWithServices(int $storeId): array
     {
-        $carrierData = $this->shippingMethodManager->getCarrierData(
-            $order->getShippingMethod(),
-            $order->getShippingDescription()
-        );
-        if (!$carrierData) {
-            return [];
-        }
-
-        $shippingCarriersWithServices = $this->calcuratesClient->getShippingCarriersWithServices($order->getStoreId());
-
-        if (empty($shippingCarriersWithServices)) {
-            $shippingServiceValue = $this->getShippingServiceId($order, $shipment);
-            $shippingCarriersWithServices = [
-                [
-                    'label' => __('Default'),
-                    'services' => [
-                        [
-                            'value' => $shippingServiceValue,
-                            'label' => $carrierData->getServiceLabel()
-                        ]
-                    ]
-                ]
-            ];
-        }
-
-        return $shippingCarriersWithServices;
+        return $this->carriersServicesOptionSource->getOptions($storeId);
     }
 
     /**
