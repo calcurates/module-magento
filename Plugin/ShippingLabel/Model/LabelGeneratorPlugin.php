@@ -27,7 +27,7 @@ class LabelGeneratorPlugin
         $shippingServiceId = $request->getParam('calcuratesShippingServiceId');
 
         if (!$shippingServiceId) {
-            throw new LocalizedException(__('Invalid shipping service'));
+            throw new LocalizedException(__('Invalid Shipping Method'));
         }
 
         $shipment->setData('calcuratesShippingServiceId', (int)$shippingServiceId);

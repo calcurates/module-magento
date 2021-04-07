@@ -9,16 +9,12 @@
 namespace Calcurates\ModuleMagento\Model;
 
 use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
-use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Client\Command\CreateShippingLabelCommand;
 use Calcurates\ModuleMagento\Client\Command\GetAllShippingOptionsCommand;
 use Calcurates\ModuleMagento\Client\Request\RateRequestBuilder;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
-use Calcurates\ModuleMagento\Client\Request\ShippingLabelRequestBuilder;
-use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Calcurates\ModuleMagento\Model\Carrier\Validator\RateRequestValidator;
 use Calcurates\ModuleMagento\Model\Shipment\CustomPackagesProvider;
-use Calcurates\ModuleMagento\Model\Shipment\ShippingLabelSaver;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
@@ -87,11 +83,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private $rateRequestValidator;
 
     /**
-     * @var ShippingMethodManager
-     */
-    private $shippingMethodManager;
-
-    /**
      * @var CustomPackagesProvider
      */
     private $customPackagesProvider;
@@ -128,7 +119,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param RatesResponseProcessor $ratesResponseProcessor
      * @param RateRequestBuilder $rateRequestBuilder
      * @param RateRequestValidator $rateRequestValidator
-     * @param ShippingMethodManager $shippingMethodManager
      * @param CustomPackagesProvider $customPackagesProvider
      * @param CreateShippingLabelCommand $createShippingLabelCommand
      * @param GetAllShippingOptionsCommand $getAllShippingOptionsCommand
@@ -155,7 +145,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         RatesResponseProcessor $ratesResponseProcessor,
         RateRequestBuilder $rateRequestBuilder,
         RateRequestValidator $rateRequestValidator,
-        ShippingMethodManager $shippingMethodManager,
         CustomPackagesProvider $customPackagesProvider,
         CreateShippingLabelCommand $createShippingLabelCommand,
         GetAllShippingOptionsCommand $getAllShippingOptionsCommand,
@@ -184,7 +173,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->ratesResponseProcessor = $ratesResponseProcessor;
         $this->rateRequestBuilder = $rateRequestBuilder;
         $this->rateRequestValidator = $rateRequestValidator;
-        $this->shippingMethodManager = $shippingMethodManager;
         $this->customPackagesProvider = $customPackagesProvider;
         $this->createShippingLabelCommand = $createShippingLabelCommand;
         $this->getAllShippingOptionsCommand = $getAllShippingOptionsCommand;
@@ -386,15 +374,8 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      */
     public function isShippingLabelsAvailable()
     {
-        /** @var \Magento\Sales\Model\Order\Shipment|null $shipment */
-        $shipment = $this->registry->registry('current_shipment');
-        if (!$shipment) {
-            return false;
-        }
-        $method = $shipment->getOrder()->getShippingMethod(true);
-        return strpos($method->getMethod(), ShippingMethodManager::CARRIER) === 0;
+        return true;
     }
-
 
     /**
      * Get tracking
@@ -408,7 +389,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     }
 
     /**
-     * @param DataObject $params
+     * @param DataObject|null $params
      * @return array
      */
     public function getContainerTypes(\Magento\Framework\DataObject $params = null)
