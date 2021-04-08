@@ -10,6 +10,9 @@ services:
       dockerfile: Dockerfile
     environment:
       - discovery.type=single-node
+      - xpack.security.enabled=false
+      - cluster.routing.allocation.disk.threshold_enabled=false
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
     container_name: magento2-elasticsearch
     ports:
       - "9200:9200"
@@ -47,6 +50,7 @@ services:
       - './Client:/var/www/magento2/app/code/Calcurates/ModuleMagento/Client'
       - './Controller:/var/www/magento2/app/code/Calcurates/ModuleMagento/Controller'
       - './etc:/var/www/magento2/app/code/Calcurates/ModuleMagento/etc'
+      - './Gateway:/var/www/magento2/app/code/Calcurates/ModuleMagento/Gateway'
       - './Helper:/var/www/magento2/app/code/Calcurates/ModuleMagento/Helper'
       - './i18n:/var/www/magento2/app/code/Calcurates/ModuleMagento/i18n'
       - './Model:/var/www/magento2/app/code/Calcurates/ModuleMagento/Model'

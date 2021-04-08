@@ -62,7 +62,6 @@ class FlatRateProcessor implements ResponseProcessorInterface
             }
 
             $carrierTitle = $responseRate['name'];
-            $responseRate['name'] = __('Flat Rate');
             $rates = $this->rateBuilder->build(
                 ShippingMethodManager::FLAT_RATES . '_' . $responseRate['id'],
                 $responseRate,

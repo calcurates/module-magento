@@ -88,4 +88,25 @@ class ShippingLabelRepository implements ShippingLabelRepositoryInterface
 
         return $collection;
     }
+
+    /**
+     * @param int $shipmentId
+     * @param string $trackingNumber
+     * @return ShippingLabelInterface
+     * @throws NoSuchEntityException
+     */
+    public function getByShipmentIdAndTrackingNumber(int $shipmentId, string $trackingNumber): ShippingLabelInterface
+    {
+        $collection = $this->collectionFactory->create();
+        $collection->addFieldToFilter(ShippingLabelInterface::SHIPMENT_ID, $shipmentId);
+        $collection->addFieldToFilter(ShippingLabelInterface::TRACKING_NUMBER, $trackingNumber);
+
+        $item = $collection->getFirstItem();
+
+        if (!$item->getId()) {
+            throw new NoSuchEntityException(__('No such shipping label with tracking number %1', $trackingNumber));
+        }
+
+        return $item;
+    }
 }

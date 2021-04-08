@@ -13,7 +13,9 @@ interface CustomSalesAttributesInterface
 {
     const CARRIER_SOURCE_CODE_TO_SERVICE = 'calcurates_carrier_srvs_srs_codes';
     const SOURCE_CODE = 'calcurates_source_code';
+    /* @TODO: remove from track table! */
     const SERVICE_ID = 'calcurates_service_id';
+    /* @TODO: drop all usages and remove from table */
     const LABEL_DATA = 'calcurates_label_data';
     const CARRIER_PACKAGES = 'calcurates_carrier_packages';
     const DELIVERY_DATES = 'calcurates_delivery_dates_data';

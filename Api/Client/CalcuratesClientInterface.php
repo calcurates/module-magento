@@ -24,15 +24,10 @@ interface CalcuratesClientInterface
     const TYPE_RATE_SHOPPING = 'rate-shopping';
 
     /**
-     * @param string $shippingCarrierId
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return array
-     */
-    public function getShippingServices($shippingCarrierId, $storeId);
-
-    /**
-     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
-     * @return array
+     * @deprecated  since 1.28.0
+     * @see \Calcurates\ModuleMagento\Gateway\CarriersServicesOptionSource
      */
     public function getShippingCarriersWithServices($storeId);
 
@@ -89,6 +84,8 @@ interface CalcuratesClientInterface
      * @param string $type
      * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
      * @return array
+     * @deprecated since 1.28.0
+     * @see \Calcurates\ModuleMagento\Client\Command\GetShippingOptionsCommand
      */
     public function getShippingOptions(string $type, $storeId): array;
 }

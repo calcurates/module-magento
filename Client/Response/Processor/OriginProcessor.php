@@ -28,7 +28,7 @@ class OriginProcessor implements ResponseProcessorInterface
     {
         $quoteItemIdToSourceCode = [];
         foreach ($response['origins'] as $origin) {
-            $sourceCode = $origin['origin']['targetValue']['targetId'] ?? null;
+            $sourceCode = $origin['origin']['syncedTargetOriginCode'] ?? null;
             if ($sourceCode === null) {
                 continue;
             }

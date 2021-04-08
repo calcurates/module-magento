@@ -16,34 +16,23 @@ class MapLinkRenderer
         . '?api=1&query={latitude},{longitude}&query_place_id={googlePlaceId}';
 
     /**
-     * @var string|null
-     */
-    private $urlTemplate;
-
-    /**
-     * MapLinkRenderer constructor.
-     * @param string|null $urlTemplate
-     */
-    public function __construct(?string $urlTemplate = null)
-    {
-        if ($urlTemplate === null) {
-            $urlTemplate = self::URL_TEMPLATE;
-        }
-
-        $this->urlTemplate = $urlTemplate;
-    }
-
-    /**
      * @param array $originData
      * @return string
      */
     public function render(array $originData): string
     {
-        $url = $this->urlTemplate;
-        foreach ($originData as $field => $value) {
-            $url = str_replace('{' . $field . '}', $value, $url);
-        }
-
-        return $url;
+        return str_replace(
+            [
+                '{latitude}',
+                '{longitude}',
+                '{googlePlaceId}',
+            ],
+            [
+                $originData['latitude'],
+                $originData['longitude'],
+                $originData['googlePlaceId'],
+            ],
+            self::URL_TEMPLATE
+        );
     }
 }

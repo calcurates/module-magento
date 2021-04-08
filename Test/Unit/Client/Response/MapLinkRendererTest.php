@@ -20,20 +20,14 @@ class MapLinkRendererTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers \Calcurates\ModuleMagento\Client\Response\MapLinkRenderer::render
      * @dataProvider dataProvider
-     * @param string|null $urlTemplate
      * @param array $originData
      * @param string $expectedResult
      */
-    public function testRender(?string $urlTemplate, array $originData, string $expectedResult)
+    public function testRender(array $originData, string $expectedResult)
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         /** @var MapLinkRenderer $model */
-        $model = $objectManager->getObject(
-            MapLinkRenderer::class,
-            [
-                'urlTemplate' => $urlTemplate
-            ]
-        );
+        $model = $objectManager->getObject(MapLinkRenderer::class);
 
         $actualResult = $model->render($originData);
 
@@ -43,8 +37,7 @@ class MapLinkRendererTest extends \PHPUnit\Framework\TestCase
     public function dataProvider(): array
     {
         return [
-            'defaultUrlTemplate' => [
-                'urlTemplate' => null,
+            'full' => [
                 'originData' => [
                     'latitude' => 2.521,
                     'longitude' => 29.321,
@@ -53,14 +46,14 @@ class MapLinkRendererTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => 'https://www.google.com/maps/search/'
                 . '?api=1&query=2.521,29.321&query_place_id=test'
             ],
-            'customTemplate' => [
-                'urlTemplate' => 'asdasdasd{aaaa},{bbb},{ccc}',
+            'partial' => [
                 'originData' => [
-                    'aaaa' => 55,
-                    'bbb' => '231wef',
-                    'ccc' => null
+                    'latitude' => 55,
+                    'longitude' => 66,
+                    'googlePlaceId' => null
                 ],
-                'expectedResult' => 'asdasdasd55,231wef,'
+                'expectedResult' => 'https://www.google.com/maps/search/'
+                    . '?api=1&query=55,66&query_place_id='
             ],
         ];
     }

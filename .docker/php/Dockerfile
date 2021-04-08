@@ -8,7 +8,7 @@ RUN set -xe \
 
 # Composer
 RUN set -xe \
-    && curl -L -o /composer.phar https://github.com/composer/composer/releases/download/2.0.11/composer.phar \
+    && curl -L -o /composer.phar https://github.com/composer/composer/releases/download/2.0.12/composer.phar \
     && chmod 755 /composer.phar
 ENV COMPOSER_HOME=/.composer
 COPY auth.json /.composer/
@@ -85,7 +85,7 @@ RUN set -xe \
     && cd / \
     && php -d memory_limit=-1 /composer.phar create-project --repository=https://repo.magento.com/ magento/project-community-edition:2.4.* mg24 \
     && cd mg24 \
-    && tar -zcvf ../mg24.tar.gz * \
+    && tar -zcvf /mg24.tar.gz * \
     && cd .. \
     && rm -rf mg24 \
     && /composer.phar clear-cache

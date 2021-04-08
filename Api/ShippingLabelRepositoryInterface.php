@@ -10,6 +10,7 @@ namespace Calcurates\ModuleMagento\Api;
 
 use Calcurates\ModuleMagento\Api\Data\ShippingLabelInterface;
 use Calcurates\ModuleMagento\Model\ResourceModel\ShippingLabel\Collection;
+use Magento\Framework\Exception\NoSuchEntityException;
 
 interface ShippingLabelRepositoryInterface
 {
@@ -30,4 +31,12 @@ interface ShippingLabelRepositoryInterface
      * @return Collection
      */
     public function getListByShipmentId(int $shipmentId);
+
+    /**
+     * @param int $shipmentId
+     * @param string $trackingNumber
+     * @return ShippingLabelInterface
+     * @throws NoSuchEntityException
+     */
+    public function getByShipmentIdAndTrackingNumber(int $shipmentId, string $trackingNumber): ShippingLabelInterface;
 }

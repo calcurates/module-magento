@@ -8,6 +8,7 @@
 ?>
 <?php /** @var $block \Magento\Shipping\Block\Adminhtml\Order\Packaging */ ?>
 <?php
+/* @TODO: get label data from last label !*/
 $labelData = $block->getShipment()->getData(\Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface::LABEL_DATA);
 $printUrl = $block->getUrl('adminhtml/order_shipment/printLabel', [
     'shipment_id' => $block->getShipment()->getId()
