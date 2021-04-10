@@ -41,7 +41,7 @@ class CustomPackagesProvider
      * @return array
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function getCustomPackages(Shipment $shipment)
+    public function getCustomPackages(Shipment $shipment): array
     {
         if ($this->packages === null) {
             $packages = $this->calcuratesClient->getCustomPackages($shipment->getStoreId());
@@ -50,15 +50,15 @@ class CustomPackagesProvider
                 $packages = $this->appendNotExists($packages, $carrierPackages);
             }
 
-            foreach ($packages as $customPackageData) {
-                $customPackageData['weightUnit'] = $customPackageData['weightUnit'] == 'lb' ?
+            foreach ($packages as &$customPackageData) {
+                $customPackageData['weightUnit'] = $customPackageData['weightUnit'] === 'lb' ?
                     \Zend_Measure_Weight::POUND : \Zend_Measure_Weight::KILOGRAM;
 
-                $customPackageData['dimensionsUnit'] = $customPackageData['dimensionsUnit'] == 'in' ?
+                $customPackageData['dimensionsUnit'] = $customPackageData['dimensionsUnit'] === 'in' ?
                     \Zend_Measure_Length::INCH : \Zend_Measure_Length::CENTIMETER;
-
-                $this->packages[] = $customPackageData;
             }
+
+            $this->packages = $packages;
         }
 
         return $this->packages;
