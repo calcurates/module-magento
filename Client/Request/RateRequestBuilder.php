@@ -9,6 +9,7 @@
 namespace Calcurates\ModuleMagento\Client\Request;
 
 use Calcurates\ModuleMagento\Model\Source\GetSourceCodesPerSkus;
+use Calcurates\ModuleMagento\Plugin\Model\Shipping\ShippingAddEstimateFlagToRequestPlugin;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Directory\Model\RegionFactory;
@@ -93,6 +94,7 @@ class RateRequestBuilder
         $customerData = $this->getCustomerData($quote);
         $streetArray = explode("\n", $request->getDestStreet());
         $customer = $quote->getCustomer();
+        $estimate = (bool)$request->getData(ShippingAddEstimateFlagToRequestPlugin::IS_ESTIMATE_ONLY_FLAG);
 
         $apiRequestBody = [
             'shipTo' => [
@@ -114,6 +116,7 @@ class RateRequestBuilder
             // setting "Use store codes in URL"
             'storeView' => $this->storeManager->getStore()->getId(),
             'promoCode' => (string)$quote->getCouponCode(),
+            'estimate' => $estimate
         ];
 
         $itemsSkus = [];
