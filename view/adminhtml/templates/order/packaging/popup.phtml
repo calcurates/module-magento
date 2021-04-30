@@ -32,10 +32,11 @@ $smartPackages = $smartPackaging->getPackages($shipment);
     require([
         "jquery",
         "Calcurates_ModuleMagento/js/model/smart-packaging",
+        "underscore",
         "prototype",
         "Magento_Shipping/order/packaging",
         "Magento_Ui/js/modal/modal"
-    ], function (jQuery, smartPackaging) {
+    ], function (jQuery, smartPackaging, _) {
         var isShipmentNew = <?= $isShipmentNew ? 'true' : 'false' ?>,
             smartPackages = <?= $smartPackages ?>;
         window.packaging = new Packaging(<?= /* @noEscape */ $block->getConfigDataJson() ?>);
@@ -217,7 +218,7 @@ $smartPackages = $smartPackaging->getPackages($shipment);
             return template;
         }
 
-        if (smartPackages) {
+        if (!_.isEmpty(smartPackages)) {
             smartPackaging.init(window.packaging, smartPackages);
         }
     });

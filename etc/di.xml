@@ -77,6 +77,7 @@
 
     <type name="Magento\Shipping\Model\Shipping">
         <plugin name="Calcurates_ModuleMagento::HideOtherCarriersIfRequired" type="Calcurates\ModuleMagento\Plugin\Model\Shipping\ShippingPlugin"/>
+        <plugin name="Calcurates_ModuleMagento::MarkRequestAsEstimate" type="Calcurates\ModuleMagento\Plugin\Model\Shipping\ShippingAddEstimateFlagToRequestPlugin"/>
     </type>
 
     <!-- custom sources webapi -->
