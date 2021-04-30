@@ -29,7 +29,7 @@ define([], function () {
                 'city': {
                     'required': true
                 },
-                'street[0]': {
+                'street': {
                     'required': false
                 }
             };
