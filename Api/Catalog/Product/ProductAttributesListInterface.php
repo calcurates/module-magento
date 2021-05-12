@@ -13,7 +13,7 @@ namespace Calcurates\ModuleMagento\Api\Catalog\Product;
  */
 interface ProductAttributesListInterface
 {
-    const BANNED_INPUT_TYPES = ['gallery', 'media_image'];
+    public const BANNED_INPUT_TYPES = ['gallery', 'media_image'];
 
     /**
      * @return \Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataInterface[]

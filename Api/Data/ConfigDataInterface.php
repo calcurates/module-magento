@@ -16,9 +16,9 @@ interface ConfigDataInterface
     /**#@+
      * Keys for data array
      */
-    const BASE_CURRENCY = 'base_currency';
-    const WEIGHT_UNIT = 'weight_unit';
-    const TIMEZONE = 'timezone';
+    public const BASE_CURRENCY = 'base_currency';
+    public const WEIGHT_UNIT = 'weight_unit';
+    public const TIMEZONE = 'timezone';
     /**#@-*/
 
     /**

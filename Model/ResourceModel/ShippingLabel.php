@@ -12,7 +12,7 @@ use Calcurates\ModuleMagento\Api\Data\ShippingLabelInterface;
 
 class ShippingLabel extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
-    const TABLE_NAME = 'calcurates_shipping_label';
+    public const TABLE_NAME = 'calcurates_shipping_label';
 
     /**
      * Fields that should be serialized before persistence

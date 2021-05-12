@@ -13,8 +13,8 @@ use Magento\Framework\HTTP\ClientFactory;
 // @TODO: service class can't contain setters and logic together! Refactor that
 class HttpClient
 {
-    const TYPE_GET = 'GET';
-    const TYPE_POST = 'POST';
+    public const TYPE_GET = 'GET';
+    public const TYPE_POST = 'POST';
 
     /**
      * @var ClientFactory

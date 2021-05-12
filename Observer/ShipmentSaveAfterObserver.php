@@ -19,7 +19,7 @@ use Magento\Sales\Model\Order\Shipment;
  */
 class ShipmentSaveAfterObserver implements ObserverInterface
 {
-    const SHIPPING_LABEL_KEY = 'calcurates_shipping_label';
+    public const SHIPPING_LABEL_KEY = 'calcurates_shipping_label';
 
     /**
      * @var ShippingLabelRepositoryInterface

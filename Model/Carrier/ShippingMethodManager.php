@@ -14,12 +14,12 @@ use Calcurates\ModuleMagento\Model\Carrier\Method\CarrierData;
 
 class ShippingMethodManager
 {
-    const FLAT_RATES = 'flatRate';
-    const FREE_SHIPPING = 'freeShipping';
-    const TABLE_RATE = 'tableRate';
-    const CARRIER = 'carrier';
-    const IN_STORE_PICKUP = 'inStorePickup';
-    const RATE_SHOPPING = 'rateShopping';
+    public const FLAT_RATES = 'flatRate';
+    public const FREE_SHIPPING = 'freeShipping';
+    public const TABLE_RATE = 'tableRate';
+    public const CARRIER = 'carrier';
+    public const IN_STORE_PICKUP = 'inStorePickup';
+    public const RATE_SHOPPING = 'rateShopping';
 
     /**
      * @var CarrierDataFactory

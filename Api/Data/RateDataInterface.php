@@ -12,9 +12,9 @@ namespace Calcurates\ModuleMagento\Api\Data;
 
 interface RateDataInterface
 {
-    const TOOLTIP_MESSAGE = 'tooltip_message';
-    const MAP_LINK = 'map_link';
-    const IMAGE_URL = 'image_url';
+    public const TOOLTIP_MESSAGE = 'tooltip_message';
+    public const MAP_LINK = 'map_link';
+    public const IMAGE_URL = 'image_url';
 
     /**
      * @return string|null

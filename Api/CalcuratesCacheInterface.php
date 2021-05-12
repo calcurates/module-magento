@@ -10,5 +10,5 @@ namespace Calcurates\ModuleMagento\Api;
 
 interface CalcuratesCacheInterface
 {
-    const TYPE_IDENTIFIER = 'calcurates';
+    public const TYPE_IDENTIFIER = 'calcurates';
 }

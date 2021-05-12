@@ -12,11 +12,11 @@ use Magento\Framework\DataObject;
 
 class CarrierData extends DataObject
 {
-    const CARRIER_ID = 'carrier_id';
-    const SERVICE_IDS_STRING = 'service_ids_string';
-    const SERVICE_IDS_ARRAY = 'service_ids_array';
-    const CARRIER_LABEL = 'carrier_label';
-    const SERVICE_LABEL = 'service_label';
+    public const CARRIER_ID = 'carrier_id';
+    public const SERVICE_IDS_STRING = 'service_ids_string';
+    public const SERVICE_IDS_ARRAY = 'service_ids_array';
+    public const CARRIER_LABEL = 'carrier_label';
+    public const SERVICE_LABEL = 'service_label';
 
     /**
      * @return string

@@ -15,9 +15,9 @@ use Magento\Framework\View\Helper\Js;
 
 class Information extends \Magento\Config\Block\System\Config\Form\Fieldset
 {
-    const CALCURATES_URL = 'https://my.calcurates.com/';
+    public const CALCURATES_URL = 'https://my.calcurates.com/';
 
-    const GITHUB_URL = 'https://github.com/calcurates/module-magento/releases';
+    public const GITHUB_URL = 'https://github.com/calcurates/module-magento/releases';
 
     /**
      * @var VersionManager

@@ -19,10 +19,10 @@ use Magento\Shipping\Model\Rate\ResultFactory;
 
 class RatesResponseProcessor
 {
-    const CALCURATES_TOOLTIP_MESSAGE = 'calcurates_tooltip';
-    const CALCURATES_DELIVERY_DATES = 'calcurates_delivery_dates';
-    const CALCURATES_MAP_LINK = 'calcurates_map_link';
-    const CALCURATES_IMAGE_URL = 'calcurates_image_url';
+    public const CALCURATES_TOOLTIP_MESSAGE = 'calcurates_tooltip';
+    public const CALCURATES_DELIVERY_DATES = 'calcurates_delivery_dates';
+    public const CALCURATES_MAP_LINK = 'calcurates_map_link';
+    public const CALCURATES_IMAGE_URL = 'calcurates_image_url';
 
     /**
      * @var ResultFactory

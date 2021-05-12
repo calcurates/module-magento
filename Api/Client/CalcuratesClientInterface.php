@@ -16,12 +16,12 @@ use Magento\Framework\Exception\LocalizedException;
  */
 interface CalcuratesClientInterface
 {
-    const TYPE_CARRIERS = 'carriers';
-    const TYPE_TABLE_RATES = 'table-rates';
-    const TYPE_FLAT_RATES = 'flat-rates';
-    const TYPE_FREE_SHIPPING = 'free-shipping';
-    const TYPE_IN_STORE_PICKUP = 'in-store-pickups';
-    const TYPE_RATE_SHOPPING = 'rate-shopping';
+    public const TYPE_CARRIERS = 'carriers';
+    public const TYPE_TABLE_RATES = 'table-rates';
+    public const TYPE_FLAT_RATES = 'flat-rates';
+    public const TYPE_FREE_SHIPPING = 'free-shipping';
+    public const TYPE_IN_STORE_PICKUP = 'in-store-pickups';
+    public const TYPE_RATE_SHOPPING = 'rate-shopping';
 
     /**
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId

@@ -13,24 +13,24 @@ interface SourceInterface
     /**
      * Constants for keys of data array. Identical to the name of the getter in snake case
      */
-    const SOURCE_CODE = 'source_code';
-    const NAME = 'name';
-    const CONTACT_NAME = 'contact_name';
-    const EMAIL = 'email';
-    const ENABLED = 'enabled';
-    const DESCRIPTION = 'description';
-    const LATITUDE = 'latitude';
-    const LONGITUDE = 'longitude';
-    const COUNTRY_ID = 'country_id';
-    const REGION_ID = 'region_id';
-    const REGION = 'region';
-    const REGION_CODE = 'region_code';
-    const CITY = 'city';
-    const STREET = 'street';
-    const POSTCODE = 'postcode';
-    const PHONE = 'phone';
-    const FAX = 'fax';
-    const USE_DEFAULT_CARRIER_CONFIG = 'use_default_carrier_config';
+    public const SOURCE_CODE = 'source_code';
+    public const NAME = 'name';
+    public const CONTACT_NAME = 'contact_name';
+    public const EMAIL = 'email';
+    public const ENABLED = 'enabled';
+    public const DESCRIPTION = 'description';
+    public const LATITUDE = 'latitude';
+    public const LONGITUDE = 'longitude';
+    public const COUNTRY_ID = 'country_id';
+    public const REGION_ID = 'region_id';
+    public const REGION = 'region';
+    public const REGION_CODE = 'region_code';
+    public const CITY = 'city';
+    public const STREET = 'street';
+    public const POSTCODE = 'postcode';
+    public const PHONE = 'phone';
+    public const FAX = 'fax';
+    public const USE_DEFAULT_CARRIER_CONFIG = 'use_default_carrier_config';
 
     /**
      * Get source code

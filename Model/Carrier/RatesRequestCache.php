@@ -15,10 +15,10 @@ use Magento\Framework\App\CacheInterface;
 
 class RatesRequestCache
 {
-    const TYPE_IDENTIFIER = CalcuratesCacheInterface::TYPE_IDENTIFIER;
-    const CACHE_TAG = 'calcurates_rates';
-    const RATES_IDENTIFIER = 'rates';
-    const LIFETIME = 60;
+    public const TYPE_IDENTIFIER = CalcuratesCacheInterface::TYPE_IDENTIFIER;
+    public const CACHE_TAG = 'calcurates_rates';
+    public const RATES_IDENTIFIER = 'rates';
+    public const LIFETIME = 60;
 
     /**
      * @var SerializerInterface

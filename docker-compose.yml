@@ -11,8 +11,9 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
       - cluster.routing.allocation.disk.threshold_enabled=false
-      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m -Xlog:disable"
     container_name: magento2-elasticsearch
     ports:
       - "9200:9200"

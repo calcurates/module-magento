@@ -17,7 +17,7 @@ use Magento\Store\Model\ScopeInterface;
 
 class DeliveryDateFormatter
 {
-    const DATE_FORMAT = 'l (d/m/Y)';
+    public const DATE_FORMAT = 'l (d/m/Y)';
 
     /**
      * @var Config

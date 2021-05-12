@@ -13,12 +13,12 @@ namespace Calcurates\ModuleMagento\Api\Data\Catalog\Product;
  */
 interface AttributeCustomDataInterface
 {
-    const ATTRIBUTE_ID = 'attribute_id';
-    const ATTRIBUTE_CODE = 'attribute_code';
-    const ATTRIBUTE_BACKEND_TYPE = 'attribute_backend_type';
-    const ATTRIBUTE_FRONTEND_TYPE = 'attribute_frontend_type';
-    const FRONTEND_LABEL = 'frontend_label';
-    const VALUES = 'values';
+    public const ATTRIBUTE_ID = 'attribute_id';
+    public const ATTRIBUTE_CODE = 'attribute_code';
+    public const ATTRIBUTE_BACKEND_TYPE = 'attribute_backend_type';
+    public const ATTRIBUTE_FRONTEND_TYPE = 'attribute_frontend_type';
+    public const FRONTEND_LABEL = 'frontend_label';
+    public const VALUES = 'values';
 
     /**
      * @return int
