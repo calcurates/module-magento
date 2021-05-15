@@ -159,13 +159,7 @@ $elementId = 'packed_window_' . $block->getShippingLabel()->getId();
         </div>
     </section>
 <?php endforeach; ?>
-    <?php
-    $shippingLabelUrl = $block->getUrl('adminhtml/order_shipment/printCalcuratesLabel', [
-        'shipment_id' => $block->getShipment()->getId(),
-        'shipping_label_id' => $block->getShippingLabel()->getId()
-    ]);
-    ?>
-    <?= $block->getChildBlock('label_data_renderer')->render($block->getShippingLabel()->getLabelData(), $shippingLabelUrl) ?>
+    <?= $block->getChildBlock('label_data_renderer')->render($block->getShippingLabel()) ?>
 </div>
 
 <script type="text/x-magento-init">

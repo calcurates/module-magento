@@ -7,18 +7,19 @@
  */
 ?>
 <?php /** @var $block \Magento\Shipping\Block\Adminhtml\Order\Packaging */ ?>
+<?php /** @var $viewModel \Calcurates\ModuleMagento\ViewModel\ShippingLabel */ ?>
 <?php
-/* @TODO: get label data from last label !*/
-$labelData = $block->getShipment()->getData(\Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface::LABEL_DATA);
+$shipmentId = (int)$block->getShipment()->getId();
+$label = $viewModel->getLastShippingLabel($shipmentId);
 $printUrl = $block->getUrl('adminhtml/order_shipment/printLabel', [
-    'shipment_id' => $block->getShipment()->getId()
+    'shipment_id' => $shipmentId
 ]);
-if (!$labelData) {
+if (!$label) {
     return;
 }
 ?>
 <div id="calcurates-shipping-label-data">
-    <?= $block->getChildBlock('label_data_renderer')->render($labelData, $printUrl) ?>
+    <?= $block->getChildBlock('label_data_renderer')->render($label, $printUrl) ?>
 </div>
 <script>
     require([

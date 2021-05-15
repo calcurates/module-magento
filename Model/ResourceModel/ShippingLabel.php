@@ -19,7 +19,10 @@ class ShippingLabel extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      *
      * @var array
      */
-    protected $_serializableFields = [ShippingLabelInterface::PACKAGES => [[], []]];
+    protected $_serializableFields = [
+        ShippingLabelInterface::PACKAGES => [[], []],
+        ShippingLabelInterface::LABEL_DATA => [[], []]
+    ];
 
     /**
      * Init table and id field

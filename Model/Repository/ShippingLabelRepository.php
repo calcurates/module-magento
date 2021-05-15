@@ -12,8 +12,10 @@ use Calcurates\ModuleMagento\Api\Data\ShippingLabelInterface;
 use Calcurates\ModuleMagento\Api\Data\ShippingLabelInterfaceFactory;
 use Calcurates\ModuleMagento\Api\ShippingLabelRepositoryInterface;
 use Calcurates\ModuleMagento\Model\ResourceModel\ShippingLabel as ShippingLabelResource;
+use Calcurates\ModuleMagento\Model\ResourceModel\ShippingLabel\Collection as LabelCollection;
 use Calcurates\ModuleMagento\Model\ResourceModel\ShippingLabel\CollectionFactory;
 use Calcurates\ModuleMagento\Model\ResourceModel\ShippingLabel\Collection;
+use Calcurates\ModuleMagento\Model\ShippingLabel;
 use Magento\Framework\Exception\NoSuchEntityException;
 
 class ShippingLabelRepository implements ShippingLabelRepositoryInterface
@@ -105,6 +107,50 @@ class ShippingLabelRepository implements ShippingLabelRepositoryInterface
 
         if (!$item->getId()) {
             throw new NoSuchEntityException(__('No such shipping label with tracking number %1', $trackingNumber));
+        }
+
+        return $item;
+    }
+
+    /**
+     * Get list labels for shipments. Only one label for shipment (last label)
+     * @param int[] $shipmentIds
+     * @return ShippingLabelInterface[]
+     */
+    public function getListLastLabelsByShipments(array $shipmentIds): array
+    {
+        $collection = $this->collectionFactory->create();
+        $collection->addFieldToFilter(ShippingLabelInterface::SHIPMENT_ID, ['in' => $shipmentIds]);
+        $collection->addOrder(ShippingLabelInterface::ID, LabelCollection::SORT_ORDER_DESC);
+
+        $labelToShipment = [];
+        /** @var ShippingLabel $label */
+        foreach ($collection->getItems() as $label) {
+            if (isset($labelToShipment[$label->getShipmentId()])) {
+                continue;
+            }
+
+            $labelToShipment[$label->getShipmentId()] = $label;
+        }
+
+        return $labelToShipment;
+    }
+
+    /**
+     * Get last created label by shipment id
+     * @param int $shipmentId
+     * @return ShippingLabelInterface
+     * @throws NoSuchEntityException
+     */
+    public function getLastByShipmentId(int $shipmentId): ShippingLabelInterface
+    {
+        $collection = $this->getListByShipmentId($shipmentId);
+        $collection->addOrder(ShippingLabelInterface::ID, Collection::SORT_ORDER_DESC);
+
+        $item = $collection->getFirstItem();
+
+        if (!$item->getId()) {
+            throw new NoSuchEntityException(__('No such shipping label for shipment id %1', $shipmentId));
         }
 
         return $item;

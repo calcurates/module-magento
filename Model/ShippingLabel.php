@@ -133,17 +133,17 @@ class ShippingLabel extends \Magento\Framework\Model\AbstractModel implements Sh
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getLabelData(): string
+    public function getLabelData(): array
     {
         return $this->getData(self::LABEL_DATA);
     }
 
     /**
-     * @param string $labelData
+     * @param array $labelData
      */
-    public function setLabelData(string $labelData): void
+    public function setLabelData(array $labelData): void
     {
         $this->setData(self::LABEL_DATA, $labelData);
     }
@@ -198,5 +198,17 @@ class ShippingLabel extends \Magento\Framework\Model\AbstractModel implements Sh
     public function setCarrierProviderCode(string $carrierProviderCode): void
     {
         $this->setData(self::CARRIER_PROVIDER_CODE, $carrierProviderCode);
+    }
+
+    public function getManifestId(): ?int
+    {
+        $id = $this->getData(self::MANIFEST_ID);
+
+        return $id ? (int)$id : null;
+    }
+
+    public function setManifestId(?int $manifestId): void
+    {
+        $this->setData(self::MANIFEST_ID, $manifestId);
     }
 }

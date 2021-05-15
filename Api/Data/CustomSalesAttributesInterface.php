@@ -16,7 +16,7 @@ interface CustomSalesAttributesInterface
     public const SOURCE_CODE = 'calcurates_source_code';
     /* @TODO: remove from track table! */
     public const SERVICE_ID = 'calcurates_service_id';
-    /* @TODO: drop all usages and remove from table */
+    /* @TODO: remove from table */
     public const LABEL_DATA = 'calcurates_label_data';
     public const CARRIER_PACKAGES = 'calcurates_carrier_packages';
     public const DELIVERY_DATES = 'calcurates_delivery_dates_data';

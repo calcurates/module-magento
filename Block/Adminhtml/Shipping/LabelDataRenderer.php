@@ -10,22 +10,13 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Block\Adminhtml\Shipping;
 
+use Calcurates\ModuleMagento\Api\Data\ShippingLabelInterface;
 use Calcurates\ModuleMagento\Model\Shipment\LabelDataParser;
 use Magento\Backend\Block\Template;
 use Magento\Backend\Block\Template\Context;
 
 class LabelDataRenderer extends Template
 {
-    /**
-     * @var string
-     */
-    private $labelDataString;
-
-    /**
-     * @var string
-     */
-    private $printUrl;
-
     /**
      * @var LabelDataParser
      */
@@ -35,6 +26,11 @@ class LabelDataRenderer extends Template
      * @var array
      */
     private $labelData;
+
+    /**
+     * @var ShippingLabelInterface
+     */
+    private $shippingLabel;
 
     /**
      * LabelDataRenderer constructor.
@@ -49,17 +45,23 @@ class LabelDataRenderer extends Template
     }
 
     /**
-     * @param string $labelDataString
-     * @param string $printUrl
+     * @param ShippingLabelInterface $shippingLabel
      * @return string
      */
-    public function render(string $labelDataString, string $printUrl): string
+    public function render(ShippingLabelInterface $shippingLabel): string
     {
-        $this->labelDataString = $labelDataString;
-        $this->printUrl = $printUrl;
-        $this->labelData = $this->labelDataParser->parse($labelDataString);
+        $this->shippingLabel = $shippingLabel;
+        $this->labelData = $this->labelDataParser->parse($shippingLabel->getLabelData());
 
         return $this->toHtml();
+    }
+
+    /**
+     * @return ShippingLabelInterface
+     */
+    public function getShippingLabel(): ShippingLabelInterface
+    {
+        return $this->shippingLabel;
     }
 
     /**
@@ -71,29 +73,12 @@ class LabelDataRenderer extends Template
     }
 
     /**
-     * @return string
-     */
-    public function getLabelDataString(): string
-    {
-        return $this->labelDataString;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPrintUrl(): string
-    {
-        return $this->printUrl;
-    }
-
-    /**
      * @return array
      */
     public function getCacheKeyInfo()
     {
         $cacheKeyInfo = parent::getCacheKeyInfo();
-        $cacheKeyInfo[] = $this->getLabelDataString();
-        $cacheKeyInfo[] = $this->getPrintUrl();
+        $cacheKeyInfo[] = $this->getShippingLabel()->getId();
 
         return $cacheKeyInfo;
     }

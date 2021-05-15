@@ -11,6 +11,9 @@
             <block class="Magento\Shipping\Block\Adminhtml\Order\Packaging"
                    name="calcurates_shipment_data"
                    template="Calcurates_ModuleMagento::order/packaging/label_data.phtml">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Calcurates\ModuleMagento\ViewModel\ShippingLabel</argument>
+                </arguments>
                 <block class="Calcurates\ModuleMagento\Block\Adminhtml\Shipping\LabelDataRenderer"
                        name="shipment.calcurates_label_data_renderer"
                        as="label_data_renderer"

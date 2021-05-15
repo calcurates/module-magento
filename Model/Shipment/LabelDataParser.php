@@ -12,52 +12,29 @@ namespace Calcurates\ModuleMagento\Model\Shipment;
 
 use Magento\Directory\Model\CurrencyFactory;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
-use Magento\Framework\Serialize\SerializerInterface;
 
 class LabelDataParser
 {
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
-    /**
-     * @var PriceCurrencyInterface
-     */
-    private $priceCurrency;
-
     /**
      * @var CurrencyFactory
      */
     private $currencyFactory;
 
-    /**
-     * ShipmentLabelDataHelper constructor.
-     * @param SerializerInterface $serializer
-     * @param PriceCurrencyInterface $priceCurrency
-     * @param CurrencyFactory $currencyFactory
-     */
     public function __construct(
-        SerializerInterface $serializer,
-        PriceCurrencyInterface $priceCurrency,
         CurrencyFactory $currencyFactory
     ) {
-        $this->serializer = $serializer;
-        $this->priceCurrency = $priceCurrency;
         $this->currencyFactory = $currencyFactory;
     }
 
     /**
-     * @param string $shippingLabelData
+     * @param array $shippingLabelData
      * @return array
      */
-    public function parse(string $shippingLabelData): array
+    public function parse(array $shippingLabelData): array
     {
         if (!$shippingLabelData) {
             return [];
         }
-
-        $shippingLabelData = $this->serializer->unserialize($shippingLabelData);
 
         $keyLabel = [
             'trackingNumber' => __('Tracking Number'),
