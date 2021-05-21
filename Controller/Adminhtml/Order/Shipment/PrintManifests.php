@@ -23,7 +23,6 @@ use Magento\Ui\Component\MassAction\Filter;
 
 class PrintManifests extends \Magento\Backend\App\Action
 {
-
     /**
      * Authorization level of a basic admin session
      *
