@@ -9,14 +9,12 @@
 namespace Calcurates\ModuleMagento\Client\Command;
 
 use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
-use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Api\Data\ShippingLabelInterface;
 use Calcurates\ModuleMagento\Api\Data\ShippingLabelInterfaceFactory;
 use Calcurates\ModuleMagento\Client\Request\ShippingLabelRequestBuilder;
 use Calcurates\ModuleMagento\Model\Config;
 use Calcurates\ModuleMagento\Observer\ShipmentSaveAfterObserver;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -53,11 +51,6 @@ class CreateShippingLabelCommand
     private $shippingLabelFactory;
 
     /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
-    /**
      * @var GetShippingOptionsCommand
      */
     private $getShippingOptionsCommand;
@@ -73,7 +66,6 @@ class CreateShippingLabelCommand
         ShippingLabelRequestBuilder $shippingLabelRequestBuilder,
         CalcuratesClientInterface $calcuratesClient,
         ShippingLabelInterfaceFactory $shippingLabelFactory,
-        SerializerInterface $serializer,
         GetShippingOptionsCommand $getShippingOptionsCommand,
         StoreManagerInterface $storeManager
     ) {
@@ -82,7 +74,6 @@ class CreateShippingLabelCommand
         $this->shippingLabelRequestBuilder = $shippingLabelRequestBuilder;
         $this->calcuratesClient = $calcuratesClient;
         $this->shippingLabelFactory = $shippingLabelFactory;
-        $this->serializer = $serializer;
         $this->getShippingOptionsCommand = $getShippingOptionsCommand;
         $this->storeManager = $storeManager;
     }
@@ -148,13 +139,11 @@ class CreateShippingLabelCommand
             $labelContent = $this->downloadLabelContent($shippingLabelResponse['labelDownload']);
         }
 
-        $order = $request->getOrderShipment()->getOrder();
         /** @var ShippingLabelInterface $shippingLabel */
         $shippingLabel = $this->shippingLabelFactory->create();
         $shippingLabel->setLabelContent($labelContent);
 
-        $shippingLabelDataSerialized = $this->serializer->serialize($shippingLabelResponse);
-        $shippingLabel->setLabelData($shippingLabelDataSerialized);
+        $shippingLabel->setLabelData($shippingLabelResponse);
 
         $shippingLabel->setShippingServiceId($shippingServiceId);
         $shippingLabel->setShippingCarrierId((string)$shippingCarrierData['id']);
@@ -170,7 +159,6 @@ class CreateShippingLabelCommand
         $shippingLabel->setPackages($request->getPackages());
 
         $request->getOrderShipment()->setData(ShipmentSaveAfterObserver::SHIPPING_LABEL_KEY, $shippingLabel);
-        $request->getOrderShipment()->setData(CustomSalesAttributesInterface::LABEL_DATA, $shippingLabelDataSerialized);
 
         return [
             'tracking_number' => $trackingNumber,

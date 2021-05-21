@@ -39,4 +39,19 @@ interface ShippingLabelRepositoryInterface
      * @throws NoSuchEntityException
      */
     public function getByShipmentIdAndTrackingNumber(int $shipmentId, string $trackingNumber): ShippingLabelInterface;
+
+    /**
+     * Get list labels for shipments. Only one label for shipment (last label)
+     * @param int[] $shipmentIds
+     * @return ShippingLabelInterface[] array (shipmentId => ShippingLabelInterface)
+     */
+    public function getListLastLabelsByShipments(array $shipmentIds): array;
+
+    /**
+     * Get last created label by shipment id
+     * @param int $shipmentId
+     * @return ShippingLabelInterface
+     * @throws NoSuchEntityException
+     */
+    public function getLastByShipmentId(int $shipmentId): ShippingLabelInterface;
 }

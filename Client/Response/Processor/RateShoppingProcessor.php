@@ -127,7 +127,7 @@ class RateShoppingProcessor implements ResponseProcessorInterface
                     $serviceIds = $messages = [];
                     foreach ($rate['services'] as $service) {
                         if (!empty($service['message'])) {
-                            $message[] = $service['message'];
+                            $messages[] = $service['message'];
                         }
 
                         $serviceIds[] = $service['id'];

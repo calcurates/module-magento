@@ -23,6 +23,7 @@ interface ShippingLabelInterface
     public const CREATED_AT = 'created_at';
     public const CARRIER_CODE = 'carrier_code';
     public const CARRIER_PROVIDER_CODE = 'carrier_provider_code';
+    public const MANIFEST_ID = 'manifest_id';
 
     /**
      * @return int|null
@@ -105,14 +106,14 @@ interface ShippingLabelInterface
     public function setLabelContent(string $labelContent): void;
 
     /**
-     * @return string
+     * @return array
      */
-    public function getLabelData(): string;
+    public function getLabelData(): array;
 
     /**
-     * @param string $labelData
+     * @param array $labelData
      */
-    public function setLabelData(string $labelData): void;
+    public function setLabelData(array $labelData): void;
 
     /**
      * @return array
@@ -155,4 +156,14 @@ interface ShippingLabelInterface
      * @param string $carrierProviderCode
      */
     public function setCarrierProviderCode(string $carrierProviderCode): void;
+
+    /**
+     * @return int|null
+     */
+    public function getManifestId(): ?int;
+
+    /**
+     * @param int|null $manifestId
+     */
+    public function setManifestId(?int $manifestId): void;
 }
