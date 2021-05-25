@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <listingToolbar name="listing_top">
+        <massaction name="listing_massaction">
+            <action name="calcurates_manifests_create">
+                <settings>
+                    <url path="adminhtml/order_shipment/createManifests"/>
+                    <type>calcurates_manifests_create</type>
+                    <label translate="true">Create Manifests</label>
+                </settings>
+            </action>
+            <action name="calcurates_manifests_print">
+                <settings>
+                    <url path="adminhtml/order_shipment/printManifests"/>
+                    <type>calcurates_manifests_print</type>
+                    <label translate="true">Download Manifests</label>
+                </settings>
+            </action>
+        </massaction>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+</listing>

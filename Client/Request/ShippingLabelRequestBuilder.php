@@ -8,18 +8,12 @@
 
 namespace Calcurates\ModuleMagento\Client\Request;
 
-use Calcurates\ModuleMagento\Api\Shipping\ShippingDataResolverInterface;
 use Calcurates\ModuleMagento\Model\Source\ShipmentSourceCodeRetriever;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Directory\Model\RegionFactory;
 
 class ShippingLabelRequestBuilder
 {
-    /**
-     * @var ShippingDataResolverInterface
-     */
-    private $shippingDataResolver;
-
     /**
      * @var RegionFactory
      */
@@ -41,13 +35,11 @@ class ShippingLabelRequestBuilder
     private $shipmentSourceCodeRetriever;
 
     public function __construct(
-        ShippingDataResolverInterface $shippingDataResolver,
         RegionFactory $regionFactory,
         ProductRepositoryInterface $productRepository,
         ProductAttributesService $productAttributesService,
         ShipmentSourceCodeRetriever $shipmentSourceCodeRetriever
     ) {
-        $this->shippingDataResolver = $shippingDataResolver;
         $this->regionFactory = $regionFactory;
         $this->productRepository = $productRepository;
         $this->productAttributesService = $productAttributesService;

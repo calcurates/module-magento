@@ -14,14 +14,14 @@ use Magento\Framework\Serialize\SerializerInterface;
 
 class PackageInfoCache
 {
-    const TYPE_IDENTIFIER = CalcuratesCacheInterface::TYPE_IDENTIFIER;
-    const CACHE_TAG = 'calcurates_package_info';
-    const PREFIX = 'package';
+    public const TYPE_IDENTIFIER = CalcuratesCacheInterface::TYPE_IDENTIFIER;
+    public const CACHE_TAG = 'calcurates_package_info';
+    public const PREFIX = 'package';
 
     /**
      * Cache lifetime is one day
      */
-    const LIFETIME = 86400;
+    public const LIFETIME = 86400;
 
     /**
      * @var SerializerInterface

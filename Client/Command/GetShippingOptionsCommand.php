@@ -1,4 +1,10 @@
 <?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
 
 declare(strict_types=1);
 
@@ -8,12 +14,12 @@ use Calcurates\ModuleMagento\Client\ApiClientProvider;
 
 class GetShippingOptionsCommand
 {
-    const TYPE_CARRIERS = 'carriers';
-    const TYPE_TABLE_RATES = 'table-rates';
-    const TYPE_FLAT_RATES = 'flat-rates';
-    const TYPE_FREE_SHIPPING = 'free-shipping';
-    const TYPE_IN_STORE_PICKUP = 'in-store-pickups';
-    const TYPE_RATE_SHOPPING = 'rate-shopping';
+    public const TYPE_CARRIERS = 'carriers';
+    public const TYPE_TABLE_RATES = 'table-rates';
+    public const TYPE_FLAT_RATES = 'flat-rates';
+    public const TYPE_FREE_SHIPPING = 'free-shipping';
+    public const TYPE_IN_STORE_PICKUP = 'in-store-pickups';
+    public const TYPE_RATE_SHOPPING = 'rate-shopping';
 
     /**
      * @var ApiClientProvider

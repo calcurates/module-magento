@@ -38,7 +38,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      *
      * @var string
      */
-    const CODE = 'calcurates';
+    public const CODE = 'calcurates';
 
     /**
      * Code of the carrier

@@ -5,6 +5,7 @@
  * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @package Calcurates_ModuleMagento
  */
+
 namespace Calcurates\ModuleMagento\Model\Data;
 
 use Calcurates\ModuleMagento\Api\Data\ShippingDataInterface;
@@ -12,7 +13,6 @@ use Magento\Framework\Api\AbstractExtensibleObject;
 
 class ShippingData extends AbstractExtensibleObject implements ShippingDataInterface
 {
-
     /**
      * @return string|null
      */

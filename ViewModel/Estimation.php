@@ -1,4 +1,10 @@
 <?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
 
 declare(strict_types=1);
 
@@ -19,17 +25,11 @@ class Estimation implements ArgumentInterface
         $this->config = $config;
     }
 
-    /**
-     * @return bool
-     */
-    public function isEnabled():bool
+    public function isEnabled(): bool
     {
         return $this->config->isShippingOnProductEnabled();
     }
 
-    /**
-     * @return string|null
-     */
     public function getFallbackMessage(): ?string
     {
         return $this->config->getShippingOnProductFallbackMessage();

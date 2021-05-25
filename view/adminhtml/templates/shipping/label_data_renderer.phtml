@@ -1,25 +1,38 @@
+<?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2019-2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
+?>
 <?php /** @var $block \Calcurates\ModuleMagento\Block\Adminhtml\Shipping\LabelDataRenderer */?>
+<?php /** @var $escaper \Magento\Framework\Escaper */?>
 <?php
 $items = $block->getLabelData();
 if (!$items) {
     return;
 }
+$printUrl = $block->getUrl('adminhtml/order_shipment/printCalcuratesLabel', [
+    'shipment_id' => $block->getShippingLabel()->getShipmentId(),
+    'shipping_label_id' => $block->getShippingLabel()->getId()
+]);
 ?>
 
 <div class="admin__page-section-item-title">
-    <span class="title"><?= __('Label Info') ?></span>
+    <span class="title"><?= $escaper->escapeHtml(__('Label Info')) ?></span>
 </div>
 <table class="admin__table-secondary">
     <tbody>
     <?php foreach ($items as $item): ?>
         <tr>
-            <th><?= $item['label']?></th>
-            <td><?= $item['value']?></td>
+            <th><?= $escaper->escapeHtml($item['label']) ?></th>
+            <td><?= $escaper->escapeHtml($item['value']) ?></td>
         </tr>
     <?php endforeach; ?>
     <tr>
         <th></th>
-        <td><a href="<?= $block->getPrintUrl() ?>"><?= __('Download label') ?></a></td>
+        <td><a href="<?= $escaper->escapeUrl($printUrl) ?>"><?= $escaper->escapeHtml(__('Download label')) ?></a></td>
     </tr>
     </tbody>
 </table>

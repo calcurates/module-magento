@@ -15,7 +15,6 @@ use Magento\Quote\Model\Quote\Address\Rate;
 
 class RatePlugin
 {
-
     /**
      * @param Rate $subject
      * @param Rate $result

@@ -10,19 +10,20 @@ namespace Calcurates\ModuleMagento\Api\Data;
 
 interface ShippingLabelInterface
 {
-    const ID = 'id';
-    const SHIPMENT_ID = 'shipment_id';
-    const SHIPPING_CARRIER_ID = 'shipping_carrier_id';
-    const SHIPPING_SERVICE_ID = 'shipping_service_id';
-    const SHIPPING_CARRIER_LABEL = 'shipping_carrier_label';
-    const SHIPPING_SERVICE_LABEL = 'shipping_service_label';
-    const TRACKING_NUMBER = 'tracking_number';
-    const LABEL_CONTENT = 'label_content';
-    const LABEL_DATA = 'label_data';
-    const PACKAGES = 'packages';
-    const CREATED_AT = 'created_at';
-    const CARRIER_CODE = 'carrier_code';
-    const CARRIER_PROVIDER_CODE = 'carrier_provider_code';
+    public const ID = 'id';
+    public const SHIPMENT_ID = 'shipment_id';
+    public const SHIPPING_CARRIER_ID = 'shipping_carrier_id';
+    public const SHIPPING_SERVICE_ID = 'shipping_service_id';
+    public const SHIPPING_CARRIER_LABEL = 'shipping_carrier_label';
+    public const SHIPPING_SERVICE_LABEL = 'shipping_service_label';
+    public const TRACKING_NUMBER = 'tracking_number';
+    public const LABEL_CONTENT = 'label_content';
+    public const LABEL_DATA = 'label_data';
+    public const PACKAGES = 'packages';
+    public const CREATED_AT = 'created_at';
+    public const CARRIER_CODE = 'carrier_code';
+    public const CARRIER_PROVIDER_CODE = 'carrier_provider_code';
+    public const MANIFEST_ID = 'manifest_id';
 
     /**
      * @return int|null
@@ -105,14 +106,14 @@ interface ShippingLabelInterface
     public function setLabelContent(string $labelContent): void;
 
     /**
-     * @return string
+     * @return array
      */
-    public function getLabelData(): string;
+    public function getLabelData(): array;
 
     /**
-     * @param string $labelData
+     * @param array $labelData
      */
-    public function setLabelData(string $labelData): void;
+    public function setLabelData(array $labelData): void;
 
     /**
      * @return array
@@ -155,4 +156,14 @@ interface ShippingLabelInterface
      * @param string $carrierProviderCode
      */
     public function setCarrierProviderCode(string $carrierProviderCode): void;
+
+    /**
+     * @return int|null
+     */
+    public function getManifestId(): ?int;
+
+    /**
+     * @param int|null $manifestId
+     */
+    public function setManifestId(?int $manifestId): void;
 }

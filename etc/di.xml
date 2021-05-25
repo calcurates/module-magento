@@ -17,7 +17,6 @@
     <preference for="Calcurates\ModuleMagento\Api\Catalog\Product\ProductAttributesListInterface" type="Calcurates\ModuleMagento\Model\Catalog\Product\AttributesList"/>
 
     <preference for="Calcurates\ModuleMagento\Api\Data\ShippingDataInterface" type="Calcurates\ModuleMagento\Model\Data\ShippingData"/>
-    <preference for="Calcurates\ModuleMagento\Api\Shipping\ShippingDataResolverInterface" type="Calcurates\ModuleMagento\Model\Shipment\ShippingDataResolver"/>
 
     <preference for="Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface"
                 type="Calcurates\ModuleMagento\Model\Carrier\CacluratesCachedClient"/>
@@ -102,6 +101,10 @@
                 type="Calcurates\ModuleMagento\Model\ShippingLabel"/>
     <preference for="Calcurates\ModuleMagento\Api\ShippingLabelRepositoryInterface"
                 type="Calcurates\ModuleMagento\Model\Repository\ShippingLabelRepository" />
+    <preference for="Calcurates\ModuleMagento\Api\Data\ManifestInterface"
+                type="Calcurates\ModuleMagento\Model\Manifest"/>
+    <preference for="Calcurates\ModuleMagento\Api\ManifestSaveInterface"
+                type="Calcurates\ModuleMagento\Model\Shipment\Manifest\ManifestSave" />
 
     <type name="Magento\SalesRule\Model\Rule\Condition\Address">
         <plugin name="Calcurates_ModuleMagento::FixShippingAddressValidation"

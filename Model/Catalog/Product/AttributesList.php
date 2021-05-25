@@ -13,7 +13,6 @@ use Magento\Catalog\Api\Data\ProductAttributeInterface;
 
 class AttributesList implements ProductAttributesListInterface
 {
-
     /**
      * @var \Magento\Eav\Api\AttributeRepositoryInterface
      */

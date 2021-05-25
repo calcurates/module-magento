@@ -1,17 +1,24 @@
 <?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
+
 declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Api\Data;
 
 interface SimpleRateInterface
 {
-    const RENDERED_TEMPLATE = 'rendered_template';
-    const NAME = 'name';
-    const AMOUNT = 'amount';
-    const DELIVERY_DATE_FROM = 'delivery_date_from';
-    const DELIVERY_DATE_TO = 'delivery_date_to';
-    const TEMPLATE = 'template';
-    const TYPE = 'type';
+    public const RENDERED_TEMPLATE = 'rendered_template';
+    public const NAME = 'name';
+    public const AMOUNT = 'amount';
+    public const DELIVERY_DATE_FROM = 'delivery_date_from';
+    public const DELIVERY_DATE_TO = 'delivery_date_to';
+    public const TEMPLATE = 'template';
+    public const TYPE = 'type';
 
     /**
      * @return string

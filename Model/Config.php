@@ -27,24 +27,24 @@ class Config implements ConfigProviderInterface
     /**
      * Group config key from system.xml
      */
-    const CONFIG_GROUP = 'carriers/calcurates/';
+    public const CONFIG_GROUP = 'carriers/calcurates/';
 
-    const CONFIG_TOKEN = 'calcurates_token';
-    const CONFIG_API_URL = 'api_url';
-    const CONFIG_DISPLAY_RATES_WITH_TAX = 'display_rates_with_tax';
-    const CONFIG_ERROR_MESSAGE = 'specificerrmsg';
-    const CONFIG_TITLE = 'specificerrmsg';
-    const API_GET_RATES_TIMEOUT = 'api_get_rates_timeout';
-    const SHIPPING_METHODS_FOR_FALLBACK = 'shipping_methods_for_fallback';
-    const DELIVERY_DATE_DISPLAY = 'delivery_date_display';
-    const DELIVERY_DATE_DISPLAY_TYPE = 'delivery_date_display_type';
-    const DISPLAY_IMAGES = 'display_shipping_options_images';
-    const DISPLAY_PACKAGE_NAME_FOR_CARRIER = 'display_package_name_for_carrier';
-    const SHIPPING_ON_PRODUCT_ENABLED = 'shipping_on_product_enabled';
-    const SHIPPING_ON_PRODUCT_FALLBACK_MESSAGE = 'shipping_on_product_fallback_message';
+    public const CONFIG_TOKEN = 'calcurates_token';
+    public const CONFIG_API_URL = 'api_url';
+    public const CONFIG_DISPLAY_RATES_WITH_TAX = 'display_rates_with_tax';
+    public const CONFIG_ERROR_MESSAGE = 'specificerrmsg';
+    public const CONFIG_TITLE = 'specificerrmsg';
+    public const API_GET_RATES_TIMEOUT = 'api_get_rates_timeout';
+    public const SHIPPING_METHODS_FOR_FALLBACK = 'shipping_methods_for_fallback';
+    public const DELIVERY_DATE_DISPLAY = 'delivery_date_display';
+    public const DELIVERY_DATE_DISPLAY_TYPE = 'delivery_date_display_type';
+    public const DISPLAY_IMAGES = 'display_shipping_options_images';
+    public const DISPLAY_PACKAGE_NAME_FOR_CARRIER = 'display_package_name_for_carrier';
+    public const SHIPPING_ON_PRODUCT_ENABLED = 'shipping_on_product_enabled';
+    public const SHIPPING_ON_PRODUCT_FALLBACK_MESSAGE = 'shipping_on_product_fallback_message';
 
-    const ACTIVE = 'active';
-    const DEBUG = 'debug';
+    public const ACTIVE = 'active';
+    public const DEBUG = 'debug';
 
     /**
      * @var ScopeConfigInterface

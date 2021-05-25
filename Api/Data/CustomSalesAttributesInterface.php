@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 /**
  * @author Calcurates Team
  * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
@@ -7,16 +6,18 @@ declare(strict_types=1);
  * @package Calcurates_ModuleMagento
  */
 
+declare(strict_types=1);
+
 namespace Calcurates\ModuleMagento\Api\Data;
 
 interface CustomSalesAttributesInterface
 {
-    const CARRIER_SOURCE_CODE_TO_SERVICE = 'calcurates_carrier_srvs_srs_codes';
-    const SOURCE_CODE = 'calcurates_source_code';
+    public const CARRIER_SOURCE_CODE_TO_SERVICE = 'calcurates_carrier_srvs_srs_codes';
+    public const SOURCE_CODE = 'calcurates_source_code';
     /* @TODO: remove from track table! */
-    const SERVICE_ID = 'calcurates_service_id';
-    /* @TODO: drop all usages and remove from table */
-    const LABEL_DATA = 'calcurates_label_data';
-    const CARRIER_PACKAGES = 'calcurates_carrier_packages';
-    const DELIVERY_DATES = 'calcurates_delivery_dates_data';
+    public const SERVICE_ID = 'calcurates_service_id';
+    /* @TODO: remove from table */
+    public const LABEL_DATA = 'calcurates_label_data';
+    public const CARRIER_PACKAGES = 'calcurates_carrier_packages';
+    public const DELIVERY_DATES = 'calcurates_delivery_dates_data';
 }

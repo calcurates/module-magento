@@ -10,8 +10,8 @@ namespace Calcurates\ModuleMagento\Api\Data\Catalog\Product;
 
 interface AttributeCustomDataOptionInterface
 {
-    const VALUE = 'value';
-    const LABEL = 'label';
+    public const VALUE = 'value';
+    public const LABEL = 'label';
 
     /**
      * @return string
