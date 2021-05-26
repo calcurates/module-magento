@@ -1,3 +1,12 @@
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2021 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
+
+@calcurates-chose-shipping-or-pickup-button-chosen__background: @color-white;
+
 .calcurates-rate-img {
   width: 75px;
   display: block;
@@ -48,6 +57,26 @@
 
     > .loading-mask > .loader > img {
       position: absolute;
+    }
+  }
+  .calcurates-in-store-pickup {
+    & {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+    .action {
+      .lib-button-l();
+
+      &.chosen {
+        .lib-css(
+                background,
+                @calcurates-chose-shipping-or-pickup-button-chosen__background
+        );
+      }
+    }
+
+    .calcurates-store {
+      margin-top: 2rem;
     }
   }
 }

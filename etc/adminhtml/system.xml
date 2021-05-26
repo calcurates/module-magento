@@ -118,6 +118,10 @@
                         <field id="shipping_on_product_enabled">1</field>
                     </depends>
                 </field>
+                <field id="store_pickup_display" translate="label" type="select" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Display In-Store Pickup as</label>
+                    <source_model>Calcurates\ModuleMagento\Model\Config\Source\DisplayInStorePickupAsSource</source_model>
+                </field>
             </group>
         </section>
     </system>

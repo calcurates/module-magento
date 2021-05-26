@@ -9,4 +9,13 @@
     <type name="Magento\Paypal\Block\Express\Review">
         <plugin name="Calcurates_ModuleMagento::AddDeliveryDateInfo" type="Calcurates\ModuleMagento\Plugin\Block\Paypal\Express\ReviewPlugin"/>
     </type>
+
+    <!-- Remove store pickup selector if disabled -->
+    <type name="Magento\Checkout\Block\Onepage">
+        <arguments>
+            <argument name="layoutProcessors" xsi:type="array">
+                <item name="calcuratesDisableStorePickupSelector" xsi:type="object">Calcurates\ModuleMagento\Block\Checkout\Onepage\CheckoutLayoutProcessor</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

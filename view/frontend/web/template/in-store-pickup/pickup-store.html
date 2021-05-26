@@ -1,0 +1,20 @@
+<select class="calcurates-store select" id="calcurates_store"
+        data-bind="
+                    attr: {
+                        id: uid,
+                        name: inputName,
+                        disabled: disabled,
+                        'aria-describedby': getDescriptionId(),
+                        'aria-required': required,
+                        'aria-invalid': error() ? true : 'false',
+                        placeholder: placeholder
+                    },
+                    hasFocus: focused,
+                    value: storeId,
+                    options: options,
+                    optionsValue: 'storeId',
+                    optionsText: 'storeTitle',
+                    optionsCaption: caption,
+                    event: {change: onChangeStore}
+                    ">
+</select>

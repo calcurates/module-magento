@@ -25,6 +25,7 @@
                 <delivery_date_display_type>days_qty</delivery_date_display_type>
                 <display_package_name_for_carrier>1</display_package_name_for_carrier>
                 <shipping_on_product_fallback_message>Shipping info will be displayed at checkout</shipping_on_product_fallback_message>
+                <store_pickup_display>shipping_methods</store_pickup_display>
             </calcurates>
         </carriers>
     </default>
