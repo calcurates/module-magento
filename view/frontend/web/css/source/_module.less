@@ -1,3 +1,5 @@
+@calcurates-chose-shipping-or-pickup-button-chosen__background: @color-white;
+
 .calcurates-rate-img {
   width: 75px;
   display: block;
@@ -48,6 +50,26 @@
 
     > .loading-mask > .loader > img {
       position: absolute;
+    }
+  }
+  .calcurates-in-store-pickup {
+    & {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+    .action {
+      .lib-button-l();
+
+      &.chosen {
+        .lib-css(
+                background,
+                @calcurates-chose-shipping-or-pickup-button-chosen__background
+        );
+      }
+    }
+
+    .calcurates-store {
+      margin-top: 2rem;
     }
   }
 }
