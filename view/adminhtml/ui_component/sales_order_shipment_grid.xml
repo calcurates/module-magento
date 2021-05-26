@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  @author Calcurates Team
+  @copyright Copyright © 2021 Calcurates (https://www.calcurates.com)
+  @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+  @package Calcurates_ModuleMagento
+-->
 <listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <listingToolbar name="listing_top">
         <massaction name="listing_massaction">
