@@ -15,7 +15,7 @@ define([], function () {
      * @return {Object.<{type: String, id: String, sub_id: String}>}
      */
     return function (methodCode) {
-        var parts = methodCode.split('_');
+        var parts = methodCode ? methodCode.split('_') : [];
 
         return {
             type: parts[0] || '',
