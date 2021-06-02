@@ -13,7 +13,9 @@ define([
     'Calcurates_ModuleMagento/js/model/instore-pickup/stores-settings',
     'Calcurates_ModuleMagento/js/model/instore-pickup/method-parser',
     'Magento_Checkout/js/action/select-shipping-method',
-    'Magento_Checkout/js/checkout-data'
+    'Magento_Checkout/js/checkout-data',
+    'Magento_Catalog/js/price-utils',
+    'Magento_Checkout/js/model/quote'
 ], function (
     $,
     ko,
@@ -22,7 +24,9 @@ define([
     storesSettings,
     parseMethodDataFromCode,
     selectShippingMethodAction,
-    checkoutData
+    checkoutData,
+    priceUtils,
+    quote
 ) {
     'use strict';
 
@@ -65,6 +69,17 @@ define([
                 selectShippingMethodAction(null);
                 checkoutData.setSelectedShippingRate(null);
             }
+        },
+
+        /**
+         * Get Store Option Label.
+         * @param {Object.<{storeId: String, storeTitle: String, rate: Object}>} store
+         * @returns {String}
+         */
+        storeOptionsText: function (store) {
+            var formattedPrice = priceUtils.formatPrice(store.rate.amount, quote.getPriceFormat());
+
+            return store.storeTitle + ' - ' + formattedPrice;
         }
     });
 });
