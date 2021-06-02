@@ -38,9 +38,10 @@ class GetSourceCodesPerSkus
 
     /**
      * @param array $skus
+     * @param string $websiteCode
      * @return array
      */
-    public function execute(array $skus): array
+    public function execute(array $skus, string $websiteCode): array
     {
         if (!class_exists(\Magento\Inventory\Model\ResourceModel\SourceItem::class)) {
             return [];
@@ -62,9 +63,26 @@ class GetSourceCodesPerSkus
                 [
                     's' => $this->resourceConnection->getTableName('inventory_source')
                 ],
-                't.source_code = s.source_code AND s.enabled = 1'
+                't.source_code = s.source_code AND s.enabled = 1',
+                []
             )
-            ->where('sku IN (?)', $skus);
+            ->joinInner(
+                [
+                    's_st' => $this->resourceConnection->getTableName('inventory_source_stock_link')
+                ],
+                't.source_code = s_st.source_code',
+                []
+            )
+            ->joinInner(
+                [
+                    'st_w' => $this->resourceConnection->getTableName('inventory_stock_sales_channel')
+                ],
+                's_st.stock_id = st_w.stock_id',
+                []
+            )
+            ->where('sku IN (?)', $skus)
+            ->where('st_w.type = ?', 'website')
+            ->where('st_w.code = ?', $websiteCode);
 
         $rows = $connection->fetchAll($query);
 
