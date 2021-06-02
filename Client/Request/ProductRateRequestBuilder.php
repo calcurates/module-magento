@@ -65,7 +65,9 @@ class ProductRateRequestBuilder
      */
     public function build(array $productIds, int $customerId): array
     {
-        $storeId = $this->storeManager->getStore()->getId();
+        $store = $this->storeManager->getStore();
+        $storeId = $store->getId();
+        $websiteCode = (string)$this->storeManager->getWebsite($store->getWebsiteId())->getCode();
 
         $customerGroupId = Group::NOT_LOGGED_IN_ID;
         $shipTo = null;
@@ -113,7 +115,7 @@ class ProductRateRequestBuilder
             $priceModel = $product->getPriceModel();
             $productBasePrice = $priceModel->getBasePrice($product);
 
-            $itemsSourceCodes = $this->getSourceCodesPerSkus->execute([$product->getSku()]);
+            $itemsSourceCodes = $this->getSourceCodesPerSkus->execute([$product->getSku()], $websiteCode);
             $apiRequestBody['products'][] = [
                 'sku' => $product->getSku(),
                 'priceWithTax' => round($productBasePrice, 2),

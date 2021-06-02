@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * @author Calcurates Team
  * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
@@ -41,14 +43,15 @@ class GetSourceCodesPerSkus
 
     /**
      * @param array $skus
+     * @param string $websiteCode
      * @return array
      */
-    public function execute(array $skus)
+    public function execute(array $skus, string $websiteCode): array
     {
-        $cacheKey = $this->encryptor->hash(json_encode($skus));
+        $cacheKey = $this->encryptor->hash(json_encode($skus) . '___' . $websiteCode);
 
         if (!array_key_exists($cacheKey, $this->cache)) {
-            $this->cache[$cacheKey] = $this->resource->execute($skus);
+            $this->cache[$cacheKey] = $this->resource->execute($skus, $websiteCode);
         }
 
         return $this->cache[$cacheKey];
