@@ -173,7 +173,7 @@ class DeliveryDateFormatter
      */
     private function formatDateMagentoLocale(\DateTime $dateTime): string
     {
-        return $this->timezone->formatDateTime($dateTime);
+        return $this->timezone->formatDateTime($dateTime, \IntlDateFormatter::SHORT, \IntlDateFormatter::NONE);
     }
 
     /**
