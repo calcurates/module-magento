@@ -136,6 +136,8 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
     public function testFormatSingleDateMagentoLocale()
     {
         $formattedResult = '20.02.2021';
+        $expectedResult = 'Sat ' . $formattedResult;
+
         $this->configProviderMock
             ->method('getDeliveryDateDisplayType')
             ->willReturn(DeliveryDateDisplayTypeSource::DATES_MAGENTO_FORMAT);
@@ -148,7 +150,7 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->model->formatSingleDate($dateTime);
 
-        $this->assertSame($formattedResult, $result);
+        $this->assertSame($expectedResult, $result);
     }
 
     /**
@@ -252,13 +254,13 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
                 'from' => '2020-02-02',
                 'to' => '2020-02-02',
                 'formatResult' => '02-02-2020',
-                'expectedResult' => '02-02-2020'
+                'expectedResult' => 'Sun 02-02-2020'
             ],
             'fromToDifferent' => [
                 'from' => '2020-02-02',
                 'to' => '2020-02-03',
                 'formatResult' => '02-02-2020', //fixme: it's quite difficult to add formats to both dates, and we return single for each
-                'expectedResult' => '02-02-2020', // and check
+                'expectedResult' => 'Sun 02-02-2020 - Mon 02-02-2020', // and check
             ],
         ];
     }
