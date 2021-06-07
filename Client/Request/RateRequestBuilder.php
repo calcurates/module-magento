@@ -98,7 +98,7 @@ class RateRequestBuilder
          */
         $quote = current($items)->getQuote();
         $customerData = $this->getCustomerData($quote);
-        $streetArray = explode("\n", $request->getDestStreet());
+        $streetArray = explode("\n", (string)$request->getDestStreet());
         $customer = $quote->getCustomer();
         $estimate = (bool)$request->getData(ShippingAddEstimateFlagToRequestPlugin::IS_ESTIMATE_ONLY_FLAG);
 

@@ -10,6 +10,8 @@ namespace Calcurates\ModuleMagento\Setup;
 
 use Calcurates\ModuleMagento\Setup\Operation\AddCalcuratesLabelTable;
 use Calcurates\ModuleMagento\Setup\Operation\AddCalcuratesManifestTable;
+use Calcurates\ModuleMagento\Setup\Operation\AddCalcuratesOrderTable;
+use Calcurates\ModuleMagento\Setup\Operation\AddCalcuratesQuoteTable;
 use Calcurates\ModuleMagento\Setup\Operation\AddCarrierCodesToLabelsTable;
 use Calcurates\ModuleMagento\Setup\Operation\AddManifestIdToLabelTable;
 use Magento\Framework\Setup\ModuleContextInterface;
@@ -39,22 +41,38 @@ class UpgradeSchema implements UpgradeSchemaInterface
     private $addCalcuratesManifestTable;
 
     /**
+     * @var AddCalcuratesQuoteTable
+     */
+    private $addCalcuratesQuoteTable;
+
+    /**
+     * @var AddCalcuratesOrderTable
+     */
+    private $addCalcuratesOrderTable;
+
+    /**
      * UpgradeSchema constructor.
      * @param AddCalcuratesLabelTable $addCalcuratesLabelTable
      * @param AddCarrierCodesToLabelsTable $addCarrierCodesToLabelsTable
      * @param AddManifestIdToLabelTable $addManifestIdToLabelTable
      * @param AddCalcuratesManifestTable $addCalcuratesManifestTable
+     * @param AddCalcuratesQuoteTable $addCalcuratesQuoteTable
+     * @param AddCalcuratesOrderTable $addCalcuratesOrderTable
      */
     public function __construct(
         AddCalcuratesLabelTable $addCalcuratesLabelTable,
         AddCarrierCodesToLabelsTable $addCarrierCodesToLabelsTable,
         AddManifestIdToLabelTable $addManifestIdToLabelTable,
-        AddCalcuratesManifestTable $addCalcuratesManifestTable
+        AddCalcuratesManifestTable $addCalcuratesManifestTable,
+        AddCalcuratesQuoteTable $addCalcuratesQuoteTable,
+        AddCalcuratesOrderTable $addCalcuratesOrderTable
     ) {
         $this->addCalcuratesLabelTable = $addCalcuratesLabelTable;
         $this->addCarrierCodesToLabelsTable = $addCarrierCodesToLabelsTable;
         $this->addManifestIdToLabelTable = $addManifestIdToLabelTable;
         $this->addCalcuratesManifestTable = $addCalcuratesManifestTable;
+        $this->addCalcuratesQuoteTable = $addCalcuratesQuoteTable;
+        $this->addCalcuratesOrderTable = $addCalcuratesOrderTable;
     }
 
     /**
@@ -75,6 +93,11 @@ class UpgradeSchema implements UpgradeSchemaInterface
         if (version_compare($context->getVersion(), '1.30.0', '<')) {
             $this->addCalcuratesManifestTable->execute($setup);
             $this->addManifestIdToLabelTable->execute($setup);
+        }
+
+        if (version_compare($context->getVersion(), '1.32.0', '<')) {
+            $this->addCalcuratesQuoteTable->execute($setup);
+            $this->addCalcuratesOrderTable->execute($setup);
         }
 
         $setup->endSetup();

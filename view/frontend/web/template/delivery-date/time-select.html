@@ -1,0 +1,20 @@
+<select class="calcurates-delivery-date-time select" id="calcurates_delivery_date_time"
+        data-bind="
+                    attr: {
+                        id: uid,
+                        name: inputName,
+                        disabled: disabled,
+                        'aria-describedby': getDescriptionId(),
+                        'aria-required': required,
+                        'aria-invalid': error() ? true : 'false',
+                        placeholder: placeholder
+                    },
+                    hasFocus: focused,
+                    value: value,
+                    options: options,
+                    optionsValue: 'id',
+                    optionsText: timeOptionsText,
+                    optionsCaption: caption,
+                    event: {change: onChangeTime}
+                    ">
+</select>

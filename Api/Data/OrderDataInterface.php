@@ -1,0 +1,93 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Calcurates\ModuleMagento\Api\Data;
+
+interface OrderDataInterface
+{
+    public const ID = 'id';
+    public const ORDER_ID = 'order_id';
+    public const DELIVERY_DATE = 'delivery_date_date';
+    public const DELIVERY_DATE_TIME_FROM = 'delivery_date_time_from';
+    public const DELIVERY_DATE_TIME_TO = 'delivery_date_time_to';
+    public const BASE_DD_FEE_AMOUNT = 'base_dd_fee_amount';
+    public const DD_FEE_AMOUNT = 'dd_fee_amount';
+
+    /**
+     * @return int
+     */
+    public function getId();
+
+    /**
+     * @param int $id
+     * @return int
+     */
+    public function setId($id);
+
+    /**
+     * @return int
+     */
+    public function getOrderId(): int;
+
+    /**
+     * @param int $orderId
+     * @return void
+     */
+    public function setOrderId(int $orderId): void;
+
+    /**
+     * @return string
+     */
+    public function getDeliveryDate(): string;
+
+    /**
+     * @param string $deliveryDate
+     * @return void
+     */
+    public function setDeliveryDate(string $deliveryDate): void;
+
+    /**
+     * @return string
+     */
+    public function getDeliveryDateTimeFrom(): string;
+
+    /**
+     * @param string $timeFrom
+     * @return void
+     */
+    public function setDeliveryDateTimeFrom(string $timeFrom): void;
+
+    /**
+     * @return string
+     */
+    public function getDeliveryDateTimeTo(): string;
+
+    /**
+     * @param string $timeTo
+     * @return void
+     */
+    public function setDeliveryDateTimeTo(string $timeTo): void;
+
+    /**
+     * @return float
+     */
+    public function getBaseDeliveryDateFeeAmount(): float;
+
+    /**
+     * @param float $baseFeeAmount
+     * @return void
+     */
+    public function setBaseDeliveryDateFeeAmount(float $baseFeeAmount): void;
+
+    /**
+     * @return float
+     */
+    public function getDeliveryDateFeeAmount(): float;
+
+    /**
+     * @param float $feeAmount
+     * @return void
+     */
+    public function setDeliveryDateFeeAmount(float $feeAmount): void;
+}

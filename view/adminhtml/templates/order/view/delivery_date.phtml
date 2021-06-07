@@ -7,18 +7,53 @@
  */
 /** @var $block \Calcurates\ModuleMagento\Block\Adminhtml\Order\View\DeliveryDate */
 /** @var $viewModel \Calcurates\ModuleMagento\ViewModel\OrderDeliveryDate */
+/** @var \Magento\Framework\Escaper $escaper */
 $viewModel = $block->getViewModel();
 
 $deliveryDatesString = $viewModel->getDeliveryDatesString($block->getOrder());
+$orderData = $viewModel->getOrderData($block->getOrder());
+$hasDeliveryDateAndTime = $orderData && $orderData->getDeliveryDate();
 ?>
 
-<?php if ($deliveryDatesString): ?>
+<?php if ($deliveryDatesString || $hasDeliveryDateAndTime): ?>
     <section class="admin__page-section order-view-billing-shipping">
         <div class="admin__page-section-title">
-            <span class="title"><?= $block->escapeHtml(__('Delivery Dates')) ?></span>
+            <span class="title"><?= $escaper->escapeHtml(__('Delivery Dates')) ?></span>
         </div>
         <div class="admin__page-section-content">
-            <?= $deliveryDatesString ?>
+            <div class="admin__page-section-item order-information">
+                <div class="admin__page-section-item-content">
+
+                    <table class="admin__table-secondary order-information-table">
+                        <tbody>
+                        <?php if ($deliveryDatesString): ?>
+                            <tr>
+                                <th><?= $escaper->escapeHtml(__('Estimated Delivery Dates')) ?></th>
+                                <td><?= $escaper->escapeHtml($deliveryDatesString) ?></td>
+                            </tr>
+                        <?php endif; ?>
+
+                        <?php if ($hasDeliveryDateAndTime): ?>
+                            <tr>
+                                <th><?= $escaper->escapeHtml(__('Selected Delivery Date')) ?></th>
+                                <td>
+                                    <?= $viewModel->formatDate($orderData->getDeliveryDate()) ?>
+                                </td>
+                            </tr>
+
+                            <?php if ($orderData->getDeliveryDateTimeFrom() || $orderData->getDeliveryDateTimeTo()): ?>
+                                <tr>
+                                    <th><?= $escaper->escapeHtml(__('Selected Delivery Time')) ?></th>
+                                    <td>
+                                        <?= $orderData->getDeliveryDateTimeFrom() ?> - <?= $orderData->getDeliveryDateTimeTo() ?>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </section>
 <?php endif; ?>

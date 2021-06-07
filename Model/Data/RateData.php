@@ -62,4 +62,21 @@ class RateData extends AbstractSimpleObject implements RateDataInterface
     {
         $this->setData(self::IMAGE_URL, $imageUrl);
     }
+
+    /**
+     * @return \Calcurates\ModuleMagento\Api\Data\DeliveryDate\DateInterface[]
+     */
+    public function getDeliveryDatesList(): ?array
+    {
+        return $this->_get(self::DELIVERY_DATES_LIST);
+    }
+
+    /**
+     * @param \Calcurates\ModuleMagento\Api\Data\DeliveryDate\DateInterface[] $deliveryDatesList
+     * @return void
+     */
+    public function setDeliveryDatesList(array $deliveryDatesList): void
+    {
+        $this->setData(self::DELIVERY_DATES_LIST, $deliveryDatesList);
+    }
 }

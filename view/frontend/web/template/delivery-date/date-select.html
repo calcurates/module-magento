@@ -1,0 +1,20 @@
+<select class="calcurates-store select" id="calcurates_delivery_date_date"
+        data-bind="
+                    attr: {
+                        id: uid,
+                        name: inputName,
+                        disabled: disabled,
+                        'aria-describedby': getDescriptionId(),
+                        'aria-required': required,
+                        'aria-invalid': error() ? true : 'false',
+                        placeholder: placeholder
+                    },
+                    hasFocus: focused,
+                    value: value,
+                    options: options,
+                    optionsValue: 'id',
+                    optionsText: dateText,
+                    optionsCaption: caption,
+                    event: {change: onChangeDate}
+                    ">
+</select>
