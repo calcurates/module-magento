@@ -1,0 +1,23 @@
+<if args="visible()">
+    <div class="calcurates-in-store-pickup">
+        <div class="calcurates-select-shipping-or-pickup-buttons">
+            <button
+                    css="'chosen': !isStorePickup()"
+                    class="action select-shipping-btn"
+                    click="choseShipping"
+                    data-bind="text: shippingButtonLabel"
+            ></button>
+            <button
+                    css="'chosen': isStorePickup()"
+                    class="action select-in-store-pickup-btn"
+                    click="chosePickup"
+                    data-bind="text: pickupButtonLabel"
+            ></button>
+        </div>
+        <if args="isStorePickup()">
+                <each args="data:elems(), as: 'element'">
+                    <!-- ko template: getTemplate() --><!-- /ko -->
+                </each>
+        </if>
+    </div>
+</if>

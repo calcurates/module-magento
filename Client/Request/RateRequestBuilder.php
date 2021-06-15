@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * @author Calcurates Team
  * @copyright Copyright © 2019-2020 Calcurates (https://www.calcurates.com)
@@ -83,10 +85,14 @@ class RateRequestBuilder
     /**
      * @param RateRequest $request
      * @param Item[] $items
+     * @return array
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function build(RateRequest $request, array $items)
+    public function build(RateRequest $request, array $items): array
     {
+        $store = $this->storeManager->getStore();
+        $storeId = $store->getId();
+        $websiteCode = (string)$this->storeManager->getWebsite($store->getWebsiteId())->getCode();
         /**
          * @var $quote \Magento\Quote\Model\Quote
          */
@@ -114,7 +120,7 @@ class RateRequestBuilder
             'products' => [],
             // storeId in $request - from quote, and not correct if we open store via store url
             // setting "Use store codes in URL"
-            'storeView' => $this->storeManager->getStore()->getId(),
+            'storeView' => $storeId,
             'promoCode' => (string)$quote->getCouponCode(),
             'estimate' => $estimate
         ];
@@ -125,7 +131,7 @@ class RateRequestBuilder
         }
 
         $itemsSkus = array_values($itemsSkus);
-        $itemsSourceCodes = $this->getSourceCodesPerSkus->execute($itemsSkus);
+        $itemsSourceCodes = $this->getSourceCodesPerSkus->execute($itemsSkus, $websiteCode);
 
         foreach ($items as $item) {
             $attributedProductId = $item->getProductId();

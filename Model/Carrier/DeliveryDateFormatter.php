@@ -168,12 +168,19 @@ class DeliveryDateFormatter
     }
 
     /**
+     * Hardcoded short day name before formatted date
      * @param \DateTime $dateTime
      * @return string
      */
     private function formatDateMagentoLocale(\DateTime $dateTime): string
     {
-        return $this->timezone->formatDateTime($dateTime);
+        $prefix = $dateTime->format('D') . ' ';
+
+        return $prefix . $this->timezone->formatDateTime(
+                $dateTime,
+                \IntlDateFormatter::SHORT,
+                \IntlDateFormatter::NONE
+            );
     }
 
     /**
@@ -184,7 +191,7 @@ class DeliveryDateFormatter
     {
         $current = new \DateTime('now', $dateTime->getTimezone());
 
-        return (int)abs(ceil(($dateTime->getTimestamp() - $current->getTimestamp()) / (60*60*24)));
+        return (int)abs(ceil(($dateTime->getTimestamp() - $current->getTimestamp()) / (60 * 60 * 24)));
     }
 
     /**
@@ -218,6 +225,6 @@ class DeliveryDateFormatter
             return $formattedFrom;
         }
 
-        return $formattedFrom . ' - ' .  $formattedTo;
+        return $formattedFrom . ' - ' . $formattedTo;
     }
 }
