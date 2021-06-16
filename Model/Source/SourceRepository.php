@@ -95,7 +95,7 @@ class SourceRepository implements SourceRepositoryInterface
      *
      * @return \Calcurates\ModuleMagento\Api\Source\Data\SourceInterface[]
      */
-    private function prepareItems(array $items)
+    private function prepareItems(array $items): array
     {
         $regionIds = [];
         foreach ($items as $item) {
@@ -110,7 +110,7 @@ class SourceRepository implements SourceRepositoryInterface
         if ($hasRegions) {
             $regionCollection = $this->regionCollectionFactory->create();
             /** @var RegionCollection $regionCollection */
-            $regionCollection->addFieldToFilter('main_table.region_id', array_values($regionIds));
+            $regionCollection->addFieldToFilter('main_table.region_id', ['in' => array_values($regionIds)]);
         }
 
         // load regions
