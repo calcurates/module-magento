@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\ViewModel;
 
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
+use Calcurates\ModuleMagento\Api\Data\OrderDataInterface;
+use Calcurates\ModuleMagento\Api\SalesData\OrderData\GetOrderDataInterface;
 use Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
@@ -28,10 +30,19 @@ class OrderDeliveryDate implements ArgumentInterface
      */
     private $serializer;
 
-    public function __construct(DeliveryDateFormatter $deliveryDateFormatter, SerializerInterface $serializer)
-    {
+    /**
+     * @var GetOrderDataInterface
+     */
+    private $getOrderData;
+
+    public function __construct(
+        DeliveryDateFormatter $deliveryDateFormatter,
+        SerializerInterface $serializer,
+        GetOrderDataInterface $getOrderData
+    ) {
         $this->deliveryDateFormatter = $deliveryDateFormatter;
         $this->serializer = $serializer;
+        $this->getOrderData = $getOrderData;
     }
 
     /**
@@ -51,5 +62,25 @@ class OrderDeliveryDate implements ArgumentInterface
             $deliveryDatesData['from'] ?? null,
             $deliveryDatesData['to'] ?? null
         );
+    }
+
+    /**
+     * @param OrderInterface $order
+     * @return OrderDataInterface|null
+     */
+    public function getOrderData(OrderInterface $order): ?OrderDataInterface
+    {
+        return $this->getOrderData->get((int)$order->getId());
+    }
+
+    /**
+     * @param string $date
+     * @return string
+     */
+    public function formatDate(string $date): string
+    {
+        [$dateObject] = $this->deliveryDateFormatter->prepareDates($date, null);
+
+        return $this->deliveryDateFormatter->formatSingleDate($dateObject);
     }
 }

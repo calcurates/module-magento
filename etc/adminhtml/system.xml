@@ -86,7 +86,6 @@
                     <a href="https://my.calcurates.com/cabinet/marketplace" target="_blank">“Delivery Dates” feature</a>
                     activated for your Calcurates account.]]></comment>
                 </field>
-
                 <field id="sort_order" translate="label" type="text" sortOrder="140" showInDefault="1"
                        showInWebsite="1" showInStore="0">
                     <label>Sort Order</label>

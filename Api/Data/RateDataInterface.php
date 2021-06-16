@@ -15,6 +15,7 @@ interface RateDataInterface
     public const TOOLTIP_MESSAGE = 'tooltip_message';
     public const MAP_LINK = 'map_link';
     public const IMAGE_URL = 'image_url';
+    public const DELIVERY_DATES_LIST = 'delivery_dates_list';
 
     /**
      * @return string|null
@@ -48,4 +49,15 @@ interface RateDataInterface
      * @return void
      */
     public function setImageUrl(string $imageUrl): void;
+
+    /**
+     * @return \Calcurates\ModuleMagento\Api\Data\DeliveryDate\DateInterface[]
+     */
+    public function getDeliveryDatesList(): ?array;
+
+    /**
+     * @param \Calcurates\ModuleMagento\Api\Data\DeliveryDate\DateInterface[] $deliveryDatesList
+     * @return void
+     */
+    public function setDeliveryDatesList(array $deliveryDatesList): void;
 }

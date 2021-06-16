@@ -44,18 +44,25 @@ class QuoteToOrderConverter
      */
     private $serializer;
 
+    /**
+     * @var ConvertQuoteData
+     */
+    private $convertQuoteData;
+
     public function __construct(
         ConvertPackages $convertPackages,
         ConvertServicesSources $convertServicesSources,
         ShippingMethodManager $shippingMethodManager,
         OrderRepositoryInterface $orderRepository,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        ConvertQuoteData $convertQuoteData
     ) {
         $this->convertPackages = $convertPackages;
         $this->convertServicesSources = $convertServicesSources;
         $this->shippingMethodManager = $shippingMethodManager;
         $this->orderRepository = $orderRepository;
         $this->serializer = $serializer;
+        $this->convertQuoteData = $convertQuoteData;
     }
 
     /**
@@ -86,6 +93,8 @@ class QuoteToOrderConverter
             $this->convertServicesSources->convert($quote, $order);
             $orderChanged = true;
         }
+
+        $this->convertQuoteData->convert($quote, $order);
 
         if ($orderChanged) {
             $this->orderRepository->save($order);

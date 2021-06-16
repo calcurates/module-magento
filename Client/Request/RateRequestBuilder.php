@@ -1,12 +1,12 @@
 <?php
-declare(strict_types=1);
-
 /**
  * @author Calcurates Team
  * @copyright Copyright © 2019-2020 Calcurates (https://www.calcurates.com)
  * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @package Calcurates_ModuleMagento
  */
+
+declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Client\Request;
 
@@ -98,7 +98,7 @@ class RateRequestBuilder
          */
         $quote = current($items)->getQuote();
         $customerData = $this->getCustomerData($quote);
-        $streetArray = explode("\n", $request->getDestStreet());
+        $streetArray = explode("\n", (string)$request->getDestStreet());
         $customer = $quote->getCustomer();
         $estimate = (bool)$request->getData(ShippingAddEstimateFlagToRequestPlugin::IS_ESTIMATE_ONLY_FLAG);
 
