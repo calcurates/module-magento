@@ -177,10 +177,10 @@ class DeliveryDateFormatter
         $prefix = $dateTime->format('D') . ' ';
 
         return $prefix . $this->timezone->formatDateTime(
-                $dateTime,
-                \IntlDateFormatter::SHORT,
-                \IntlDateFormatter::NONE
-            );
+            $dateTime,
+            \IntlDateFormatter::SHORT,
+            \IntlDateFormatter::NONE
+        );
     }
 
     /**

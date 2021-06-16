@@ -113,7 +113,6 @@ class DeliveryDateProcessor
      */
     private function generateTimeIntervalId(array $timeInterval): string
     {
-
         $string = implode(
             self::ID_HASH_DELIMITTER,
             [
