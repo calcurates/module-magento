@@ -10,6 +10,7 @@
 <?php /** @var $viewModel \Calcurates\ModuleMagento\ViewModel\ShippingLabel */ ?>
 <?php
 $shipmentId = (int)$block->getShipment()->getId();
+$viewModel = $block->getViewModel();
 $label = $viewModel->getLastShippingLabel($shipmentId);
 $printUrl = $block->getUrl('adminhtml/order_shipment/printLabel', [
     'shipment_id' => $shipmentId
