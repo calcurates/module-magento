@@ -77,6 +77,13 @@ class AddCalcuratesOrderTable
                 ['nullable' => false],
                 'Whole delivery date fee amount in order currency'
             )
+            ->addColumn(
+                OrderDataInterface::DELIVERY_DATES,
+                Table::TYPE_TEXT,
+                null,
+                ['nullable' => false],
+                'Delivery Dates serialized for current method'
+            )
             ->addIndex(
                 $setup->getIdxName(
                     OrderData::TABLE_NAME,

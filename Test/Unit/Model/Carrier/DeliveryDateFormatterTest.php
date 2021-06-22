@@ -171,6 +171,22 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @param $from
+     * @param $to
+     * @param $date
+     * @param $expectedResult
+     * @return void
+     * @throws \Exception
+     * @dataProvider dataProviderForTimeInterval
+     */
+    public function testFormatTimeInterval($from, $to, $date, $expectedResult)
+    {
+        $result = $this->model->formatTimeInterval($from, $to, $date);
+
+        $this->assertSame($expectedResult, $result);
+    }
+
+    /**
      * @return array
      */
     public function dataProvider(): array
@@ -261,6 +277,27 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
                 'to' => '2020-02-03',
                 'formatResult' => '02-02-2020', //fixme: it's quite difficult to add formats to both dates, and we return single for each
                 'expectedResult' => 'Sun 02-02-2020 - Mon 02-02-2020', // and check
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProviderForTimeInterval(): array
+    {
+        return [
+            'format' => [
+                'from' => '00:00:00',
+                'to' => '12:00:00',
+                'date' => '2020-02-02',
+                '00:00 - 12:00'
+            ],
+            'format24' => [
+                'from' => '14:34:12',
+                'to' => '15:25:11',
+                'date' => '2020-02-02',
+                '14:34 - 15:25'
             ],
         ];
     }

@@ -10,12 +10,15 @@
 /** @var \Magento\Framework\Escaper $escaper */
 $viewModel = $block->getViewModel();
 
-$deliveryDatesString = $viewModel->getDeliveryDatesString($block->getOrder());
-$orderData = $viewModel->getOrderData($block->getOrder());
+$orderData = $viewModel->getOrderDataByOrderId((int)$block->getOrder()->getId());
 $hasDeliveryDateAndTime = $orderData && $orderData->getDeliveryDate();
+$deliveryDatesFormatted = '';
+if ($orderData) {
+    $deliveryDatesFormatted = $viewModel->formatDeliveryDates($orderData->getDeliveryDates());
+}
 ?>
 
-<?php if ($deliveryDatesString || $hasDeliveryDateAndTime): ?>
+<?php if ($deliveryDatesFormatted || $hasDeliveryDateAndTime): ?>
     <section class="admin__page-section order-view-billing-shipping">
         <div class="admin__page-section-title">
             <span class="title"><?= $escaper->escapeHtml(__('Delivery Dates')) ?></span>
@@ -26,10 +29,10 @@ $hasDeliveryDateAndTime = $orderData && $orderData->getDeliveryDate();
 
                     <table class="admin__table-secondary order-information-table">
                         <tbody>
-                        <?php if ($deliveryDatesString): ?>
+                        <?php if ($deliveryDatesFormatted): ?>
                             <tr>
                                 <th><?= $escaper->escapeHtml(__('Estimated Delivery Dates')) ?></th>
-                                <td><?= $escaper->escapeHtml($deliveryDatesString) ?></td>
+                                <td><?= $escaper->escapeHtml($deliveryDatesFormatted) ?></td>
                             </tr>
                         <?php endif; ?>
 
@@ -45,7 +48,7 @@ $hasDeliveryDateAndTime = $orderData && $orderData->getDeliveryDate();
                                 <tr>
                                     <th><?= $escaper->escapeHtml(__('Selected Delivery Time')) ?></th>
                                     <td>
-                                        <?= $orderData->getDeliveryDateTimeFrom() ?> - <?= $orderData->getDeliveryDateTimeTo() ?>
+                                        <?= $viewModel->formatTimeInterval($orderData->getDeliveryDateTimeFrom(), $orderData->getDeliveryDateTimeTo()) ?>
                                     </td>
                                 </tr>
                             <?php endif; ?>

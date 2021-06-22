@@ -8,12 +8,12 @@
 
 namespace Calcurates\ModuleMagento\Client;
 
-use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
+use Calcurates\ModuleMagento\Api\Data\QuoteDataInterfaceFactory;
+use Calcurates\ModuleMagento\Api\SalesData\QuoteData\GetQuoteDataInterface;
+use Calcurates\ModuleMagento\Api\SalesData\QuoteData\SaveQuoteDataInterface;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Calcurates\ModuleMagento\Model\Config as CalcuratesConfig;
-use Magento\Framework\Serialize\SerializerInterface;
-use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
 use Magento\Shipping\Model\Rate\Result;
 use Magento\Shipping\Model\Rate\ResultFactory;
 
@@ -45,9 +45,19 @@ class RatesResponseProcessor
     private $failedRateBuilder;
 
     /**
-     * @var SerializerInterface
+     * @var GetQuoteDataInterface
      */
-    private $serializer;
+    private $getQuoteData;
+
+    /**
+     * @var SaveQuoteDataInterface
+     */
+    private $saveQuoteData;
+
+    /**
+     * @var QuoteDataInterfaceFactory
+     */
+    private $quoteDataFactory;
 
     /**
      * RatesResponseProcessor constructor.
@@ -55,20 +65,26 @@ class RatesResponseProcessor
      * @param CalcuratesConfig $calcuratesConfig
      * @param ResponseProcessorInterface $responseProcessor
      * @param FailedRateBuilder $failedRateBuilder
-     * @param SerializerInterface $serializer
+     * @param GetQuoteDataInterface $getQuoteData
+     * @param SaveQuoteDataInterface $saveQuoteData
+     * @param QuoteDataInterfaceFactory $quoteDataFactory
      */
     public function __construct(
         ResultFactory $resultFactory,
         CalcuratesConfig $calcuratesConfig,
         ResponseProcessorInterface $responseProcessor,
         FailedRateBuilder $failedRateBuilder,
-        SerializerInterface $serializer
+        GetQuoteDataInterface $getQuoteData,
+        SaveQuoteDataInterface $saveQuoteData,
+        QuoteDataInterfaceFactory $quoteDataFactory
     ) {
         $this->resultFactory = $resultFactory;
         $this->calcuratesConfig = $calcuratesConfig;
         $this->responseProcessor = $responseProcessor;
         $this->failedRateBuilder = $failedRateBuilder;
-        $this->serializer = $serializer;
+        $this->getQuoteData = $getQuoteData;
+        $this->saveQuoteData = $saveQuoteData;
+        $this->quoteDataFactory = $quoteDataFactory;
     }
 
     /**
@@ -101,7 +117,7 @@ class RatesResponseProcessor
 
         $this->responseProcessor->process($result, $response, $quote);
 
-        // @TODO: temporary fix, need refactoring and external table storage for rates data
+        // @TODO: temporary fix, need refactoring
         $deliveryDates = [];
         foreach ($result->getAllRates() as $rate) {
             $rateDeliveryDates = $rate->getData(self::CALCURATES_DELIVERY_DATES);
@@ -110,10 +126,15 @@ class RatesResponseProcessor
             }
         }
 
-        $quote->setData(
-            CustomSalesAttributesInterface::DELIVERY_DATES,
-            $this->serializer->serialize($deliveryDates)
-        );
+        $quoteData = $this->getQuoteData->get((int)$quote->getId());
+
+        if (!$quoteData) {
+            $quoteData = $this->quoteDataFactory->create();
+            $quoteData->setQuoteId((int)$quote->getId());
+        }
+
+        $quoteData->setDeliveryDates($deliveryDates);
+        $this->saveQuoteData->save($quoteData);
 
         return $result;
     }

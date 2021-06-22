@@ -77,6 +77,13 @@ class AddCalcuratesQuoteTable
                 ['nullable' => false],
                 'Date Fee'
             )
+            ->addColumn(
+                QuoteDataInterface::DELIVERY_DATES,
+                Table::TYPE_TEXT,
+                null,
+                ['nullable' => false],
+                'Delivery dates for quote'
+            )
             ->addIndex(
                 $setup->getIdxName(
                     QuoteData::TABLE_NAME,

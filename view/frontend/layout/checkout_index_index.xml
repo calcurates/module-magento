@@ -92,6 +92,28 @@
                                         </item>
                                     </item>
                                 </item>
+                                <item name="sidebar" xsi:type="array">
+                                    <item name="children" xsi:type="array">
+                                        <item name="shipping-information" xsi:type="array">
+                                            <item name="children" xsi:type="array">
+                                                <item name="ship-to" xsi:type="array">
+                                                    <item name="children" xsi:type="array">
+                                                        <item name="calcurates-delivery-date-sidebar" xsi:type="array">
+                                                            <item name="component" xsi:type="string">Calcurates_ModuleMagento/js/view/checkout/delivery-date/sidebar</item>
+                                                            <item name="displayArea" xsi:type="string">calcurates-delivery-date-sidebar</item>
+                                                            <item name="config" xsi:type="array">
+                                                                <item name="template" xsi:type="string">Calcurates_ModuleMagento/delivery-date/sidebar</item>
+                                                                <item name="deps" xsi:type="array">
+                                                                    <item name="0" xsi:type="string">checkout.sidebar.shipping-information</item>
+                                                                </item>
+                                                            </item>
+                                                        </item>
+                                                    </item>
+                                                </item>
+                                            </item>
+                                        </item>
+                                    </item>
+                                </item>
                             </item>
                         </item>
                     </item>

@@ -1,0 +1,35 @@
+<?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
+/** @var $block \Calcurates\ModuleMagento\Block\Adminhtml\Order\View\DeliveryDate */
+/** @var $viewModel \Calcurates\ModuleMagento\ViewModel\OrderDeliveryDate */
+/** @var \Magento\Framework\Escaper $escaper */
+$viewModel = $block->getViewModel();
+
+$orderData = $viewModel->getOrderDataByOrderId((int)$block->getRequest()->getParam('order_id'));
+$hasDeliveryDateAndTime = $orderData && $orderData->getDeliveryDate();
+?>
+<?php if ($hasDeliveryDateAndTime): ?>
+    <div class="block block-order-details-view">
+        <div class="block-title">
+            <strong><?= $escaper->escapeHtml(__('Delivery Dates')) ?></strong>
+        </div>
+        <div class="block-content">
+            <strong><?= $escaper->escapeHtml(__('Selected Delivery Date')) ?></strong>
+
+            <?= $viewModel->formatDate($orderData->getDeliveryDate()) ?>
+
+
+            <?php if ($orderData->getDeliveryDateTimeFrom() || $orderData->getDeliveryDateTimeTo()): ?>
+                <br>
+                <strong><?= $escaper->escapeHtml(__('Selected Delivery Time')) ?></strong>
+                <?= $viewModel->formatTimeInterval($orderData->getDeliveryDateTimeFrom(), $orderData->getDeliveryDateTimeTo()) ?>
+
+            <?php endif; ?>
+        </div>
+    </div>
+<?php endif; ?>

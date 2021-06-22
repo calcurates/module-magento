@@ -11,16 +11,12 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Plugin\QuoteDataSave\Checkout\Model;
 
 use Calcurates\ModuleMagento\Api\Data\QuoteDataInterfaceFactory;
-use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Api\SalesData\QuoteData\GetQuoteDataInterface;
 use Calcurates\ModuleMagento\Api\SalesData\QuoteData\SaveQuoteDataInterface;
 use Calcurates\ModuleMagento\Client\Response\DeliveryDateProcessor;
 use Calcurates\ModuleMagento\Model\Carrier;
-use Magento\Checkout\Api\Data\PaymentDetailsInterface;
 use Magento\Checkout\Api\Data\ShippingInformationInterface;
 use Magento\Checkout\Api\ShippingInformationManagementInterface;
-use Magento\Framework\Serialize\SerializerInterface;
-use Magento\Quote\Api\CartRepositoryInterface;
 
 class SaveDeliveryDateFromShippingInfoPlugin
 {
@@ -40,34 +36,20 @@ class SaveDeliveryDateFromShippingInfoPlugin
     private $quoteDataFactory;
 
     /**
-     * @var CartRepositoryInterface
-     */
-    private $cartRepository;
-
-    /**
      * @var DeliveryDateProcessor
      */
     private $deliveryDateProcessor;
-
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
 
     public function __construct(
         GetQuoteDataInterface $getQuoteData,
         SaveQuoteDataInterface $saveQuoteData,
         QuoteDataInterfaceFactory $quoteDataFactory,
-        CartRepositoryInterface $cartRepository,
-        DeliveryDateProcessor $deliveryDateProcessor,
-        SerializerInterface $serializer
+        DeliveryDateProcessor $deliveryDateProcessor
     ) {
         $this->getQuoteData = $getQuoteData;
         $this->saveQuoteData = $saveQuoteData;
         $this->quoteDataFactory = $quoteDataFactory;
-        $this->cartRepository = $cartRepository;
         $this->deliveryDateProcessor = $deliveryDateProcessor;
-        $this->serializer = $serializer;
     }
 
     /**
@@ -95,13 +77,7 @@ class SaveDeliveryDateFromShippingInfoPlugin
             $quoteData = $this->quoteDataFactory->create();
         }
 
-        $quote = $this->cartRepository->getActive($cartId);
-
-        $deliveryDatesString = $quote->getData(CustomSalesAttributesInterface::DELIVERY_DATES);
-        $deliveryDatesData = [];
-        if ($deliveryDatesString) {
-            $deliveryDatesData = $this->serializer->unserialize($deliveryDatesString);
-        }
+        $deliveryDatesData = $quoteData->getDeliveryDates();
 
         $quoteData->setQuoteId((int)$cartId);
         $quoteData->setDeliveryDate('');

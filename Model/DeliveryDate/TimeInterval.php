@@ -54,4 +54,14 @@ class TimeInterval extends AbstractSimpleObject implements TimeIntervalInterface
     {
         $this->setData(self::TO, $to);
     }
+
+    public function getIntervalFormatted(): string
+    {
+        return (string)$this->_get(self::INTERVAL_FORMATTED);
+    }
+
+    public function setIntervalFormatted(string $intervalFormatted): void
+    {
+        $this->setData(self::INTERVAL_FORMATTED, $intervalFormatted);
+    }
 }

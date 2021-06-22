@@ -19,5 +19,4 @@ interface CustomSalesAttributesInterface
     /* @TODO: remove from table */
     public const LABEL_DATA = 'calcurates_label_data';
     public const CARRIER_PACKAGES = 'calcurates_carrier_packages';
-    public const DELIVERY_DATES = 'calcurates_delivery_dates_data';
 }

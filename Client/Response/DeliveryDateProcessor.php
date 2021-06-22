@@ -74,12 +74,18 @@ class DeliveryDateProcessor
 
             $timeIntervals = [];
             foreach ($timeSlot['time'] as $time) {
+                $intervalFormatted = $this->deliveryDateFormatter->formatTimeInterval(
+                    $time['from'],
+                    $time['to']
+                );
+
                 /** @var TimeIntervalInterface $timeInterval */
                 $timeInterval = $this->timeIntervalFactory->create();
                 $timeInterval->setFeeAmount((float)$time['extraFee']);
                 $timeInterval->setFrom($time['from']);
                 $timeInterval->setTo($time['to']);
                 $timeInterval->setId($this->generateTimeIntervalId($time));
+                $timeInterval->setIntervalFormatted($intervalFormatted);
 
                 $timeIntervals[] = $timeInterval;
             }

@@ -16,6 +16,13 @@ class QuoteData extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     public const TABLE_NAME = 'calcurates_quote_data';
 
+    protected $_serializableFields = [
+        QuoteDataInterface::DELIVERY_DATES => [
+            '[]',
+            []
+        ]
+    ];
+
     protected function _construct()
     {
         $this->_init(self::TABLE_NAME, QuoteDataInterface::ID);

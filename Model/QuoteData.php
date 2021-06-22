@@ -81,4 +81,16 @@ class QuoteData extends \Magento\Framework\Model\AbstractModel implements QuoteD
     {
         $this->setData(self::DELIVERY_DATE_TIME_FEE, $timeFee);
     }
+
+    public function getDeliveryDates(): array
+    {
+        $deliveryDates = $this->getData(self::DELIVERY_DATES);
+
+        return $deliveryDates ?: [];
+    }
+
+    public function setDeliveryDates(array $deliveryDates): void
+    {
+        $this->setData(self::DELIVERY_DATES, $deliveryDates);
+    }
 }

@@ -74,6 +74,10 @@ class ConvertQuoteData
             $orderData->setBaseDeliveryDateFeeAmount($baseFeeAmount);
             $orderData->setDeliveryDateFeeAmount($feeAmount);
 
+            $deliveryDates = $quoteData->getDeliveryDates();
+            $deliveryDatesForCurrentShippingMethod = $deliveryDates[$order->getShippingMethod(false)] ?? [];
+            $orderData->setDeliveryDates($deliveryDatesForCurrentShippingMethod);
+
             $this->saveOrderData->save($orderData);
         }
     }
