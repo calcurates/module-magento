@@ -81,4 +81,16 @@ class OrderData extends \Magento\Framework\Model\AbstractModel implements OrderD
     {
         $this->setData(self::DD_FEE_AMOUNT, $feeAmount);
     }
+
+    public function getDeliveryDates(): array
+    {
+        $deliveryDates = $this->getData(self::DELIVERY_DATES);
+
+        return $deliveryDates ?: [];
+    }
+
+    public function setDeliveryDates(array $deliveryDates): void
+    {
+        $this->setData(self::DELIVERY_DATES, $deliveryDates);
+    }
 }

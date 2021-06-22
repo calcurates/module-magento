@@ -1,5 +1,12 @@
-<select class="calcurates-delivery-date-time select" id="calcurates_delivery_date_time"
-        data-bind="
+<div class="field time">
+
+    <label class="label" data-bind="attr: { for: uid }" >
+        <span data-bind="i18n: label"></span>
+    </label>
+
+    <div class="control">
+        <select class="calcurates-delivery-date-time select" id="calcurates_delivery_date_time"
+                data-bind="
                     attr: {
                         id: uid,
                         name: inputName,
@@ -12,9 +19,12 @@
                     hasFocus: focused,
                     value: value,
                     options: options,
-                    optionsValue: 'id',
-                    optionsText: timeOptionsText,
+                    optionsValue: 'value',
+                    optionsText: 'label',
                     optionsCaption: caption,
                     event: {change: onChangeTime}
                     ">
-</select>
+        </select>
+    </div>
+</div>
+

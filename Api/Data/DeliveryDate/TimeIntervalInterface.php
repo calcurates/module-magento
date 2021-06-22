@@ -16,6 +16,7 @@ interface TimeIntervalInterface
     public const FEE_AMOUNT = 'fee_amount';
     public const FROM = 'from';
     public const TO = 'to';
+    public const INTERVAL_FORMATTED = 'interval_formatted';
 
     /**
      * @return string
@@ -60,4 +61,15 @@ interface TimeIntervalInterface
      * @return void
      */
     public function setTo(string $to): void;
+
+    /**
+     * @return string
+     */
+    public function getIntervalFormatted(): string;
+
+    /**
+     * @param string $intervalFormatted
+     * @return void
+     */
+    public function setIntervalFormatted(string $intervalFormatted): void;
 }

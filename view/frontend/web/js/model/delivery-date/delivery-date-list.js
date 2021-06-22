@@ -24,7 +24,9 @@ define([
          */
         updateStoresSettingsFromRates: function (ratesData) {
             var deliveryDates = {},
-                currentRate = quote.shippingMethod();
+                currentRate = quote.shippingMethod(),
+                prevDeliveryDates = this.currentDeliveryDatesList(),
+                currentDeliveryDates = [];
 
             ratesData.forEach(function (rate) {
                 var calcuratesData = rate.extension_attributes.calcurates_data || {};
@@ -39,21 +41,27 @@ define([
                 deliveryDates[rate.carrier_code + '_' + rate.method_code] = calcuratesData.delivery_dates_list;
 
                 if (currentRate && currentRate.carrier_code === rate.carrier_code && currentRate.method_code === rate.method_code) {
-                    this.currentDeliveryDatesList(calcuratesData.delivery_dates_list)
+                    currentDeliveryDates = calcuratesData.delivery_dates_list;
                 }
             }.bind(this));
+
+            if (prevDeliveryDates != currentDeliveryDates) {
+                this.currentDeliveryDatesList(currentDeliveryDates);
+            }
 
             this.deliveryDateList(deliveryDates);
         },
 
         updateShippingMethod: function (method) {
-            var currentDeliveryDates = [];
+            var currentDeliveryDates = [],
+                prevDeliveryDates = this.currentDeliveryDatesList();
 
             if (method && method.carrier_code && method.method_code) {
                 currentDeliveryDates = this.deliveryDateList()[method.carrier_code + '_' + method.method_code] || [];
             }
-
-            this.currentDeliveryDatesList(currentDeliveryDates);
+            if (prevDeliveryDates != currentDeliveryDates) {
+                this.currentDeliveryDatesList(currentDeliveryDates);
+            }
         },
 
         /**

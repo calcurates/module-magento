@@ -27,7 +27,8 @@ define([
     return Select.extend({
         defaults: {
             caption: $t('Choose a Delivery Time...'),
-            template: 'Calcurates_ModuleMagento/delivery-date/time-select'
+            template: 'Calcurates_ModuleMagento/delivery-date/time-select',
+            label: $t('Delivery Time Slot')
         },
 
         initObservable: function () {
@@ -36,9 +37,14 @@ define([
             deliveryDateList.currentDate.subscribe(function (data) {
                 var options = [];
                 if (data && data.time_intervals) {
-                    options = data.time_intervals;
+                    data.time_intervals.forEach(function (timeInterval){
+                        options.push({
+                            value: timeInterval.id,
+                            label: this.timeOptionsText(timeInterval)
+                        })
+                    }.bind(this));
                 }
-                this.options(options);
+                this.setOptions(options);
                 this.value("");
             }, this);
 
@@ -49,7 +55,7 @@ define([
         },
 
         timeOptionsText: function (timeInterval) {
-            var optionLabel = timeInterval.from + ' - ' + timeInterval.to,
+            var optionLabel = timeInterval.interval_formatted,
                 formattedPrice = '';
 
             if (timeInterval.fee_amount) {

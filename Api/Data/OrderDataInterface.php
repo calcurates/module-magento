@@ -19,6 +19,7 @@ interface OrderDataInterface
     public const DELIVERY_DATE_TIME_TO = 'delivery_date_time_to';
     public const BASE_DD_FEE_AMOUNT = 'base_dd_fee_amount';
     public const DD_FEE_AMOUNT = 'dd_fee_amount';
+    public const DELIVERY_DATES = 'delivery_dates';
 
     /**
      * @return int
@@ -96,4 +97,15 @@ interface OrderDataInterface
      * @return void
      */
     public function setDeliveryDateFeeAmount(float $feeAmount): void;
+
+    /**
+     * @return array
+     */
+    public function getDeliveryDates(): array;
+
+    /**
+     * @param array $deliveryDates
+     * @return void
+     */
+    public function setDeliveryDates(array $deliveryDates): void;
 }

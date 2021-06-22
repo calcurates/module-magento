@@ -19,6 +19,7 @@ interface QuoteDataInterface
     public const DELIVERY_DATE_TIME_FROM = 'delivery_date_time_from';
     public const DELIVERY_DATE_TIME_TO = 'delivery_date_time_to';
     public const DELIVERY_DATE_TIME_FEE = 'delivery_date_time_fee';
+    public const DELIVERY_DATES = 'delivery_dates';
 
     /**
      * @return int
@@ -96,4 +97,15 @@ interface QuoteDataInterface
      * @return void
      */
     public function setDeliveryDateTimeFee(float $timeFee): void;
+
+    /**
+     * @return array
+     */
+    public function getDeliveryDates(): array;
+
+    /**
+     * @param array $deliveryDates
+     * @return void
+     */
+    public function setDeliveryDates(array $deliveryDates): void;
 }

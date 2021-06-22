@@ -27,14 +27,22 @@ define([
     return Select.extend({
         defaults: {
             caption: $t('Choose a Delivery Date...'),
-            template: 'Calcurates_ModuleMagento/delivery-date/date-select'
+            template: 'Calcurates_ModuleMagento/delivery-date/date-select',
+            label: $t('Delivery Date')
         },
 
         initObservable: function () {
             this._super().observe('options');
 
             deliveryDateList.currentDeliveryDatesList.subscribe(function (data) {
-                this.options(data);
+                var options = [];
+                data.forEach(function (deliveryDate){
+                    options.push({
+                        value: deliveryDate.id,
+                        label: this.dateText(deliveryDate)
+                    })
+                }.bind(this));
+                this.setOptions(options);
                 this.value("");
                 this.onChangeDate();
             }, this);
