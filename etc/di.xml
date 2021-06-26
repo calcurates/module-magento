@@ -143,4 +143,27 @@
     <preference for="Calcurates\ModuleMagento\Api\EstimateShippingByProductsGuestInterface" type="Calcurates\ModuleMagento\Model\Estimate\EstimateShippingByProductsGuest"/>
     <preference for="Calcurates\ModuleMagento\Api\EstimateShippingByProductsInterface" type="Calcurates\ModuleMagento\Model\Estimate\EstimateShippingByProducts"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\SimpleRateInterface" type="Calcurates\ModuleMagento\Model\Estimate\SimpleRate"/>
+
+    <!-- Quote Data -->
+    <preference for="Calcurates\ModuleMagento\Api\SalesData\QuoteData\GetQuoteDataInterface" type="Calcurates\ModuleMagento\Model\SalesData\QuoteData\GetQuoteData"/>
+    <preference for="Calcurates\ModuleMagento\Api\SalesData\QuoteData\SaveQuoteDataInterface" type="Calcurates\ModuleMagento\Model\SalesData\QuoteData\SaveQuoteData"/>
+    <preference for="Calcurates\ModuleMagento\Api\Data\QuoteDataInterface" type="Calcurates\ModuleMagento\Model\QuoteData"/>
+    <preference for="Calcurates\ModuleMagento\Api\Data\OrderDataInterface" type="Calcurates\ModuleMagento\Model\OrderData"/>
+    <preference for="Calcurates\ModuleMagento\Api\SalesData\OrderData\GetOrderDataInterface" type="Calcurates\ModuleMagento\Model\SalesData\OrderData\GetOrderData"/>
+    <preference for="Calcurates\ModuleMagento\Api\SalesData\OrderData\SaveOrderDataInterface" type="Calcurates\ModuleMagento\Model\SalesData\OrderData\SaveOrderData"/>
+    <!-- Delivery Dates -->
+    <preference for="Calcurates\ModuleMagento\Api\Data\DeliveryDate\DateInterface" type="Calcurates\ModuleMagento\Model\DeliveryDate\Date"/>
+    <preference for="Calcurates\ModuleMagento\Api\Data\DeliveryDate\TimeIntervalInterface" type="Calcurates\ModuleMagento\Model\DeliveryDate\TimeInterval"/>
+
+    <!-- for save delivery date data -->
+    <type name="Magento\Checkout\Api\ShippingInformationManagementInterface">
+        <plugin name="Calcurates_ModuleMagento::SaveDeliveryDatesPlugin"
+                type="Calcurates\ModuleMagento\Plugin\QuoteDataSave\Checkout\Model\SaveDeliveryDateFromShippingInfoPlugin"/>
+    </type>
+
+    <!-- Add delivery date fee to shipping amount -->
+    <type name="Magento\Quote\Model\Quote\Address\Total\Shipping">
+        <plugin name="Calcurates_ModuleMagento::AddDeliveryDateFee"
+                type="Calcurates\ModuleMagento\Plugin\DeliveryDateFee\Quote\Address\Total\AddShippingFeeToShippingTotal" />
+    </type>
 </config>

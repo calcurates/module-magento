@@ -10,9 +10,9 @@ namespace Calcurates\ModuleMagento\Setup;
 
 use Calcurates\ModuleMagento\Setup\Operation\AddCalcuratesServiceAndSourceFields;
 use Calcurates\ModuleMagento\Setup\Operation\AddCalcuratesShippingLabelDataField;
-use Calcurates\ModuleMagento\Setup\Operation\AddDeliveryDatesField;
 use Calcurates\ModuleMagento\Setup\Operation\AddPackagesField;
 use Calcurates\ModuleMagento\Setup\Operation\AddQuoteAndOrderOriginField;
+use Calcurates\ModuleMagento\Setup\Operation\MoveCalcuratesDataToTable;
 use Calcurates\ModuleMagento\Setup\Operation\RemoveQuoteAndOrderOriginField;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
@@ -46,9 +46,9 @@ class UpgradeData implements UpgradeDataInterface
     private $addPackagesField;
 
     /**
-     * @var AddDeliveryDatesField
+     * @var MoveCalcuratesDataToTable
      */
-    private $addDeliveryDatesField;
+    private $moveCalcuratesDataToTable;
 
     public function __construct(
         AddQuoteAndOrderOriginField $addQuoteAndOrderOriginField,
@@ -56,14 +56,14 @@ class UpgradeData implements UpgradeDataInterface
         AddCalcuratesServiceAndSourceFields $addCalcuratesServiceAndSourceFields,
         AddCalcuratesShippingLabelDataField $addCalcuratesShippingLabelDataField,
         AddPackagesField $addPackagesField,
-        AddDeliveryDatesField $addDeliveryDatesField
+        MoveCalcuratesDataToTable $moveCalcuratesDataToTable
     ) {
         $this->addQuoteAndOrderOriginField = $addQuoteAndOrderOriginField;
         $this->removeQuoteAndOrderOriginField = $removeQuoteAndOrderOriginField;
         $this->addCalcuratesServiceAndSourceFields = $addCalcuratesServiceAndSourceFields;
         $this->addCalcuratesShippingLabelDataField = $addCalcuratesShippingLabelDataField;
         $this->addPackagesField = $addPackagesField;
-        $this->addDeliveryDatesField = $addDeliveryDatesField;
+        $this->moveCalcuratesDataToTable = $moveCalcuratesDataToTable;
     }
 
     /**
@@ -93,8 +93,8 @@ class UpgradeData implements UpgradeDataInterface
             $this->addPackagesField->execute($setup);
         }
 
-        if (version_compare($context->getVersion(), '1.23.0', '<')) {
-            $this->addDeliveryDatesField->execute($setup);
+        if (version_compare($context->getVersion(), '1.32.0', '<')) {
+            $this->moveCalcuratesDataToTable->execute($setup);
         }
 
         // @TODO: migrate old data to calcurates shipment table, and use it instead of attributes

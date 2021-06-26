@@ -131,6 +131,21 @@ class DeliveryDateFormatter
     }
 
     /**
+     * @param string $from
+     * @param string $to
+     * @param string $date
+     * @return string
+     * @throws \Exception
+     */
+    public function formatTimeInterval(string $from, string $to, string $date = '2020-02-02'): string
+    {
+        $from = new \DateTime($date . ' ' . $from);
+        $to = new \DateTime($date . ' ' . $to);
+
+        return $from->format('H:i') . ' - ' . $to->format('H:i');
+    }
+
+    /**
      * @param \DateTime $from
      * @param \DateTime $to
      * @return string
@@ -177,10 +192,10 @@ class DeliveryDateFormatter
         $prefix = $dateTime->format('D') . ' ';
 
         return $prefix . $this->timezone->formatDateTime(
-                $dateTime,
-                \IntlDateFormatter::SHORT,
-                \IntlDateFormatter::NONE
-            );
+            $dateTime,
+            \IntlDateFormatter::SHORT,
+            \IntlDateFormatter::NONE
+        );
     }
 
     /**

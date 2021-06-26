@@ -10,9 +10,7 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Model\CheckoutConverter;
 
-use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
-use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
@@ -40,22 +38,22 @@ class QuoteToOrderConverter
     private $orderRepository;
 
     /**
-     * @var SerializerInterface
+     * @var ConvertQuoteData
      */
-    private $serializer;
+    private $convertQuoteData;
 
     public function __construct(
         ConvertPackages $convertPackages,
         ConvertServicesSources $convertServicesSources,
         ShippingMethodManager $shippingMethodManager,
         OrderRepositoryInterface $orderRepository,
-        SerializerInterface $serializer
+        ConvertQuoteData $convertQuoteData
     ) {
         $this->convertPackages = $convertPackages;
         $this->convertServicesSources = $convertServicesSources;
         $this->shippingMethodManager = $shippingMethodManager;
         $this->orderRepository = $orderRepository;
-        $this->serializer = $serializer;
+        $this->convertQuoteData = $convertQuoteData;
     }
 
     /**
@@ -66,18 +64,6 @@ class QuoteToOrderConverter
     {
         // @TODO: store all data in external table
         $orderChanged = false;
-        $deliveryDates = $quote->getData(CustomSalesAttributesInterface::DELIVERY_DATES);
-        if ($deliveryDates) {
-            $deliveryDates = $this->serializer->unserialize($deliveryDates);
-            $deliveryDates = $deliveryDates[$order->getShippingMethod(false)] ?? null;
-            if ($deliveryDates) {
-                $order->setData(
-                    CustomSalesAttributesInterface::DELIVERY_DATES,
-                    $this->serializer->serialize($deliveryDates)
-                );
-                $orderChanged = true;
-            }
-        }
 
         $carrierData = $this->shippingMethodManager->getCarrierData($order->getShippingMethod(false));
 
@@ -86,6 +72,8 @@ class QuoteToOrderConverter
             $this->convertServicesSources->convert($quote, $order);
             $orderChanged = true;
         }
+
+        $this->convertQuoteData->convert($quote, $order);
 
         if ($orderChanged) {
             $this->orderRepository->save($order);

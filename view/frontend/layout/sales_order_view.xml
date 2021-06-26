@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  @author Calcurates Team
+  @copyright Copyright © 2021 Calcurates (https://www.calcurates.com)
+  @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+  @package Calcurates_ModuleMagento
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\Framework\View\Element\Template"
+                   name="calcurates.delivery_date"
+                   template="Calcurates_ModuleMagento::order/delivery_date.phtml"
+                   after="sales.order.info">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Calcurates\ModuleMagento\ViewModel\OrderDeliveryDate</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

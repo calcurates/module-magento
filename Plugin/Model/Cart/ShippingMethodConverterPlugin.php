@@ -13,6 +13,7 @@ namespace Calcurates\ModuleMagento\Plugin\Model\Cart;
 use Calcurates\ModuleMagento\Api\Data\RateDataInterface;
 use Calcurates\ModuleMagento\Api\Data\RateDataInterfaceFactory;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
+use Calcurates\ModuleMagento\Client\Response\DeliveryDateProcessor;
 use Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter;
 use Calcurates\ModuleMagento\Model\Config;
 use Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplaySource;
@@ -36,6 +37,11 @@ class ShippingMethodConverterPlugin
     private $rateDataFactory;
 
     /**
+     * @var DeliveryDateProcessor
+     */
+    private $deliveryDateProcessor;
+
+    /**
      * ShippingMethodConverterPlugin constructor.
      * @param Config $configProvider
      * @param DeliveryDateFormatter $deliveryDateFormatter
@@ -44,11 +50,13 @@ class ShippingMethodConverterPlugin
     public function __construct(
         Config $configProvider,
         DeliveryDateFormatter $deliveryDateFormatter,
-        RateDataInterfaceFactory $rateDataFactory
+        RateDataInterfaceFactory $rateDataFactory,
+        DeliveryDateProcessor $deliveryDateProcessor
     ) {
         $this->configProvider = $configProvider;
         $this->deliveryDateFormatter = $deliveryDateFormatter;
         $this->rateDataFactory = $rateDataFactory;
+        $this->deliveryDateProcessor = $deliveryDateProcessor;
     }
 
     /**
@@ -79,6 +87,8 @@ class ShippingMethodConverterPlugin
                     break;
             }
         }
+
+        $calcuratesRateData->setDeliveryDatesList($this->getDeliveryDatesList($rateModel));
 
         if ($tooltip) {
             $calcuratesRateData->setTooltipMessage($tooltip);
@@ -115,5 +125,20 @@ class ShippingMethodConverterPlugin
         }
 
         return $deliveryDatesString;
+    }
+
+    /**
+     * @param \Magento\Quote\Model\Quote\Address\Rate $rateModel
+     * @return array
+     */
+    private function getDeliveryDatesList($rateModel): array
+    {
+        $deliveryDatesData = $rateModel->getData(RatesResponseProcessor::CALCURATES_DELIVERY_DATES);
+
+        if (!isset($deliveryDatesData['timeSlots'])) {
+            return [];
+        }
+
+        return $this->deliveryDateProcessor->getDeliveryDates($deliveryDatesData['timeSlots']);
     }
 }

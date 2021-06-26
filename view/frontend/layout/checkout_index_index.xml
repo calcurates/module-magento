@@ -45,6 +45,36 @@
                                                                 </item>
                                                             </item>
                                                         </item>
+                                                        <item name="calcurates_delivery_date" xsi:type="array">
+                                                            <item name="component" xsi:type="string">Calcurates_ModuleMagento/js/view/checkout/delivery-date/delivery-date-fieldset</item>
+                                                            <item name="displayArea" xsi:type="string">shippingAdditional</item>
+                                                            <item name="sortOrder" xsi:type="number">10</item>
+                                                            <item name="dataScope" xsi:type="string">calcurates_delivery_date</item>
+                                                            <item name="provider" xsi:type="string">checkoutProvider</item>
+                                                            <item name="config" xsi:type="array">
+                                                                <item name="deps" xsi:type="array">
+                                                                    <item name="0" xsi:type="string">checkoutProvider</item>
+                                                                </item>
+                                                            </item>
+                                                            <item name="children" xsi:type="array">
+                                                                <item name="calcurates-delivery-date-date" xsi:type="array">
+                                                                    <item name="component" xsi:type="string">Calcurates_ModuleMagento/js/view/checkout/delivery-date/date-select</item>
+                                                                    <item name="dataScope" xsi:type="string">calcurates_delivery_date_id</item>
+                                                                    <item name="provider" xsi:type="string">checkoutProvider</item>
+                                                                    <item name="validation" xsi:type="array">
+                                                                        <item name="required-entry" xsi:type="string">true</item>
+                                                                    </item>
+                                                                </item>
+                                                                <item name="calcurates-delivery-date-time" xsi:type="array">
+                                                                    <item name="component" xsi:type="string">Calcurates_ModuleMagento/js/view/checkout/delivery-date/time-select</item>
+                                                                    <item name="dataScope" xsi:type="string">calcurates_delivery_date_time_id</item>
+                                                                    <item name="provider" xsi:type="string">checkoutProvider</item>
+                                                                    <item name="validation" xsi:type="array">
+                                                                        <item name="required-entry" xsi:type="string">true</item>
+                                                                    </item>
+                                                                </item>
+                                                            </item>
+                                                        </item>
                                                     </item>
                                                 </item>
                                                 <item name="step-config" xsi:type="array">
@@ -53,6 +83,28 @@
                                                             <item name="children" xsi:type="array">
                                                                 <item name="calcurates-rates-validation" xsi:type="array">
                                                                     <item name="component" xsi:type="string">Calcurates_ModuleMagento/js/view/shipping-rates-validation/calcurates</item>
+                                                                </item>
+                                                            </item>
+                                                        </item>
+                                                    </item>
+                                                </item>
+                                            </item>
+                                        </item>
+                                    </item>
+                                </item>
+                                <item name="sidebar" xsi:type="array">
+                                    <item name="children" xsi:type="array">
+                                        <item name="shipping-information" xsi:type="array">
+                                            <item name="children" xsi:type="array">
+                                                <item name="ship-to" xsi:type="array">
+                                                    <item name="children" xsi:type="array">
+                                                        <item name="calcurates-delivery-date-sidebar" xsi:type="array">
+                                                            <item name="component" xsi:type="string">Calcurates_ModuleMagento/js/view/checkout/delivery-date/sidebar</item>
+                                                            <item name="displayArea" xsi:type="string">calcurates-delivery-date-sidebar</item>
+                                                            <item name="config" xsi:type="array">
+                                                                <item name="template" xsi:type="string">Calcurates_ModuleMagento/delivery-date/sidebar</item>
+                                                                <item name="deps" xsi:type="array">
+                                                                    <item name="0" xsi:type="string">checkout.sidebar.shipping-information</item>
                                                                 </item>
                                                             </item>
                                                         </item>

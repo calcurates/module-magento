@@ -1,0 +1,30 @@
+<div class="field date">
+
+    <label class="label" data-bind="attr: { for: uid }" >
+        <span data-bind="i18n: label"></span>
+    </label>
+
+    <div class="control">
+        <select class="calcurates-store select" id="calcurates_delivery_date_date"
+                data-bind="
+                    attr: {
+                        id: uid,
+                        name: inputName,
+                        disabled: disabled,
+                        'aria-describedby': getDescriptionId(),
+                        'aria-required': required,
+                        'aria-invalid': error() ? true : 'false',
+                        placeholder: placeholder
+                    },
+                    hasFocus: focused,
+                    value: value,
+                    options: options,
+                    optionsValue: 'value',
+                    optionsText: 'label',
+                    optionsCaption: caption,
+                    event: {change: onChangeDate}
+                    ">
+        </select>
+    </div>
+</div>
+
