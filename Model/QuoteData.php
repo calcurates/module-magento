@@ -85,8 +85,14 @@ class QuoteData extends \Magento\Framework\Model\AbstractModel implements QuoteD
     public function getDeliveryDates(): array
     {
         $deliveryDates = $this->getData(self::DELIVERY_DATES);
+        if ($deliveryDates) {
+            if (!is_array($deliveryDates)) { // SAAS-2292
+                $deliveryDates = [$deliveryDates];
+            }
+            return $deliveryDates;
+        }
 
-        return $deliveryDates ?: [];
+        return [];
     }
 
     public function setDeliveryDates(array $deliveryDates): void

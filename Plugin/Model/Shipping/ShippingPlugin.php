@@ -52,7 +52,7 @@ class ShippingPlugin
     public function aroundCollectRates(Shipping $subject, \Closure $proceed, RateRequest $request)
     {
         try {
-            // make Calurates as first carrier for process
+            // make Calcurates as first carrier for process
             $allCarriers = $this->getAllCarrierCodesCalcuratesFirst($request->getStoreId());
             $request->setIsAllCarriersCalcuratesFirst(false);
             if (!$request->getLimitCarrier()) {

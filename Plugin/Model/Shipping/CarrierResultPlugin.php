@@ -27,16 +27,14 @@ class CarrierResultPlugin
     }
 
     /**
-     * @param array $rates
-     * @return array
      * @see SAAS-1244
      */
-    private function sortRates(array $rates)
+    private function sortRates(array $rates): array
     {
         usort($rates, static function (
             \Magento\Quote\Model\Quote\Address\RateResult\AbstractResult $a,
             \Magento\Quote\Model\Quote\Address\RateResult\AbstractResult $b
-        ) {
+        ): int {
             if ($a->getData('priority') === $b->getData('priority')) {
                 return $a->getData('price') <=> $b->getData('price');
             }
