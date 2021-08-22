@@ -12,16 +12,20 @@ namespace Calcurates\ModuleMagento\Controller\Adminhtml\Order\Shipment;
 
 use Calcurates\ModuleMagento\Model\Shipment\Manifest\ManifestCreator;
 use Calcurates\ModuleMagento\Model\Shipment\Manifest\ManifestPdfBuilder;
+use Exception;
+use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\Response\Http\FileFactory;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Stdlib\DateTime\DateTime;
+use Magento\Sales\Model\ResourceModel\Order\Shipment\Collection;
 use Magento\Sales\Model\ResourceModel\Order\Shipment\CollectionFactory;
 use Magento\Ui\Component\MassAction\Filter;
 
-class PrintManifests extends \Magento\Backend\App\Action
+class PrintManifests extends Action
 {
     /**
      * Authorization level of a basic admin session
@@ -79,11 +83,12 @@ class PrintManifests extends \Magento\Backend\App\Action
     /**
      * Create manifests for specified shipments
      *
-     * @return ResponseInterface|\Magento\Backend\Model\View\Result\Redirect
+     * @return ResponseInterface|Redirect
      */
     public function execute()
     {
         try {
+            /** @var Collection $collection */
             $collection = $this->filter->getCollection($this->collectionFactory->create());
             $pdf = $this->manifestPdfBuilder->getPdfForShipments($collection);
             $fileContent = ['type' => 'string', 'value' => $pdf->render(), 'rm' => true];
@@ -94,11 +99,11 @@ class PrintManifests extends \Magento\Backend\App\Action
                 DirectoryList::VAR_DIR,
                 'application/pdf'
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
         }
 
-        /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
+        /** @var Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
         $resultRedirect->setPath('sales/shipment/index');
 

@@ -12,14 +12,7 @@
                 <settings>
                     <url path="adminhtml/order_shipment/createManifests"/>
                     <type>calcurates_manifests_create</type>
-                    <label translate="true">Create Manifests</label>
-                </settings>
-            </action>
-            <action name="calcurates_manifests_print">
-                <settings>
-                    <url path="adminhtml/order_shipment/printManifests"/>
-                    <type>calcurates_manifests_print</type>
-                    <label translate="true">Download Manifests</label>
+                    <label translate="true">Print Manifests</label>
                 </settings>
             </action>
         </massaction>
