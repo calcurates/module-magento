@@ -139,7 +139,7 @@
             <argument name="responseProcessor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\CompositeProcessor</argument>
         </arguments>
     </type>
-    
+
     <preference for="Calcurates\ModuleMagento\Api\EstimateShippingByProductsGuestInterface" type="Calcurates\ModuleMagento\Model\Estimate\EstimateShippingByProductsGuest"/>
     <preference for="Calcurates\ModuleMagento\Api\EstimateShippingByProductsInterface" type="Calcurates\ModuleMagento\Model\Estimate\EstimateShippingByProducts"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\SimpleRateInterface" type="Calcurates\ModuleMagento\Model\Estimate\SimpleRate"/>
@@ -165,5 +165,9 @@
     <type name="Magento\Quote\Model\Quote\Address\Total\Shipping">
         <plugin name="Calcurates_ModuleMagento::AddDeliveryDateFee"
                 type="Calcurates\ModuleMagento\Plugin\DeliveryDateFee\Quote\Address\Total\AddShippingFeeToShippingTotal" />
+    </type>
+    <type name="Magento\Sales\Model\ResourceModel\Order\Shipment\Grid\Collection">
+        <plugin name="Calcurates\ModuleMagento\Plugin\Model\Order\ResourceModel\Shipment\Grid\Collection"
+                type="Calcurates\ModuleMagento\Plugin\Model\Order\ResourceModel\Shipment\Grid\Collection"/>
     </type>
 </config>

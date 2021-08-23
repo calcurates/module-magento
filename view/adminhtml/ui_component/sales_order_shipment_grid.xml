@@ -18,4 +18,17 @@
         </massaction>
         <paging name="listing_paging"/>
     </listingToolbar>
+    <columns name="sales_order_shipment_columns">
+        <column name="carrier_code"
+                class="Calcurates\ModuleMagento\UI\Component\Listing\Order\Shipment\Column\Carrier"
+                component="Magento_Ui/js/grid/columns/select">
+            <settings>
+                <filter>select</filter>
+                <options class="Calcurates\ModuleMagento\UI\Component\Listing\Order\Shipment\Column\Carrier\Options"/>
+                <dataType>select</dataType>
+                <label translate="true">Carrier</label>
+                <visible>true</visible>
+            </settings>
+        </column>
+    </columns>
 </listing>
