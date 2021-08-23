@@ -11,13 +11,18 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Controller\Adminhtml\Order\Shipment;
 
 use Calcurates\ModuleMagento\Model\Shipment\Manifest\ManifestCreator;
+use Exception;
+use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Backend\Model\View\Result\Redirect;
+use Magento\Framework\Controller\Result\Forward;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Validator\Exception as ValidatorException;
+use Magento\Sales\Model\ResourceModel\Order\Shipment\Collection;
 use Magento\Sales\Model\ResourceModel\Order\Shipment\CollectionFactory;
 use Magento\Ui\Component\MassAction\Filter;
 
-class CreateManifests extends \Magento\Backend\App\Action
+class CreateManifests extends Action
 {
     /**
      * Authorization level of a basic admin session
@@ -56,23 +61,27 @@ class CreateManifests extends \Magento\Backend\App\Action
     /**
      * Create manifests for specified shipments
      *
-     * @return \Magento\Backend\Model\View\Result\Redirect
+     * @return Redirect
      */
     public function execute()
     {
         try {
+            /** @var Collection $collection */
             $collection = $this->filter->getCollection($this->collectionFactory->create());
             $this->manifestCreator->createManifestsForShipments($collection);
-            $this->messageManager->addSuccessMessage(__('Success: the manifests has been created'));
+
+            /** @var Forward $resultForward */
+            $resultForward = $this->resultFactory->create(ResultFactory::TYPE_FORWARD);
+            $resultForward->forward('printManifests');
         } catch (ValidatorException $e) {
             foreach ($e->getMessages() as $message) {
                 $this->messageManager->addErrorMessage($message->getText());
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
         }
 
-        /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
+        /** @var Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
         $resultRedirect->setPath('sales/shipment/index');
 

@@ -1,10 +1,11 @@
 "Field ","Field "
 " is required."," is required."
-Calcurates,Calcurates
-Enabled,Enabled
+"Calcurates","Calcurates"
+"Enabled","Enabled"
 "Calcurates API Token","Calcurates API Token"
 "Token supplied by Calcurates","Token supplied by Calcurates"
 "API URL","API URL"
 "Enable Debug","Enable Debug"
 "Default Error Message","Default Error Message"
 "Display rates with tax and duties","Display rates with tax and duties"
+"Print Manifests","Print Manifests"
