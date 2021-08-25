@@ -148,9 +148,12 @@ class Config implements ConfigProviderInterface
         static $composerPackage = null;
 
         if (!$composerPackage) {
-            $composerPackage = ComposerFactory::create(
+            $composerPackage = (new ComposerFactory())->createComposer(
                 new BufferIO(),
-                __DIR__ . '/../composer.json'
+                __DIR__ . '/../composer.json',
+                true,
+                null,
+                false
             )->getPackage();
         }
 
