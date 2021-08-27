@@ -103,7 +103,7 @@ class ProductRateRequestBuilder
             $product = $this->productRepository->getById($productId, false, $storeId, true);
 
             // @TODO: change implementation for configurables and bundles!
-            if ($product->getTypeId() == Configurable::TYPE_CODE) {
+            if ($product->getTypeId() === Configurable::TYPE_CODE) {
                 $configurableChildIds = $product->getTypeInstance()->getUsedProductIds($product);
 
                 if (!isset($configurableChildIds[0])) {
@@ -115,14 +115,17 @@ class ProductRateRequestBuilder
             $priceModel = $product->getPriceModel();
             $productBasePrice = $priceModel->getBasePrice($product);
 
+            $isVirtual = $product->isVirtual();
+
             $itemsSourceCodes = $this->getSourceCodesPerSkus->execute([$product->getSku()], $websiteCode);
             $apiRequestBody['products'][] = [
                 'sku' => $product->getSku(),
+                'isVirtual' => $isVirtual,
                 'priceWithTax' => round($productBasePrice, 2),
                 'priceWithoutTax' => round($productBasePrice, 2),
                 'discountAmount' => round(0.00, 2),
                 'quantity' => 1,
-                'weight' => $product->isVirtual() ? 0 : $product->getWeight(),
+                'weight' => $isVirtual ? 0 : $product->getWeight(),
                 'categories' => $product->getCategoryIds(),
                 'attributes' => $this->productAttributesService->getAttributes($product),
                 'inventories' => $itemsSourceCodes[$product->getSku()] ?? []

@@ -85,13 +85,16 @@ class ShippingLabelRequestBuilder
         /** @var \Magento\Sales\Api\Data\ShipmentItemInterface $item */
         foreach ($request->getOrderShipment()->getAllItems() as $item) {
             $product = $this->productRepository->getById($item->getProductId());
+            $isVirtual = (bool) $item->getIsVirtual();
+
             $apiRequestBody['products'][] = [
                 'priceWithTax' => round($item->getBasePriceInclTax(), 2),
                 'priceWithoutTax' => round($item->getBasePrice(), 2),
                 'discountAmount' => round($item->getBaseDiscountAmount() / $item->getQty(), 2),
                 'quantity' => round($item->getQty(), 0),
-                'weight' => $item->getWeight(),
+                'weight' => $isVirtual ? 0 : $item->getWeight(),
                 'sku' => $item->getSku(),
+                'isVirtual' => $isVirtual,
                 'categories' => $product->getCategoryIds(),
                 'attributes' => $this->productAttributesService->getAttributes($product),
             ];
