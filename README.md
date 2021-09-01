@@ -1,8 +1,8 @@
 ### Calcurates magento module
 
 #### Requirements
-- Magento >= 2.3.5
-- PHP >= 7.1.3
+- Magento >= 2.3
+- PHP >= 7.1
 
 #### Manual installation
 - Download [latest release](https://github.com/calcurates/module-magento/releases/latest)
