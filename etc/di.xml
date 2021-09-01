@@ -177,11 +177,15 @@
     <!-- Delivery Dates -->
     <preference for="Calcurates\ModuleMagento\Api\Data\DeliveryDate\DateInterface" type="Calcurates\ModuleMagento\Model\DeliveryDate\Date"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\DeliveryDate\TimeIntervalInterface" type="Calcurates\ModuleMagento\Model\DeliveryDate\TimeInterval"/>
+    <preference for="Calcurates\ModuleMagento\Api\Data\InStorePickup\AddressInterface" type="Calcurates\ModuleMagento\Model\InStorePickup\Address"/>
 
-    <!-- for save delivery date data -->
     <type name="Magento\Checkout\Api\ShippingInformationManagementInterface">
         <plugin name="Calcurates_ModuleMagento::SaveDeliveryDatesPlugin"
-                type="Calcurates\ModuleMagento\Plugin\QuoteDataSave\Checkout\Model\SaveDeliveryDateFromShippingInfoPlugin"/>
+                type="Calcurates\ModuleMagento\Plugin\QuoteDataSave\Checkout\Model\SaveDeliveryDateFromShippingInfoPlugin"
+                sortOrder="10"/>
+        <plugin name="Calcurates_ModuleMagento::AddPickupLocationForQuoteAddress"
+                type="Calcurates\ModuleMagento\Plugin\Model\Checkout\AddPickupLocationForQuoteAddress"
+                sortOrder="20"/>
     </type>
 
     <!-- Add delivery date fee to shipping amount -->

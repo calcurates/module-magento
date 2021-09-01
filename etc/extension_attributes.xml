@@ -14,4 +14,8 @@
         <attribute code="calcurates_delivery_date_id" type="string"/>
         <attribute code="calcurates_delivery_date_time_id" type="string"/>
     </extension_attributes>
+
+    <extension_attributes for="Magento\Quote\Api\Data\AddressInterface">
+        <attribute code="calcurates_pickup_location_quote_address" type="Calcurates\ModuleMagento\Api\Data\InStorePickup\AddressInterface"/>
+    </extension_attributes>
 </config>
