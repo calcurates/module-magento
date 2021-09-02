@@ -86,8 +86,8 @@ class OrderData extends \Magento\Framework\Model\AbstractModel implements OrderD
     {
         $deliveryDates = $this->getData(self::DELIVERY_DATES);
         if ($deliveryDates) {
-            if (!is_array($deliveryDates)) { // SAAS-2292
-                $deliveryDates = [$deliveryDates];
+            if (!is_array($deliveryDates)) {
+                $deliveryDates = [];
             }
             return $deliveryDates;
         }
