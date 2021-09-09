@@ -32,7 +32,7 @@ class ShippingAddEstimateFlagToRequestPlugin
     /**
      * @param Shipping $subject
      * @param RateRequest $request
-     * @return array
+     * @return RateRequest[]
      */
     public function beforeCollectRates(Shipping $subject, RateRequest $request): array
     {
@@ -46,8 +46,15 @@ class ShippingAddEstimateFlagToRequestPlugin
      */
     public function isAjaxFromCartPage(): bool
     {
-        $referer = $this->request->getHeader('referer');
+        if (!$this->request->isXmlHttpRequest()) {
+            return false;
+        }
 
-        return $this->request->isXmlHttpRequest() && strpos($referer, 'checkout/cart') !== false;
+        $referer = $this->request->getHeader('referer');
+        if (!$referer) {
+            return false;
+        }
+
+        return strpos($referer, 'checkout/cart') !== false;
     }
 }
