@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * @author Calcurates Team
  * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
@@ -6,7 +9,6 @@
  * @package Calcurates_ModuleMagento
  */
 
-declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Plugin\Model\Shipping;
 
