@@ -9,6 +9,9 @@
 namespace Calcurates\ModuleMagento\Plugin\Block\Adminhtml\Order;
 
 use Calcurates\ModuleMagento\Model\Carrier;
+use Calcurates\ModuleMagento\Model\Shipment\CarriersSettingsProvider;
+use Calcurates\ModuleMagento\ViewModel\SmartPackaging;
+use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\ShipmentInterface;
 use Magento\Shipping\Block\Adminhtml\Order\Packaging;
@@ -16,13 +19,25 @@ use Magento\Shipping\Block\Adminhtml\Order\Packaging;
 class PackagingPlugin
 {
     /**
-     * @var \Calcurates\ModuleMagento\ViewModel\SmartPackaging
+     * @var SmartPackaging
      */
     private $smartPackaging;
 
-    public function __construct(\Calcurates\ModuleMagento\ViewModel\SmartPackaging $smartPackaging)
-    {
+    /**
+     * @var DataPersistorInterface
+     */
+    private $dataPersistor;
+
+    /**
+     * @param SmartPackaging $smartPackaging
+     * @param DataPersistorInterface $dataPersistor
+     */
+    public function __construct(
+        SmartPackaging $smartPackaging,
+        DataPersistorInterface $dataPersistor
+    ) {
         $this->smartPackaging = $smartPackaging;
+        $this->dataPersistor = $dataPersistor;
     }
 
     /**
@@ -53,6 +68,7 @@ class PackagingPlugin
             return;
         }
 
+        $this->dataPersistor->clear(CarriersSettingsProvider::CARRIERS_SETTINGS_DATA_CODE);
         $subject->setTemplate('Calcurates_ModuleMagento::order/packaging/popup.phtml');
         $subject->setData('calcurates_smart_packaging', $this->smartPackaging);
     }

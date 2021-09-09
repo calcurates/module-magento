@@ -10,3 +10,5 @@
 "Display rates with tax and duties","Display rates with tax and duties"
 "Print Manifests","Print Manifests"
 "No Carrier Info","No Carrier Info"
+"Cannot get Carriers settings with API Calcurates %1","Cannot get Carriers settings with API Calcurates %1"
+"Shipment object should be set for HS Code field rendering","Shipment object should be set for HS Code field rendering"
