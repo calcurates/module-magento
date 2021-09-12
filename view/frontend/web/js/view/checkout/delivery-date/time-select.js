@@ -28,14 +28,20 @@ define([
         defaults: {
             caption: $t('Choose a Delivery Time...'),
             template: 'Calcurates_ModuleMagento/delivery-date/time-select',
-            label: $t('Delivery Time Slot')
+            label: $t('Delivery Time Slot'),
+            additionalCss: '',
+            validationError: '',
+            timeSlotTimeRequired: null,
         },
 
         initObservable: function () {
-            this._super().observe('options');
+            this._super().observe(['options', 'timeSlotTimeRequired', 'additionalCss', 'validationError']);
 
             deliveryDateList.currentDate.subscribe(function (data) {
                 var options = [];
+                this.timeSlotTimeRequired(this.getTimeSlotTimeRequired(deliveryDateList));
+                this.additionalCss(this.getAdditionalCss());
+
                 if (data && data.time_intervals) {
                     data.time_intervals.forEach(function (timeInterval){
                         options.push({
@@ -44,14 +50,25 @@ define([
                         })
                     }.bind(this));
                 }
-                this.setOptions(options);
-                this.value("");
+                if (options.length > 0) {
+                    this.setOptions(options);
+                    if (this.timeSlotTimeRequired()
+                        && 'undefined' !== typeof options[0]
+                    ) {
+                        this.value(options[0].value);
+                        this.validateSelect();
+                    }
+                    this.enable();
+                } else {
+                    this.disable();
+                }
             }, this);
 
             return this;
         },
 
         onChangeTime: function () {
+            this.validateSelect();
         },
 
         timeOptionsText: function (timeInterval) {
@@ -64,6 +81,37 @@ define([
             }
 
             return optionLabel;
+        },
+
+        getTimeSlotTimeRequired: function () {
+            var deliveryDatesMetadata = deliveryDateList.getDeliveryDatesMetadata();
+
+            return !!(deliveryDatesMetadata
+                && deliveryDatesMetadata.time_slot_time_required === true);
+        },
+
+        getAdditionalCss: function () {
+            var initialClasses = '';
+            if (this.timeSlotTimeRequired()) {
+                initialClasses += ' _required';
+            }
+            if (this.validationError()) {
+                initialClasses += ' _error';
+            }
+            return initialClasses;
+        },
+
+        validateSelect: function () {
+            if (this.getTimeSlotTimeRequired() === true
+                && 'undefined' === typeof this.value()
+            ) {
+                this.validationError($t('This is a required field.'));
+                this.additionalCss(this.getAdditionalCss());
+                return false;
+            }
+            this.validationError('');
+            this.additionalCss(this.getAdditionalCss());
+            return true;
         }
     });
 });
