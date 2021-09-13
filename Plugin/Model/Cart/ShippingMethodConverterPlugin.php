@@ -10,13 +10,17 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Plugin\Model\Cart;
 
+use Calcurates\ModuleMagento\Api\Data\MetadataInterfaceFactory;
 use Calcurates\ModuleMagento\Api\Data\RateDataInterface;
 use Calcurates\ModuleMagento\Api\Data\RateDataInterfaceFactory;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Response\DeliveryDateProcessor;
+use Calcurates\ModuleMagento\Client\Response\MetadataPoolInterface;
+use Calcurates\ModuleMagento\Model\Carrier;
 use Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter;
 use Calcurates\ModuleMagento\Model\Config;
 use Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplaySource;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Cart\ShippingMethodConverter;
 
 class ShippingMethodConverterPlugin
@@ -42,21 +46,38 @@ class ShippingMethodConverterPlugin
     private $deliveryDateProcessor;
 
     /**
+     * @var MetadataPoolInterface
+     */
+    private $metadataPool;
+
+    /**
+     * @var MetadataInterfaceFactory
+     */
+    private $metadataInterfaceFactory;
+
+    /**
      * ShippingMethodConverterPlugin constructor.
      * @param Config $configProvider
      * @param DeliveryDateFormatter $deliveryDateFormatter
      * @param RateDataInterfaceFactory $rateDataFactory
+     * @param DeliveryDateProcessor $deliveryDateProcessor
+     * @param MetadataPoolInterface $metadataPool
+     * @param MetadataInterfaceFactory $metadataInterfaceFactory
      */
     public function __construct(
         Config $configProvider,
         DeliveryDateFormatter $deliveryDateFormatter,
         RateDataInterfaceFactory $rateDataFactory,
-        DeliveryDateProcessor $deliveryDateProcessor
+        DeliveryDateProcessor $deliveryDateProcessor,
+        MetadataPoolInterface $metadataPool,
+        MetadataInterfaceFactory $metadataInterfaceFactory
     ) {
         $this->configProvider = $configProvider;
         $this->deliveryDateFormatter = $deliveryDateFormatter;
         $this->rateDataFactory = $rateDataFactory;
         $this->deliveryDateProcessor = $deliveryDateProcessor;
+        $this->metadataPool = $metadataPool;
+        $this->metadataInterfaceFactory = $metadataInterfaceFactory;
     }
 
     /**
@@ -103,6 +124,18 @@ class ShippingMethodConverterPlugin
             $calcuratesRateData->setImageUrl($imageUrl);
         }
 
+        if ($rateModel->getCarrier() === Carrier::CODE) {
+            try {
+                $metadataData = $this->metadataPool->getMetadata();
+                if (!empty($metadataData)) {
+                    $metadata = $this->metadataInterfaceFactory->create();
+                    $metadata->setData($metadataData);
+                    $calcuratesRateData->setMetadata($metadata);
+                }
+            } catch (LocalizedException $exception) {
+                // Don't set any metadata
+            }
+        }
         $result->getExtensionAttributes()->setCalcuratesData($calcuratesRateData);
 
         return $result;

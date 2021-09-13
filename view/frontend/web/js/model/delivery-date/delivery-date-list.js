@@ -15,6 +15,7 @@ define([
         deliveryDateList: ko.observable({}),
         currentDeliveryDatesList: ko.observable([]),
         currentDate: ko.observable({}),
+        deliveryDatesMetadata: null,
 
         /**
          * Parse rates and update delivery dates list
@@ -42,6 +43,13 @@ define([
 
                 if (currentRate && currentRate.carrier_code === rate.carrier_code && currentRate.method_code === rate.method_code) {
                     currentDeliveryDates = calcuratesData.delivery_dates_list;
+                }
+
+                if (this.deliveryDatesMetadata === null
+                    && 'undefined' !== typeof calcuratesData.metadata
+                    && 'undefined' !== typeof calcuratesData.metadata.delivery_dates_metadata
+                ) {
+                    this.deliveryDatesMetadata = calcuratesData.metadata.delivery_dates_metadata;
                 }
             }.bind(this));
 
@@ -71,6 +79,15 @@ define([
          */
         getStoresSettings: function () {
             return storesSettingsRegistry.getStoresSettings();
+        },
+
+        /**
+         * Get delivery dates metadata
+         *
+         * @returns {*}
+         */
+        getDeliveryDatesMetadata: function () {
+            return this.deliveryDatesMetadata;
         }
     };
 });

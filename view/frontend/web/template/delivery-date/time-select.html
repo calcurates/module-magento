@@ -1,4 +1,4 @@
-<div class="field time">
+<div class="field time" data-bind="css: additionalCss()">
 
     <label class="label" data-bind="attr: { for: uid }" >
         <span data-bind="i18n: label"></span>
@@ -13,7 +13,7 @@
                         disabled: disabled,
                         'aria-describedby': getDescriptionId(),
                         'aria-required': required,
-                        'aria-invalid': error() ? true : 'false',
+                        'aria-invalid': validationError() ? true : 'false',
                         placeholder: placeholder
                     },
                     hasFocus: focused,
@@ -25,6 +25,11 @@
                     event: {change: onChangeTime}
                     ">
         </select>
+        <!-- ko if: validationError() -->
+            <div class="field-error" data-bind="attr: { id: element.errorId }" generated="true">
+                <span data-bind="text: validationError()"></span>
+            </div>
+        <!-- /ko -->
     </div>
 </div>
 

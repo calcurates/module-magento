@@ -16,6 +16,7 @@ interface RateDataInterface
     public const MAP_LINK = 'map_link';
     public const IMAGE_URL = 'image_url';
     public const DELIVERY_DATES_LIST = 'delivery_dates_list';
+    public const METADATA = 'metadata';
 
     /**
      * @return string|null
@@ -51,7 +52,7 @@ interface RateDataInterface
     public function setImageUrl(string $imageUrl): void;
 
     /**
-     * @return \Calcurates\ModuleMagento\Api\Data\DeliveryDate\DateInterface[]
+     * @return \Calcurates\ModuleMagento\Api\Data\DeliveryDate\DateInterface[]|null
      */
     public function getDeliveryDatesList(): ?array;
 
@@ -60,4 +61,15 @@ interface RateDataInterface
      * @return void
      */
     public function setDeliveryDatesList(array $deliveryDatesList): void;
+
+    /**
+     * @return \Calcurates\ModuleMagento\Api\Data\MetadataInterface|null
+     */
+    public function getMetadata(): ?\Calcurates\ModuleMagento\Api\Data\MetadataInterface;
+
+    /**
+     * @param \Calcurates\ModuleMagento\Api\Data\MetadataInterface $metadata
+     * @return void
+     */
+    public function setMetadata(\Calcurates\ModuleMagento\Api\Data\MetadataInterface $metadata): void;
 }
