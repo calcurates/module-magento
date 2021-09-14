@@ -60,6 +60,9 @@ define([
                     }
                     this.enable();
                 } else {
+                    this.options([]);
+                    this.setOptions([]);
+                    this.value();
                     this.disable();
                 }
             }, this);
@@ -68,7 +71,9 @@ define([
         },
 
         onChangeTime: function () {
-            this.validateSelect();
+            if (this.options().length > 0) {
+                this.validateSelect();
+            }
         },
 
         timeOptionsText: function (timeInterval) {
