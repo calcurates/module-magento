@@ -7,7 +7,8 @@
 
 define([
     'uiRegistry',
-], function (registry) {
+    'Calcurates_ModuleMagento/js/model/delivery-date/delivery-date-list'
+], function (registry, deliveryDateList) {
     'use strict';
 
     return function (Component) {
@@ -20,14 +21,18 @@ define([
                 var superResult = this._super();
 
                 if (superResult) {
-                    var dateSelect = registry.get('index = calcurates-delivery-date-date'),
-                        timeSelect = registry.get('index = calcurates-delivery-date-time');
+                    if ('undefined' !== typeof deliveryDateList.currentDeliveryDatesList()
+                        && deliveryDateList.currentDeliveryDatesList().length > 0
+                    ) {
+                        var dateSelect = registry.get('index = calcurates-delivery-date-date'),
+                            timeSelect = registry.get('index = calcurates-delivery-date-time');
 
-                    var dateSelectValidationResult = dateSelect.validateSelect(),
-                        timeSelectValidationResult = timeSelect.validateSelect();
+                        var dateSelectValidationResult = dateSelect.validateSelect(),
+                            timeSelectValidationResult = timeSelect.validateSelect();
 
-                    if (!dateSelectValidationResult || !timeSelectValidationResult) {
-                        return false;
+                        if (!dateSelectValidationResult || !timeSelectValidationResult) {
+                            return false;
+                        }
                     }
                 }
                 return superResult;
