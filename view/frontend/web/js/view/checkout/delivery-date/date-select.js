@@ -71,7 +71,11 @@ define([
             });
 
             deliveryDateList.currentDate(currentDate);
-            this.validateSelect();
+            if ('undefined' !== typeof deliveryDateList.currentDeliveryDatesList()
+                && deliveryDateList.currentDeliveryDatesList().length > 0
+            ) {
+                this.validateSelect();
+            }
         },
 
         dateText: function (deliveryDate) {
