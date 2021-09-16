@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Model\Archive;
 
 use Magento\Framework\Archive\Zip as ZipArchiveMagento;
+use Magento\Framework\Exception\FileSystemException;
 
 /**
  * Zip compressed file archive.
@@ -24,11 +25,16 @@ class Zip extends ZipArchiveMagento
      * @param string $destination
      * @param null $sourceAlias
      * @return string
+     * @throws FileSystemException
      */
     public function pack($source, $destination, $sourceAlias = null)
     {
         $zip = new \ZipArchive();
-        $zip->open($destination, \ZipArchive::CREATE);
+        if (!$zip->open($destination, \ZipArchive::CREATE)) {
+            throw new FileSystemException(
+                __('\'%1\' destination source could not been open', $destination)
+            );
+        }
         $zip->addFile($source, $sourceAlias);
         $zip->close();
         return $destination;
