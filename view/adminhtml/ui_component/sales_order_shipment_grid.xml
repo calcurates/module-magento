@@ -12,17 +12,23 @@
                 <settings>
                     <url path="adminhtml/order_shipment/createManifests"/>
                     <type>calcurates_manifests_create</type>
-                    <label translate="true">Create Manifests</label>
-                </settings>
-            </action>
-            <action name="calcurates_manifests_print">
-                <settings>
-                    <url path="adminhtml/order_shipment/printManifests"/>
-                    <type>calcurates_manifests_print</type>
-                    <label translate="true">Download Manifests</label>
+                    <label translate="true">Print Manifests</label>
                 </settings>
             </action>
         </massaction>
         <paging name="listing_paging"/>
     </listingToolbar>
+    <columns name="sales_order_shipment_columns">
+        <column name="carrier_code"
+                class="Calcurates\ModuleMagento\UI\Component\Listing\Order\Shipment\Column\Carrier"
+                component="Magento_Ui/js/grid/columns/select">
+            <settings>
+                <filter>select</filter>
+                <options class="Calcurates\ModuleMagento\UI\Component\Listing\Order\Shipment\Column\Carrier\Options"/>
+                <dataType>select</dataType>
+                <label translate="true">Carrier</label>
+                <visible>true</visible>
+            </settings>
+        </column>
+    </columns>
 </listing>

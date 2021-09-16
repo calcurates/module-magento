@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Model\Data;
 
+use Calcurates\ModuleMagento\Api\Data\MetadataInterface;
 use Calcurates\ModuleMagento\Api\Data\RateDataInterface;
 use Magento\Framework\Api\AbstractSimpleObject;
 
@@ -78,5 +79,21 @@ class RateData extends AbstractSimpleObject implements RateDataInterface
     public function setDeliveryDatesList(array $deliveryDatesList): void
     {
         $this->setData(self::DELIVERY_DATES_LIST, $deliveryDatesList);
+    }
+
+    /**
+     * @return \Calcurates\ModuleMagento\Api\Data\MetadataInterface|null
+     */
+    public function getMetadata(): ?\Calcurates\ModuleMagento\Api\Data\MetadataInterface
+    {
+        return $this->_get(self::METADATA);
+    }
+
+    /**
+     * @param \Calcurates\ModuleMagento\Api\Data\MetadataInterface $metadata
+     */
+    public function setMetadata(\Calcurates\ModuleMagento\Api\Data\MetadataInterface $metadata): void
+    {
+        $this->setData(self::METADATA, $metadata);
     }
 }

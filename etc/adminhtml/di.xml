@@ -7,11 +7,42 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <type name="Magento\Shipping\Block\Adminhtml\Order\Packaging">
-        <plugin name="Calcurates_ModuleMagento::ChangePackagingLogic" type="Calcurates\ModuleMagento\Plugin\Block\Adminhtml\Order\PackagingPlugin"/>
+        <plugin name="Calcurates_ModuleMagento::ChangePackagingLogic"
+                type="Calcurates\ModuleMagento\Plugin\Block\Adminhtml\Order\PackagingPlugin"/>
     </type>
 
     <type name="Magento\Shipping\Model\Shipping\LabelGenerator">
         <plugin name="Calcurates_ModuleMagento::AddAdditionalDataFromRequestToLabelGenerator"
                 type="Calcurates\ModuleMagento\Plugin\ShippingLabel\Model\LabelGeneratorPlugin" />
+    </type>
+
+    <type name="Magento\Shipping\Block\Adminhtml\Order\Packaging\Grid">
+        <plugin name="Calcurates\ModuleMagento\Plugin\Block\Adminhtml\Order\Packaging\GridPlugin"
+                type="Calcurates\ModuleMagento\Plugin\Block\Adminhtml\Order\Packaging\GridPlugin"/>
+    </type>
+
+    <virtualType name="Calcurates\ModuleMagento\Model\Backend\Request\DataPersistor" type="Magento\Framework\App\Request\DataPersistor">
+        <arguments>
+            <argument name="session" xsi:type="object">Magento\Backend\Model\Session</argument>
+        </arguments>
+    </virtualType>
+    <type name="Calcurates\ModuleMagento\Model\Shipment\CarriersSettingsProvider">
+        <arguments>
+            <argument name="dataPersistor" xsi:type="object">Calcurates\ModuleMagento\Model\Backend\Request\DataPersistor</argument>
+        </arguments>
+    </type>
+    <type name="Calcurates\ModuleMagento\Plugin\Block\Adminhtml\Order\PackagingPlugin">
+        <arguments>
+            <argument name="dataPersistor" xsi:type="object">Calcurates\ModuleMagento\Model\Backend\Request\DataPersistor</argument>
+        </arguments>
+    </type>
+    <type name="Calcurates\ModuleMagento\Plugin\ShippingLabel\Model\LabelGeneratorPlugin">
+        <arguments>
+            <argument name="dataPersistor" xsi:type="object">Calcurates\ModuleMagento\Model\Backend\Request\DataPersistor</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Shipping\Controller\Adminhtml\Order\Shipment\PrintLabel">
+        <plugin name="Calcurates\ModuleMagento\Plugin\Controller\Shipping\Adminhtml\Order\Shipment\PrintLabel"
+                type="Calcurates\ModuleMagento\Plugin\Controller\Shipping\Adminhtml\Order\Shipment\PrintLabel"/>
     </type>
 </config>

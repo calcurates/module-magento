@@ -10,7 +10,10 @@ var config = {
         mixins: {
             'Magento_Checkout/js/model/shipping-save-processor/payload-extender': {
                 'Calcurates_ModuleMagento/js/model/shipping-save-processor/payload-extender-mixin': true
-            }
+            },
+            'Magento_Checkout/js/view/shipping': {
+                'Calcurates_ModuleMagento/js/view/shipping/shipping-mixin': true
+            },
         }
     }
 };

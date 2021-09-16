@@ -154,14 +154,17 @@ class RateRequestBuilder
             $attributes = $this->productAttributesService->getAttributes($attributedProduct);
             $attributes['category_ids'] = $item->getProduct()->getCategoryIds(); // get category ids always from parent
 
+            $isVirtual = (bool) $item->getIsVirtual();
+
             $apiRequestBody['products'][] = [
                 'quoteItemId' => $item->getItemId() ?? $item->getQuoteItemId(),
                 'priceWithTax' => round($item->getBasePriceInclTax(), 2),
                 'priceWithoutTax' => round($item->getBasePrice(), 2),
                 'discountAmount' => round($item->getBaseDiscountAmount() / $item->getQty(), 2),
                 'quantity' => round($item->getQty(), 0),
-                'weight' => $item->getIsVirtual() ? 0 : $item->getWeight(),
+                'weight' => $isVirtual ? 0 : $item->getWeight(),
                 'sku' => $item->getSku(),
+                'isVirtual' => $isVirtual,
                 'attributes' => $attributes,
                 'inventories' => $itemsSourceCodes[$item->getSku()] ?? []
             ];

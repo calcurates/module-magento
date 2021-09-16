@@ -123,6 +123,7 @@
     <type name="Calcurates\ModuleMagento\Client\Response\CompositeProcessor">
         <arguments>
             <argument name="processors" xsi:type="array">
+                <item name="metadata_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\MetadataProcessor</item>
                 <item name="origin_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\OriginProcessor</item>
                 <item name="free_shipping_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\FreeShippingProcessor</item>
                 <item name="flat_rate_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\FlatRateProcessor</item>
@@ -139,7 +140,29 @@
             <argument name="responseProcessor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\CompositeProcessor</argument>
         </arguments>
     </type>
-    
+
+    <virtualType name="ResponseMetadataHydratorPool" type="Calcurates\ModuleMagento\Client\Response\HydratorPool">
+        <arguments>
+            <argument name="hydrators" xsi:type="array">
+                <item name="Calcurates\ModuleMagento\Api\Data\Metadata\DeliveryDatesMetadataInterface" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Hydrators\DeliveryDatesMetadataHydrator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Calcurates\ModuleMagento\Client\Response\MetadataPool">
+        <arguments>
+            <argument name="hydratorPool" xsi:type="object">ResponseMetadataHydratorPool</argument>
+            <argument name="metadata" xsi:type="array">
+                <item name="Calcurates\ModuleMagento\Api\Data\Metadata\DeliveryDatesMetadataInterface" xsi:type="const">Calcurates\ModuleMagento\Api\Data\MetadataInterface::DELIVERY_DATES_METADATA</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <preference for="Calcurates\ModuleMagento\Client\Response\MetadataPoolInterface" type="Calcurates\ModuleMagento\Client\Response\MetadataPool"/>
+    <preference for="Calcurates\ModuleMagento\Api\Data\MetadataInterface" type="Calcurates\ModuleMagento\Model\Data\Metadata"/>
+    <preference for="Calcurates\ModuleMagento\Api\Data\Metadata\DeliveryDatesMetadataInterface" type="Calcurates\ModuleMagento\Model\Metadata\DeliveryDatesMetadata"/>
+
+    <preference for="Calcurates\ModuleMagento\Model\ArchiveDataHandlerInterface" type="Calcurates\ModuleMagento\Model\ArchiveDataHandler"/>
+
     <preference for="Calcurates\ModuleMagento\Api\EstimateShippingByProductsGuestInterface" type="Calcurates\ModuleMagento\Model\Estimate\EstimateShippingByProductsGuest"/>
     <preference for="Calcurates\ModuleMagento\Api\EstimateShippingByProductsInterface" type="Calcurates\ModuleMagento\Model\Estimate\EstimateShippingByProducts"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\SimpleRateInterface" type="Calcurates\ModuleMagento\Model\Estimate\SimpleRate"/>
@@ -165,5 +188,9 @@
     <type name="Magento\Quote\Model\Quote\Address\Total\Shipping">
         <plugin name="Calcurates_ModuleMagento::AddDeliveryDateFee"
                 type="Calcurates\ModuleMagento\Plugin\DeliveryDateFee\Quote\Address\Total\AddShippingFeeToShippingTotal" />
+    </type>
+    <type name="Magento\Sales\Model\ResourceModel\Order\Shipment\Grid\Collection">
+        <plugin name="Calcurates\ModuleMagento\Plugin\Model\Order\ResourceModel\Shipment\Grid\Collection"
+                type="Calcurates\ModuleMagento\Plugin\Model\Order\ResourceModel\Shipment\Grid\Collection"/>
     </type>
 </config>

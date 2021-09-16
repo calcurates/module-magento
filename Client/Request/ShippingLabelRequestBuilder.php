@@ -8,9 +8,18 @@
 
 namespace Calcurates\ModuleMagento\Client\Request;
 
+use Calcurates\ModuleMagento\Model\Catalog\Product\Attribute\Resolver\HsCodeAttributeResolver;
 use Calcurates\ModuleMagento\Model\Source\ShipmentSourceCodeRetriever;
+use InvalidArgumentException;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Directory\Model\Region;
 use Magento\Directory\Model\RegionFactory;
+use Magento\Framework\DataObject;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Sales\Api\Data\ShipmentItemInterface;
+use Magento\Sales\Model\Order\Address;
+use Zend_Measure_Length;
+use Zend_Measure_Weight;
 
 class ShippingLabelRequestBuilder
 {
@@ -34,24 +43,39 @@ class ShippingLabelRequestBuilder
      */
     private $shipmentSourceCodeRetriever;
 
+    /**
+     * @var HsCodeAttributeResolver
+     */
+    private $hsCodeAttributeResolver;
+
+    /**
+     * @param RegionFactory $regionFactory
+     * @param ProductRepositoryInterface $productRepository
+     * @param ProductAttributesService $productAttributesService
+     * @param ShipmentSourceCodeRetriever $shipmentSourceCodeRetriever
+     * @param HsCodeAttributeResolver $hsCodeAttributeResolver
+     */
     public function __construct(
         RegionFactory $regionFactory,
         ProductRepositoryInterface $productRepository,
         ProductAttributesService $productAttributesService,
-        ShipmentSourceCodeRetriever $shipmentSourceCodeRetriever
+        ShipmentSourceCodeRetriever $shipmentSourceCodeRetriever,
+        HsCodeAttributeResolver $hsCodeAttributeResolver
     ) {
         $this->regionFactory = $regionFactory;
         $this->productRepository = $productRepository;
         $this->productAttributesService = $productAttributesService;
         $this->shipmentSourceCodeRetriever = $shipmentSourceCodeRetriever;
+        $this->hsCodeAttributeResolver = $hsCodeAttributeResolver;
     }
 
     /**
-     * @param \Magento\Framework\DataObject|\Magento\Shipping\Model\Shipment\Request $request
+     * @param DataObject $request
      * @param bool $testLabel
      * @return array
+     * @throws NoSuchEntityException
      */
-    public function build(\Magento\Framework\DataObject $request, $testLabel = false)
+    public function build(DataObject $request, $testLabel = false)
     {
         $shippingAddress = $request->getOrderShipment()->getOrder()->getShippingAddress();
         $regionModel = $this->getRegionModel($shippingAddress);
@@ -82,20 +106,25 @@ class ShippingLabelRequestBuilder
             'products' => [],
         ];
 
-        /** @var \Magento\Sales\Api\Data\ShipmentItemInterface $item */
+        /** @var ShipmentItemInterface $item */
         foreach ($request->getOrderShipment()->getAllItems() as $item) {
             $product = $this->productRepository->getById($item->getProductId());
+            $isVirtual = (bool) $item->getIsVirtual();
+
             $apiRequestBody['products'][] = [
                 'priceWithTax' => round($item->getBasePriceInclTax(), 2),
                 'priceWithoutTax' => round($item->getBasePrice(), 2),
                 'discountAmount' => round($item->getBaseDiscountAmount() / $item->getQty(), 2),
                 'quantity' => round($item->getQty(), 0),
-                'weight' => $item->getWeight(),
+                'weight' => $isVirtual ? 0 : $item->getWeight(),
                 'sku' => $item->getSku(),
+                'isVirtual' => $isVirtual,
                 'categories' => $product->getCategoryIds(),
                 'attributes' => $this->productAttributesService->getAttributes($product),
             ];
         }
+
+        $this->populateRequestBodyWithHsCodeAttributeValues($apiRequestBody, $request);
 
         foreach ($request->getPackages() as $package) {
             $rawPackage = [
@@ -123,20 +152,20 @@ class ShippingLabelRequestBuilder
     private function getWeightUnits($weightUnits)
     {
         switch ($weightUnits) {
-            case \Zend_Measure_Weight::POUND:
+            case Zend_Measure_Weight::POUND:
                 $weightUnits = 'lb';
                 break;
-            case \Zend_Measure_Weight::KILOGRAM:
+            case Zend_Measure_Weight::KILOGRAM:
                 $weightUnits = 'kg';
                 break;
-            case \Zend_Measure_Weight::OUNCE:
+            case Zend_Measure_Weight::OUNCE:
                 $weightUnits = 'ounce';
                 break;
-            case \Zend_Measure_Weight::GRAM:
+            case Zend_Measure_Weight::GRAM:
                 $weightUnits = 'gram';
                 break;
             default:
-                throw new \InvalidArgumentException('Invalid weight units');
+                throw new InvalidArgumentException('Invalid weight units');
         }
 
         return $weightUnits;
@@ -149,22 +178,22 @@ class ShippingLabelRequestBuilder
     private function getDimensionUnits($dimensionUnits)
     {
         switch ($dimensionUnits) {
-            case \Zend_Measure_Length::INCH:
+            case Zend_Measure_Length::INCH:
                 $dimensionUnits = 'in';
                 break;
-            case \Zend_Measure_Length::CENTIMETER:
+            case Zend_Measure_Length::CENTIMETER:
                 $dimensionUnits = 'cm';
                 break;
             default:
-                throw new \InvalidArgumentException('Invalid dimension units');
+                throw new InvalidArgumentException('Invalid dimension units');
         }
 
         return $dimensionUnits;
     }
 
     /**
-     * @param \Magento\Sales\Model\Order\Address|null $address
-     * @return \Magento\Directory\Model\Region|null
+     * @param Address|null $address
+     * @return Region|null
      */
     private function getRegionModel($address)
     {
@@ -180,5 +209,44 @@ class ShippingLabelRequestBuilder
         }
 
         return null;
+    }
+
+    /**
+     * @param array $apiRequestBody
+     * @param DataObject $request
+     */
+    private function populateRequestBodyWithHsCodeAttributeValues(array &$apiRequestBody, DataObject $request)
+    {
+        $orderShipmentItemsIdToSkuMap = [];
+        /** @var ShipmentItemInterface $item */
+        foreach ($request->getOrderShipment()->getAllItems() as $item) {
+            $orderShipmentItemsIdToSkuMap[$item->getOrderItemId()] = $item->getSku();
+        }
+
+        $hsCodeValuesToProductSkusList = [];
+        foreach ($request->getPackages() as $package) {
+            if (is_array($package['items'])) {
+                foreach ($package['items'] as $item) {
+                    if (isset($item['hs_code_value'])
+                        && !empty($item['hs_code_value'])
+                    ) {
+                        $hsCodeValuesToProductSkusList[$orderShipmentItemsIdToSkuMap[$item['order_item_id']]] =
+                            $item['hs_code_value'];
+                    }
+                }
+            }
+        }
+
+        if (!empty($hsCodeValuesToProductSkusList)) {
+            $hsCodeAttribute = $this->hsCodeAttributeResolver->resolveAttribute(
+                (int)$request->getOrderShipment()->getStoreId()
+            );
+            foreach ($apiRequestBody['products'] as $key => $preparedProduct) {
+                if (array_key_exists($preparedProduct['sku'], $hsCodeValuesToProductSkusList)) {
+                    $apiRequestBody['products'][$key]['attributes'][$hsCodeAttribute->getAttributeCode()] =
+                        $hsCodeValuesToProductSkusList[$preparedProduct['sku']];
+                }
+            }
+        }
     }
 }

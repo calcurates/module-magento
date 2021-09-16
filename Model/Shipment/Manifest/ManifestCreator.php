@@ -95,7 +95,10 @@ class ManifestCreator
         foreach ($labels as $shipmentId => $label) {
             $labelData = $label->getLabelData();
             $labelId = $labelData['labelId'] ?? '';
-            if (!empty($labelId) && !isset($labelExtIdHash[$labelId])) {
+            if (!$label->getManifestId()
+                && !empty($labelId)
+                && !isset($labelExtIdHash[$labelId])
+            ) {
                 /** @var Shipment $shipment */
                 $shipment = $shipmentsCollection->getItemById($shipmentId);
 
