@@ -41,4 +41,8 @@
             <argument name="dataPersistor" xsi:type="object">Calcurates\ModuleMagento\Model\Backend\Request\DataPersistor</argument>
         </arguments>
     </type>
+    <type name="Magento\Shipping\Controller\Adminhtml\Order\Shipment\PrintLabel">
+        <plugin name="Calcurates\ModuleMagento\Plugin\Controller\Shipping\Adminhtml\Order\Shipment\PrintLabel"
+                type="Calcurates\ModuleMagento\Plugin\Controller\Shipping\Adminhtml\Order\Shipment\PrintLabel"/>
+    </type>
 </config>
