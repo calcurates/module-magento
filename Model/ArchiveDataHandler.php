@@ -10,9 +10,9 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Model;
 
+use Calcurates\ModuleMagento\Model\Archive\Zip;
 use Calcurates\ModuleMagento\Model\ArchiveDataHandlerInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\Archive\Zip;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
@@ -54,8 +54,8 @@ class ArchiveDataHandler implements ArchiveDataHandlerInterface
      */
     public function prepareDataArchive(array $sources, string $dataArchiveName): string
     {
+        $directory = $this->filesystem->getDirectoryWrite(DirectoryList::VAR_DIR);
         try {
-            $directory = $this->filesystem->getDirectoryWrite(DirectoryList::VAR_DIR);
             $directory->delete($this->getArchiveDirectoryRelativePath());
 
             $archiveDirectoryAbsolutePath = $directory->getAbsolutePath($this->getArchiveDirectoryRelativePath());
@@ -67,7 +67,7 @@ class ArchiveDataHandler implements ArchiveDataHandlerInterface
             foreach ($sources as $fileName => $source) {
                 $fileAbsolutePath = $archiveDirectoryAbsolutePath . $fileName;
                 $directory->writeFile($fileAbsolutePath, $source);
-                $this->archiver->pack($fileAbsolutePath, $archiveAbsolutePath);
+                $this->archiver->pack($fileAbsolutePath, $archiveAbsolutePath, $fileName);
             }
             $archiveContent = $directory->readFile($archiveAbsolutePath);
         } finally {
