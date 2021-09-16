@@ -104,8 +104,9 @@ class ArchiveDataHandler implements ArchiveDataHandlerInterface
     private function prepareFileDirectory(WriteInterface $directory, string $path): string
     {
         $directory->delete($path);
-        if (dirname($path) !== '.') {
-            $directory->create(dirname($path));
+        $dir = dirname($path);
+        if ($dir !== '.') {
+            $directory->create($dir);
         }
         return $directory->getAbsolutePath($path);
     }
