@@ -161,6 +161,8 @@
     <preference for="Calcurates\ModuleMagento\Api\Data\MetadataInterface" type="Calcurates\ModuleMagento\Model\Data\Metadata"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\Metadata\DeliveryDatesMetadataInterface" type="Calcurates\ModuleMagento\Model\Metadata\DeliveryDatesMetadata"/>
 
+    <preference for="Calcurates\ModuleMagento\Model\ArchiveDataHandlerInterface" type="Calcurates\ModuleMagento\Model\ArchiveDataHandler"/>
+
     <preference for="Calcurates\ModuleMagento\Api\EstimateShippingByProductsGuestInterface" type="Calcurates\ModuleMagento\Model\Estimate\EstimateShippingByProductsGuest"/>
     <preference for="Calcurates\ModuleMagento\Api\EstimateShippingByProductsInterface" type="Calcurates\ModuleMagento\Model\Estimate\EstimateShippingByProducts"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\SimpleRateInterface" type="Calcurates\ModuleMagento\Model\Estimate\SimpleRate"/>

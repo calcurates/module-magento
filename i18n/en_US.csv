@@ -13,3 +13,5 @@
 "Cannot get Carriers settings with API Calcurates %1","Cannot get Carriers settings with API Calcurates %1"
 "Shipment object should be set for HS Code field rendering","Shipment object should be set for HS Code field rendering"
 "Unknown entity type: %s requested","Unknown entity type: %s requested"
+"Download label","Download label"
+"Download label and custom form","Download label and custom form"
