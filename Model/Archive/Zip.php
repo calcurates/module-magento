@@ -30,7 +30,7 @@ class Zip extends ZipArchiveMagento
     public function pack($source, $destination, $sourceAlias = null)
     {
         $zip = new \ZipArchive();
-        if (!$zip->open($destination, \ZipArchive::CREATE)) {
+        if (true !== $zip->open($destination, \ZipArchive::CREATE)) {
             throw new FileSystemException(
                 __('\'%1\' destination source could not been open', $destination)
             );
