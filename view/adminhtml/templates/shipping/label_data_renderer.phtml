@@ -17,6 +17,10 @@ $printUrl = $block->getUrl('adminhtml/order_shipment/printCalcuratesLabel', [
     'shipment_id' => $block->getShippingLabel()->getShipmentId(),
     'shipping_label_id' => $block->getShippingLabel()->getId()
 ]);
+
+$downloadLinkLabel = isset($block->getShippingLabel()->getLabelData()['formDownload'])
+    ? __('Download label and custom form')
+    : __('Download label');
 ?>
 
 <div class="admin__page-section-item-title">
@@ -32,7 +36,7 @@ $printUrl = $block->getUrl('adminhtml/order_shipment/printCalcuratesLabel', [
     <?php endforeach; ?>
     <tr>
         <th></th>
-        <td><a href="<?= $escaper->escapeUrl($printUrl) ?>"><?= $escaper->escapeHtml(__('Download label')) ?></a></td>
+        <td><a href="<?= $escaper->escapeUrl($printUrl) ?>"><?= $escaper->escapeHtml($downloadLinkLabel) ?></a></td>
     </tr>
     </tbody>
 </table>
