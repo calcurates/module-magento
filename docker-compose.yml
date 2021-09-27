@@ -59,6 +59,7 @@ services:
       - './Plugin:/var/www/magento2/app/code/Calcurates/ModuleMagento/Plugin'
       - './Setup:/var/www/magento2/app/code/Calcurates/ModuleMagento/Setup'
       - './Test:/var/www/magento2/app/code/Calcurates/ModuleMagento/Test'
+      - './UI:/var/www/magento2/app/code/Calcurates/ModuleMagento/UI'
       - './view:/var/www/magento2/app/code/Calcurates/ModuleMagento/view'
       - './ViewModel:/var/www/magento2/app/code/Calcurates/ModuleMagento/ViewModel'
       - './.editorconfig:/var/www/magento2/app/code/Calcurates/ModuleMagento/.editorconfig'
