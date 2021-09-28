@@ -8,7 +8,7 @@
 define([
     'jquery',
     'ko',
-    'Magento_Ui/js/form/element/select',
+    'Calcurates_ModuleMagento/js/component/form/element/select',
     'mage/translate',
     'Calcurates_ModuleMagento/js/model/delivery-date/delivery-date-list',
     'Magento_Catalog/js/price-utils',
@@ -48,6 +48,9 @@ define([
                         label: this.dateText(deliveryDate)
                     })
                 }.bind(this));
+                if (this.timeSlotDateRequired()) {
+                    this.caption(null);
+                }
                 this.setOptions(options);
                 if (this.timeSlotDateRequired()
                     && 'undefined' !== typeof options[0]

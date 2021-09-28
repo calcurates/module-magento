@@ -8,7 +8,7 @@
 define([
     'jquery',
     'ko',
-    'Magento_Ui/js/form/element/select',
+    'Calcurates_ModuleMagento/js/component/form/element/select',
     'mage/translate',
     'Calcurates_ModuleMagento/js/model/delivery-date/delivery-date-list',
     'Magento_Catalog/js/price-utils',
@@ -51,6 +51,10 @@ define([
                     }.bind(this));
                 }
                 if (options.length > 0) {
+                    if (this.timeSlotTimeRequired()) {
+                        this.caption(null);
+                    }
+
                     this.setOptions(options);
                     if (this.timeSlotTimeRequired()
                         && 'undefined' !== typeof options[0]
