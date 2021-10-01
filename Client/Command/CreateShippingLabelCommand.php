@@ -127,7 +127,7 @@ class CreateShippingLabelCommand
         try {
             $shippingLabelResponse = $this->calcuratesClient->createShippingLabel($apiRequestBody, $this->getStore());
             $debugData['result'] = $shippingLabelResponse;
-        } catch (LocalizedException $e) {
+        } catch (\Exception $e) {
             $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
             $this->debug($debugData);
             throw $e;
@@ -206,7 +206,7 @@ class CreateShippingLabelCommand
         try {
             $result = $this->calcuratesClient->getLabelContent($url);
             $debugData['result'] = $result;
-        } catch (LocalizedException $e) {
+        } catch (\Exception $e) {
             $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
             $this->debug($debugData);
             throw $e;

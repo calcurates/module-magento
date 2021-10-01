@@ -278,7 +278,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         try {
             $response = $this->calcuratesClient->getRates($apiRequestBody, $this->getStore());
             $debugData['result'] = $response;
-        } catch (LocalizedException $e) {
+        } catch (\Exception $e) {
             $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
             $response = [];
         }
