@@ -129,10 +129,10 @@ class CreateShippingLabelCommand
             $debugData['result'] = $shippingLabelResponse;
         } catch (\Exception $e) {
             $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
-            $this->debug($debugData);
             throw $e;
+        } finally {
+            $this->debug($debugData);
         }
-        $this->debug($debugData);
 
         $labelContent = '';
         if (!empty($shippingLabelResponse['labelDownload'])) {
@@ -208,10 +208,10 @@ class CreateShippingLabelCommand
             $debugData['result'] = $result;
         } catch (\Exception $e) {
             $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
-            $this->debug($debugData);
             throw $e;
+        } finally {
+            $this->debug($debugData);
         }
-        $this->debug($debugData);
 
         return $result;
     }

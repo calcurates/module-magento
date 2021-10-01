@@ -11,6 +11,7 @@ namespace Calcurates\ModuleMagento\Model;
 use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
 use Calcurates\ModuleMagento\Client\Command\CreateShippingLabelCommand;
 use Calcurates\ModuleMagento\Client\Command\GetAllShippingOptionsCommand;
+use Calcurates\ModuleMagento\Client\Http\ApiException;
 use Calcurates\ModuleMagento\Client\Request\RateRequestBuilder;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Model\Carrier\Validator\RateRequestValidator;
@@ -278,11 +279,15 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         try {
             $response = $this->calcuratesClient->getRates($apiRequestBody, $this->getStore());
             $debugData['result'] = $response;
+        } catch (ApiException $e) {
+            $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
+            throw $e; // throws for fallback rate
         } catch (\Exception $e) {
             $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
             $response = [];
+        } finally {
+            $this->_debug($debugData);
         }
-        $this->_debug($debugData);
 
         return $this->ratesResponseProcessor->processResponse($response, $quote);
     }
