@@ -21,6 +21,22 @@ class Address extends AbstractSimpleObject implements AddressInterface
     /**
      * @inheritDoc
      */
+    public function getCode()
+    {
+        return $this->_get(AddressInterface::KEY_CODE);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setCode($code)
+    {
+        return $this->setData(AddressInterface::KEY_CODE, $code);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getRegion()
     {
         return $this->_get(AddressInterface::KEY_REGION);

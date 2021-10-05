@@ -187,11 +187,16 @@
                 type="Calcurates\ModuleMagento\Plugin\Model\Checkout\AddPickupLocationForQuoteAddress"
                 sortOrder="20"/>
     </type>
+    <type name="Magento\Quote\Api\BillingAddressManagementInterface">
+        <plugin name="Calcurates\ModuleMagento\Plugin\Model\Quote\DoNotUseBillingAddressForShipping"
+                type="Calcurates\ModuleMagento\Plugin\Model\Quote\DoNotUseBillingAddressForShipping"
+                sortOrder="10"/>
+    </type>
 
     <!-- Add delivery date fee to shipping amount -->
     <type name="Magento\Quote\Model\Quote\Address\Total\Shipping">
         <plugin name="Calcurates_ModuleMagento::AddDeliveryDateFee"
-                type="Calcurates\ModuleMagento\Plugin\DeliveryDateFee\Quote\Address\Total\AddShippingFeeToShippingTotal" />
+                type="Calcurates\ModuleMagento\Plugin\DeliveryDateFee\Quote\Address\Total\AddShippingFeeToShippingTotal"/>
     </type>
     <type name="Magento\Sales\Model\ResourceModel\Order\Shipment\Grid\Collection">
         <plugin name="Calcurates\ModuleMagento\Plugin\Model\Order\ResourceModel\Shipment\Grid\Collection"

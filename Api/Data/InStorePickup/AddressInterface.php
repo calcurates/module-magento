@@ -15,6 +15,8 @@ namespace Calcurates\ModuleMagento\Api\Data\InStorePickup;
  */
 interface AddressInterface
 {
+    const KEY_CODE = 'code';
+
     const KEY_COUNTRY_ID = 'country_id';
 
     const KEY_REGION_ID = 'region_id';
@@ -34,6 +36,17 @@ interface AddressInterface
     const KEY_POSTCODE = 'postcode';
 
     const KEY_CITY = 'city';
+
+    /**
+     * @return string
+     */
+    public function getCode();
+
+    /**
+     * @param string $code
+     * @return $this
+     */
+    public function setCode($code);
 
     /**
      * @return string
