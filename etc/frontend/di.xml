@@ -18,20 +18,4 @@
             </argument>
         </arguments>
     </type>
-
-    <virtualType name="Calcurates\ModuleMagento\Model\Request\DataPersistor" type="Magento\Framework\App\Request\DataPersistor">
-        <arguments>
-            <argument name="session" xsi:type="object">Magento\Checkout\Model\Session</argument>
-        </arguments>
-    </virtualType>
-    <type name="Calcurates\ModuleMagento\Model\Shipment\CarriersSettingsProvider">
-        <arguments>
-            <argument name="dataPersistor" xsi:type="object">Calcurates\ModuleMagento\Model\Request\DataPersistor</argument>
-        </arguments>
-    </type>
-    <type name="Calcurates\ModuleMagento\Plugin\Block\Adminhtml\Order\PackagingPlugin">
-        <arguments>
-            <argument name="dataPersistor" xsi:type="object">Calcurates\ModuleMagento\Model\Request\DataPersistor</argument>
-        </arguments>
-    </type>
 </config>

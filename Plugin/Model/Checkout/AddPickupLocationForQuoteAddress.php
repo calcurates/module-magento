@@ -10,38 +10,35 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Plugin\Model\Checkout;
 
-use Calcurates\ModuleMagento\Client\Command\GetAllShippingOptionsCommand;
-use Calcurates\ModuleMagento\Client\Command\GetShippingOptionsCommand;
+use Calcurates\ModuleMagento\Api\InStorePickup\PickupLocationRepositoryInterface;
 use Calcurates\ModuleMagento\Model\Carrier;
 use Magento\Checkout\Api\Data\ShippingInformationInterface;
 use Magento\Checkout\Api\ShippingInformationManagementInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Psr\Log\LoggerInterface;
 
-/**
- * Class AddPickupLocationForQuoteAddress
- */
 class AddPickupLocationForQuoteAddress
 {
     /**
-     * @var GetShippingOptionsCommand
+     * @var PickupLocationRepositoryInterface
      */
-    private $getShippingOptionsCommand;
+    private $pickupLocationRepository;
 
     /**
-     * @var GetAllShippingOptionsCommand
+     * @var LoggerInterface
      */
-    private $getAllShippingOptionsCommand;
+    private $logger;
 
     /**
-     * AddPickupLocationForQuoteAddress constructor.
-     * @param GetShippingOptionsCommand $getShippingOptionsCommand
-     * @param GetAllShippingOptionsCommand $getAllShippingOptionsCommand
+     * @param PickupLocationRepositoryInterface $pickupLocationRepository
+     * @param LoggerInterface $logger
      */
     public function __construct(
-        GetShippingOptionsCommand $getShippingOptionsCommand,
-        GetAllShippingOptionsCommand $getAllShippingOptionsCommand
+        PickupLocationRepositoryInterface $pickupLocationRepository,
+        LoggerInterface $logger
     ) {
-        $this->getShippingOptionsCommand = $getShippingOptionsCommand;
-        $this->getAllShippingOptionsCommand = $getAllShippingOptionsCommand;
+        $this->pickupLocationRepository = $pickupLocationRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -59,7 +56,7 @@ class AddPickupLocationForQuoteAddress
             return [$cartId, $addressInformation];
         }
 
-        list($shippingMethodCode, $CalcuratesCarrierId, $CalcuratesMethodId) = explode(
+        list($shippingMethodCode, $calcuratesCarrierId, $calcuratesMethodId) = explode(
             '_',
             $addressInformation->getShippingMethodCode()
         );
@@ -68,13 +65,20 @@ class AddPickupLocationForQuoteAddress
             return [$cartId, $addressInformation];
         }
 
-//        $shippingOptions = $this->getShippingOptionsCommand->get(
-//            GetShippingOptionsCommand::TYPE_IN_STORE_PICKUP,
-//            1
-//        );
+        $shippingAddress = $addressInformation->getShippingAddress();
+        $shippingAddressExtensionAttributes = $shippingAddress->getExtensionAttributes();
+        if ($shippingAddressExtensionAttributes) {
+            try {
+                $pickupLocation = $this->pickupLocationRepository->getByShippingOptionId((int) $calcuratesMethodId);
+                $shippingAddressExtensionAttributes->setCalcuratesPickupLocationQuoteAddress($pickupLocation);
+                $shippingAddress->setExtensionAttributes($shippingAddressExtensionAttributes);
 
-        $billingAddress = $addressInformation->getBillingAddress();
-        $billingAddress->setData([]);
+                $billingAddress = $addressInformation->getBillingAddress();
+                $billingAddress->setData([]);
+            } catch (NoSuchEntityException $exception) {
+                $this->logger->critical($exception->getMessage());
+            }
+        }
 
         return [$cartId, $addressInformation];
     }

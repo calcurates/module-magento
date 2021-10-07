@@ -1,22 +1,21 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * @author Calcurates Team
+ * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
  */
+
 declare(strict_types=1);
 
-namespace Magento\InventoryInStorePickupQuote\Plugin\Quote;
+namespace Calcurates\ModuleMagento\Plugin\Model\Quote;
 
+use Calcurates\ModuleMagento\Api\Data\InStorePickup\PickupLocationInterface;
+use Calcurates\ModuleMagento\Model\InStorePickup\Convertor\ToQuoteAddressConvertor;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\InventoryInStorePickupApi\Api\Data\PickupLocationInterface;
-use Magento\InventoryInStorePickupApi\Model\GetPickupLocationInterface;
-use Magento\InventoryInStorePickupQuote\Model\GetWebsiteCodeByStoreId;
 use Magento\InventoryInStorePickupQuote\Model\IsPickupLocationShippingAddress;
-use Magento\InventoryInStorePickupQuote\Model\ToQuoteAddress;
-use Magento\InventorySalesApi\Api\Data\SalesChannelInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\AddressInterface;
-use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\ShippingAddressManagementInterface;
 
 /**
@@ -30,64 +29,41 @@ class ReplaceShippingAddressForShippingAddressManagement
     private $cartRepository;
 
     /**
-     * @var GetPickupLocationInterface
-     */
-    private $getPickupLocation;
-
-    /**
      * @var IsPickupLocationShippingAddress
      */
     private $isPickupLocationShippingAddress;
 
     /**
-     * @var ToQuoteAddress
+     * @var ToQuoteAddressConvertor
      */
-    private $addressConverter;
-
-    /**
-     * @var GetWebsiteCodeByStoreId
-     */
-    private $getWebsiteCodeByStoreId;
+    private $toQuoteAddressConvertor;
 
     /**
      * @param CartRepositoryInterface $cartRepository
-     * @param GetPickupLocationInterface $getPickupLocation
      * @param IsPickupLocationShippingAddress $isPickupLocationShippingAddress
-     * @param ToQuoteAddress $addressConverter
-     * @param GetWebsiteCodeByStoreId $getWebsiteCodeByStoreId
+     * @param ToQuoteAddressConvertor $addressConverter
      */
     public function __construct(
         CartRepositoryInterface $cartRepository,
-        GetPickupLocationInterface $getPickupLocation,
         IsPickupLocationShippingAddress $isPickupLocationShippingAddress,
-        ToQuoteAddress $addressConverter,
-        GetWebsiteCodeByStoreId $getWebsiteCodeByStoreId
+        ToQuoteAddressConvertor $toQuoteAddressConvertor
     ) {
         $this->cartRepository = $cartRepository;
-        $this->getPickupLocation = $getPickupLocation;
         $this->isPickupLocationShippingAddress = $isPickupLocationShippingAddress;
-        $this->addressConverter = $addressConverter;
-        $this->getWebsiteCodeByStoreId = $getWebsiteCodeByStoreId;
+        $this->toQuoteAddressConvertor = $toQuoteAddressConvertor;
     }
 
     /**
-     * Check and replace Quote Address with Pickup Location address for In-Store Pickup Quote.
-     *
      * @param ShippingAddressManagementInterface $subject
      * @param int $cartId
      * @param AddressInterface $address
-     *
      * @return array
-     * @throws NoSuchEntityException
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function beforeAssign(
         ShippingAddressManagementInterface $subject,
         int $cartId,
         AddressInterface $address
     ): array {
-        $quote = $this->cartRepository->getActive($cartId);
-
         if (!$this->isQuoteAddressHasPickupLocationCode($address)) {
             return [$cartId, $address];
         }
@@ -98,28 +74,22 @@ class ReplaceShippingAddressForShippingAddressManagement
 //            return [$cartId, $address];
 //        }
 
-        $address = $this->addressConverter->convert($pickupLocation, $address);
+        $address = $this->toQuoteAddressConvertor->convert($pickupLocation, $address);
 
         return [$cartId, $address];
     }
 
     /**
-     * Get Pickup Location entity, assigned to Shipping Address.
-     *
      * @param AddressInterface $address
-     *
-     * @return \Calcurates\ModuleMagento\Api\Data\InStorePickup\AddressInterface
+     * @return PickupLocationInterface
      */
-    private function getPickupLocation(AddressInterface $address): \Calcurates\ModuleMagento\Api\Data\InStorePickup\AddressInterface
+    private function getPickupLocation(AddressInterface $address): PickupLocationInterface
     {
         return $address->getExtensionAttributes()->getCalcuratesPickupLocationQuoteAddress();
     }
 
     /**
-     * Check if Quote Shipping Address has assigned Pickup Location.
-     *
      * @param AddressInterface $address
-     *
      * @return bool
      */
     private function isQuoteAddressHasPickupLocationCode(AddressInterface $address): bool

@@ -6,8 +6,7 @@ namespace Calcurates\ModuleMagento\Model\InStorePickup\Extractor;
 
 use Magento\Directory\Model\RegionFactory;
 use Magento\Framework\DataObject\Copy;
-use Magento\InventoryApi\Api\Data\SourceInterface;
-use Magento\InventoryInStorePickupApi\Api\Data\PickupLocationInterface;
+use Calcurates\ModuleMagento\Api\Data\InStorePickup\PickupLocationInterface;
 
 class PickupLocationShippingAddressDataExtractor
 {
@@ -17,51 +16,24 @@ class PickupLocationShippingAddressDataExtractor
     private $objectCopyService;
 
     /**
-     * @var RegionFactory
-     */
-    private $regionFactory;
-
-    /**
-     * @var array
-     */
-    private $regions = [];
-
-    /**
      * @param Copy $copyService
-     * @param RegionFactory $regionFactory
      */
     public function __construct(
-        Copy $copyService,
-        RegionFactory $regionFactory
+        Copy $copyService
     ) {
         $this->objectCopyService = $copyService;
-        $this->regionFactory = $regionFactory;
     }
 
-    public function execute(array $pickupLocation): array
+    /**
+     * @param PickupLocationInterface $pickupLocation
+     * @return array
+     */
+    public function extract(PickupLocationInterface $pickupLocation): array
     {
-        $data = $this->objectCopyService->getDataFromFieldset(
+        return $this->objectCopyService->getDataFromFieldset(
             'calcurates_convert_pickup_location',
-            'to_calcurates_in_store_pickup_address',
+            'to_calcurates_in_store_pickup_shipping_address',
             $pickupLocation
         );
-        //$data = $this->retrieveRegion($pickupLocation, $data);
-
-        return $data;
     }
-
-//    private function retrieveRegion(array $pickupLocation, array $data): array
-//    {
-//        $cacheKey = $pickupLocation[country_Id() . '_' . $pickupLocation->getRegionId();
-//
-//        if (!isset($this->regions[$cacheKey])) {
-//            $region = $this->regionFactory->create();
-//            $region->loadByName($pickupLocation->getRegion(), $pickupLocation->getCountryId());
-//            $this->regions[$cacheKey] = $region->getName() ?: $pickupLocation->getRegion();
-//        }
-//
-//        $data[SourceInterface::REGION] = $this->regions[$cacheKey];
-//
-//        return $data;
-//    }
 }

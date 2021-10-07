@@ -16,6 +16,6 @@
     </extension_attributes>
 
     <extension_attributes for="Magento\Quote\Api\Data\AddressInterface">
-        <attribute code="calcurates_pickup_location_quote_address" type="Calcurates\ModuleMagento\Api\Data\InStorePickup\AddressInterface"/>
+        <attribute code="calcurates_pickup_location_quote_address" type="Calcurates\ModuleMagento\Api\Data\InStorePickup\PickupLocationInterface"/>
     </extension_attributes>
 </config>
