@@ -1,4 +1,10 @@
 <?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
 
 declare(strict_types=1);
 
@@ -74,6 +80,8 @@ class ToQuoteAddressConvertor
         $pickupLocationAddressData = $this->getShippingAddressData->execute()
             + $this->pickupLocationShippingAddressDataExtractor->extract($pickupLocation);
 
+        $pickupLocationAddressData[AddressInterface::KEY_LASTNAME] = __('Store');
+
         $quoteAddressData = $this->objectCopyService->getDataFromFieldset(
             'sales_convert_quote_address',
             'to_calcurates_in_store_pickup_shipping_address',
@@ -83,7 +91,7 @@ class ToQuoteAddressConvertor
         $address = $this->addressFactory->create();
         $this->dataObjectHelper->populateWithArray(
             $address,
-            array_merge($pickupLocationAddressData, $quoteAddressData, $data),
+            array_merge($quoteAddressData, $pickupLocationAddressData, $data),
             AddressInterface::class
         );
 

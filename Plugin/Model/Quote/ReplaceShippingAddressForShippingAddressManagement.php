@@ -12,15 +12,10 @@ namespace Calcurates\ModuleMagento\Plugin\Model\Quote;
 
 use Calcurates\ModuleMagento\Api\Data\InStorePickup\PickupLocationInterface;
 use Calcurates\ModuleMagento\Model\InStorePickup\Convertor\ToQuoteAddressConvertor;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\InventoryInStorePickupQuote\Model\IsPickupLocationShippingAddress;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Model\ShippingAddressManagementInterface;
 
-/**
- * Replace Shipping Address with Pickup Location Shipping Address for Shipping Address Management service.
- */
 class ReplaceShippingAddressForShippingAddressManagement
 {
     /**
@@ -29,27 +24,19 @@ class ReplaceShippingAddressForShippingAddressManagement
     private $cartRepository;
 
     /**
-     * @var IsPickupLocationShippingAddress
-     */
-    private $isPickupLocationShippingAddress;
-
-    /**
      * @var ToQuoteAddressConvertor
      */
     private $toQuoteAddressConvertor;
 
     /**
      * @param CartRepositoryInterface $cartRepository
-     * @param IsPickupLocationShippingAddress $isPickupLocationShippingAddress
-     * @param ToQuoteAddressConvertor $addressConverter
+     * @param ToQuoteAddressConvertor $toQuoteAddressConvertor
      */
     public function __construct(
         CartRepositoryInterface $cartRepository,
-        IsPickupLocationShippingAddress $isPickupLocationShippingAddress,
         ToQuoteAddressConvertor $toQuoteAddressConvertor
     ) {
         $this->cartRepository = $cartRepository;
-        $this->isPickupLocationShippingAddress = $isPickupLocationShippingAddress;
         $this->toQuoteAddressConvertor = $toQuoteAddressConvertor;
     }
 
@@ -69,10 +56,6 @@ class ReplaceShippingAddressForShippingAddressManagement
         }
 
         $pickupLocation = $this->getPickupLocation($address);
-
-//        if ($this->isPickupLocationShippingAddress->execute($pickupLocation, $address)) {
-//            return [$cartId, $address];
-//        }
 
         $address = $this->toQuoteAddressConvertor->convert($pickupLocation, $address);
 

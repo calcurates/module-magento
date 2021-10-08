@@ -17,9 +17,6 @@ use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\Quote;
 
-/**
- * Disallow use Billing Address for shipping if Quote Delivery Method is In-Store Pickup.
- */
 class DoNotUseBillingAddressForShipping
 {
     /**

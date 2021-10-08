@@ -13,11 +13,6 @@ define([
 
     return function (quote) {
         var shippingAddress = quote.shippingAddress;
-
-        /**
-         * Makes sure that shipping address gets appropriate type when it points
-         * to a store pickup location.
-         */
         quote.shippingAddress = ko.pureComputed({
             /**
              * Return quote shipping address
@@ -36,7 +31,9 @@ define([
                     if (shippingMethod['carrier_code'] === 'calcurates'
                         && shippingMethodParts[0] === 'inStorePickup'
                     ) {
-                        shippingAddress(pickupAddressConverter.formatAddressToPickupAddress(address));
+                        shippingAddress(pickupAddressConverter.formatAddressToInStorePickupAddress(address));
+                    } else {
+                        shippingAddress(address);
                     }
                 } else {
                     shippingAddress(address);

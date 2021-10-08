@@ -74,7 +74,7 @@ class AddPickupLocationForQuoteAddress
                 $shippingAddress->setExtensionAttributes($shippingAddressExtensionAttributes);
 
                 $billingAddress = $addressInformation->getBillingAddress();
-                $billingAddress->setData([]);
+                $billingAddress->setData(null);
             } catch (NoSuchEntityException $exception) {
                 $this->logger->critical($exception->getMessage());
             }

@@ -22,7 +22,6 @@ define([
          */
         getShippingMethodTitle: function () {
             var shippingMethod = quote.shippingMethod(),
-                locationName = '',
                 title;
 
             if (!this.isStorePickup()) {

@@ -15,8 +15,8 @@ define(['underscore'], function (_) {
          * @param {Object} address
          * @return {*}
          */
-        formatAddressToPickupAddress: function (address) {
-            if (address.getType() !== 'store-pickup-address') {
+        formatAddressToInStorePickupAddress: function (address) {
+            if (address.getType() !== 'calcurates-in-store-pickup-address') {
                 address = _.extend({}, address, {
                     saveInAddressBook: 0,
 
@@ -35,7 +35,7 @@ define(['underscore'], function (_) {
                      * @return {String}
                      */
                     getType: function () {
-                        return 'store-pickup-address';
+                        return 'calcurates-in-store-pickup-address';
                     },
 
                     /**
