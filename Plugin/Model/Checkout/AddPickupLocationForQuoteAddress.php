@@ -12,6 +12,7 @@ namespace Calcurates\ModuleMagento\Plugin\Model\Checkout;
 
 use Calcurates\ModuleMagento\Api\InStorePickup\PickupLocationRepositoryInterface;
 use Calcurates\ModuleMagento\Model\Carrier;
+use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Magento\Checkout\Api\Data\ShippingInformationInterface;
 use Magento\Checkout\Api\ShippingInformationManagementInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -25,19 +26,27 @@ class AddPickupLocationForQuoteAddress
     private $pickupLocationRepository;
 
     /**
+     * @var ShippingMethodManager
+     */
+    private $shippingMethodManager;
+
+    /**
      * @var LoggerInterface
      */
     private $logger;
 
     /**
      * @param PickupLocationRepositoryInterface $pickupLocationRepository
+     * @param ShippingMethodManager $shippingMethodManager
      * @param LoggerInterface $logger
      */
     public function __construct(
         PickupLocationRepositoryInterface $pickupLocationRepository,
+        ShippingMethodManager $shippingMethodManager,
         LoggerInterface $logger
     ) {
         $this->pickupLocationRepository = $pickupLocationRepository;
+        $this->shippingMethodManager = $shippingMethodManager;
         $this->logger = $logger;
     }
 
@@ -56,12 +65,11 @@ class AddPickupLocationForQuoteAddress
             return [$cartId, $addressInformation];
         }
 
-        list($shippingMethodCode, $calcuratesCarrierId, $calcuratesMethodId) = explode(
-            '_',
+        $inStorePickupData = $this->shippingMethodManager->getInStorePickupData(
             $addressInformation->getShippingMethodCode()
         );
 
-        if ($shippingMethodCode !== 'inStorePickup') {
+        if ($inStorePickupData === null) {
             return [$cartId, $addressInformation];
         }
 
@@ -69,7 +77,9 @@ class AddPickupLocationForQuoteAddress
         $shippingAddressExtensionAttributes = $shippingAddress->getExtensionAttributes();
         if ($shippingAddressExtensionAttributes) {
             try {
-                $pickupLocation = $this->pickupLocationRepository->getByShippingOptionId((int) $calcuratesMethodId);
+                $pickupLocation = $this->pickupLocationRepository->getByShippingOptionId(
+                    $inStorePickupData->getServiceId()
+                );
                 $shippingAddressExtensionAttributes->setCalcuratesPickupLocationQuoteAddress($pickupLocation);
                 $shippingAddress->setExtensionAttributes($shippingAddressExtensionAttributes);
 

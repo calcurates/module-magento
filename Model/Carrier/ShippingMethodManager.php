@@ -11,6 +11,8 @@ namespace Calcurates\ModuleMagento\Model\Carrier;
 use Calcurates\ModuleMagento\Model\Carrier;
 use Calcurates\ModuleMagento\Model\Carrier\Method\CarrierDataFactory;
 use Calcurates\ModuleMagento\Model\Carrier\Method\CarrierData;
+use Calcurates\ModuleMagento\Model\Carrier\Method\InStorePickupDataFactory;
+use Calcurates\ModuleMagento\Model\Carrier\Method\InStorePickupData;
 
 class ShippingMethodManager
 {
@@ -27,12 +29,20 @@ class ShippingMethodManager
     private $carrierDataFactory;
 
     /**
-     * ShippingMethodManager constructor.
-     * @param CarrierDataFactory $carrierDataFactory
+     * @var InStorePickupDataFactory
      */
-    public function __construct(CarrierDataFactory $carrierDataFactory)
-    {
+    private $inStorePickupDataFactory;
+
+    /**
+     * @param CarrierDataFactory $carrierDataFactory
+     * @param InStorePickupDataFactory $inStorePickupDataFactory
+     */
+    public function __construct(
+        CarrierDataFactory $carrierDataFactory,
+        InStorePickupDataFactory $inStorePickupDataFactory
+    ) {
         $this->carrierDataFactory = $carrierDataFactory;
+        $this->inStorePickupDataFactory = $inStorePickupDataFactory;
     }
 
     /**
@@ -73,6 +83,32 @@ class ShippingMethodManager
                 CarrierData::SERVICE_IDS_STRING => $serviceIds,
                 CarrierData::CARRIER_LABEL => $carrierLabel,
                 CarrierData::SERVICE_LABEL => $serviceLabel
+            ]
+        ]);
+    }
+
+    /**
+     * @param string|null $shippingMethodCode
+     * @return InStorePickupData|null
+     */
+    public function getInStorePickupData(?string $shippingMethodCode): ?InStorePickupData
+    {
+        if (!$shippingMethodCode) {
+            return null;
+        }
+
+        list($method, $additional) = explode('_', $shippingMethodCode, 2);
+
+        if ($method !== self::IN_STORE_PICKUP) {
+            return null;
+        }
+
+        list($carrierId, $serviceId) = explode('_', $additional);
+
+        return $this->inStorePickupDataFactory->create([
+            'data' => [
+                InStorePickupData::CARRIER_ID => $carrierId,
+                InStorePickupData::SERVICE_ID => $serviceId,
             ]
         ]);
     }
