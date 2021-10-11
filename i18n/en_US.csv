@@ -15,3 +15,5 @@
 "Unknown entity type: %s requested","Unknown entity type: %s requested"
 "Download label","Download label"
 "Download label and custom form","Download label and custom form"
+"No such location with code: %1","No such location with code: %1"
+"No such location with shipping_option_id: %1","No such location with shipping_option_id: %1"

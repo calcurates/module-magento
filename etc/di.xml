@@ -177,17 +177,48 @@
     <!-- Delivery Dates -->
     <preference for="Calcurates\ModuleMagento\Api\Data\DeliveryDate\DateInterface" type="Calcurates\ModuleMagento\Model\DeliveryDate\Date"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\DeliveryDate\TimeIntervalInterface" type="Calcurates\ModuleMagento\Model\DeliveryDate\TimeInterval"/>
+    <preference for="Calcurates\ModuleMagento\Api\Data\InStorePickup\PickupLocationInterface" type="Calcurates\ModuleMagento\Model\InStorePickup\PickupLocation"/>
+    <preference for="Calcurates\ModuleMagento\Api\InStorePickup\PickupLocationRepositoryInterface" type="Calcurates\ModuleMagento\Model\InStorePickup\PickupLocationRepository"/>
 
-    <!-- for save delivery date data -->
+    <virtualType name="Calcurates\ModuleMagento\Model\Request\DataPersistor" type="Magento\Framework\App\Request\DataPersistor">
+        <arguments>
+            <argument name="session" xsi:type="object">Magento\Checkout\Model\Session</argument>
+        </arguments>
+    </virtualType>
+    <type name="Calcurates\ModuleMagento\Model\InStorePickup\PickupLocationPersistor">
+        <arguments>
+            <argument name="dataPersistor" xsi:type="object">Calcurates\ModuleMagento\Model\Request\DataPersistor</argument>
+        </arguments>
+    </type>
+    <type name="Calcurates\ModuleMagento\Api\InStorePickup\PickupLocationRepositoryInterface">
+        <arguments>
+            <argument name="dataPersistor" xsi:type="object">Calcurates\ModuleMagento\Model\Request\DataPersistor</argument>
+        </arguments>
+    </type>
+
     <type name="Magento\Checkout\Api\ShippingInformationManagementInterface">
         <plugin name="Calcurates_ModuleMagento::SaveDeliveryDatesPlugin"
-                type="Calcurates\ModuleMagento\Plugin\QuoteDataSave\Checkout\Model\SaveDeliveryDateFromShippingInfoPlugin"/>
+                type="Calcurates\ModuleMagento\Plugin\QuoteDataSave\Checkout\Model\SaveDeliveryDateFromShippingInfoPlugin"
+                sortOrder="10"/>
+        <plugin name="Calcurates_ModuleMagento::AddPickupLocationForQuoteAddress"
+                type="Calcurates\ModuleMagento\Plugin\Model\Checkout\AddPickupLocationForQuoteAddress"
+                sortOrder="20"/>
+    </type>
+    <type name="Magento\Quote\Api\BillingAddressManagementInterface">
+        <plugin name="Calcurates\ModuleMagento\Plugin\Model\Quote\DoNotUseBillingAddressForShipping"
+                type="Calcurates\ModuleMagento\Plugin\Model\Quote\DoNotUseBillingAddressForShipping"
+                sortOrder="10"/>
+    </type>
+    <type name="Magento\Quote\Model\ShippingAddressManagementInterface">
+        <plugin name="Calcurates\ModuleMagento\Plugin\Model\Quote\ReplaceShippingAddressForShippingAddressManagement"
+                type="Calcurates\ModuleMagento\Plugin\Model\Quote\ReplaceShippingAddressForShippingAddressManagement"
+                sortOrder="10"/>
     </type>
 
     <!-- Add delivery date fee to shipping amount -->
     <type name="Magento\Quote\Model\Quote\Address\Total\Shipping">
         <plugin name="Calcurates_ModuleMagento::AddDeliveryDateFee"
-                type="Calcurates\ModuleMagento\Plugin\DeliveryDateFee\Quote\Address\Total\AddShippingFeeToShippingTotal" />
+                type="Calcurates\ModuleMagento\Plugin\DeliveryDateFee\Quote\Address\Total\AddShippingFeeToShippingTotal"/>
     </type>
     <type name="Magento\Sales\Model\ResourceModel\Order\Shipment\Grid\Collection">
         <plugin name="Calcurates\ModuleMagento\Plugin\Model\Order\ResourceModel\Shipment\Grid\Collection"
