@@ -80,7 +80,7 @@ class ToQuoteAddressConvertor
         $pickupLocationAddressData = $this->getShippingAddressData->execute()
             + $this->pickupLocationShippingAddressDataExtractor->extract($pickupLocation);
 
-        $pickupLocationAddressData[AddressInterface::KEY_LASTNAME] = __('Store');
+        $pickupLocationAddressData[AddressInterface::KEY_LASTNAME] = (string) __('Store');
 
         $quoteAddressData = $this->objectCopyService->getDataFromFieldset(
             'sales_convert_quote_address',
