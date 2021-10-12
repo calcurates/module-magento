@@ -26,7 +26,7 @@ define([
              */
             write: function (address) {
                 var shippingMethod = quote.shippingMethod();
-                if (shippingMethod !== null) {
+                if (shippingMethod !== null && shippingMethod['method_code'] !== null) {
                     var shippingMethodParts = shippingMethod['method_code'].split('_');
                     if (shippingMethod['carrier_code'] === 'calcurates'
                         && shippingMethodParts[0] === 'inStorePickup'

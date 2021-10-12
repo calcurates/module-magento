@@ -50,7 +50,7 @@ define([
                 isStorePickup = this._super();
             }
 
-            if (!isStorePickup && shippingMethod !== null) {
+            if (!isStorePickup && shippingMethod !== null && shippingMethod['method_code'] !== null) {
                 var shippingMethodParts = shippingMethod['method_code'].split('_');
                 isStorePickup = shippingMethod['carrier_code'] === 'calcurates' &&
                     shippingMethodParts[0] === 'inStorePickup';
