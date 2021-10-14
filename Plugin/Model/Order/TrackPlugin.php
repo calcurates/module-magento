@@ -11,6 +11,7 @@ namespace Calcurates\ModuleMagento\Plugin\Model\Order;
 use Calcurates\ModuleMagento\Model\Carrier;
 use Calcurates\ModuleMagento\Model\Carrier\Tracking\TrackingInfoProvider;
 use Magento\Shipping\Model\Order\Track;
+use Zend_Json_Exception;
 
 class TrackPlugin
 {
@@ -31,6 +32,7 @@ class TrackPlugin
      * @param Track $subject
      * @param \Closure $proceed
      * @return mixed
+     * @throws Zend_Json_Exception
      */
     public function aroundGetNumberDetail(Track $subject, \Closure $proceed)
     {
