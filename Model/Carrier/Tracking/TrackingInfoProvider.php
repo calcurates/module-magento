@@ -15,7 +15,9 @@ use Calcurates\ModuleMagento\Api\ShippingLabelRepositoryInterface;
 use Calcurates\ModuleMagento\Client\Command\GetTrackingInfoCommand;
 use Calcurates\ModuleMagento\Client\Http\ApiException;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Shipping\Model\Order\Track;
+use Zend_Json_Exception;
 
 class TrackingInfoProvider
 {
@@ -54,14 +56,16 @@ class TrackingInfoProvider
     /**
      * @param Track $track
      * @return \Magento\Framework\Phrase|\Magento\Shipping\Model\Tracking\Result\Error|\Magento\Shipping\Model\Tracking\Result\Status
+     * @throws Zend_Json_Exception
      */
     public function getTrackingInfo(Track $track)
     {
-        $shippingLabel = $this->shippingLabelRepository->getByShipmentIdAndTrackingNumber(
-            (int)$track->getParentId(),
-            $track->getTrackNumber()
-        );
         try {
+            $shippingLabel = $this->shippingLabelRepository->getByShipmentIdAndTrackingNumber(
+                (int)$track->getParentId(),
+                $track->getTrackNumber()
+            );
+
             $trackingInfoArray = $this->getTrackingInfoCommand->get(
                 (string)$shippingLabel->getCarrierCode(),
                 (string)$shippingLabel->getCarrierProviderCode(),
@@ -70,8 +74,13 @@ class TrackingInfoProvider
             );
 
             return $this->parseTrackingData($track, $trackingInfoArray);
-        } catch (ApiException $exception) {
-            return __('No detail for number "%1"', $track->getNumber());
+        } catch (ApiException | NoSuchEntityException $exception) {
+            $error = $this->trackErrorFactory->create();
+            $error->setCarrier($track->getCarrierCode());
+            $error->setCarrierTitle($track->getTitle());
+            $error->setTracking($track->getTrackNumber());
+            $error->setErrorMessage(__('Tracking getting error'));
+            return $error;
         }
     }
 
