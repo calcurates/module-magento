@@ -17,3 +17,4 @@
 "Download label and custom form","Download label and custom form"
 "No such location with code: %1","No such location with code: %1"
 "No such location with shipping_option_id: %1","No such location with shipping_option_id: %1"
+"Make sure this address match Origin address that is specified in Calcurates as shipping label will be requested using the one from Calcurates.","Make sure this address match Origin address that is specified in Calcurates as shipping label will be requested using the one from Calcurates."

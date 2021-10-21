@@ -276,6 +276,9 @@ $block->fetchView($block->getTemplateFile('Magento_Shipping::order/packaging/pop
             <div class="admin__page-section-item order-billing-address">
                 <div class="admin__page-section-item-title">
                     <span class="title"><?= __('Origin Address') ?></span>
+                    <span class="message message-notice notice hint">
+                        <?= __('Make sure this address match Origin address that is specified in Calcurates as shipping label will be requested using the one from Calcurates.') ?>
+                    </span>
                 </div>
                 <address class="admin__page-section-item-content">
                     <?= /* @noEscape */
