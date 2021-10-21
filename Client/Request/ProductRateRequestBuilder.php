@@ -61,12 +61,14 @@ class ProductRateRequestBuilder
     /**
      * @param int[] $productIds
      * @param int $customerId
+     * @param int $storeId
      * @return array
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function build(array $productIds, int $customerId): array
+    public function build(array $productIds, int $customerId, int $storeId): array
     {
-        $store = $this->storeManager->getStore();
-        $storeId = $store->getId();
+        $store = $this->storeManager->getStore($storeId);
         $websiteCode = (string)$this->storeManager->getWebsite($store->getWebsiteId())->getCode();
 
         $customerGroupId = Group::NOT_LOGGED_IN_ID;
@@ -131,7 +133,6 @@ class ProductRateRequestBuilder
                 'inventories' => $itemsSourceCodes[$product->getSku()] ?? []
             ];
         }
-
 
         return $apiRequestBody;
     }

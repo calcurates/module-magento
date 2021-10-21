@@ -193,4 +193,8 @@
         <plugin name="Calcurates\ModuleMagento\Plugin\Model\Order\ResourceModel\Shipment\Grid\Collection"
                 type="Calcurates\ModuleMagento\Plugin\Model\Order\ResourceModel\Shipment\Grid\Collection"/>
     </type>
+    <type name="Magento\Framework\Api\ExtensibleDataObjectConverter">
+        <plugin name="Calcurates_ModuleMagento::add_calcurates_data_for_graphql"
+                type="Calcurates\ModuleMagento\Plugin\GraphQL\DataObjectConverterPlugin" />
+    </type>
 </config>

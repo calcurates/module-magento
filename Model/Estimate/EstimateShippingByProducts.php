@@ -64,14 +64,17 @@ class EstimateShippingByProducts implements EstimateShippingByProductsInterface
     /**
      * @param int[] $productIds
      * @param int $customerId
+     * @param int|null $storeId
      * @return \Calcurates\ModuleMagento\Api\Data\SimpleRateInterface[]
      * @throws LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function estimate(array $productIds, int $customerId): array
+    public function estimate(array $productIds, int $customerId, ?int $storeId = null): array
     {
-        $request = $this->productRateRequestBuilder->build($productIds, $customerId);
+        $storeId = (int)$this->storeManager->getStore($storeId)->getId();
+        $request = $this->productRateRequestBuilder->build($productIds, $customerId, $storeId);
         try {
-            $ratesData = $this->calcuratesClient->getRatesSimple($request, $this->storeManager->getStore()->getId());
+            $ratesData = $this->calcuratesClient->getRatesSimple($request, $storeId);
         } catch (ApiException $e) {
             throw new LocalizedException(__('Something went wrong with Calcurates API'));
         }
