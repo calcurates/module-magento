@@ -8,9 +8,18 @@
 @calcurates-chose-shipping-or-pickup-button-chosen__background: @color-white;
 
 .calcurates-rate-img {
-  width: 75px;
+  width: 50px;
   display: block;
-  margin-top: 10px;
+  margin-left: 20px;
+  margin-right: 10px;
+}
+
+.field-tooltip-action {
+  &.action-calendar {
+    &:before {
+      content: '\e612';
+    }
+  }
 }
 
 //
@@ -83,6 +92,21 @@
   .calcurates-delivery-dates-sidebar-container {
     .calcurates-label {
       color: #666;
+    }
+  }
+
+  .table-checkout-shipping-method {
+    > tbody > tr > th,
+    > tfoot > tr > th,
+    > tbody > tr > td,
+    > tfoot > tr > td {
+      vertical-align: middle;
+    }
+    .col-method {
+      min-width: 245px;
+    }
+    .col-logo {
+      text-align: left;
     }
   }
 }

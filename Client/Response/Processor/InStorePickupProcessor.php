@@ -10,12 +10,17 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Client\Response\Processor;
 
+use Calcurates\ModuleMagento\Api\Data\InStorePickup\PickupLocationInterface;
+use Calcurates\ModuleMagento\Api\Data\InStorePickup\PickupLocationInterfaceFactory;
 use Calcurates\ModuleMagento\Client\RateBuilder;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Client\Response\MapLinkRenderer;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
+use Calcurates\ModuleMagento\Model\InStorePickup\Extractor\PickupLocationDataExtractor;
+use Calcurates\ModuleMagento\Model\InStorePickup\PickupLocationPersistor;
+use Magento\Framework\Api\DataObjectHelper;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Shipping\Model\Rate\Result;
 
@@ -37,19 +42,51 @@ class InStorePickupProcessor implements ResponseProcessorInterface
     private $mapLinkRenderer;
 
     /**
+     * @var PickupLocationDataExtractor
+     */
+    private $pickupLocationDataExtractor;
+
+    /**
+     * @var PickupLocationPersistor
+     */
+    private $pickupLocationPersistor;
+
+    /**
+     * @var PickupLocationInterfaceFactory
+     */
+    private $pickupLocationFactory;
+
+    /**
+     * @var DataObjectHelper
+     */
+    private $dataObjectHelper;
+
+    /**
      * InStorePickupProcessor constructor.
      * @param FailedRateBuilder $failedRateBuilder
      * @param RateBuilder $rateBuilder
      * @param MapLinkRenderer $mapLinkRenderer
+     * @param PickupLocationDataExtractor $pickupLocationDataExtractor
+     * @param PickupLocationPersistor $pickupLocationPersistor
+     * @param PickupLocationInterfaceFactory $pickupLocationFactory
+     * @param DataObjectHelper $dataObjectHelper
      */
     public function __construct(
         FailedRateBuilder $failedRateBuilder,
         RateBuilder $rateBuilder,
-        MapLinkRenderer $mapLinkRenderer
+        MapLinkRenderer $mapLinkRenderer,
+        PickupLocationDataExtractor $pickupLocationDataExtractor,
+        PickupLocationPersistor $pickupLocationPersistor,
+        PickupLocationInterfaceFactory $pickupLocationFactory,
+        DataObjectHelper $dataObjectHelper
     ) {
         $this->failedRateBuilder = $failedRateBuilder;
         $this->rateBuilder = $rateBuilder;
         $this->mapLinkRenderer = $mapLinkRenderer;
+        $this->pickupLocationDataExtractor = $pickupLocationDataExtractor;
+        $this->pickupLocationPersistor = $pickupLocationPersistor;
+        $this->pickupLocationFactory = $pickupLocationFactory;
+        $this->dataObjectHelper = $dataObjectHelper;
     }
 
     /**
@@ -99,6 +136,17 @@ class InStorePickupProcessor implements ResponseProcessorInterface
                     $rate->setData(RatesResponseProcessor::CALCURATES_MAP_LINK, $this->mapLinkRenderer->render($store['origin']));
                     $result->append($rate);
                 }
+
+                $pickupLocationData = $this->pickupLocationDataExtractor->extract($store['origin']);
+
+                $pickupLocation = $this->pickupLocationFactory->create();
+                $this->dataObjectHelper->populateWithArray(
+                    $pickupLocation,
+                    $pickupLocationData,
+                    PickupLocationInterface::class
+                );
+                $pickupLocation->setShippingOptionId((int) $store['id']);
+                $this->pickupLocationPersistor->save($pickupLocation);
             }
         }
     }
