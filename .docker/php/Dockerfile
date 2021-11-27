@@ -83,7 +83,7 @@ RUN set -xe \
 # Template of Magento2
 RUN set -xe \
     && cd / \
-    && php -d memory_limit=-1 /composer.phar create-project --repository=https://repo.magento.com/ magento/project-community-edition:2.4.* mg24 \
+    && php -d memory_limit=-1 -d default_socket_timeout=1000 /composer.phar create-project --repository=https://repo.magento.com/ magento/project-community-edition:2.4.* mg24 \
     && cd mg24 \
     && tar -zcvf /mg24.tar.gz * \
     && cd .. \

@@ -58,7 +58,6 @@ class Collection
                     ['carrier_code']
                 )
                 ->group('main_table.entity_id');
-
         } catch (Zend_Db_Select_Exception $exception) {
             $this->logger->error($exception->getMessage());
         }

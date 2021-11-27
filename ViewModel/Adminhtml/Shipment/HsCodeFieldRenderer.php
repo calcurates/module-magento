@@ -23,7 +23,7 @@ use Magento\Sales\Model\Order\Shipment;
 
 class HsCodeFieldRenderer implements ArgumentInterface
 {
-    const HS_CODE_ATTRIBUTE_FRONTEND_ALLOWED_TYPES = ['text', 'select'];
+    public const HS_CODE_ATTRIBUTE_FRONTEND_ALLOWED_TYPES = ['text', 'select'];
 
     /**
      * @var Shipment
@@ -102,7 +102,6 @@ class HsCodeFieldRenderer implements ArgumentInterface
                 ' size="10"' .
                 ' value="' . $this->escaper->escapeHtmlAttr($hsCodeAttributeValue) . '"' .
                 ' />';
-
         } elseif ($hsCodeAttribute->getFrontendInput() === 'select') {
             $select = $this->layout->createBlock(
                 Select::class

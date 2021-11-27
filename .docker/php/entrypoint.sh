@@ -11,7 +11,7 @@ done
 >&2 echo "MySQL is up"
 
 isSourced=`mysql --silent --skip-column-names --user="$MYSQL_USER" --password="$MYSQL_PASSWORD" --host="mysql" --port="3306" -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$MYSQL_DATABASE';"`
-
+#isSourced=0
 if [[ -f "/mg24.tar.gz" || "${isSourced}" -eq "0" ]]; then
     echo "Copying the Magento2 template to the working directory..."
     rm -rf "vendor/*"
