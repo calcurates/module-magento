@@ -6,13 +6,6 @@ RUN set -xe \
     && apk upgrade \
     && apk --no-cache add htop unzip gzip tar curl
 
-# Composer
-RUN set -xe \
-    && curl -L -o /composer.phar https://github.com/composer/composer/releases/download/2.1.12/composer.phar \
-    && chmod 755 /composer.phar
-ENV COMPOSER_HOME=/.composer
-COPY auth.json /.composer/
-
 # PHP
 RUN set -xe \
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
@@ -79,6 +72,13 @@ RUN set -xe \
     && apk del --no-cache libzip-dev \
     && apk del --no-cache libsodium-dev \
     && rm -rf /tmp/* /var/cache/apk/*
+
+# Composer
+RUN set -xe \
+    && curl -L -o /composer.phar https://github.com/composer/composer/releases/download/2.1.14/composer.phar \
+    && chmod 755 /composer.phar
+ENV COMPOSER_HOME=/.composer
+COPY auth.json /.composer/
 
 # Template of Magento2
 RUN set -xe \
