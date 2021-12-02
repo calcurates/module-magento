@@ -1,0 +1,37 @@
+<?php
+declare(strict_types=1);
+
+namespace Calcurates\ModuleMagento\Model\Resolver;
+
+use Calcurates\ModuleMagento\Model\Config;
+use Magento\Framework\GraphQl\Config\Element\Field;
+use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
+use Magento\Framework\GraphQl\Query\Resolver\Value;
+use Magento\Framework\GraphQl\Query\ResolverInterface;
+use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+
+class CalcuratesConfigResolver implements ResolverInterface
+{
+    /**
+     * @var Config
+     */
+    private $configProvider;
+
+    public function __construct(Config $configProvider)
+    {
+        $this->configProvider = $configProvider;
+    }
+
+    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
+    {
+        $store = $context->getExtensionAttributes()->getStore();
+        $storeId = $store->getId();
+
+        return [
+            'is_shipping_on_product_enabled' => $this->configProvider->isShippingOnProductEnabled($storeId),
+            'shipping_on_product_fallback_message' => $this->configProvider->getShippingOnProductFallbackMessage(
+                $storeId
+            )
+        ];
+    }
+}

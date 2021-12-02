@@ -2,8 +2,61 @@ type CalcuratesRateData {
     tooltip_message: String @doc(description: "Could be null")
     map_link: String @doc(description: "Could be null")
     image_url: String @doc(description: "Could be null")
+    delivery_dates_list: [DeliveryDate] @doc(description: "List of available Delivery Dates")
+    delivery_dates_meta: DeliveryDateMeta @doc(description: "Settings of Delivery Dates")
+}
+
+type DeliveryDate {
+    id: String @doc(description: "Delivery Date Id")
+    date: String @doc(description: "Date")
+    date_formatted: String @doc(description: "Date Formatted")
+    fee_amount: Float @doc(description: "Fee for this Date")
+    time_intervals: [DeliveryDateTime] @doc(description: "List of Time intervals for date")
+}
+
+type DeliveryDateTime {
+    id: String @doc(description: "Time ID")
+    fee_amount: Float @doc(description: "Fee for this Time")
+    from: String @doc(description: "Interval From")
+    to: String @doc(description: "Interval To")
+    interval_formatted: String @doc(description: "Formatted Interval")
+}
+
+type DeliveryDateMeta {
+    is_delivery_date_required: Boolean @doc (description: "Is delivery Date Required")
+    is_delivery_time_required: Boolean @doc (description: "Is delivery Time Required")
 }
 
 type AvailableShippingMethod {
     calcurates_data: CalcuratesRateData @resolver(class: "\\Calcurates\\ModuleMagento\\Model\\Resolver\\RatesDataResolver")
 }
+
+type CalcuratesConfig {
+    is_shipping_on_product_enabled: Boolean @doc(description: "Is estimate shipping on product page enabled")
+    shipping_on_product_fallback_message: String @doc(description: "Fallback message if isn't available")
+}
+
+type StoreConfig {
+    calcurates_config: CalcuratesConfig @resolver(class: "\\Calcurates\\ModuleMagento\\Model\\Resolver\\CalcuratesConfigResolver") @doc(description: "Calcurates Module Configuration.")
+}
+
+type Query {
+    estimationForProduct (
+        skus: [String] @doc(description: "Skus of products")
+    ): SimpleRates @resolver(class: "Calcurates\\ModuleMagento\\Model\\Resolver\\SimpleRatesResolver")
+}
+
+type SimpleRates @doc(description: "Shipping Rates for Product") {
+    items: [SimpleRate] @doc(description: "An array of Rates")
+}
+
+type SimpleRate @doc(description: "Shipping Rate for Product") {
+    rendered_template: String @doc(description: "Fully rendered rate data")
+    name: String @doc(description: "Name")
+    amount: String @doc(description: "Amount")
+    delivery_date_from: String @doc(description: "Delivery Date From DateTime")
+    delivery_date_to: String @doc(description: "Delivery Date To DateTime")
+    template: String @doc(description: "Template for custom render with placeholders")
+    type: String @doc(description: "Type: free_shipping, flat_rate, table_rates, in_store_pickup")
+}
+
