@@ -12,8 +12,8 @@ namespace Calcurates\ModuleMagento\Api\Data;
 
 interface RateDataInterface
 {
-    public const INFO_MESSAGE = 'tooltip_message';
-    public const TOOLTIP_MESSAGE = 'info_message';
+    public const TOOLTIP_MESSAGE = 'tooltip_message';
+    public const INFO_MESSAGE = 'info_message';
     public const MAP_LINK = 'map_link';
     public const IMAGE_URL = 'image_url';
     public const DELIVERY_DATES_LIST = 'delivery_dates_list';
