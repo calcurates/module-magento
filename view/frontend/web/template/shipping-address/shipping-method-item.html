@@ -35,10 +35,9 @@
         <div class="field-tooltip toggle"
              style="position: relative"
              if="method.extension_attributes && method.extension_attributes.calcurates_data.tooltip_message">
-
-            <span id="tooltip-label" class="label"><!-- ko i18n: 'Tooltip' --><!-- /ko --></span>
+            <span id="calendar-label" class="label"><!-- ko i18n: 'Tooltip' --><!-- /ko --></span>
             <span
-                    id="tooltip"
+                    id="calendar"
                     class="field-tooltip-action action-calendar"
                     tabindex="0"
                     data-toggle="dropdown"
@@ -46,9 +45,25 @@
                     aria-labelledby="tooltip-label"
             >
          </span>
-
             <div class="field-tooltip-content"
                  data-target="dropdown" translate="method.extension_attributes.calcurates_data.tooltip_message">
+            </div>
+        </div>
+        <div class="field-tooltip toggle"
+             style="position: relative"
+             if="method.extension_attributes && method.extension_attributes.calcurates_data.info_message">
+            <span id="tooltip-label" class="label"><!-- ko i18n: 'Tooltip' --><!-- /ko --></span>
+            <span
+                    id="tooltip"
+                    class="field-tooltip-action action-help"
+                    tabindex="0"
+                    aria-labelledby="tooltip-label"
+                    data-toggle="dropdown"
+                    data-bind="mageInit: {'dropdown':{'activeClass': '_active', 'parent': '.field-tooltip.toggle'}}"
+            >
+         </span>
+            <div class="field-tooltip-content"
+                 data-target="dropdown" translate="method.extension_attributes.calcurates_data.info_message">
             </div>
         </div>
     </td>
