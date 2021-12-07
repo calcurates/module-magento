@@ -16,6 +16,8 @@ use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Model\Group;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Customer\Model\CustomerFactory;
+use Magento\Customer\Api\Data\CustomerInterface;
 
 class ProductRateRequestBuilder
 {
@@ -44,13 +46,20 @@ class ProductRateRequestBuilder
      */
     private $customerRepository;
 
+    /**
+     * @var CustomerFactory
+     */
+    private $customerFactory;
+
     public function __construct(
         StoreManagerInterface $storeManager,
         ProductRepositoryInterface $productRepository,
         GetSourceCodesPerSkus $getSourceCodesPerSkus,
         ProductAttributesService $productAttributesService,
-        CustomerRepositoryInterface $customerRepository
+        CustomerRepositoryInterface $customerRepository,
+        CustomerFactory $customerFactory
     ) {
+        $this->customerFactory = $customerFactory;
         $this->storeManager = $storeManager;
         $this->productRepository = $productRepository;
         $this->getSourceCodesPerSkus = $getSourceCodesPerSkus;
@@ -75,6 +84,9 @@ class ProductRateRequestBuilder
         $shipTo = null;
         if ($customerId) {
             $customer = $this->customerRepository->getById($customerId);
+            if ($customer instanceof CustomerInterface) {
+                $customer = $this->customerFactory->create()->updateData($customer);
+            }
             $customerGroupId = $customer->getGroupId();
             $address = $customer->getDefaultShippingAddress();
             if ($address) {
