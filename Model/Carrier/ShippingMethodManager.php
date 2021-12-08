@@ -17,6 +17,7 @@ use Calcurates\ModuleMagento\Model\Carrier\Method\InStorePickupData;
 class ShippingMethodManager
 {
     public const FLAT_RATES = 'flatRate';
+    public const MERGRED_SHIPPING = 'mergedRate';
     public const FREE_SHIPPING = 'freeShipping';
     public const TABLE_RATE = 'tableRate';
     public const CARRIER = 'carrier';
