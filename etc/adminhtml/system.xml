@@ -52,7 +52,7 @@
                         <config_path>carriers/calcurates/display_shipping_options_images</config_path>
                     </field>
                     <field id="display_package_name_for_carrier" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                        <label>Display package name next to Carrier method name</label>
+                        <label>Display package name next to method name</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <config_path>carriers/calcurates/display_package_name_for_carrier</config_path>
                     </field>
