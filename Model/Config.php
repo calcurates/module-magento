@@ -16,6 +16,7 @@ use Composer\Factory as ComposerFactory;
 use Composer\IO\BufferIO;
 use Magento\Directory\Helper\Data as DirectoryData;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\DataObject;
 use Magento\Framework\Stdlib\DateTime\Timezone;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -148,13 +149,20 @@ class Config implements ConfigProviderInterface
         static $composerPackage = null;
 
         if (!$composerPackage) {
-            $composerPackage = (new ComposerFactory())->createComposer(
-                new BufferIO(),
-                __DIR__ . '/../composer.json',
-                true,
-                null,
-                false
-            )->getPackage();
+            try {
+                $composerPackage = (new ComposerFactory())->createComposer(
+                    new BufferIO(),
+                    __DIR__ . '/../composer.json',
+                    true,
+                    null,
+                    false
+                )->getPackage();
+            } catch (\Throwable $e) {
+                $composerPackage = new DataObject();
+                $composerPackage->setName('calcurates/module-magento');
+                $composerPackage->setVersion('0.0.0');
+            }
+
         }
 
         return $composerPackage;
