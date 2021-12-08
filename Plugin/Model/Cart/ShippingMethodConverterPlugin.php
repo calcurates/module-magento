@@ -95,7 +95,7 @@ class ShippingMethodConverterPlugin
             $calcuratesRateData = $this->rateDataFactory->create();
         }
 
-        $tooltip = $rateModel->getData(RatesResponseProcessor::CALCURATES_TOOLTIP_MESSAGE);
+        $infoMessage = $rateModel->getData(RatesResponseProcessor::CALCURATES_TOOLTIP_MESSAGE);
         if ($deliveryDatesString = $this->getDeliveryDates($rateModel)) {
             switch ($this->configProvider->getDeliveryDateDisplay()) {
                 case DeliveryDateDisplaySource::AFTER_METHOD_NAME:
@@ -111,8 +111,11 @@ class ShippingMethodConverterPlugin
 
         $calcuratesRateData->setDeliveryDatesList($this->getDeliveryDatesList($rateModel));
 
-        if ($tooltip) {
+        if (isset($tooltip)) {
             $calcuratesRateData->setTooltipMessage($tooltip);
+        }
+        if ($infoMessage) {
+            $calcuratesRateData->setInfoMessage($infoMessage);
         }
 
         if ($mapLink = $rateModel->getData(RatesResponseProcessor::CALCURATES_MAP_LINK)) {

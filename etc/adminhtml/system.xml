@@ -80,7 +80,6 @@
                     <field id="delivery_date_display" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                         <label>Delivery dates display settings</label>
                         <source_model>Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplaySource</source_model>
-                        <comment><![CDATA[Warning: existing tooltip messages will be ignored if “Show in the tooltip“ is selected.]]></comment>
                         <config_path>carriers/calcurates/delivery_date_display</config_path>
                     </field>
                     <field id="delivery_date_display_type" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
