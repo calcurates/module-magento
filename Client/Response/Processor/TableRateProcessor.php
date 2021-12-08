@@ -13,8 +13,10 @@ namespace Calcurates\ModuleMagento\Client\Response\Processor;
 use Calcurates\ModuleMagento\Client\RateBuilder;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
+use Calcurates\ModuleMagento\Client\Response\Processor\Utils\TableRateNameBuilder;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
+use Calcurates\ModuleMagento\Model\Config;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Shipping\Model\Rate\Result;
 
@@ -31,14 +33,32 @@ class TableRateProcessor implements ResponseProcessorInterface
     private $rateBuilder;
 
     /**
+     * @var TableRateNameBuilder
+     */
+    private $tableRateNameBuilder;
+
+    /**
+     * @var Config
+     */
+    private $configProvider;
+
+    /**
      * TableRateProcessor constructor.
      * @param FailedRateBuilder $failedRateBuilder
      * @param RateBuilder $rateBuilder
+     * @param TableRateNameBuilder $tableRateNameBuilder
+     * @param Config $configProvider
      */
-    public function __construct(FailedRateBuilder $failedRateBuilder, RateBuilder $rateBuilder)
-    {
+    public function __construct(
+        FailedRateBuilder $failedRateBuilder,
+        RateBuilder $rateBuilder,
+        TableRateNameBuilder $tableRateNameBuilder,
+        Config $configProvider
+    ) {
         $this->failedRateBuilder = $failedRateBuilder;
         $this->rateBuilder = $rateBuilder;
+        $this->tableRateNameBuilder = $tableRateNameBuilder;
+        $this->configProvider = $configProvider;
     }
 
     /**
@@ -65,8 +85,12 @@ class TableRateProcessor implements ResponseProcessorInterface
             foreach ($tableRate['methods'] as $responseRateMethod) {
                 if (!$responseRateMethod['success']) {
                     if ($responseRateMethod['message']) {
+                        $rateName = $this->tableRateNameBuilder->buildName(
+                            $responseRateMethod,
+                            $this->configProvider->isDisplayPackageNameForCarrier()
+                        );
                         $failedRate = $this->failedRateBuilder->build(
-                            $responseRateMethod['name'],
+                            $rateName,
                             $responseRateMethod['message'],
                             $tableRate['priority']
                         );
@@ -78,6 +102,10 @@ class TableRateProcessor implements ResponseProcessorInterface
 
                 $responseRateMethod['priority'] = $tableRate['priority'];
                 $responseRateMethod['imageUri'] = $responseRateMethod['imageUri'] ?: $tableRate['imageUri'];
+                $responseRateMethod['name'] = $this->tableRateNameBuilder->buildName(
+                    $responseRateMethod,
+                    $this->configProvider->isDisplayPackageNameForCarrier()
+                );
                 $rates = $this->rateBuilder->build(
                     ShippingMethodManager::TABLE_RATE . '_' . $tableRate['id'] . '_' . $responseRateMethod['id'],
                     $responseRateMethod,
