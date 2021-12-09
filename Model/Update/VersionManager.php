@@ -43,9 +43,9 @@ class VersionManager
      */
     public function getCurrentVersion()
     {
-        $composerPackage = $this->config->getComposerPackage();
+        $composerData = $this->config->getComposerData();
 
-        return $composerPackage->getPrettyVersion();
+        return $composerData['version'];
     }
 
     /**
@@ -55,8 +55,8 @@ class VersionManager
     {
         if (null === $this->latestVersion) {
             $version = '';
-            $composerPackage = $this->config->getComposerPackage();
-            $packageData = $this->packageInfoLoader->getPackageData($composerPackage->getName());
+            $composerData = $this->config->getComposerData();
+            $packageData = $this->packageInfoLoader->getPackageData($composerData['name']);
             if (!empty($packageData['package']['versions']) && is_array($packageData['package']['versions'])) {
                 foreach ($packageData['package']['versions'] as $versionName => $versionData) {
                     if ($versionName === 'dev-master') {
