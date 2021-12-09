@@ -74,21 +74,19 @@ RUN set -xe \
     && rm -rf /tmp/* /var/cache/apk/*
 
 # Composer
-RUN set -xe \
-    && curl -L -o /composer.phar https://github.com/composer/composer/releases/download/2.1.14/composer.phar \
-    && chmod 755 /composer.phar
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 ENV COMPOSER_HOME=/.composer
 COPY auth.json /.composer/
 
 # Template of Magento2
 RUN set -xe \
     && cd / \
-    && php -d memory_limit=-1 -d default_socket_timeout=1000 /composer.phar create-project --repository=https://repo.magento.com/ magento/project-community-edition:2.4.* mg24 \
+    && php -d memory_limit=-1 -d default_socket_timeout=1000 /usr/local/bin/composer create-project --repository=https://repo.magento.com/ magento/project-community-edition:2.4.* mg24 \
     && cd mg24 \
     && tar -zcvf /mg24.tar.gz * \
     && cd .. \
     && rm -rf mg24 \
-    && /composer.phar clear-cache
+    && composer clear-cache
 
 
 WORKDIR /var/www/magento2
