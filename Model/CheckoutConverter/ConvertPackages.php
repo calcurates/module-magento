@@ -68,6 +68,12 @@ class ConvertPackages
         }
 
         if ($orderPackages) {
+            if ($order->getData(CustomSalesAttributesInterface::CARRIER_PACKAGES)) {
+                $packagesSet = $this->serializer->unserialize(
+                    $order->getData(CustomSalesAttributesInterface::CARRIER_PACKAGES)
+                );
+                $orderPackages = array_merge($packagesSet, $orderPackages);
+            }
             $orderPackages = $this->serializer->serialize($orderPackages);
             $order->setData(CustomSalesAttributesInterface::CARRIER_PACKAGES, $orderPackages);
         }

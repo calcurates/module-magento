@@ -12,6 +12,7 @@ use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Sales\Model\Order;
+use Calcurates\ModuleMagento\Model\Carrier\Method\CarrierData;
 
 class ShipmentServiceRetriever
 {
@@ -42,26 +43,45 @@ class ShipmentServiceRetriever
      */
     public function retrieve($order, $requestedSourceCode)
     {
-        $carrierData = $this->shippingMethodManager->getCarrierData(
-            $order->getShippingMethod(),
-            $order->getShippingDescription()
-        );
+        try {
+            $carrierData = $this->shippingMethodManager->getCarrierData(
+                $order->getShippingMethod(),
+                $order->getShippingDescription(),
+                $order->getData(CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE)
+            );
+        } catch (\InvalidArgumentException $e) {
+            $carrierData = null;
+        }
         if (!$carrierData) {
             return "";
         }
-        $carrierId = $carrierData->getCarrierId();
-        $shippingServices = $carrierData->getServiceIdsString();
-        $shippingServicesArray = $carrierData->getServiceIds();
-
         try {
-            $carrierServicesToOrigins = $order->getData(CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE);
+            $carrierServicesToOrigins = $order->getData(
+                CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE
+            );
             $carrierServicesToOrigins = $this->serializer->unserialize($carrierServicesToOrigins);
         } catch (\InvalidArgumentException $e) {
             $carrierServicesToOrigins = [];
         }
+        if ($carrierData instanceof CarrierData) {
+            $carrierId = $carrierData->getCarrierId();
+            $shippingServices = $carrierData->getServiceIdsString();
+            $shippingServicesArray = $carrierData->getServiceIds();
+            $sourceCodesToServices = $carrierServicesToOrigins[$carrierId][$shippingServices] ?? [];
+            return $sourceCodesToServices[$requestedSourceCode] ?? current($shippingServicesArray);
+        } elseif (is_array($carrierData)) {
+            $shippingServicesArray = [];
+            foreach ($carrierData as $carrier) {
+                $carrierId = $carrier->getCarrierId();
+                $shippingServices = $carrier->getServiceIdsString();
+                $shippingServicesArray = $carrier->getServiceIds();
 
-        $sourceCodesToServices = $carrierServicesToOrigins[$carrierId][$shippingServices] ?? [];
-
-        return $sourceCodesToServices[$requestedSourceCode] ?? current($shippingServicesArray);
+                $sourceCodesToServices = $carrierServicesToOrigins[$carrierId][$shippingServices] ?? [];
+                if (array_key_exists($requestedSourceCode, $sourceCodesToServices)) {
+                    return $sourceCodesToServices[$requestedSourceCode];
+                }
+            }
+            return current($shippingServicesArray);
+        }
     }
 }

@@ -13,6 +13,8 @@ use Calcurates\ModuleMagento\Model\Carrier\Method\CarrierDataFactory;
 use Calcurates\ModuleMagento\Model\Carrier\Method\CarrierData;
 use Calcurates\ModuleMagento\Model\Carrier\Method\InStorePickupDataFactory;
 use Calcurates\ModuleMagento\Model\Carrier\Method\InStorePickupData;
+use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
+use Magento\Framework\Serialize\SerializerInterface;
 
 class ShippingMethodManager
 {
@@ -34,14 +36,20 @@ class ShippingMethodManager
      */
     private $inStorePickupDataFactory;
 
+    private $serializer;
+
     /**
+     * ShippingMethodManager constructor.
      * @param CarrierDataFactory $carrierDataFactory
      * @param InStorePickupDataFactory $inStorePickupDataFactory
+     * @param SerializerInterface $serializer
      */
     public function __construct(
         CarrierDataFactory $carrierDataFactory,
-        InStorePickupDataFactory $inStorePickupDataFactory
+        InStorePickupDataFactory $inStorePickupDataFactory,
+        SerializerInterface $serializer
     ) {
+        $this->serializer = $serializer;
         $this->carrierDataFactory = $carrierDataFactory;
         $this->inStorePickupDataFactory = $inStorePickupDataFactory;
     }
@@ -49,20 +57,36 @@ class ShippingMethodManager
     /**
      * @param string|null $shippingMethodFull
      * @param string $orderShippingDescription
-     * @return CarrierData|null
+     * @param string $sourceCodeToService
+     * @return array|CarrierData|null
      */
-    public function getCarrierData(?string $shippingMethodFull, string $orderShippingDescription = ""): ?CarrierData
-    {
+    public function getCarrierData(
+        ?string $shippingMethodFull,
+        string $orderShippingDescription = "",
+        $sourceCodeToService = ''
+    ) {
         if (!$shippingMethodFull) {
             return null;
         }
 
         list($carrierCode, $method) = explode('_', $shippingMethodFull, 2);
-
         if ($carrierCode !== Carrier::CODE) {
             return null;
         }
+        $carrierData = $this->retrieveCarrierData($method, $orderShippingDescription);
+        if (!$carrierData) {
+            $carrierData = $this->retrieveCarrierDataFromMergedOption($method, $sourceCodeToService);
+        }
+        return $carrierData;
+    }
 
+    /**
+     * @param $method
+     * @param $orderShippingDescription
+     * @return CarrierData|null
+     */
+    private function retrieveCarrierData($method, $orderShippingDescription)
+    {
         list($method, $additional) = explode('_', $method, 2);
 
         if ($method !== self::CARRIER) {
@@ -86,6 +110,54 @@ class ShippingMethodManager
                 CarrierData::SERVICE_LABEL => $serviceLabel
             ]
         ]);
+    }
+
+    /**
+     * @param $method
+     * @param $sourceCodeToService
+     * @return array|null
+     */
+    private function retrieveCarrierDataFromMergedOption($method, $sourceCodeToService)
+    {
+        if (!$sourceCodeToService) {
+            return null;
+        }
+        list($method, $additional) = explode('_', $method, 2);
+
+        if ($method !== self::MERGRED_SHIPPING) {
+            return null;
+        }
+        list($method, $additional) = explode('_', $additional, 2);
+        if ($method !== self::CARRIER) {
+            return null;
+        }
+        list($carrierIds) = explode('_', $additional);
+        $carriers = explode(',', $carrierIds);
+        $carrierData = [];
+        foreach ($carriers as $carrierId) {
+            $carrierServices = $this->serializer->unserialize($sourceCodeToService);
+            $serviceIds = [];
+            foreach ($carrierServices as $carrierDataId => $serviceData) {
+                if ($carrierDataId == $carrierId) {
+                    foreach ($serviceData as $serviceId => $sourceData) {
+                        $serviceCombination = explode(',', $serviceId);
+                        foreach ($serviceCombination as $serviceIdentity) {
+                            $serviceIds[] = $serviceIdentity;
+                        }
+                    }
+                }
+            }
+            $carrierData[] = $this->carrierDataFactory->create([
+                'data' => [
+                    CarrierData::CARRIER_ID => $carrierId,
+                    CarrierData::SERVICE_IDS_ARRAY => $serviceIds,
+                    CarrierData::SERVICE_IDS_STRING => implode(',', $serviceIds),
+                    CarrierData::CARRIER_LABEL => 'Merged Carrier Option',
+                    CarrierData::SERVICE_LABEL => 'Merged Carrier Option'
+                ]
+            ]);
+        }
+        return $carrierData ? : null;
     }
 
     /**

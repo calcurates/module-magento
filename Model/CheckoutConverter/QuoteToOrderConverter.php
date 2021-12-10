@@ -14,6 +14,8 @@ use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
+use Calcurates\ModuleMagento\Model\Carrier\Method\CarrierData;
+use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 
 class QuoteToOrderConverter
 {
@@ -42,6 +44,14 @@ class QuoteToOrderConverter
      */
     private $convertQuoteData;
 
+    /**
+     * QuoteToOrderConverter constructor.
+     * @param ConvertPackages $convertPackages
+     * @param ConvertServicesSources $convertServicesSources
+     * @param ShippingMethodManager $shippingMethodManager
+     * @param OrderRepositoryInterface $orderRepository
+     * @param ConvertQuoteData $convertQuoteData
+     */
     public function __construct(
         ConvertPackages $convertPackages,
         ConvertServicesSources $convertServicesSources,
@@ -65,12 +75,22 @@ class QuoteToOrderConverter
         // @TODO: store all data in external table
         $orderChanged = false;
 
-        $carrierData = $this->shippingMethodManager->getCarrierData($order->getShippingMethod(false));
+        $carrierData = $this->shippingMethodManager->getCarrierData(
+            $order->getShippingMethod(false),
+            '',
+            $quote->getData(CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE)
+        );
 
-        if ($carrierData) {
+        if ($carrierData instanceof CarrierData) {
             $this->convertPackages->convert($quote, $order, $carrierData);
             $this->convertServicesSources->convert($quote, $order);
             $orderChanged = true;
+        } elseif (is_array($carrierData)) {
+            foreach ($carrierData as $carrier) {
+                $this->convertPackages->convert($quote, $order, $carrier);
+                $this->convertServicesSources->convert($quote, $order);
+                $orderChanged = true;
+            }
         }
 
         $this->convertQuoteData->convert($quote, $order);

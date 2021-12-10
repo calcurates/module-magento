@@ -16,6 +16,8 @@ use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Shipping\Model\Rate\Result;
+use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
+use Magento\Framework\Serialize\SerializerInterface;
 
 class MergedShippingProcessor implements ResponseProcessorInterface
 {
@@ -30,12 +32,22 @@ class MergedShippingProcessor implements ResponseProcessorInterface
     private $rateBuilder;
 
     /**
-     * FreeShippingProcessor constructor.
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    /**
+     * MergedShippingProcessor constructor.
      * @param FailedRateBuilder $failedRateBuilder
      * @param RateBuilder $rateBuilder
+     * @param SerializerInterface $serializer
      */
-    public function __construct(FailedRateBuilder $failedRateBuilder, RateBuilder $rateBuilder)
-    {
+    public function __construct(
+        FailedRateBuilder $failedRateBuilder,
+        RateBuilder $rateBuilder,
+        SerializerInterface $serializer
+    ) {
+        $this->serializer = $serializer;
         $this->failedRateBuilder = $failedRateBuilder;
         $this->rateBuilder = $rateBuilder;
     }
@@ -59,9 +71,17 @@ class MergedShippingProcessor implements ResponseProcessorInterface
                 }
                 continue;
             }
-
+            $carriePrefix = '';
+            if (array_key_exists('carriers', $responseRate) && $responseRate['carriers']) {
+                $carriePrefix = 'carrier_';
+                $carrierIds = [];
+                foreach ($responseRate['carriers'] as $carrier) {
+                    $carrierIds[] = $carrier['id'];
+                }
+                $carriePrefix .= implode(',', $carrierIds);
+            }
             $rates = $this->rateBuilder->build(
-                ShippingMethodManager::MERGRED_SHIPPING . '_' . $responseRate['id'],
+                ShippingMethodManager::MERGRED_SHIPPING . '_' . $carriePrefix . '_' . $responseRate['id'],
                 $responseRate,
                 ''
             );
@@ -69,6 +89,74 @@ class MergedShippingProcessor implements ResponseProcessorInterface
             foreach ($rates as $rate) {
                 $result->append($rate);
             }
+            $carrierServicesToOrigins = $carrierRatesToPackages = [];
+            foreach ($responseRate['carriers'] as $carrier) {
+                foreach ($carrier['rates'] as $responseCarrierRate) {
+                    $serviceIds = [];
+                    $sourceToServiceId = [];
+                    $message = [];
+                    $packages = [];
+                    foreach ($responseCarrierRate['services'] as $service) {
+                        foreach ($service['packages'] ?? [] as $package) {
+                            $packages[] = $package;
+                        }
+
+                        if (!empty($service['message'])) {
+                            $message[] = $service['message'];
+                        }
+
+                        $serviceIds[] = $service['id'];
+
+                        $sourceCode = $service['origin']['syncedTargetOriginCode'] ?? null;
+
+                        if ($sourceCode) {
+                            $sourceToServiceId[$sourceCode] = $service['id'];
+                        }
+                    }
+                    $serviceIdsString = implode(',', $serviceIds);
+                    $carrierServicesToOrigins[$carrier['id']][$serviceIdsString] = $sourceToServiceId;
+                    $carrierRatesToPackages[$carrier['id']][$serviceIdsString] = $packages;
+                }
+            }
+
+            $existingCarrierServicesToOrigins = $quote->getData(
+                CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE
+            ) ? : [];
+            if ($existingCarrierServicesToOrigins) {
+                $existingCarrierServicesToOrigins = $this->serializer->unserialize($existingCarrierServicesToOrigins);
+                foreach ($existingCarrierServicesToOrigins as $carrierId => $serviceIdData) {
+                    foreach ($serviceIdData as $serviceIds => $source) {
+                        $mergedSource = $source;
+                        if (isset($carrierServicesToOrigins[$carrierId][$serviceIds])) {
+                            $mergedSource = array_merge($source, $carrierServicesToOrigins[$carrierId][$serviceIds]);
+                        }
+                        $carrierServicesToOrigins[$carrierId][$serviceIds] = $mergedSource;
+                    }
+                }
+            }
+            $quote->setData(
+                CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE,
+                $this->serializer->serialize($carrierServicesToOrigins)
+            );
+            $existingCarrierRatesToPackages = $quote->getData(
+                CustomSalesAttributesInterface::CARRIER_PACKAGES
+            ) ? : [];
+            if ($existingCarrierRatesToPackages) {
+                $existingCarrierRatesToPackages = $this->serializer->unserialize($existingCarrierRatesToPackages);
+                foreach ($existingCarrierRatesToPackages as $carrierId => $serviceIdData) {
+                    foreach ($serviceIdData as $serviceIds => $source) {
+                        $mergedSource = $source;
+                        if (isset($carrierRatesToPackages[$carrierId][$serviceIds])) {
+                            $mergedSource = array_merge($source, $carrierRatesToPackages[$carrierId][$serviceIds]);
+                        }
+                        $carrierRatesToPackages[$carrierId][$serviceIds] = $mergedSource;
+                    }
+                }
+            }
+            $quote->setData(
+                CustomSalesAttributesInterface::CARRIER_PACKAGES,
+                $this->serializer->serialize($carrierRatesToPackages)
+            );
         }
     }
 }

@@ -128,9 +128,9 @@
                 <item name="free_shipping_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\FreeShippingProcessor</item>
                 <item name="flat_rate_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\FlatRateProcessor</item>
                 <item name="table_rate_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\TableRateProcessor</item>
-                <item name="merged_shipping_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\MergedShippingProcessor</item>
                 <item name="carrier_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\CarrierProcessor</item>
                 <item name="in_store_pickup_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\InStorePickupProcessor</item>
+                <item name="merged_shipping_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\MergedShippingProcessor</item>
                 <item name="rate_shopping_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\RateShoppingProcessor</item>
             </argument>
         </arguments>
