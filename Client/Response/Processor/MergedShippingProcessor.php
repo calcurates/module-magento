@@ -31,8 +31,17 @@ class MergedShippingProcessor implements ResponseProcessorInterface
      */
     private $rateBuilder;
 
+    /**
+     * @var SerializerInterface
+     */
     private $serializer;
 
+    /**
+     * MergedShippingProcessor constructor.
+     * @param FailedRateBuilder $failedRateBuilder
+     * @param RateBuilder $rateBuilder
+     * @param SerializerInterface $serializer
+     */
     public function __construct(
         FailedRateBuilder $failedRateBuilder,
         RateBuilder $rateBuilder,
