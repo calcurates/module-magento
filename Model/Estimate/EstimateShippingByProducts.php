@@ -76,7 +76,7 @@ class EstimateShippingByProducts implements EstimateShippingByProductsInterface
         try {
             $ratesData = $this->calcuratesClient->getRatesSimple($request, $storeId);
         } catch (ApiException $e) {
-            throw new LocalizedException(__('Something went wrong with Calcurates API'));
+            throw new LocalizedException(__('Something went wrong with Calcurates API'), $e);
         }
 
         $displayRatesType = $this->calcuratesConfig->getRatesTaxDisplayType();
