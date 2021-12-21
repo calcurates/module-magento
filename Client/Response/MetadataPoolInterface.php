@@ -32,7 +32,7 @@ interface MetadataPoolInterface
      * @param object $entity
      * @throws LocalizedException
      */
-    public function setMetadata(string $entityType, object $entity): void;
+    public function setMetadata(string $entityType, $entity): void;
 
     /**
      * @param string $entity

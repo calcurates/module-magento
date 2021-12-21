@@ -71,7 +71,7 @@ class MetadataPool implements MetadataPoolInterface
      * @param object $entity
      * @throws LocalizedException
      */
-    public function setMetadata(string $entityType, object $entity): void
+    public function setMetadata(string $entityType, $entity): void
     {
         if (!in_array($entityType, $this->metadata, true)) {
             throw new LocalizedException(__('Unknown entity type: %s requested', $entityType));
