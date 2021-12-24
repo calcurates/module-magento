@@ -105,7 +105,7 @@ class RateShoppingProcessor implements ResponseProcessorInterface
                 }
 
                 $existingMethodIds = [];
-                foreach ($carrier['rates'] as $rate) {
+                foreach ($carrier['rates'] ?? [] as $rate) {
                     if (!$rate['success']) {
                         if ($rate['message']) {
                             $rateName = $this->carrierRateNameBuilder->buildName(
@@ -158,8 +158,8 @@ class RateShoppingProcessor implements ResponseProcessorInterface
                         $carrier['name']
                     );
 
-                    foreach ($rates as $rate) {
-                        $result->append($rate);
+                    foreach ($rates as $rateItem) {
+                        $result->append($rateItem);
                     }
                 }
             }

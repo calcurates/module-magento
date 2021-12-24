@@ -23,7 +23,7 @@ class TableRateNameBuilder
     public function buildName(array $rateMethod, bool $includePackageNames): string
     {
         $uniqueMethodNames = [];
-        foreach ($rateMethod['rates'] as $rate) {
+        foreach ($rateMethod['rates'] ?? [] as $rate) {
             $name = $uniqueMethodNames[$rateMethod['name']] ?? $rateMethod['name'] . ' - ';
 
             if ($includePackageNames) {
@@ -37,7 +37,7 @@ class TableRateNameBuilder
             $uniqueMethodNames[$rateMethod['name']] = $name;
         }
 
-        return implode(', ', array_map(static function ($serviceName) {
+        return implode(', ', array_map(static function ($serviceName): string {
             return rtrim($serviceName, ' - ');
         }, $uniqueMethodNames));
     }

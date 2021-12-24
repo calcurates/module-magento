@@ -113,7 +113,7 @@ class CarrierProcessor implements ResponseProcessorInterface
             }
 
             $existingMethodIds = [];
-            foreach ($carrier['rates'] as $responseCarrierRate) {
+            foreach ($carrier['rates'] ?? [] as $responseCarrierRate) {
                 if (!$responseCarrierRate['success']) {
                     if ($responseCarrierRate['message']) {
                         $rateName = $this->carrierRateNameBuilder->buildName(

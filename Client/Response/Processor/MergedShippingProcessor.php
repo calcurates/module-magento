@@ -91,7 +91,7 @@ class MergedShippingProcessor implements ResponseProcessorInterface
             }
             $carrierServicesToOrigins = $carrierRatesToPackages = [];
             foreach ($responseRate['carriers'] as $carrier) {
-                foreach ($carrier['rates'] as $responseCarrierRate) {
+                foreach ($carrier['rates'] ?? [] as $responseCarrierRate) {
                     $serviceIds = [];
                     $sourceToServiceId = [];
                     $message = [];
