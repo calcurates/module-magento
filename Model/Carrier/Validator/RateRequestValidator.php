@@ -73,7 +73,8 @@ class RateRequestValidator
     {
         $isRegionRequired = $this->isRegionRequired($request->getDestCountryId());
         return (!$isRegionRequired || !empty($request->getDestRegionCode()))
-            && ($this->helper->isZipCodeOptional($request->getDestCountryId())
+            && (
+                $this->helper->isZipCodeOptional($request->getDestCountryId())
                 || !empty($request->getDestPostcode())
             )
             && !empty($request->getDestCountryId());

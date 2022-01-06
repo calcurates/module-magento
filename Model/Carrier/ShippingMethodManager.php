@@ -157,7 +157,7 @@ class ShippingMethodManager
                 ]
             ]);
         }
-        return $carrierData ? : null;
+        return $carrierData ?: null;
     }
 
     /**

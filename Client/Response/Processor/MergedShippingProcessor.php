@@ -121,7 +121,7 @@ class MergedShippingProcessor implements ResponseProcessorInterface
 
             $existingCarrierServicesToOrigins = $quote->getData(
                 CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE
-            ) ? : [];
+            ) ?: [];
             if ($existingCarrierServicesToOrigins) {
                 $existingCarrierServicesToOrigins = $this->serializer->unserialize($existingCarrierServicesToOrigins);
                 foreach ($existingCarrierServicesToOrigins as $carrierId => $serviceIdData) {
@@ -140,7 +140,7 @@ class MergedShippingProcessor implements ResponseProcessorInterface
             );
             $existingCarrierRatesToPackages = $quote->getData(
                 CustomSalesAttributesInterface::CARRIER_PACKAGES
-            ) ? : [];
+            ) ?: [];
             if ($existingCarrierRatesToPackages) {
                 $existingCarrierRatesToPackages = $this->serializer->unserialize($existingCarrierRatesToPackages);
                 foreach ($existingCarrierRatesToPackages as $carrierId => $serviceIdData) {
