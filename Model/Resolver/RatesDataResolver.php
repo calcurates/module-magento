@@ -35,8 +35,39 @@ class RatesDataResolver implements ResolverInterface
 
         $data = [];
         foreach ($fields as $fieldKey) {
-            $data[$fieldKey] = $value[$fieldKey] ?? null;
+            $data[$fieldKey] = $value['calcurates_data'][$fieldKey] ?? null;
         }
+
+        $data['delivery_dates_list'] = [];
+        foreach ($value['calcurates_data']['delivery_dates_list'] ?? [] as $deliveryDate) {
+            $deliveryDateArray = [
+                'id' => $deliveryDate['id'],
+                'date' => $deliveryDate['date'],
+                'date_formatted' => $deliveryDate['date_formatted'],
+                'fee_amount' => $deliveryDate['fee_amount']
+            ];
+
+            $deliveryDateArray['time_intervals'] = [];
+            foreach ($deliveryDate['time_intervals'] as $timeInterval) {
+                $deliveryDateArray['time_intervals'][] = [
+                    'id' => $timeInterval['id'],
+                    'fee_amount' => $timeInterval['fee_amount'],
+                    'from' => $timeInterval['from'],
+                    'to' => $timeInterval['to'],
+                    'interval_formatted' => $timeInterval['interval_formatted']
+                ];
+            }
+
+            $data['delivery_dates_list'][] = $deliveryDateArray;
+        }
+
+        $data['delivery_dates_meta']['is_delivery_date_required'] =
+            $value['calcurates_data']['metadata']['delivery_dates_metadata']
+            ['time_slot_date_required'] ?? null;
+
+        $data['delivery_dates_meta']['is_delivery_time_required'] =
+            $value['calcurates_data']['metadata']['delivery_dates_metadata']
+            ['time_slot_time_required'] ?? null;
 
         return $data;
     }

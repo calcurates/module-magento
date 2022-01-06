@@ -1,17 +1,10 @@
-FROM php:7.4-fpm-alpine3.14
+FROM php:7.4-fpm-alpine
 
 # Update repo and install some utilites
 RUN set -xe \
     && apk update \
     && apk upgrade \
     && apk --no-cache add htop unzip gzip tar curl
-
-# Composer
-RUN set -xe \
-    && curl -L -o /composer.phar https://github.com/composer/composer/releases/download/2.1.9/composer.phar \
-    && chmod 755 /composer.phar
-ENV COMPOSER_HOME=/.composer
-COPY auth.json /.composer/
 
 # PHP
 RUN set -xe \
@@ -80,15 +73,20 @@ RUN set -xe \
     && apk del --no-cache libsodium-dev \
     && rm -rf /tmp/* /var/cache/apk/*
 
+# Composer
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+ENV COMPOSER_HOME=/.composer
+COPY auth.json /.composer/
+
 # Template of Magento2
 RUN set -xe \
     && cd / \
-    && php -d memory_limit=-1 /composer.phar create-project --repository=https://repo.magento.com/ magento/project-community-edition:2.4.* mg24 \
+    && php -d memory_limit=-1 -d default_socket_timeout=1000 /usr/local/bin/composer create-project --repository=https://repo.magento.com/ magento/project-community-edition:2.4.* mg24 \
     && cd mg24 \
     && tar -zcvf /mg24.tar.gz * \
     && cd .. \
     && rm -rf mg24 \
-    && /composer.phar clear-cache
+    && composer clear-cache
 
 
 WORKDIR /var/www/magento2

@@ -13,7 +13,7 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
 
 class InStorePickupNote extends Field
 {
-    const LINK_URL = 'https://my.calcurates.com/cabinet/marketplace';
+    public const LINK_URL = 'https://my.calcurates.com/cabinet/marketplace';
 
     /**
      * @param AbstractElement $element

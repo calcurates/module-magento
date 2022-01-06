@@ -43,11 +43,11 @@ class ApiClientProvider
     public function getClient(int $storeId): HttpClient
     {
         if (!isset($this->httpClients[$storeId])) {
-            $composerPackage = $this->calcuratesConfig->getComposerPackage();
+            $composerData = $this->calcuratesConfig->getComposerData();
             $client = $this->httpClientFactory->create();
             $client->addHeader(
                 'User-Agent',
-                $composerPackage->getName() . '/' . $composerPackage->getVersion()
+                $composerData['name'] . '/' . $composerData['version']
             );
             $client->addHeader('X-API-Key', $this->calcuratesConfig->getCalcuratesToken());
 

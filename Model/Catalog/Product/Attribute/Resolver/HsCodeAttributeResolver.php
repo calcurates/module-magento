@@ -18,7 +18,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 
 class HsCodeAttributeResolver
 {
-    const CARRIERS_SETTING_MAPPED_HS_CODE_ATTRIBUTE = 'harmonizedTariffCodeCustomCode';
+    public const CARRIERS_SETTING_MAPPED_HS_CODE_ATTRIBUTE = 'harmonizedTariffCodeCustomCode';
 
     /**
      * @var AttributeInterface

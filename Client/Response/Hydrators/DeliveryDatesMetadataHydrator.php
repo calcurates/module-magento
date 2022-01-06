@@ -35,7 +35,7 @@ class DeliveryDatesMetadataHydrator implements HydratorInterface
      * @param array $data
      * @return object
      */
-    public function hydrate(object $entity, array $data): object
+    public function hydrate($entity, array $data)
     {
         /** @var DeliveryDatesMetadataInterface $entity */
         $entity->setTimeSlotDateRequired(

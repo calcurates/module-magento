@@ -35,6 +35,22 @@ class RateData extends AbstractSimpleObject implements RateDataInterface
     /**
      * @return string|null
      */
+    public function getInfoMessage(): ?string
+    {
+        return $this->_get(self::INFO_MESSAGE);
+    }
+
+    /**
+     * @param string $infoMessage
+     */
+    public function setInfoMessage(string $infoMessage): void
+    {
+        $this->setData(self::INFO_MESSAGE, $infoMessage);
+    }
+
+    /**
+     * @return string|null
+     */
     public function getMapLink(): ?string
     {
         return $this->_get(self::MAP_LINK);

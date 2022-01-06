@@ -113,7 +113,7 @@ class CarrierProcessor implements ResponseProcessorInterface
             }
 
             $existingMethodIds = [];
-            foreach ($carrier['rates'] as $responseCarrierRate) {
+            foreach ($carrier['rates'] ?? [] as $responseCarrierRate) {
                 if (!$responseCarrierRate['success']) {
                     if ($responseCarrierRate['message']) {
                         $rateName = $this->carrierRateNameBuilder->buildName(
@@ -185,7 +185,43 @@ class CarrierProcessor implements ResponseProcessorInterface
             }
         }
 
-        $quote->setData(CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE, $this->serializer->serialize($carrierServicesToOrigins));
-        $quote->setData(CustomSalesAttributesInterface::CARRIER_PACKAGES, $this->serializer->serialize($carrierRatesToPackages));
+        $existingCarrierServicesToOrigins = $quote->getData(
+            CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE
+        ) ?: [];
+        if ($existingCarrierServicesToOrigins) {
+            $existingCarrierServicesToOrigins = $this->serializer->unserialize($existingCarrierServicesToOrigins);
+            foreach ($existingCarrierServicesToOrigins as $carrierId => $serviceIdData) {
+                foreach ($serviceIdData as $serviceIds => $source) {
+                    $mergedSource = $source;
+                    if (isset($carrierServicesToOrigins[$carrierId][$serviceIds])) {
+                        $mergedSource = array_merge($source, $carrierServicesToOrigins[$carrierId][$serviceIds]);
+                    }
+                    $carrierServicesToOrigins[$carrierId][$serviceIds] = $mergedSource;
+                }
+            }
+        }
+        $quote->setData(
+            CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE,
+            $this->serializer->serialize($carrierServicesToOrigins)
+        );
+        $existingCarrierRatesToPackages = $quote->getData(
+            CustomSalesAttributesInterface::CARRIER_PACKAGES
+        ) ?: [];
+        if ($existingCarrierRatesToPackages) {
+            $existingCarrierRatesToPackages = $this->serializer->unserialize($existingCarrierRatesToPackages);
+            foreach ($existingCarrierRatesToPackages as $carrierId => $serviceIdData) {
+                foreach ($serviceIdData as $serviceIds => $source) {
+                    $mergedSource = $source;
+                    if (isset($carrierRatesToPackages[$carrierId][$serviceIds])) {
+                        $mergedSource = array_merge($source, $carrierRatesToPackages[$carrierId][$serviceIds]);
+                    }
+                    $carrierRatesToPackages[$carrierId][$serviceIds] = $mergedSource;
+                }
+            }
+        }
+        $quote->setData(
+            CustomSalesAttributesInterface::CARRIER_PACKAGES,
+            $this->serializer->serialize($carrierRatesToPackages)
+        );
     }
 }

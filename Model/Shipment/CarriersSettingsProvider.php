@@ -15,7 +15,7 @@ use Magento\Store\Model\StoreManagerInterface;
 
 class CarriersSettingsProvider
 {
-    const CARRIERS_SETTINGS_DATA_CODE = 'carriers_settings';
+    public const CARRIERS_SETTINGS_DATA_CODE = 'carriers_settings';
 
     /**
      * @var GetCarriersSettingsCommand

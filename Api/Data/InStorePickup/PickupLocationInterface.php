@@ -12,22 +12,22 @@ namespace Calcurates\ModuleMagento\Api\Data\InStorePickup;
 
 interface PickupLocationInterface
 {
-    const KEY_CODE = 'code';
-    const KEY_SHIPPING_OPTION_ID = 'shipping_option_id';
-    const KEY_NAME = 'name';
-    const KEY_EMAIL = 'email';
-    const KEY_FAX = 'fax';
-    const KEY_CONTACT_NAME = 'contact_name';
-    const KEY_LATITUDE = 'latitude';
-    const KEY_LONGITUDE = 'longitude';
-    const KEY_COUNTRY_ID = 'country_id';
-    const KEY_REGION = 'region';
-    const KEY_REGION_ID = 'region_id';
-    const KEY_REGION_CODE = 'region_code';
-    const KEY_CITY = 'city';
-    const KEY_STREET = 'street';
-    const KEY_POSTCODE = 'postcode';
-    const KEY_TELEPHONE = 'telephone';
+    public const KEY_CODE = 'code';
+    public const KEY_SHIPPING_OPTION_ID = 'shipping_option_id';
+    public const KEY_NAME = 'name';
+    public const KEY_EMAIL = 'email';
+    public const KEY_FAX = 'fax';
+    public const KEY_CONTACT_NAME = 'contact_name';
+    public const KEY_LATITUDE = 'latitude';
+    public const KEY_LONGITUDE = 'longitude';
+    public const KEY_COUNTRY_ID = 'country_id';
+    public const KEY_REGION = 'region';
+    public const KEY_REGION_ID = 'region_id';
+    public const KEY_REGION_CODE = 'region_code';
+    public const KEY_CITY = 'city';
+    public const KEY_STREET = 'street';
+    public const KEY_POSTCODE = 'postcode';
+    public const KEY_TELEPHONE = 'telephone';
 
     /**
      * @return string|null

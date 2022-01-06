@@ -12,14 +12,13 @@ use Calcurates\ModuleMagento\Api\ConfigProviderInterface;
 use Calcurates\ModuleMagento\Api\Data\ConfigDataInterface;
 use Calcurates\ModuleMagento\Api\Data\ConfigDataInterfaceFactory;
 use Calcurates\ModuleMagento\Model\Config\Data;
-use Composer\Factory as ComposerFactory;
-use Composer\IO\BufferIO;
 use Magento\Directory\Helper\Data as DirectoryData;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Stdlib\DateTime\Timezone;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Website;
+use Magento\Framework\Filesystem;
 
 class Config implements ConfigProviderInterface
 {
@@ -66,16 +65,23 @@ class Config implements ConfigProviderInterface
      */
     private $timezone;
 
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
+
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         StoreManagerInterface $storeManager,
         ConfigDataInterfaceFactory $dataFactory,
-        Timezone $timezone
+        Timezone $timezone,
+        Filesystem $filesystem
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
         $this->dataFactory = $dataFactory;
         $this->timezone = $timezone;
+        $this->filesystem = $filesystem;
     }
 
     /**
@@ -141,23 +147,25 @@ class Config implements ConfigProviderInterface
     }
 
     /**
-     * @return \Composer\Package\RootPackageInterface
+     * @return array{name: string, version: string}
      */
-    public function getComposerPackage()
+    public function getComposerData()
     {
-        static $composerPackage = null;
+        static $data = [];
 
-        if (!$composerPackage) {
-            $composerPackage = (new ComposerFactory())->createComposer(
-                new BufferIO(),
-                __DIR__ . '/../composer.json',
-                true,
-                null,
-                false
-            )->getPackage();
+        if (!$data) {
+            try {
+                $json = $this->filesystem->getDirectoryReadByPath(__DIR__ . '/..')->readFile('composer.json');
+                $data = \Zend_Json::decode($json);
+            } catch (\Throwable $e) {
+                $data = [
+                    'name' => 'calcurates/module-magento',
+                    'version' => '0.0.0',
+                ];
+            }
         }
 
-        return $composerPackage;
+        return $data;
     }
 
     /**

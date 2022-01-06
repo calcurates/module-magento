@@ -20,5 +20,5 @@ interface EstimateShippingByProductsInterface
      * @param int $customerId
      * @return \Calcurates\ModuleMagento\Api\Data\SimpleRateInterface[]
      */
-    public function estimate(array $productIds, int $customerId): array;
+    public function estimate(array $productIds, int $customerId, ?int $storeId = null): array;
 }

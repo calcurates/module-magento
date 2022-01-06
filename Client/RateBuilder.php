@@ -102,13 +102,23 @@ class RateBuilder
         $rate->setMethod($methodId);
         $rate->setMethodTitle($responseRate['name']);
         $rate->setCarrierTitle($carrierTitle);
-        $rate->setInfoMessageEnabled((bool)$responseRate['message']);
-        $rate->setInfoMessage($responseRate['message']);
-        $rate->setPriority($responseRate['priority']);
-        $rate->setData(RatesResponseProcessor::CALCURATES_IMAGE_URL, $responseRate['imageUri']);
+        if (array_key_exists('message', $responseRate)) {
+            $rate->setInfoMessageEnabled((bool)$responseRate['message']);
+            $rate->setInfoMessage($responseRate['message']);
+            $rate->setData(RatesResponseProcessor::CALCURATES_TOOLTIP_MESSAGE, $responseRate['message']);
+        } else {
+            $rate->setInfoMessageEnabled(false);
+        }
+        if (array_key_exists('priority', $responseRate)) {
+            $rate->setPriority($responseRate['priority']);
+        } else {
+            $rate->setPriority(0);
+        }
+        if (array_key_exists('imageUri', $responseRate)) {
+            $rate->setData(RatesResponseProcessor::CALCURATES_IMAGE_URL, $responseRate['imageUri']);
+        }
         $rate->setCost($baseAmount);
         $rate->setPrice($baseAmount);
-        $rate->setData(RatesResponseProcessor::CALCURATES_TOOLTIP_MESSAGE, $responseRate['message']);
         if (!empty($responseRate['rate']['estimatedDeliveryDate'])) {
             $rate->setData(
                 RatesResponseProcessor::CALCURATES_DELIVERY_DATES,

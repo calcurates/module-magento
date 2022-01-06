@@ -15,7 +15,7 @@ use Magento\Framework\App\Request\DataPersistorInterface;
 
 class PickupLocationPersistor
 {
-    const PICKUP_LOCATION_PERSISTENT_KEY = 'pickup_location';
+    public const PICKUP_LOCATION_PERSISTENT_KEY = 'pickup_location';
 
     /**
      * @var DataPersistorInterface
