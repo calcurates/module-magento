@@ -136,7 +136,7 @@ class CreateShippingLabelCommand
 
         $labelContent = '';
         if (!empty($shippingLabelResponse['labelDownload'])) {
-            $labelContent = $this->downloadLabelContent($shippingLabelResponse['labelDownload']);
+            $labelContent = $this->downloadLabelContent($shippingLabelResponse['labelDownload'], $this->getStore());
         }
 
         /** @var ShippingLabelInterface $shippingLabel */
@@ -197,14 +197,15 @@ class CreateShippingLabelCommand
 
     /**
      * @param string $url
+     * @param int $storeId
      * @return string
      * @throws LocalizedException
      */
-    private function downloadLabelContent($url)
+    private function downloadLabelContent($url, $storeId)
     {
         $debugData = ['request' => $url, 'type' => 'shippingLabelDownload'];
         try {
-            $result = $this->calcuratesClient->getLabelContent($url);
+            $result = $this->calcuratesClient->getLabelContent($url, $storeId);
             $debugData['result'] = $result;
         } catch (\Exception $e) {
             $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];

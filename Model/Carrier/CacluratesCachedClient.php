@@ -44,11 +44,13 @@ class CacluratesCachedClient implements CalcuratesClientInterface
 
     /**
      * @param string $url
+     * @param int $storeId
      * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function getLabelContent($url)
+    public function getLabelContent($url, $storeId)
     {
-        return $this->calcuratesClient->getLabelContent($url);
+        return $this->calcuratesClient->getLabelContent($url, $storeId);
     }
 
     /**

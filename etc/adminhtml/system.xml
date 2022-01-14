@@ -29,7 +29,7 @@
                         <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                         <config_path>carriers/calcurates/calcurates_token</config_path>
                     </field>
-                    <field id="api_url" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <field id="api_url" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                         <label>API URL</label>
                         <config_path>carriers/calcurates/api_url</config_path>
                     </field>
