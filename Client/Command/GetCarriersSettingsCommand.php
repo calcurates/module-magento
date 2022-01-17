@@ -57,7 +57,7 @@ class GetCarriersSettingsCommand
     public function get(int $storeId): array
     {
         $httpClient = $this->apiClientProvider->getClient($storeId);
-        $apiUrl = $this->apiClientProvider->getApiUrl($storeId);
+        $apiUrl = $this->apiClientProvider->getApiUrl();
 
         try {
             $response = $httpClient->get($apiUrl . '/carriers-settings');

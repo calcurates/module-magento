@@ -39,7 +39,7 @@ class GetShippingOptionsCommand
     public function get(string $type, int $storeId): array
     {
         $httpClient = $this->apiClientProvider->getClient($storeId);
-        $apiUrl = $this->apiClientProvider->getApiUrl($storeId);
+        $apiUrl = $this->apiClientProvider->getApiUrl();
 
         $allowedTypes = [
             self::TYPE_CARRIERS,
