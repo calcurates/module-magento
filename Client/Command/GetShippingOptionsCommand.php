@@ -57,7 +57,7 @@ class GetShippingOptionsCommand
         }
 
         $requestPath = $apiUrl . '/shipping-options';
-        if ($type !=  self::TYPE_ALL) {
+        if ($type != self::TYPE_ALL) {
             $requestPath .= '/' . $type;
         }
         $response = $httpClient->get($requestPath);
