@@ -20,7 +20,6 @@ class GetShippingOptionsCommand
     public const TYPE_FREE_SHIPPING = 'free-shipping';
     public const TYPE_IN_STORE_PICKUP = 'in-store-pickups';
     public const TYPE_RATE_SHOPPING = 'rate-shopping';
-    public const TYPE_ALL = 'all';
 
     /**
      * @var ApiClientProvider
@@ -32,34 +31,29 @@ class GetShippingOptionsCommand
         $this->apiClientProvider = $apiClientProvider;
     }
 
-    /**
-     * @param string $type
-     * @param int $storeId
-     * @return array
-     */
-    public function get(string $type, int $storeId): array
+    public function get(int $storeId, ?string $type = null): array
     {
         $httpClient = $this->apiClientProvider->getClient($storeId);
         $apiUrl = $this->apiClientProvider->getApiUrl();
-
-        $allowedTypes = [
-            self::TYPE_CARRIERS,
-            self::TYPE_TABLE_RATES,
-            self::TYPE_FREE_SHIPPING,
-            self::TYPE_FLAT_RATES,
-            self::TYPE_IN_STORE_PICKUP,
-            self::TYPE_RATE_SHOPPING,
-            self::TYPE_ALL
-        ];
-
-        if (!in_array($type, $allowedTypes)) {
-            throw new \InvalidArgumentException('Invalid type ' . $type);
-        }
-
         $requestPath = $apiUrl . '/shipping-options';
-        if ($type != self::TYPE_ALL) {
-            $requestPath .= '/' . $type;
+
+        if ($type) {
+            $allowedTypes = [
+                self::TYPE_CARRIERS,
+                self::TYPE_TABLE_RATES,
+                self::TYPE_FREE_SHIPPING,
+                self::TYPE_FLAT_RATES,
+                self::TYPE_IN_STORE_PICKUP,
+                self::TYPE_RATE_SHOPPING,
+            ];
+
+            if (!in_array($type, $allowedTypes, true)) {
+                throw new \InvalidArgumentException('Invalid type '.$type);
+            }
+
+            $requestPath .= '/'.$type;
         }
+
         $response = $httpClient->get($requestPath);
 
         return \Zend_Json::decode($response);

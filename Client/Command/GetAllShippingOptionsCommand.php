@@ -35,7 +35,6 @@ class GetAllShippingOptionsCommand
     public function getShippingOptions($storeId)
     {
         $allShippingOptions = $this->getShippingOptionsCommand->get(
-            GetShippingOptionsCommand::TYPE_ALL,
             (int) $storeId
         );
 
