@@ -33,8 +33,8 @@ class CarriersServicesOptionSource
     {
         try {
             $carriersWithOptions = $this->getShippingOptionsCommand->get(
-                GetShippingOptionsCommand::TYPE_CARRIERS,
-                $storeId
+                $storeId,
+                GetShippingOptionsCommand::TYPE_CARRIERS
             );
         } catch (ApiException $e) {
             return [];

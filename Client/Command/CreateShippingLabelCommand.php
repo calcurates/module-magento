@@ -174,8 +174,8 @@ class CreateShippingLabelCommand
     {
         $storeId = (int)$this->storeManager->getStore($this->getStore())->getId();
         $carriersWithServices = $this->getShippingOptionsCommand->get(
-            GetShippingOptionsCommand::TYPE_CARRIERS,
-            $storeId
+            $storeId,
+            GetShippingOptionsCommand::TYPE_CARRIERS
         );
 
         $result = null;
