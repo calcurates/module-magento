@@ -94,7 +94,7 @@ class InStorePickupProcessor implements ResponseProcessorInterface
      * @param array $response
      * @param CartInterface $quote
      */
-    public function process(Result $result, array $response, CartInterface $quote): void
+    public function process(Result $result, array &$response, CartInterface $quote): void
     {
         foreach ($response['shippingOptions']['inStorePickups'] as $shippingOption) {
             if (!$shippingOption['success']) {

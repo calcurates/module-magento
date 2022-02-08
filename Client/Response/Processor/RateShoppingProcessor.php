@@ -74,7 +74,7 @@ class RateShoppingProcessor implements ResponseProcessorInterface
      * @param array $response
      * @param CartInterface $quote
      */
-    public function process(Result $result, array $response, CartInterface $quote): void
+    public function process(Result $result, array &$response, CartInterface $quote): void
     {
         foreach ($response['shippingOptions']['rateShopping'] as $rateShopping) {
             if (!$this->childChecker->isHaveRates($rateShopping, 'carriers')) {

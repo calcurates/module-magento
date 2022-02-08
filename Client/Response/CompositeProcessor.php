@@ -31,7 +31,7 @@ class CompositeProcessor implements ResponseProcessorInterface
      * @param CartInterface $quote
      * @return void
      */
-    public function process(Result $result, array $response, CartInterface $quote): void
+    public function process(Result $result, array &$response, CartInterface $quote): void
     {
         foreach ($this->getProcessors() as $processor) {
             $processor->process($result, $response, $quote);

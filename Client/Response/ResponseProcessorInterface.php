@@ -21,5 +21,5 @@ interface ResponseProcessorInterface
      * @param CartInterface $quote
      * @return void
      */
-    public function process(Result $result, array $response, CartInterface $quote): void;
+    public function process(Result $result, array &$response, CartInterface $quote): void;
 }
