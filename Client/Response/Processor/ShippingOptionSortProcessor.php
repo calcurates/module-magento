@@ -103,9 +103,8 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
             return;
         }
 
-        foreach ($resultShippingOptions['tableRates'] as $tableRate) {
-            $methodsArray = $tableRate['methods'];
-            \usort($methodsArray, static function ($firstMethod, $secondMethod): int {
+        foreach ($resultShippingOptions['tableRates'] as &$tableRate) {
+            \usort($tableRate['methods'], static function ($firstMethod, $secondMethod): int {
                 if (!$firstMethod['success'] || !$firstMethod['rate']) {
                     return 1;
                 }
@@ -120,7 +119,6 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
 
                 return $result;
             });
-            $tableRate['methods'] = $methodsArray;
         }
 
         \usort($resultShippingOptions['tableRates'], static function ($firstRate, $secondRate): int {
@@ -171,9 +169,8 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
             return;
         }
 
-        foreach ($resultShippingOptions['inStorePickups'] as $inStorePickup) {
-            $storesArray = $inStorePickup['stores'];
-            \usort($storesArray, static function ($firstStore, $secondStore): int {
+        foreach ($resultShippingOptions['inStorePickups'] as &$inStorePickup) {
+            \usort($inStorePickup['stores'], static function ($firstStore, $secondStore): int {
                 if (!$firstStore['success'] || !$firstStore['rate']) {
                     return 1;
                 }
@@ -188,7 +185,6 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
 
                 return $result;
             });
-            $inStorePickup['stores'] = $storesArray;
         }
 
         \usort($resultShippingOptions['inStorePickups'], static function ($firstRate, $secondRate): int {
@@ -241,12 +237,11 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
             return;
         }
 
-        foreach ($resultShippingOptions['carriers'] as $carrier) {
+        foreach ($resultShippingOptions['carriers'] as &$carrier) {
             if (!$carrier['rates']) {
                 continue;
             }
-            $ratesArray = $carrier['rates'];
-            \usort($ratesArray, static function ($firstRate, $secondRate): int {
+            \usort($carrier['rates'], static function ($firstRate, $secondRate): int {
                 if (!$firstRate['success'] || !$firstRate['rate']) {
                     return 1;
                 }
@@ -255,7 +250,6 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                 }
                 return $firstRate['rate']['cost'] <=> $secondRate['rate']['cost'];
             });
-            $carrier['rates'] = $ratesArray;
         }
 
         \usort($resultShippingOptions['carriers'], static function ($firstCarrier, $secondCarrier): int {
@@ -302,16 +296,15 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
             return;
         }
 
-        foreach ($resultShippingOptions['rateShopping'] as $rateShopping) {
+        foreach ($resultShippingOptions['rateShopping'] as &$rateShopping) {
             if (!$rateShopping['carriers']) {
                 continue;
             }
-            foreach ($rateShopping['carriers'] as $carrier) {
+            foreach ($rateShopping['carriers'] as &$carrier) {
                 if (!$carrier['rates']) {
                     continue;
                 }
-                $ratesArray = $carrier['rates'];
-                \usort($ratesArray, static function ($firstRate, $secondRate): int {
+                \usort($carrier['rates'], static function ($firstRate, $secondRate): int {
                     if (!$firstRate['success'] || !$firstRate['rate']) {
                         return 1;
                     }
@@ -320,7 +313,6 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                     }
                     return $firstRate['rate']['cost'] <=> $secondRate['rate']['cost'];
                 });
-                $carrier['rates'] = $ratesArray;
             }
         }
 
