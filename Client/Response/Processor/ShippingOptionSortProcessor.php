@@ -51,13 +51,17 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
         $this->prioritySortByType($resultShippingOptions, 'freeShipping');
         $this->sortTableRates($resultShippingOptions);
         $this->sortInStorePickups($resultShippingOptions);
-        //$this->sortCarriers($resultShippingOptions);
-        //$this->sortRateShopping($resultShippingOptions);
-        //$this->sortMergedShippingOptions($resultShippingOptions);
+        $this->sortCarriers($resultShippingOptions);
+        $this->sortRateShopping($resultShippingOptions);
+        $this->sortMergedShippingOptions($resultShippingOptions);
         $response['shippingOptions'] = $resultShippingOptions;
     }
 
 
+    /**
+     * @param $resultShippingOptions
+     * @param $type
+     */
     private function prioritySortByType(&$resultShippingOptions, $type): void
     {
         if (!$resultShippingOptions[$type]) {
@@ -90,6 +94,9 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
         });
     }
 
+    /**
+     * @param $resultShippingOptions
+     */
     private function sortTableRates(&$resultShippingOptions): void
     {
         if (!$resultShippingOptions['tableRates']) {
@@ -155,6 +162,9 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
         });
     }
 
+    /**
+     * @param $resultShippingOptions
+     */
     private function sortInStorePickups(&$resultShippingOptions): void
     {
         if (!$resultShippingOptions['inStorePickups']) {
@@ -220,5 +230,164 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
 
             return $firstRate['priority'] <=> $secondRate['priority'];
         });
+    }
+
+    /**
+     * @param $resultShippingOptions
+     */
+    private function sortCarriers(&$resultShippingOptions): void
+    {
+        if (!$resultShippingOptions['carriers']) {
+            return;
+        }
+
+        foreach ($resultShippingOptions['carriers'] as $carrier) {
+            if (!$carrier['rates']) {
+                continue;
+            }
+            $ratesArray = $carrier['rates'];
+            \usort($ratesArray, static function ($firstRate, $secondRate): int {
+                if (!$firstRate['success'] || !$firstRate['rate']) {
+                    return 1;
+                }
+                if (!$secondRate['success'] || !$secondRate['rate']) {
+                    return -1;
+                }
+                return $firstRate['rate']['cost'] <=> $secondRate['rate']['cost'];
+            });
+            $carrier['rates'] = $ratesArray;
+        }
+
+        \usort($resultShippingOptions['carriers'], static function ($firstCarrier, $secondCarrier): int {
+            if ($firstCarrier['priority'] === $secondCarrier['priority']) {
+                if (!$firstCarrier['success'] || !$firstCarrier['rates']) {
+                    return 1;
+                }
+                if (!$secondCarrier['success'] || !$secondCarrier['rates']) {
+                    return -1;
+                }
+
+                $carrierA = $firstCarrier['rates'][0];
+                $carrierB = $secondCarrier['rates'][0];
+
+                $cheapestCostA = $carrierA['rate'] ? $carrierA['rate']['cost'] : null;
+                $cheapestCostB = $carrierB['rate'] ? $carrierB['rate']['cost'] : null;
+
+                if (null === $cheapestCostA) {
+                    return 1;
+                }
+                if (null === $cheapestCostB) {
+                    return -1;
+                }
+
+                return $cheapestCostA <=> $cheapestCostB;
+            }
+            if (null === $firstCarrier['priority']) {
+                return 1;
+            }
+            if (null === $secondCarrier['priority']) {
+                return -1;
+            }
+
+            return $firstCarrier['priority'] <=> $secondCarrier['priority'];
+        });
+    }
+
+    /**
+     * @param $resultShippingOptions
+     */
+    private function sortRateShopping(&$resultShippingOptions): void
+    {
+        if (!$resultShippingOptions['rateShopping']) {
+            return;
+        }
+
+        foreach ($resultShippingOptions['rateShopping'] as $rateShopping) {
+            if (!$rateShopping['carriers']) {
+                continue;
+            }
+            foreach ($rateShopping['carriers'] as $carrier) {
+                if (!$carrier['rates']) {
+                    continue;
+                }
+                $ratesArray = $carrier['rates'];
+                \usort($ratesArray, static function ($firstRate, $secondRate): int {
+                    if (!$firstRate['success'] || !$firstRate['rate']) {
+                        return 1;
+                    }
+                    if (!$secondRate['success'] || !$secondRate['rate']) {
+                        return -1;
+                    }
+                    return $firstRate['rate']['cost'] <=> $secondRate['rate']['cost'];
+                });
+                $carrier['rates'] = $ratesArray;
+            }
+        }
+
+        \usort($resultShippingOptions['rateShopping'], static function ($firstRate, $secondRate): int {
+            if ($firstRate['priority'] === $secondRate['priority']) {
+                if (!$firstRate['carriers']) {
+                    return 1;
+                }
+                if (!$secondRate['carriers']) {
+                    return -1;
+                }
+
+                $carrierA = $firstRate['carriers'][0];
+                $carrierB = $secondRate['carriers'][0];
+
+                $cheapestCostA = $carrierA['rates'] && $carrierA['rates'][0] ? $carrierA['rates'][0]['cost'] : null;
+                $cheapestCostB = $carrierB['rates'] && $carrierB['rates'][0] ? $carrierB['rates'][0]['cost'] : null;
+
+                if (null === $cheapestCostA) {
+                    return 1;
+                }
+                if (null === $cheapestCostB) {
+                    return -1;
+                }
+
+                $result = $cheapestCostA <=> $cheapestCostB;
+                if (0 === $result) {
+                    $result = $carrierB['name'] <=> $carrierB['name'];
+                }
+
+                return $result;
+            }
+            if (null === $firstRate['priority']) {
+                return 1;
+            }
+            if (null === $secondRate['priority']) {
+                return -1;
+            }
+
+            return $firstRate['priority'] <=> $secondRate['priority'];
+        });
+    }
+
+    /**
+     * @param $resultShippingOptions
+     */
+    private function sortMergedShippingOptions(&$resultShippingOptions): void
+    {
+        if (!$resultShippingOptions['mergedShippingOptions']) {
+            return;
+        }
+        \usort(
+            $resultShippingOptions['mergedShippingOptions'],
+            static function ($firstMethod, $secondMethod): int {
+                if (!$firstMethod['success'] || !$firstMethod['rate']) {
+                    return 1;
+                }
+                if (!$secondMethod['success'] || !$secondMethod['rate']) {
+                    return -1;
+                }
+
+                $result = $firstMethod['rate']['cost'] <=> $secondMethod['rate']['cost'];
+                if (0 === $result) {
+                    $result = $firstMethod['name'] <=> $secondMethod['name'];
+                }
+
+                return $result;
+            });
     }
 }

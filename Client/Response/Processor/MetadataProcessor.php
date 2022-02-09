@@ -57,10 +57,6 @@ class MetadataProcessor implements ResponseProcessorInterface
      */
     public function process(Result $result, array &$response, CartInterface $quote): void
     {
-        $flatRateArray = $response['shippingOptions']['flatRates'];
-        $flatRateArray[0] = $response['shippingOptions']['flatRates'][1];
-        $flatRateArray[1] = $response['shippingOptions']['flatRates'][0];
-        $response['shippingOptions']['flatRates'] = $flatRateArray;
         try {
             foreach ($this->metadataPool->getMetadataTypes() as $entity => $metadataType) {
                 $data = $this->metadataPool->getHydrator($entity)->extract($response);
