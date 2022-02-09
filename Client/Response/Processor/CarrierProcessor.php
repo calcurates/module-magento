@@ -12,7 +12,6 @@ namespace Calcurates\ModuleMagento\Client\Response\Processor;
 
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Client\RateBuilder;
-use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Client\Response\Processor\Utils\CarrierRateNameBuilder;
 use Calcurates\ModuleMagento\Client\Response\Processor\Utils\ChildChecker;
@@ -95,7 +94,7 @@ class CarrierProcessor implements ResponseProcessorInterface
      * @param array $response
      * @param CartInterface $quote
      */
-    public function process(Result $result, array $response, CartInterface $quote): void
+    public function process(Result $result, array &$response, CartInterface $quote): void
     {
         $carrierServicesToOrigins = $carrierRatesToPackages = [];
         foreach ($response['shippingOptions']['carriers'] as $carrier) {
