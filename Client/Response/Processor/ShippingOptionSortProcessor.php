@@ -328,8 +328,12 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                 $carrierA = $firstRate['carriers'][0];
                 $carrierB = $secondRate['carriers'][0];
 
-                $cheapestCostA = $carrierA['rates'] && $carrierA['rates'][0] ? $carrierA['rates'][0]['cost'] : null;
-                $cheapestCostB = $carrierB['rates'] && $carrierB['rates'][0] ? $carrierB['rates'][0]['cost'] : null;
+                $cheapestCostA = $carrierA['rates'] && $carrierA['rates'][0] && $carrierA['rates'][0]['rate']
+                    ? $carrierA['rates'][0]['rate']['cost']
+                    : null;
+                $cheapestCostB = $carrierB['rates'] && $carrierB['rates'][0] && $carrierB['rates'][0]['rate']
+                    ? $carrierB['rates'][0]['rate']['cost']
+                    : null;
 
                 if (null === $cheapestCostA) {
                     return 1;
