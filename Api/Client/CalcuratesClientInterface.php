@@ -75,6 +75,15 @@ interface CalcuratesClientInterface
     public function getRatesSimple(array $request, $storeId): array;
 
     /**
+     * @param $request
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @return array
+     * @throws LocalizedException
+     * @throws ApiException
+     */
+    public function getRatesSplitCheckout($request, $storeId);
+
+    /**
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return array
      * @throws LocalizedException

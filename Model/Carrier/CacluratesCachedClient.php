@@ -101,6 +101,22 @@ class CacluratesCachedClient implements CalcuratesClientInterface
     }
 
     /**
+     * @param array $request
+     * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
+     * @return array|bool
+     */
+    public function getRatesSplitCheckout($request, $storeId)
+    {
+        $rates = $this->cache->getCachedData($request, $storeId);
+        if ($rates === false) {
+            $rates = $this->calcuratesClient->getRatesSplitCheckout($request, $storeId);
+            $this->cache->saveCachedData($request, $storeId, $rates);
+        }
+
+        return $rates;
+    }
+
+    /**
      * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
      * @return array
      */

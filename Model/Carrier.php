@@ -14,6 +14,7 @@ use Calcurates\ModuleMagento\Client\Command\GetAllShippingOptionsCommand;
 use Calcurates\ModuleMagento\Client\Http\ApiException;
 use Calcurates\ModuleMagento\Client\Request\RateRequestBuilder;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
+use Calcurates\ModuleMagento\Client\Response\Strategy\RatesStrategyFactory;
 use Calcurates\ModuleMagento\Model\Carrier\Validator\RateRequestValidator;
 use Calcurates\ModuleMagento\Model\Shipment\CustomPackagesProvider;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -72,6 +73,8 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @var RatesResponseProcessor
      */
     private $ratesResponseProcessor;
+
+    private $ratesStrategyFactory;
 
     /**
      * @var RateRequestBuilder
@@ -144,6 +147,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         \Magento\Framework\Registry $registry,
         CalcuratesClientInterface $calcuratesClient,
         RatesResponseProcessor $ratesResponseProcessor,
+        RatesStrategyFactory $ratesStrategyFactory,
         RateRequestBuilder $rateRequestBuilder,
         RateRequestValidator $rateRequestValidator,
         CustomPackagesProvider $customPackagesProvider,
@@ -173,6 +177,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->calcuratesClient = $calcuratesClient;
         $this->ratesResponseProcessor = $ratesResponseProcessor;
         $this->rateRequestBuilder = $rateRequestBuilder;
+        $this->ratesStrategyFactory = $ratesStrategyFactory;
         $this->rateRequestValidator = $rateRequestValidator;
         $this->customPackagesProvider = $customPackagesProvider;
         $this->createShippingLabelCommand = $createShippingLabelCommand;
@@ -277,7 +282,10 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $debugData['request'] = $apiRequestBody;
 
         try {
-            $response = $this->calcuratesClient->getRates($apiRequestBody, $this->getStore());
+            $splitCheckout = 0;
+
+            $ratesStrategy = $this->ratesStrategyFactory->create($splitCheckout);
+            $response = $ratesStrategy->getResponse($apiRequestBody, $this->getStore());
             $debugData['result'] = $response;
         } catch (ApiException $e) {
             $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
@@ -289,7 +297,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             $this->_debug($debugData);
         }
 
-        return $this->ratesResponseProcessor->processResponse($response, $quote);
+        return $ratesStrategy->processResponse($response, $quote);
     }
 
     /**

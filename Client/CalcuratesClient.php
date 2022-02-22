@@ -193,6 +193,35 @@ class CalcuratesClient implements CalcuratesClientInterface
     }
 
     /**
+     * @param $request
+     * @param int $storeId
+     * @return array
+     * @throws LocalizedException
+     * @throws ApiException
+     */
+    public function getRatesSplitCheckout($request, $storeId)
+    {
+        $timeout = $this->calcuratesConfig->getApiGetRatesTimeout($storeId);
+        try {
+            $httpClient = $this->apiClientProvider->getClient($storeId);
+            $apiUrl = $this->apiClientProvider->getApiUrl();
+            $httpClient->setTimeout($timeout);
+            $response = $httpClient->post(
+                $apiUrl . '/rates-split-checkout',
+                \Zend_Json::encode($request)
+            );
+            $httpClient->setTimeout(null);
+            $response = \Zend_Json::decode($response);
+        } catch (ApiException $e) {
+            throw $e;
+        } catch (\Throwable $e) {
+            throw new LocalizedException(__('Cannot getting rates with API Calcurates %1', $e->getMessage()));
+        }
+
+        return $response;
+    }
+
+    /**
      * @param int $storeId
      * @return array
      */
