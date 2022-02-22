@@ -41,6 +41,7 @@ class Config implements ConfigProviderInterface
     public const SHIPPING_ON_PRODUCT_ENABLED = 'shipping_on_product_enabled';
     public const SHIPPING_ON_PRODUCT_FALLBACK_MESSAGE = 'shipping_on_product_fallback_message';
     public const STORE_PICKUP_DISPLAY = 'store_pickup_display';
+    public const SPLIT_CHECKOUT_ENABLED = 'split_checkout';
 
     public const ACTIVE = 'active';
     public const DEBUG = 'debug';
@@ -339,6 +340,19 @@ class Config implements ConfigProviderInterface
     {
         return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::STORE_PICKUP_DISPLAY,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param $storeId
+     * @return bool
+     */
+    public function isSplitCheckoutEnabled($storeId)
+    {
+        return $this->scopeConfig->isSetFlag(
+            self::CONFIG_GROUP . self::SPLIT_CHECKOUT_ENABLED,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );
