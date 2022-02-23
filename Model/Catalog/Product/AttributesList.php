@@ -70,8 +70,13 @@ class AttributesList implements ProductAttributesListInterface
             }
 
             $values = [];
-            foreach ($attributesItem->getSource()->getAllOptions() as $option) {
-                if (empty($option['value'])) {
+            try {
+                $sourceOptions = $attributesItem->getSource()->getAllOptions();
+            } catch (\Exception $e) {
+                continue;
+            }
+            foreach ($sourceOptions as $option) {
+                if (empty($option['value']) || is_array($option['value'])) {
                     continue;
                 }
                 $values[] = $this->getCustomDataOptionObject()
