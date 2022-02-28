@@ -102,8 +102,10 @@
     > tfoot > tr > td {
       vertical-align: middle;
     }
-    .col-method {
-      min-width: 245px;
+    &:not(.amcheckout-shipping-methods) {
+      .col-method {
+        min-width: 245px;
+      }
     }
     .col-logo {
       text-align: left;

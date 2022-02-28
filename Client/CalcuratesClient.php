@@ -10,9 +10,9 @@ namespace Calcurates\ModuleMagento\Client;
 
 use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
 use Calcurates\ModuleMagento\Client\Http\ApiException;
-use Calcurates\ModuleMagento\Client\Http\HttpClient;
 use Calcurates\ModuleMagento\Model\Config;
 use Magento\Framework\Exception\LocalizedException;
+use Calcurates\ModuleMagento\Client\ApiClientProvider;
 
 class CalcuratesClient implements CalcuratesClientInterface
 {
@@ -22,37 +22,25 @@ class CalcuratesClient implements CalcuratesClientInterface
     private $calcuratesConfig;
 
     /**
-     * @var HttpClient
+     * @var ApiClientProvider
      */
-    private $httpClient;
+    private $apiClientProvider;
 
     /**
      * CalcuratesClient constructor.
-     * @param HttpClient $httpClient
      * @param Config $calcuratesConfig
+     * @param ApiClientProvider $apiClientProvider
      */
     public function __construct(
-        HttpClient $httpClient,
-        Config $calcuratesConfig
+        Config $calcuratesConfig,
+        ApiClientProvider $apiClientProvider
     ) {
         $this->calcuratesConfig = $calcuratesConfig;
-        $this->httpClient = $httpClient;
-        $this->init();
+        $this->apiClientProvider = $apiClientProvider;
     }
 
     /**
-     * initialize http client
-     */
-    protected function init(): void
-    {
-        $composerData = $this->calcuratesConfig->getComposerData();
-        $this->httpClient
-            ->addHeader('User-Agent', $composerData['name'] . '/' . $composerData['version'])
-            ->addHeader('X-API-Key', $this->calcuratesConfig->getCalcuratesToken());
-    }
-
-    /**
-     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @param int $storeId
      * @return array
      */
     public function getShippingCarriersWithServices($storeId)
@@ -86,10 +74,11 @@ class CalcuratesClient implements CalcuratesClientInterface
      * @return string
      * @throws LocalizedException
      */
-    public function getLabelContent($url)
+    public function getLabelContent($url, $storeId)
     {
         try {
-            $response = $this->httpClient->get($url);
+            $httpClient = $this->apiClientProvider->getClient($storeId);
+            $response = $httpClient->get($url);
         } catch (\Throwable $e) {
             throw new LocalizedException(__('Cannot getting label from API Calcurates %1', $e->getMessage()));
         }
@@ -100,7 +89,7 @@ class CalcuratesClient implements CalcuratesClientInterface
     /**
      * @param string $serviceId
      * @param string $tracking
-     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @param int $storeId
      * @return array
      * @throws LocalizedException
      */
@@ -111,7 +100,9 @@ class CalcuratesClient implements CalcuratesClientInterface
                 'serviceId' => $serviceId,
                 'trackingNumber' => $tracking
             ]);
-            $response = $this->httpClient->get($this->getAPIUrl($storeId) . '/tracking?' . $query);
+            $httpClient = $this->apiClientProvider->getClient($storeId);
+            $apiUrl = $this->apiClientProvider->getApiUrl();
+            $response = $httpClient->get($apiUrl . '/tracking?' . $query);
             $response = \Zend_Json::decode($response);
         } catch (\Throwable $e) {
             throw new LocalizedException(__('Cannot getting tracking from API Calcurates %1', $e->getMessage()));
@@ -122,15 +113,17 @@ class CalcuratesClient implements CalcuratesClientInterface
 
     /**
      * @param array $request
-     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @param int $storeId
      * @return array
      * @throws LocalizedException
      */
     public function createShippingLabel($request, $storeId)
     {
         try {
-            $response = $this->httpClient->post(
-                $this->getAPIUrl($storeId) . '/labels',
+            $httpClient = $this->apiClientProvider->getClient($storeId);
+            $apiUrl = $this->apiClientProvider->getApiUrl();
+            $response = $httpClient->post(
+                $apiUrl . '/labels',
                 \Zend_Json::encode($request)
             );
             $response = \Zend_Json::decode($response);
@@ -143,7 +136,7 @@ class CalcuratesClient implements CalcuratesClientInterface
 
     /**
      * @param $request
-     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @param int $storeId
      * @return array
      * @throws LocalizedException
      * @throws ApiException
@@ -152,12 +145,14 @@ class CalcuratesClient implements CalcuratesClientInterface
     {
         $timeout = $this->calcuratesConfig->getApiGetRatesTimeout($storeId);
         try {
-            $this->httpClient->setTimeout($timeout);
-            $response = $this->httpClient->post(
-                $this->getAPIUrl($storeId) . '/rates',
+            $httpClient = $this->apiClientProvider->getClient($storeId);
+            $apiUrl = $this->apiClientProvider->getApiUrl();
+            $httpClient->setTimeout($timeout);
+            $response = $httpClient->post(
+                $apiUrl . '/rates',
                 \Zend_Json::encode($request)
             );
-            $this->httpClient->setTimeout(null);
+            $httpClient->setTimeout(null);
             $response = \Zend_Json::decode($response);
         } catch (ApiException $e) {
             throw $e;
@@ -170,7 +165,7 @@ class CalcuratesClient implements CalcuratesClientInterface
 
     /**
      * @param array $request
-     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @param int $storeId
      * @return array
      * @throws LocalizedException
      * @throws ApiException
@@ -179,12 +174,14 @@ class CalcuratesClient implements CalcuratesClientInterface
     {
         $timeout = $this->calcuratesConfig->getApiGetRatesTimeout($storeId);
         try {
-            $this->httpClient->setTimeout($timeout);
-            $response = $this->httpClient->post(
-                $this->getAPIUrl($storeId) . '/rates-simple',
+            $httpClient = $this->apiClientProvider->getClient($storeId);
+            $apiUrl = $this->apiClientProvider->getApiUrl();
+            $httpClient->setTimeout($timeout);
+            $response = $httpClient->post(
+                $apiUrl . '/rates-simple',
                 \Zend_Json::encode($request)
             );
-            $this->httpClient->setTimeout(null);
+            $httpClient->setTimeout(null);
             $response = \Zend_Json::decode($response);
         } catch (ApiException $e) {
             throw $e;
@@ -196,23 +193,16 @@ class CalcuratesClient implements CalcuratesClientInterface
     }
 
     /**
-     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
-     * @return string
-     */
-    protected function getApiUrl($storeId)
-    {
-        return rtrim($this->calcuratesConfig->getApiUrl($storeId), '/') . '/api/magento2';
-    }
-
-    /**
-     * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
+     * @param int $storeId
      * @return array
      */
     public function getCustomPackages($storeId)
     {
         try {
-            $response = $this->httpClient->get(
-                $this->getAPIUrl($storeId) . '/custom-packages'
+            $httpClient = $this->apiClientProvider->getClient($storeId);
+            $apiUrl = $this->apiClientProvider->getApiUrl();
+            $response = $httpClient->get(
+                $apiUrl . '/custom-packages'
             );
             $response = \Zend_Json::decode($response);
         } catch (\Throwable $e) {
@@ -225,7 +215,7 @@ class CalcuratesClient implements CalcuratesClientInterface
     /**
      *
      * @param string $type
-     * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
+     * @param int $storeId
      * @return array
      * @throws \InvalidArgumentException
      */
@@ -245,8 +235,10 @@ class CalcuratesClient implements CalcuratesClientInterface
         }
 
         try {
-            $response = $this->httpClient->get(
-                $this->getAPIUrl($storeId) . '/shipping-options/' . $type
+            $httpClient = $this->apiClientProvider->getClient($storeId);
+            $apiUrl = $this->apiClientProvider->getApiUrl();
+            $response = $httpClient->get(
+                $apiUrl . '/shipping-options/' . $type
             );
             $response = \Zend_Json::decode($response);
         } catch (\Throwable $e) {

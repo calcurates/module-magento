@@ -57,7 +57,7 @@ class MergedShippingProcessor implements ResponseProcessorInterface
      * @param array $response
      * @param CartInterface $quote
      */
-    public function process(Result $result, array $response, CartInterface $quote): void
+    public function process(Result $result, array &$response, CartInterface $quote): void
     {
         foreach ($response['shippingOptions']['mergedShippingOptions'] as $responseRate) {
             if (!$responseRate['success']) {

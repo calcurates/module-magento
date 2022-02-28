@@ -126,23 +126,25 @@ class Config implements ConfigProviderInterface
     }
 
     /**
+     * @param int $storeId
      * @return string
      */
-    public function getCalcuratesToken()
+    public function getCalcuratesToken($storeId)
     {
-        return $this->scopeConfig->getValue(self::CONFIG_GROUP . self::CONFIG_TOKEN, ScopeInterface::SCOPE_WEBSITE);
+        return $this->scopeConfig->getValue(
+            self::CONFIG_GROUP . self::CONFIG_TOKEN,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
     }
 
     /**
-     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return string
      */
-    public function getApiUrl($storeId)
+    public function getApiUrl()
     {
         return $this->scopeConfig->getValue(
-            self::CONFIG_GROUP . self::CONFIG_API_URL,
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-            $storeId
+            self::CONFIG_GROUP . self::CONFIG_API_URL
         );
     }
 
@@ -195,7 +197,7 @@ class Config implements ConfigProviderInterface
     }
 
     /**
-     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @param int|string $storeId
      * @return int
      */
     public function getApiGetRatesTimeout($storeId)

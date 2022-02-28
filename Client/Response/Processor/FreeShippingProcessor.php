@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Client\Response\Processor;
 
 use Calcurates\ModuleMagento\Client\RateBuilder;
-use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
@@ -46,7 +45,7 @@ class FreeShippingProcessor implements ResponseProcessorInterface
      * @param array $response
      * @param CartInterface $quote
      */
-    public function process(Result $result, array $response, CartInterface $quote): void
+    public function process(Result $result, array &$response, CartInterface $quote): void
     {
         foreach ($response['shippingOptions']['freeShipping'] as $responseRate) {
             if (!$responseRate['success']) {

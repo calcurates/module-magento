@@ -345,7 +345,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      */
     protected function _doShipmentRequest(\Magento\Framework\DataObject $request)
     {
-        $this->createShippingLabelCommand->setStore($this->getStore());
+        $this->createShippingLabelCommand->setStore($request->getStoreId());
 
         return $this->createShippingLabelCommand->execute($request);
     }

@@ -33,10 +33,11 @@ interface CalcuratesClientInterface
 
     /**
      * @param string $url
+     * @param int $storeId
      * @return string
      * @throws LocalizedException
      */
-    public function getLabelContent($url);
+    public function getLabelContent($url, $storeId);
 
     /**
      * @param string $serviceId

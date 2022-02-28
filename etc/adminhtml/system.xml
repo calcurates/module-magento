@@ -19,6 +19,9 @@
                         <label>Enabled</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <config_path>carriers/calcurates/active</config_path>
+                        <requires>
+                            <field id="calcurates_token"/>
+                        </requires>
                     </field>
                     <field id="calcurates_token" translate="label comment" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Calcurates API Token</label>
@@ -26,7 +29,7 @@
                         <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                         <config_path>carriers/calcurates/calcurates_token</config_path>
                     </field>
-                    <field id="api_url" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <field id="api_url" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                         <label>API URL</label>
                         <config_path>carriers/calcurates/api_url</config_path>
                     </field>

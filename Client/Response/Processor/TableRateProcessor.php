@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Client\Response\Processor;
 
 use Calcurates\ModuleMagento\Client\RateBuilder;
-use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Client\Response\Processor\Utils\TableRateNameBuilder;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
@@ -66,7 +65,7 @@ class TableRateProcessor implements ResponseProcessorInterface
      * @param array $response
      * @param CartInterface $quote
      */
-    public function process(Result $result, array $response, CartInterface $quote): void
+    public function process(Result $result, array &$response, CartInterface $quote): void
     {
         foreach ($response['shippingOptions']['tableRates'] as $tableRate) {
             if (!$tableRate['success']) {

@@ -35,7 +35,7 @@ class CreateManifestsCommand
     public function createManifests(string $carrierCode, string $providerCode, array $labelIds, int $storeId): array
     {
         $httpClient = $this->apiClientProvider->getClient($storeId);
-        $apiUrl = $this->apiClientProvider->getApiUrl($storeId);
+        $apiUrl = $this->apiClientProvider->getApiUrl();
 
         $query = \Zend_Json::encode([
             'carrierCode' => $carrierCode,

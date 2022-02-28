@@ -39,7 +39,7 @@ class GetTrackingInfoCommand
     public function get(string $carrierCode, string $providerCode, string $trackingNumber, int $storeId): array
     {
         $httpClient = $this->apiClientProvider->getClient($storeId);
-        $apiUrl = $this->apiClientProvider->getApiUrl($storeId);
+        $apiUrl = $this->apiClientProvider->getApiUrl();
 
         $query = http_build_query([
             'carrierCode' => $carrierCode,

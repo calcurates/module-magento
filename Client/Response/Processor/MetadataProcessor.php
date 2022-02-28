@@ -55,7 +55,7 @@ class MetadataProcessor implements ResponseProcessorInterface
      * @param CartInterface $quote
      * @return void
      */
-    public function process(Result $result, array $response, CartInterface $quote): void
+    public function process(Result $result, array &$response, CartInterface $quote): void
     {
         try {
             foreach ($this->metadataPool->getMetadataTypes() as $entity => $metadataType) {

@@ -49,7 +49,7 @@ class ApiClientProvider
                 'User-Agent',
                 $composerData['name'] . '/' . $composerData['version']
             );
-            $client->addHeader('X-API-Key', $this->calcuratesConfig->getCalcuratesToken());
+            $client->addHeader('X-API-Key', $this->calcuratesConfig->getCalcuratesToken($storeId));
 
             $this->httpClients[$storeId] = $client;
         }
@@ -59,11 +59,10 @@ class ApiClientProvider
 
     /**
      * @TODO: move inside http client provider
-     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return string
      */
-    public function getApiUrl($storeId)
+    public function getApiUrl()
     {
-        return rtrim($this->calcuratesConfig->getApiUrl($storeId), '/') . '/api/magento2';
+        return rtrim($this->calcuratesConfig->getApiUrl(), '/') . '/api/magento2';
     }
 }
