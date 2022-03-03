@@ -19,6 +19,9 @@ var config = {
             },
             'Magento_Checkout/js/view/shipping-information': {
                 'Calcurates_ModuleMagento/js/view/shipping-information-mixin': true
+            },
+            'Magento_Checkout/js/checkout-data': {
+                'Calcurates_ModuleMagento/js/checkout-data-mixin': true
             }
         }
     }
