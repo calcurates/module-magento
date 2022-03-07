@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+  <table name="calcurates_shipping_label" resource="default" engine="innodb" comment="Calcurates Multi-labels table">
+    <column xsi:type="int" name="id" padding="10" unsigned="true" nullable="false" identity="true" comment="ID"/>
+    <column xsi:type="int" name="shipment_id" padding="10" unsigned="true" nullable="false" identity="false" default="0" comment="Shipment Id"/>
+    <column xsi:type="varchar" name="shipping_carrier_id" nullable="false" length="255" default="" comment="Calcurates Shipping Carrier Id"/>
+    <column xsi:type="varchar" name="shipping_service_id" nullable="false" length="255" default="" comment="Calcurates Shipping Service Id"/>
+    <column xsi:type="varchar" name="shipping_carrier_label" nullable="true" length="255" comment="Calcurates Shipping Carrier Label"/>
+    <column xsi:type="varchar" name="shipping_service_label" nullable="true" length="255" comment="Calcurates Shipping Service Label"/>
+    <column xsi:type="varchar" name="tracking_number" nullable="true" length="255" comment="Calcurates Tracking Number"/>
+    <column xsi:type="mediumblob" name="label_content" nullable="true" comment="Calcurates PDF Label Content"/>
+    <column xsi:type="text" name="label_data" nullable="true" comment="Calcurates Label Data Json from API"/>
+    <column xsi:type="text" name="packages" nullable="true" comment="Packages JSON from magento"/>
+    <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+    <column xsi:type="varchar" name="carrier_code" nullable="true" length="255" default="" comment="Calcurates Carrier Code"/>
+    <column xsi:type="varchar" name="carrier_provider_code" nullable="true" length="255" default="" comment="Calcurates Carrier Provider Code"/>
+    <column xsi:type="int" name="manifest_id" padding="10" unsigned="true" nullable="true" identity="false" comment="Calcurates Manifest ID"/>
+    <constraint xsi:type="primary" referenceId="PRIMARY">
+      <column name="id"/>
+    </constraint>
+  </table>
+  <table name="calcurates_manifest" resource="default" engine="innodb" comment="Calcurates Manifests">
+    <column xsi:type="int" name="manifest_id" padding="10" unsigned="true" nullable="false" identity="true" comment="ID"/>
+    <column xsi:type="mediumblob" name="pdf_content" nullable="true" comment="Calcurates PDF Manifest Content"/>
+    <column xsi:type="text" name="manifest_data" nullable="true" comment="Calcurates Manifest Data Json from API"/>
+    <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+    <constraint xsi:type="primary" referenceId="PRIMARY">
+      <column name="manifest_id"/>
+    </constraint>
+  </table>
+  <table name="calcurates_quote_data" resource="default" engine="innodb" comment="Calcurates Quote Additional Data Table">
+    <column xsi:type="int" name="id" padding="10" unsigned="true" nullable="false" identity="true" comment="ID"/>
+    <column xsi:type="int" name="quote_id" padding="10" unsigned="true" nullable="false" identity="false" comment="Quote ID"/>
+    <column xsi:type="varchar" name="delivery_date_date" nullable="false" length="255" comment="Date"/>
+    <column xsi:type="decimal" name="delivery_date_fee" scale="4" precision="12" unsigned="false" nullable="false" comment="Date Fee"/>
+    <column xsi:type="varchar" name="delivery_date_time_from" nullable="false" length="255" comment="Time From"/>
+    <column xsi:type="varchar" name="delivery_date_time_to" nullable="false" length="255" comment="Time To"/>
+    <column xsi:type="decimal" name="delivery_date_time_fee" scale="4" precision="12" unsigned="false" nullable="false" comment="Date Fee"/>
+    <column xsi:type="text" name="delivery_dates" nullable="false" comment="Delivery dates for quote"/>
+    <constraint xsi:type="primary" referenceId="PRIMARY">
+      <column name="id"/>
+    </constraint>
+    <constraint xsi:type="foreign" referenceId="CALCURATES_QUOTE_DATA_QUOTE_ID_QUOTE_ENTITY_ID" table="calcurates_quote_data" column="quote_id" referenceTable="quote" referenceColumn="entity_id" onDelete="CASCADE"/>
+    <index referenceId="CALCURATES_QUOTE_DATA_QUOTE_ID" indexType="btree">
+      <column name="quote_id"/>
+    </index>
+  </table>
+  <table name="calcurates_order_data" resource="default" engine="innodb" comment="Calcurates Order Additional Data Table">
+    <column xsi:type="int" name="id" padding="10" unsigned="true" nullable="false" identity="true" comment="ID"/>
+    <column xsi:type="int" name="order_id" padding="10" unsigned="true" nullable="false" identity="false" comment="Order ID"/>
+    <column xsi:type="varchar" name="delivery_date_date" nullable="false" length="255" comment="Date"/>
+    <column xsi:type="varchar" name="delivery_date_time_from" nullable="false" length="255" comment="Time From"/>
+    <column xsi:type="varchar" name="delivery_date_time_to" nullable="false" length="255" comment="Time To"/>
+    <column xsi:type="decimal" name="base_dd_fee_amount" scale="4" precision="12" unsigned="false" nullable="false" comment="Whole delivery date fee amount in base currency"/>
+    <column xsi:type="decimal" name="dd_fee_amount" scale="4" precision="12" unsigned="false" nullable="false" comment="Whole delivery date fee amount in order currency"/>
+    <column xsi:type="text" name="delivery_dates" nullable="false" comment="Delivery Dates serialized for current method"/>
+    <constraint xsi:type="primary" referenceId="PRIMARY">
+      <column name="id"/>
+    </constraint>
+    <constraint xsi:type="foreign" referenceId="CALCURATES_ORDER_DATA_ORDER_ID_SALES_ORDER_ENTITY_ID" table="calcurates_order_data" column="order_id" referenceTable="sales_order" referenceColumn="entity_id" onDelete="CASCADE"/>
+    <index referenceId="CALCURATES_ORDER_DATA_ORDER_ID" indexType="btree">
+      <column name="order_id"/>
+    </index>
+  </table>
+  <table name="quote">
+    <column xsi:type="text" name="calcurates_carrier_packages" nullable="true"/>
+    <column xsi:type="text" name="calcurates_carrier_srvs_srs_codes" nullable="true"/>
+  </table>
+  <table name="quote_item">
+    <column xsi:type="text" name="calcurates_source_code" nullable="true"/>
+  </table>
+  <table name="sales_order">
+    <column xsi:type="text" name="calcurates_carrier_srvs_srs_codes" nullable="true"/>
+    <column xsi:type="text" name="calcurates_carrier_packages" nullable="true"/>
+  </table>
+  <table name="sales_order_item">
+    <column xsi:type="text" name="calcurates_source_code" nullable="true"/>
+  </table>
+  <table name="sales_shipment">
+    <column xsi:type="text" name="calcurates_label_data" nullable="true"/>
+  </table>
+
+  <table name="sales_shipment_track">
+    <column xsi:type="text" name="calcurates_service_id" nullable="true"/>
+  </table>
+</schema>
