@@ -384,6 +384,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                 }
 
                 return $result;
-            });
+            }
+        );
     }
 }
