@@ -1,4 +1,10 @@
 <?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2022 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
 
 declare(strict_types=1);
 
@@ -10,7 +16,6 @@ use Calcurates\ModuleMagento\Model\ResourceModel\OrderData;
 use Calcurates\ModuleMagento\Model\ResourceModel\QuoteData;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
-
 
 class MoveCalcuratesDataToTable implements DataPatchInterface
 {

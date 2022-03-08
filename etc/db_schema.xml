@@ -1,4 +1,10 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  @author Calcurates Team
+  @copyright Copyright © 2022 Calcurates (https://www.calcurates.com)
+  @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+  @package Calcurates_ModuleMagento
+-->
 <schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
   <table name="calcurates_shipping_label" resource="default" engine="innodb" comment="Calcurates Multi-labels table">
     <column xsi:type="int" name="id" padding="10" unsigned="true" nullable="false" identity="true" comment="ID"/>
