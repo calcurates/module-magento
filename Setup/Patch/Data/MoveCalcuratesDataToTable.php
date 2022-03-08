@@ -2,18 +2,39 @@
 
 declare(strict_types=1);
 
-namespace Calcurates\ModuleMagento\Setup\Operation;
+namespace Calcurates\ModuleMagento\Setup\Patch\Data;
 
 use Calcurates\ModuleMagento\Api\Data\OrderDataInterface;
 use Calcurates\ModuleMagento\Api\Data\QuoteDataInterface;
 use Calcurates\ModuleMagento\Model\ResourceModel\OrderData;
 use Calcurates\ModuleMagento\Model\ResourceModel\QuoteData;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
+use Magento\Framework\Setup\Patch\DataPatchInterface;
 
-class MoveCalcuratesDataToTable
+
+class MoveCalcuratesDataToTable implements DataPatchInterface
 {
-    public function execute(ModuleDataSetupInterface $setup): void
+    /**
+     * @var ModuleDataSetupInterface $moduleDataSetup
+     */
+    private $moduleDataSetup;
+
+    /**
+     * @param ModuleDataSetupInterface $moduleDataSetup
+     */
+    public function __construct(ModuleDataSetupInterface $moduleDataSetup)
     {
+        $this->moduleDataSetup = $moduleDataSetup;
+    }
+
+    /**
+     * Do Upgrade
+     *
+     * @return void
+     */
+    public function apply()
+    {
+        $setup = $this->moduleDataSetup;
         $connection = $setup->getConnection();
 
         $quoteTable = $setup->getTable('quote');
@@ -64,5 +85,21 @@ class MoveCalcuratesDataToTable
             );
             $connection->dropColumn($orderTable, $deliveryDatesFieldName);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAliases()
+    {
+        return [];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getDependencies()
+    {
+        return [];
     }
 }
