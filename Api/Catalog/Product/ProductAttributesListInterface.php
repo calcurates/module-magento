@@ -15,6 +15,8 @@ interface ProductAttributesListInterface
 {
     public const BANNED_INPUT_TYPES = ['gallery', 'media_image'];
 
+    public const BANNED_ATTRIBUTES = ['available_shipping_methods'];
+
     /**
      * @return \Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataInterface[]
      */
