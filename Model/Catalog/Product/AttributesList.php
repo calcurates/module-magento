@@ -68,7 +68,7 @@ class AttributesList implements ProductAttributesListInterface
             if (in_array($attributesItem->getFrontendInput(), ProductAttributesListInterface::BANNED_INPUT_TYPES, true)) {
                 continue;
             }
-            if (in_array($attributesItem->getAttributeCode(), ProductAttributesListInterface::BANNED_ATTRIBUTES)) {
+            if (in_array($attributesItem->getAttributeCode(), ProductAttributesListInterface::BANNED_ATTRIBUTES, true)) {
                 continue;
             }
 
