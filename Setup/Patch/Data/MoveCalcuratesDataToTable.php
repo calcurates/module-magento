@@ -61,13 +61,14 @@ class MoveCalcuratesDataToTable implements DataPatchInterface
                 ->where($deliveryDatesFieldName . ' IS NOT NULL')
                 ->where($deliveryDatesFieldName . " <> ''");
 
-            $connection->insertOnDuplicate(
-                $quoteDataTable,
-                $connection->fetchAll($quoteSelect),
-                [QuoteDataInterface::DELIVERY_DATES]
-            );
-
-            $connection->dropColumn($quoteTable, $deliveryDatesFieldName);
+            $quotes = $connection->fetchAll($quoteSelect);
+            if (!empty($quotes)) {
+                $connection->insertOnDuplicate(
+                    $quoteDataTable,
+                    $quotes,
+                    [QuoteDataInterface::DELIVERY_DATES]
+                );
+            }
         }
 
         if ($connection->tableColumnExists($orderTable, $deliveryDatesFieldName)) {
@@ -83,12 +84,14 @@ class MoveCalcuratesDataToTable implements DataPatchInterface
                 ->where($deliveryDatesFieldName . ' IS NOT NULL')
                 ->where($deliveryDatesFieldName . " <> ''");
 
-            $connection->insertOnDuplicate(
-                $orderDataTable,
-                $connection->fetchAll($orderSelect),
-                [OrderDataInterface::DELIVERY_DATES]
-            );
-            $connection->dropColumn($orderTable, $deliveryDatesFieldName);
+            $orders = $connection->fetchAll($orderSelect);
+            if (!empty($orders)) {
+                $connection->insertOnDuplicate(
+                    $orderDataTable,
+                    $orders,
+                    [OrderDataInterface::DELIVERY_DATES]
+                );
+            }
         }
     }
 
