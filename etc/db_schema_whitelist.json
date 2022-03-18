@@ -1,0 +1,104 @@
+{
+    "calcurates_shipping_label": {
+        "column": {
+            "id": true,
+            "shipment_id": true,
+            "shipping_carrier_id": true,
+            "shipping_service_id": true,
+            "shipping_carrier_label": true,
+            "shipping_service_label": true,
+            "tracking_number": true,
+            "label_content": true,
+            "label_data": true,
+            "packages": true,
+            "created_at": true,
+            "carrier_code": true,
+            "carrier_provider_code": true,
+            "manifest_id": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "calcurates_manifest": {
+        "column": {
+            "manifest_id": true,
+            "pdf_content": true,
+            "manifest_data": true,
+            "created_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "calcurates_quote_data": {
+        "column": {
+            "id": true,
+            "quote_id": true,
+            "delivery_date_date": true,
+            "delivery_date_fee": true,
+            "delivery_date_time_from": true,
+            "delivery_date_time_to": true,
+            "delivery_date_time_fee": true,
+            "delivery_dates": true
+        },
+        "index": {
+            "CALCURATES_QUOTE_DATA_QUOTE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "CALCURATES_QUOTE_DATA_QUOTE_ID_QUOTE_ENTITY_ID": true
+        }
+    },
+    "calcurates_order_data": {
+        "column": {
+            "id": true,
+            "order_id": true,
+            "delivery_date_date": true,
+            "delivery_date_time_from": true,
+            "delivery_date_time_to": true,
+            "base_dd_fee_amount": true,
+            "dd_fee_amount": true,
+            "delivery_dates": true
+        },
+        "index": {
+            "CALCURATES_ORDER_DATA_ORDER_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "CALCURATES_ORDER_DATA_ORDER_ID_SALES_ORDER_ENTITY_ID": true
+        }
+    },
+    "quote": {
+        "column": {
+            "calcurates_carrier_packages": true,
+            "calcurates_carrier_srvs_srs_codes": true
+        }
+    },
+    "quote_item": {
+        "column": {
+            "calcurates_source_code": true
+        }
+    },
+    "sales_order": {
+        "column": {
+            "calcurates_carrier_srvs_srs_codes": true,
+            "calcurates_carrier_packages": true
+        }
+    },
+    "sales_order_item": {
+        "column": {
+            "calcurates_source_code": true
+        }
+    },
+    "sales_shipment": {
+        "column": {
+            "calcurates_label_data": true
+        }
+    },
+    "sales_shipment_track": {
+        "column": {
+            "calcurates_service_id": true
+        }
+    }
+}
