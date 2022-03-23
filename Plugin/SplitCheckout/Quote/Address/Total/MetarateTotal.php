@@ -91,7 +91,8 @@ class MetarateTotal
                         $total->addBaseTotalAmount($subject->getCode(), $rate->getCost());
                         $splitShipment['cost'] = $rate->getCost();
                         $splitShipment['price'] = $rate->getPrice();
-                        $splitShipment['products'] = $productData[$origin];
+                        $splitShipment['products'] = $this->getProductSku($quote, $productData[$origin]);
+                        $splitShipment['title'] = $rate->getMethodTitle();
                         $splitShipmentData[$key] = $splitShipment;
                     }
                 }
@@ -99,6 +100,22 @@ class MetarateTotal
         }
         $quoteData->setSplitShipments($splitShipmentData);
         $this->saveQuoteData->save($quoteData);
+
+        return $result;
+    }
+
+    /**
+     * @param Quote $quote
+     * @param array $itemId
+     * @return array
+     */
+    private function getProductSku(Quote $quote, array $itemId)
+    {
+        $result = [];
+        foreach ($itemId as $id) {
+            $item = $quote->getItemById($id);
+            $result[] = $item->getSku();
+        }
 
         return $result;
     }
