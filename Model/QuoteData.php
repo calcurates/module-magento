@@ -99,4 +99,14 @@ class QuoteData extends \Magento\Framework\Model\AbstractModel implements QuoteD
     {
         $this->setData(self::DELIVERY_DATES, $deliveryDates);
     }
+
+    public function getSplitShipments()
+    {
+        return $this->getData(self::SPLIT_SHIPMENTS);
+    }
+
+    public function setSplitShipments(array $shipments)
+    {
+        $this->setData(self::SPLIT_SHIPMENTS, $shipments);
+    }
 }

@@ -109,7 +109,6 @@ define([
                 return method.carrier_code === 'calcurates'
                     && method.extension_attributes
                     && method.extension_attributes.calcurates_metarate_data
-                    && method.extension_attributes.calcurates_metarate_data.length > 1
             },
 
             /**

@@ -25,6 +25,7 @@ class ShippingMethodManager
     public const CARRIER = 'carrier';
     public const IN_STORE_PICKUP = 'inStorePickup';
     public const RATE_SHOPPING = 'rateShopping';
+    public const META_RATE = 'metaRate';
 
     /**
      * @var CarrierDataFactory
@@ -87,7 +88,11 @@ class ShippingMethodManager
      */
     private function retrieveCarrierData($method, $orderShippingDescription)
     {
-        list($method, $additional) = explode('_', $method, 2);
+        try {
+            list($method, $additional) = explode('_', $method, 2);
+        } catch (\Exception $exception) {
+            return null;
+        }
 
         if ($method !== self::CARRIER) {
             return null;
@@ -122,7 +127,11 @@ class ShippingMethodManager
         if (!$sourceCodeToService) {
             return null;
         }
-        list($method, $additional) = explode('_', $method, 2);
+        try {
+            list($method, $additional) = explode('_', $method, 2);
+        } catch (\Exception $exception) {
+            return null;
+        }
 
         if ($method !== self::MERGRED_SHIPPING) {
             return null;
@@ -170,7 +179,11 @@ class ShippingMethodManager
             return null;
         }
 
-        list($method, $additional) = explode('_', $shippingMethodCode, 2);
+        try {
+            list($method, $additional) = explode('_', $shippingMethodCode, 2);
+        } catch (\Exception $exception) {
+            return null;
+        }
 
         if ($method !== self::IN_STORE_PICKUP) {
             return null;

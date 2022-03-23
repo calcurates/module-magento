@@ -20,6 +20,10 @@ class QuoteData extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         QuoteDataInterface::DELIVERY_DATES => [
             '[]',
             []
+        ],
+        QuoteDataInterface::SPLIT_SHIPMENTS => [
+            '[]',
+            []
         ]
     ];
 

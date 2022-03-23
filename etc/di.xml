@@ -181,6 +181,7 @@
     </type>
     <preference for="Calcurates\ModuleMagento\Api\Data\MetaRateInterface" type="Calcurates\ModuleMagento\Model\Data\MetaRate"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\MetaRateDataInterface" type="Calcurates\ModuleMagento\Model\Data\MetaRateData"/>
+    <preference for="Calcurates\ModuleMagento\Api\Data\SplitShipmentInterface" type="Calcurates\ModuleMagento\Model\Data\SplitShipment"/>
     <virtualType name="ResponseMetadataHydratorPool" type="Calcurates\ModuleMagento\Client\Response\HydratorPool">
         <arguments>
             <argument name="hydrators" xsi:type="array">
@@ -296,6 +297,8 @@
     <type name="Magento\Quote\Model\Quote\Address\Total\Shipping">
         <plugin name="Calcurates_ModuleMagento::AddDeliveryDateFee"
                 type="Calcurates\ModuleMagento\Plugin\DeliveryDateFee\Quote\Address\Total\AddShippingFeeToShippingTotal"/>
+        <plugin name="Calcurates_ModuleMagento::MetarateTotal"
+                type="Calcurates\ModuleMagento\Plugin\SplitCheckout\Quote\Address\Total\MetarateTotal"/>
     </type>
     <type name="Magento\Sales\Model\ResourceModel\Order\Shipment\Grid\Collection">
         <plugin name="Calcurates\ModuleMagento\Plugin\Model\Order\ResourceModel\Shipment\Grid\Collection"

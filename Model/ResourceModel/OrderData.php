@@ -20,6 +20,10 @@ class OrderData extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         OrderDataInterface::DELIVERY_DATES => [
             '[]',
             []
+        ],
+        OrderDataInterface::SPLIT_SHIPMENTS => [
+            '[]',
+            []
         ]
     ];
 

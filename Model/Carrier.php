@@ -282,7 +282,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $debugData['request'] = $apiRequestBody;
 
         try {
-            $splitCheckout = 0;
+            $splitCheckout = 1;
 
             $ratesStrategy = $this->ratesStrategyFactory->create($splitCheckout);
             $response = $ratesStrategy->getResponse($apiRequestBody, $this->getStore());
