@@ -159,10 +159,10 @@ class ShippingLabelRequestBuilder
                 $weightUnits = 'kg';
                 break;
             case Zend_Measure_Weight::OUNCE:
-                $weightUnits = 'ounce';
+                $weightUnits = 'oz';
                 break;
             case Zend_Measure_Weight::GRAM:
-                $weightUnits = 'gram';
+                $weightUnits = 'g';
                 break;
             default:
                 throw new InvalidArgumentException('Invalid weight units');
