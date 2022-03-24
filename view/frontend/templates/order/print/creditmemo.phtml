@@ -1,0 +1,112 @@
+<?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
+
+/**
+ * @var $viewModel \Calcurates\ModuleMagento\ViewModel\OrderSplitShipments
+ * @var $escaper \Magento\Framework\Escaper
+ */
+?>
+<?php
+$_order = $block->getOrder();
+$viewModel = $block->getViewModel();
+$viewModel->setOrder($_order);
+$_creditmemo = $block->getCreditmemo();
+?>
+<?php if ($_creditmemo) : ?>
+    <?php $_creditmemos = [$_creditmemo]; ?>
+<?php else : ?>
+    <?php $_creditmemos = $_order->getCreditmemosCollection() ?>
+<?php endif; ?>
+<?php foreach ($_creditmemos as $_creditmemo) : ?>
+<div class="order-details-items creditmemo">
+    <div class="order-title">
+        <strong><?= $block->escapeHtml(__('Refund #%1', $_creditmemo->getIncrementId())) ?></strong>
+    </div>
+    <div class="table-wrapper order-items-creditmemo">
+        <table class="data table table-order-items creditmemo" id="my-refund-table-<?= (int) $_creditmemo->getId() ?>">
+            <caption class="table-caption"><?= $block->escapeHtml(__('Items Refunded')) ?></caption>
+            <thead>
+                <tr>
+                    <th class="col name"><?= $block->escapeHtml(__('Product Name')) ?></th>
+                    <th class="col sku"><?= $block->escapeHtml(__('SKU')) ?></th>
+                    <th class="col price"><?= $block->escapeHtml(__('Price')) ?></th>
+                    <th class="col qty"><?= $block->escapeHtml(__('Qty')) ?></th>
+                    <th class="col subtotal"><?= $block->escapeHtml(__('Subtotal')) ?></th>
+                    <th class="col discount"><?= $block->escapeHtml(__('Discount Amount')) ?></th>
+                    <th class="col rowtotal"><?= $block->escapeHtml(__('Row Total')) ?></th>
+                </tr>
+            </thead>
+            <?php $_items = $_creditmemo->getAllItems(); ?>
+            <?php foreach ($_items as $_item) : ?>
+                <?php if (!$_item->getOrderItem()->getParentItem()) : ?>
+                    <tbody>
+                        <?= $block->getItemHtml($_item) ?>
+                    </tbody>
+                <?php endif; ?>
+            <?php endforeach; ?>
+            <tfoot>
+                <?= $block->getTotalsHtml($_creditmemo) ?>
+            </tfoot>
+        </table>
+    </div>
+    <div class="block block-order-details-view">
+        <div class="block-title">
+            <strong><?= $block->escapeHtml(__('Order Information')) ?></strong>
+        </div>
+        <div class="block-content">
+        <?php if (!$_order->getIsVirtual()) : ?>
+            <div class="box box-order-shipping-address">
+                <div class="box-title">
+                    <strong><?= $block->escapeHtml(__('Shipping Address')) ?></strong>
+                </div>
+                <div class="box-content">
+                    <?php $_shipping = $_creditmemo->getShippingAddress() ?>
+                    <address><?= /* @noEscape */ $block->formatAddress($_shipping, 'html') ?></address>
+                </div>
+            </div>
+            <div class="box box-order-shipping-method">
+                <div class="box-title">
+                    <strong><?= $block->escapeHtml(__('Shipping Method')) ?></strong>
+                </div>
+                <div class="box-content">
+                    <?php if($viewModel->isSplitShipment()) : ?>
+                        <?php $shipmentCount = count($viewModel->getOrderData()->getSplitShipments()) ?>
+                        <?php foreach ($viewModel->getOrderData()->getSplitShipments() as $key => $splitShipment): ?>
+                            <b><?= $escaper->escapeHtml(__('Shipment %1 of %2:', $key + 1, $shipmentCount)) ?></b><br>
+                            <span><?= $escaper->escapeHtml($splitShipment['title'] ?? '')?></span><br>
+                            <span>
+                                <?= $escaper->escapeHtml(__('Included SKUs: %1', implode(', ', $splitShipment['products'] ?? []))) ?>
+                            </span><br>
+                        <?php endforeach; ?>
+                    <?php else : ?>
+                        <?= $block->escapeHtml($_order->getShippingDescription()) ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+            <div class="box box-order-billing-address">
+                <div class="box-title">
+                    <strong><?= $block->escapeHtml(__('Billing Address')) ?></strong>
+                </div>
+                <div class="box-content">
+                    <?php $_billing = $_creditmemo->getbillingAddress() ?>
+                    <address><?= /* @noEscape */ $block->formatAddress($_order->getBillingAddress(), 'html') ?></address>
+                </div>
+            </div>
+            <div class="box box-order-billing-method">
+                <div class="box-title">
+                    <strong><?= $block->escapeHtml(__('Payment Method')) ?></strong>
+                </div>
+                <div class="box-content">
+                    <?= $block->getPaymentInfoHtml() ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endforeach; ?>

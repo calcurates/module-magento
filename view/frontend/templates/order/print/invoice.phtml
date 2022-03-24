@@ -1,0 +1,117 @@
+<?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
+
+/**
+ * @var $block \Magento\Sales\Block\Order\PrintOrder\Invoice
+ * @var $viewModel \Calcurates\ModuleMagento\ViewModel\OrderSplitShipments
+ * @var $escaper \Magento\Framework\Escaper
+ */
+?>
+<?php
+$_order = $block->getOrder();
+$viewModel = $block->getViewModel();
+$viewModel->setOrder($_order);
+$_invoice = $block->getInvoice();
+?>
+<?php if ($_invoice) : ?>
+    <?php $_invoices = [$_invoice]; ?>
+<?php else : ?>
+    <?php $_invoices = $_order->getInvoiceCollection() ?>
+<?php endif; ?>
+<?php foreach ($_invoices as $_invoice) : ?>
+<div class="order-details-items invoice">
+    <div class="order-title">
+        <strong><?= $escaper->escapeHtml(__('Invoice #')) ?><?= (int) $_invoice->getIncrementId() ?></strong>
+    </div>
+    <div class="table-wrapper table-order-items invoice">
+        <table class="data table table-order-items invoice" id="my-invoice-table-<?= (int) $_invoice->getId() ?>">
+            <caption class="table-caption"><?= $escaper->escapeHtml(__('Items Invoiced')) ?></caption>
+            <thead>
+            <tr>
+                <th class="col name"><?= $escaper->escapeHtml(__('Product Name')) ?></th>
+                <th class="col sku"><?= $escaper->escapeHtml(__('SKU')) ?></th>
+                <th class="col price"><?= $escaper->escapeHtml(__('Price')) ?></th>
+                <th class="col qty"><?= $escaper->escapeHtml(__('Qty Invoiced')) ?></th>
+                <th class="col subtotal"><?= $escaper->escapeHtml(__('Subtotal')) ?></th>
+            </tr>
+            </thead>
+            <?php $_items = $_invoice->getItemsCollection(); ?>
+            <?php foreach ($_items as $_item) : ?>
+                <?php if (!$_item->getOrderItem()->getParentItem()) : ?>
+                    <tbody>
+                        <?= $block->getItemHtml($_item) ?>
+                    </tbody>
+                <?php endif; ?>
+            <?php endforeach; ?>
+            <tfoot>
+                <?= $block->getInvoiceTotalsHtml($_invoice) ?>
+            </tfoot>
+        </table>
+    </div>
+    <div class="block block-order-details-view">
+        <div class="block-title">
+            <strong><?= $escaper->escapeHtml(__('Order Information')) ?></strong>
+        </div>
+        <div class="block-content">
+        <?php if (!$_order->getIsVirtual()) : ?>
+            <div class="box box-order-shipping-address">
+                <div class="box-title">
+                    <strong><?= $escaper->escapeHtml(__('Shipping Address')) ?></strong>
+                </div>
+                <div class="box-content">
+                    <?php $_shipping = $_invoice->getShippingAddress() ?>
+                    <address><?= /* @noEscape */ $block->formatAddress($_shipping, 'html') ?></address>
+                </div>
+            </div>
+
+            <div class="box box-order-shipping-method">
+                <div class="box-title">
+                    <strong><?= $escaper->escapeHtml(__('Shipping Method')) ?></strong>
+                </div>
+                <div class="box-content">
+                    <?php if($viewModel->isSplitShipment()) : ?>
+                        <?php $shipmentCount = count($viewModel->getOrderData()->getSplitShipments()) ?>
+                        <?php foreach ($viewModel->getOrderData()->getSplitShipments() as $key => $splitShipment): ?>
+                            <b><?= $escaper->escapeHtml(__('Shipment %1 of %2:', $key + 1, $shipmentCount)) ?></b><br>
+                            <span><?= $escaper->escapeHtml($splitShipment['title'] ?? '')?></span><br>
+                            <span>
+                                <?= $escaper->escapeHtml(__('Included SKUs: %1', implode(', ', $splitShipment['products'] ?? []))) ?>
+                            </span><br>
+                        <?php endforeach; ?>
+                    <?php else : ?>
+                        <?php if ($_order->getShippingDescription()) : ?>
+                            <?= $escaper->escapeHtml($_order->getShippingDescription()) ?>
+                        <?php else : ?>
+                            <?= $escaper->escapeHtml(__('No shipping information available')) ?>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+            <div class="box box-order-billing-address">
+                <div class="box-title">
+                    <strong><?= $escaper->escapeHtml(__('Billing Address')) ?></strong>
+                </div>
+                <div class="box-content">
+                    <?php $_billing = $_invoice->getbillingAddress() ?>
+                    <address><?= /* @noEscape */ $block->formatAddress($_order->getBillingAddress(), 'html') ?></address>
+                </div>
+            </div>
+
+            <div class="box box-order-billing-method">
+                <div class="box-title">
+                    <strong><?= $escaper->escapeHtml(__('Payment Method')) ?></strong>
+                </div>
+                <div class="box-content">
+                    <?= $block->getPaymentInfoHtml() ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endforeach; ?>

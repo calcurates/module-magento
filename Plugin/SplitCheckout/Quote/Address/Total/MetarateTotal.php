@@ -84,7 +84,8 @@ class MetarateTotal
         foreach ($this->metarateData->getRatesData() as $origin => $rates) {
             foreach ($rates as $rate) {
                 foreach ($splitShipmentData as $key => $splitShipment) {
-                    if ($rate->getMethod() == explode('_', $splitShipment['method'],2)[1]
+                    if (isset($splitShipment['method'])
+                        && $rate->getMethod() == explode('_', $splitShipment['method'],2)[1]
                         && $origin == $splitShipment['origin']
                     ) {
                         $total->addTotalAmount($subject->getCode(), $rate->getPrice());

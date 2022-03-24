@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <!--
   @author Calcurates Team
   @copyright Copyright © 2021 Calcurates (https://www.calcurates.com)
@@ -12,15 +12,5 @@
                 <argument name="view_model" xsi:type="object">Calcurates\ModuleMagento\ViewModel\OrderSplitShipments</argument>
             </arguments>
         </referenceBlock>
-        <referenceContainer name="content">
-            <block class="Magento\Framework\View\Element\Template"
-                   name="calcurates.delivery_date"
-                   template="Calcurates_ModuleMagento::order/delivery_date.phtml"
-                   after="sales.order.info">
-                <arguments>
-                    <argument name="view_model" xsi:type="object">Calcurates\ModuleMagento\ViewModel\OrderDeliveryDate</argument>
-                </arguments>
-            </block>
-        </referenceContainer>
     </body>
 </page>
