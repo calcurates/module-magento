@@ -45,14 +45,18 @@ class CustomPackagesProvider
     {
         if ($this->packages === null) {
             $packages = $this->calcuratesClient->getCustomPackages($shipment->getStoreId());
-            if ($shipment) {
-                $carrierPackages = $this->carrierPackagesRetriever->retrievePackages($shipment->getOrder());
-                $packages = $this->appendNotExists($packages, $carrierPackages);
-            }
+
+            $carrierPackages = $this->carrierPackagesRetriever->retrievePackages($shipment->getOrder());
+            $packages = $this->appendNotExists($packages, $carrierPackages);
 
             foreach ($packages as &$customPackageData) {
-                $customPackageData['weightUnit'] = $customPackageData['weightUnit'] === 'lb' ?
-                    \Zend_Measure_Weight::POUND : \Zend_Measure_Weight::KILOGRAM;
+                if ($customPackageData['weightUnit'] === 'lb') {
+                    $customPackageData['weightUnit'] = \Zend_Measure_Weight::POUND;
+                } elseif ($customPackageData['weightUnit'] === 'g') {
+                    $customPackageData['weightUnit'] = \Zend_Measure_Weight::GRAM;
+                } else {
+                    $customPackageData['weightUnit'] = \Zend_Measure_Weight::KILOGRAM;
+                }
 
                 $customPackageData['dimensionsUnit'] = $customPackageData['dimensionsUnit'] === 'in' ?
                     \Zend_Measure_Length::INCH : \Zend_Measure_Length::CENTIMETER;
