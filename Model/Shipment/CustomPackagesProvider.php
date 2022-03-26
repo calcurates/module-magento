@@ -9,7 +9,11 @@
 namespace Calcurates\ModuleMagento\Model\Shipment;
 
 use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
+use InvalidArgumentException;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\Order\Shipment;
+use Zend_Measure_Length;
+use Zend_Measure_Weight;
 
 class CustomPackagesProvider
 {
@@ -39,7 +43,7 @@ class CustomPackagesProvider
     /**
      * @param Shipment|null $shipment
      * @return array
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws LocalizedException
      */
     public function getCustomPackages(Shipment $shipment): array
     {
@@ -50,16 +54,10 @@ class CustomPackagesProvider
             $packages = $this->appendNotExists($packages, $carrierPackages);
 
             foreach ($packages as &$customPackageData) {
-                if ($customPackageData['weightUnit'] === 'lb') {
-                    $customPackageData['weightUnit'] = \Zend_Measure_Weight::POUND;
-                } elseif ($customPackageData['weightUnit'] === 'g') {
-                    $customPackageData['weightUnit'] = \Zend_Measure_Weight::GRAM;
-                } else {
-                    $customPackageData['weightUnit'] = \Zend_Measure_Weight::KILOGRAM;
-                }
+                $customPackageData['weightUnit'] = $this->mapWeightUnit($customPackageData['weightUnit']);
 
                 $customPackageData['dimensionsUnit'] = $customPackageData['dimensionsUnit'] === 'in' ?
-                    \Zend_Measure_Length::INCH : \Zend_Measure_Length::CENTIMETER;
+                    Zend_Measure_Length::INCH : Zend_Measure_Length::CENTIMETER;
             }
 
             $this->packages = $packages;
@@ -87,5 +85,28 @@ class CustomPackagesProvider
         }
 
         return $packages;
+    }
+
+    /**
+     * @param string $weight_unit
+     * @return string
+     */
+    private function mapWeightUnit(string $weight_unit)
+    {
+        switch ($weight_unit) {
+            case 'lb':
+                $weight_unit = Zend_Measure_Weight::POUND;
+                break;
+            case 'g':
+                $weight_unit = Zend_Measure_Weight::GRAM;
+                break;
+            case 'kg':
+                $weight_unit = Zend_Measure_Weight::KILOGRAM;
+                break;
+            default:
+                throw new InvalidArgumentException('Invalid weight units');
+        }
+
+        return $weight_unit;
     }
 }
