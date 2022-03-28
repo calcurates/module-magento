@@ -41,7 +41,7 @@ class CustomPackagesProvider
     }
 
     /**
-     * @param Shipment|null $shipment
+     * @param Shipment $shipment
      * @return array
      * @throws LocalizedException
      */
@@ -55,10 +55,9 @@ class CustomPackagesProvider
 
             foreach ($packages as &$customPackageData) {
                 $customPackageData['weightUnit'] = $this->mapWeightUnit($customPackageData['weightUnit']);
-
-                $customPackageData['dimensionsUnit'] = $customPackageData['dimensionsUnit'] === 'in' ?
-                    Zend_Measure_Length::INCH : Zend_Measure_Length::CENTIMETER;
+                $customPackageData['dimensionsUnit'] = $this->mapDimensionsUnit($customPackageData['dimensionsUnit']);
             }
+            unset($customPackageData);
 
             $this->packages = $packages;
         }
@@ -66,11 +65,6 @@ class CustomPackagesProvider
         return $this->packages;
     }
 
-    /**
-     * @param array $packages
-     * @param array $packagesToAppend
-     * @return array
-     */
     private function appendNotExists(array $packages, array $packagesToAppend): array
     {
         $map = [];
@@ -87,26 +81,38 @@ class CustomPackagesProvider
         return $packages;
     }
 
-    /**
-     * @param string $weight_unit
-     * @return string
-     */
-    private function mapWeightUnit(string $weight_unit)
+    private function mapWeightUnit(string $weightUnit): string
     {
-        switch ($weight_unit) {
+        switch ($weightUnit) {
             case 'lb':
-                $weight_unit = Zend_Measure_Weight::POUND;
+                $weightUnit = Zend_Measure_Weight::POUND;
                 break;
             case 'g':
-                $weight_unit = Zend_Measure_Weight::GRAM;
+                $weightUnit = Zend_Measure_Weight::GRAM;
                 break;
             case 'kg':
-                $weight_unit = Zend_Measure_Weight::KILOGRAM;
+                $weightUnit = Zend_Measure_Weight::KILOGRAM;
                 break;
             default:
                 throw new InvalidArgumentException('Invalid weight units');
         }
 
-        return $weight_unit;
+        return $weightUnit;
+    }
+
+    private function mapDimensionsUnit(string $dimensionsUnit): string
+    {
+        switch ($dimensionsUnit) {
+            case 'in':
+                $dimensionsUnit = Zend_Measure_Length::INCH;
+                break;
+            case 'cm':
+                $weightUnit = Zend_Measure_Length::CENTIMETER;
+                break;
+            default:
+                throw new InvalidArgumentException('Invalid dimensions units');
+        }
+
+        return $dimensionsUnit;
     }
 }
