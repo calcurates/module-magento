@@ -9,7 +9,11 @@
 namespace Calcurates\ModuleMagento\Model\Shipment;
 
 use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
+use InvalidArgumentException;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\Order\Shipment;
+use Zend_Measure_Length;
+use Zend_Measure_Weight;
 
 class CustomPackagesProvider
 {
@@ -37,9 +41,9 @@ class CustomPackagesProvider
     }
 
     /**
-     * @param Shipment|null $shipment
+     * @param Shipment $shipment
      * @return array
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws LocalizedException
      */
     public function getCustomPackages(Shipment $shipment): array
     {
@@ -50,17 +54,10 @@ class CustomPackagesProvider
             $packages = $this->appendNotExists($packages, $carrierPackages);
 
             foreach ($packages as &$customPackageData) {
-                if ($customPackageData['weightUnit'] === 'lb') {
-                    $customPackageData['weightUnit'] = \Zend_Measure_Weight::POUND;
-                } elseif ($customPackageData['weightUnit'] === 'g') {
-                    $customPackageData['weightUnit'] = \Zend_Measure_Weight::GRAM;
-                } else {
-                    $customPackageData['weightUnit'] = \Zend_Measure_Weight::KILOGRAM;
-                }
-
-                $customPackageData['dimensionsUnit'] = $customPackageData['dimensionsUnit'] === 'in' ?
-                    \Zend_Measure_Length::INCH : \Zend_Measure_Length::CENTIMETER;
+                $customPackageData['weightUnit'] = $this->mapWeightUnit($customPackageData['weightUnit']);
+                $customPackageData['dimensionsUnit'] = $this->mapDimensionsUnit($customPackageData['dimensionsUnit']);
             }
+            unset($customPackageData);
 
             $this->packages = $packages;
         }
@@ -68,11 +65,6 @@ class CustomPackagesProvider
         return $this->packages;
     }
 
-    /**
-     * @param array $packages
-     * @param array $packagesToAppend
-     * @return array
-     */
     private function appendNotExists(array $packages, array $packagesToAppend): array
     {
         $map = [];
@@ -87,5 +79,40 @@ class CustomPackagesProvider
         }
 
         return $packages;
+    }
+
+    private function mapWeightUnit(string $weightUnit): string
+    {
+        switch ($weightUnit) {
+            case 'lb':
+                $weightUnit = Zend_Measure_Weight::POUND;
+                break;
+            case 'g':
+                $weightUnit = Zend_Measure_Weight::GRAM;
+                break;
+            case 'kg':
+                $weightUnit = Zend_Measure_Weight::KILOGRAM;
+                break;
+            default:
+                throw new InvalidArgumentException('Invalid weight units');
+        }
+
+        return $weightUnit;
+    }
+
+    private function mapDimensionsUnit(string $dimensionsUnit): string
+    {
+        switch ($dimensionsUnit) {
+            case 'in':
+                $dimensionsUnit = Zend_Measure_Length::INCH;
+                break;
+            case 'cm':
+                $weightUnit = Zend_Measure_Length::CENTIMETER;
+                break;
+            default:
+                throw new InvalidArgumentException('Invalid dimensions units');
+        }
+
+        return $dimensionsUnit;
     }
 }
