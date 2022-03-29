@@ -308,4 +308,6 @@
         <plugin name="Calcurates_ModuleMagento::add_calcurates_data_for_graphql"
                 type="Calcurates\ModuleMagento\Plugin\GraphQL\DataObjectConverterPlugin" />
     </type>
+    <preference for="Magento\Sales\Model\Order\Pdf\Invoice" type="Calcurates\ModuleMagento\Model\Order\Pdf\Invoice"/>
+    <preference for="\Magento\Sales\Model\Order\Pdf\Creditmemo" type="Calcurates\ModuleMagento\Model\Order\Pdf\Creditmemo"/>
 </config>
