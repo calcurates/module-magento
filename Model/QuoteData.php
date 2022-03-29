@@ -102,7 +102,15 @@ class QuoteData extends \Magento\Framework\Model\AbstractModel implements QuoteD
 
     public function getSplitShipments()
     {
-        return $this->getData(self::SPLIT_SHIPMENTS);
+        $splitShipments = $this->getData(self::SPLIT_SHIPMENTS);
+        if ($splitShipments) {
+            if (!is_array($splitShipments)) {
+                $splitShipments = [];
+            }
+            return $splitShipments;
+        }
+
+        return [];
     }
 
     public function setSplitShipments(array $shipments)

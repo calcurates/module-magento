@@ -26,6 +26,11 @@ class MetaRateData extends DataObject implements MetaRateDataInterface
     protected $products;
 
     /**
+     * @var
+     */
+    protected $origins;
+
+    /**
      * @param $code
      * @return mixed|null
      */
@@ -67,5 +72,18 @@ class MetaRateData extends DataObject implements MetaRateDataInterface
     public function setProductData($origin, $productData)
     {
         $this->products[$origin] = $productData;
+    }
+
+    public function getOriginData($code = null)
+    {
+        if (null === $code) {
+            return $this->origins;
+        }
+        return $this->origins[$code] ?? null;
+    }
+
+    public function setOriginData($origin, $originData)
+    {
+        $this->origins[$origin] = $originData;
     }
 }

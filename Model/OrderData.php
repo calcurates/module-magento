@@ -102,7 +102,15 @@ class OrderData extends \Magento\Framework\Model\AbstractModel implements OrderD
 
     public function getSplitShipments(): array
     {
-        return $this->getData(self::SPLIT_SHIPMENTS);
+        $splitShipments = $this->getData(self::SPLIT_SHIPMENTS);
+        if ($splitShipments) {
+            if (!is_array($splitShipments)) {
+                $splitShipments = [];
+            }
+            return $splitShipments;
+        }
+
+        return [];
     }
 
     public function setSplitShipments(array $shipments): void

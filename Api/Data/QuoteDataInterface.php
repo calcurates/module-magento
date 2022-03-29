@@ -110,7 +110,5 @@ interface QuoteDataInterface
      */
     public function setDeliveryDates(array $deliveryDates): void;
 
-    public function getSplitShipments();
 
-    public function setSplitShipments(array $shipments);
 }

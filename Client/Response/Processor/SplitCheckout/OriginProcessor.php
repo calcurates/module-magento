@@ -10,13 +10,12 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Client\Response\Processor\SplitCheckout;
 
-use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Shipping\Model\Rate\Result;
 use Calcurates\ModuleMagento\Model\Data\MetaRateData;
 
-class ProductProcessor implements ResponseProcessorInterface
+class OriginProcessor implements ResponseProcessorInterface
 {
     private $metaRateData;
 
@@ -28,20 +27,10 @@ class ProductProcessor implements ResponseProcessorInterface
 
     public function process(Result $result, array &$response, CartInterface $quote): void
     {
-        $products = [];
-        foreach ($response['products'] as $product) {
-            $products[] = $product['quoteItemId'];
-        }
+        $origin['id'] = $response['origin']['id'];
+        $origin['name'] = $response['origin']['name'];
+        $origin['code'] = $response['origin']['syncedTargetOriginCode'];
 
-        foreach ($quote->getAllItems() as $quoteItem) {
-            if (in_array($quoteItem->getId(), $products)) {
-                $quoteItem->setData(
-                    CustomSalesAttributesInterface::SOURCE_CODE,
-                    $response['origin']['syncedTargetOriginCode'] ?? null
-                );
-            }
-        }
-
-        $this->metaRateData->setProductData($response['origin']['id'], $products);
+        $this->metaRateData->setOriginData($response['origin']['id'], $origin);
     }
 }
