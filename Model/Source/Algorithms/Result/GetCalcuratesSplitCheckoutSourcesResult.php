@@ -83,6 +83,7 @@ class GetCalcuratesSplitCheckoutSourcesResult
             $qtyToDeduct = 0.0;
             if ($sourceItem->getSourceCode() === $mainSourceCodesForSkus[$normalizedSku]) {
                 $qtyToDeduct = $itemsTdDeliver[$normalizedSku];
+                $itemsTdDeliver[$normalizedSku] -= min($sourceItemQtyAvailable, $itemsTdDeliver[$normalizedSku] ?? 0.0);
             }
 
             $sourceItemSelections[] = $this->sourceSelectionItemFactory->create(
@@ -93,8 +94,6 @@ class GetCalcuratesSplitCheckoutSourcesResult
                     'qtyAvailable' => $sourceItemQtyAvailable
                 ]
             );
-
-            $itemsTdDeliver[$normalizedSku] -= min($sourceItemQtyAvailable, $itemsTdDeliver[$normalizedSku] ?? 0.0);
         }
 
         $isShippable = true;
