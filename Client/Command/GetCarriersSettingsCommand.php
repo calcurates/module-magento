@@ -71,6 +71,6 @@ class GetCarriersSettingsCommand
             throw new LocalizedException(__('Cannot get Carriers settings with API Calcurates %1', $exception->getMessage()));
         }
 
-        return $response;
+        return is_array($response) ? $response : [];
     }
 }
