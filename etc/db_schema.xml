@@ -69,15 +69,15 @@
     </index>
   </table>
   <table name="quote">
-    <column xsi:type="text" name="calcurates_carrier_packages" nullable="true"/>
-    <column xsi:type="text" name="calcurates_carrier_srvs_srs_codes" nullable="true"/>
+    <column xsi:type="longtext" name="calcurates_carrier_packages" nullable="true"/>
+    <column xsi:type="longtext" name="calcurates_carrier_srvs_srs_codes" nullable="true"/>
   </table>
   <table name="quote_item">
     <column xsi:type="text" name="calcurates_source_code" nullable="true"/>
   </table>
   <table name="sales_order">
-    <column xsi:type="text" name="calcurates_carrier_srvs_srs_codes" nullable="true"/>
-    <column xsi:type="text" name="calcurates_carrier_packages" nullable="true"/>
+    <column xsi:type="longtext" name="calcurates_carrier_srvs_srs_codes" nullable="true"/>
+    <column xsi:type="longtext" name="calcurates_carrier_packages" nullable="true"/>
   </table>
   <table name="sales_order_item">
     <column xsi:type="text" name="calcurates_source_code" nullable="true"/>
