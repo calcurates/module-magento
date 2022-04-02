@@ -188,7 +188,11 @@ class CarrierProcessor implements ResponseProcessorInterface
             CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE
         ) ?: [];
         if ($existingCarrierServicesToOrigins) {
-            $existingCarrierServicesToOrigins = $this->serializer->unserialize($existingCarrierServicesToOrigins);
+            try {
+                $existingCarrierServicesToOrigins = $this->serializer->unserialize($existingCarrierServicesToOrigins);
+            } catch (\Exception $e) {
+                $existingCarrierServicesToOrigins = [];
+            }
             foreach ($existingCarrierServicesToOrigins as $carrierId => $serviceIdData) {
                 foreach ($serviceIdData as $serviceIds => $source) {
                     $mergedSource = $source;
@@ -207,7 +211,11 @@ class CarrierProcessor implements ResponseProcessorInterface
             CustomSalesAttributesInterface::CARRIER_PACKAGES
         ) ?: [];
         if ($existingCarrierRatesToPackages) {
-            $existingCarrierRatesToPackages = $this->serializer->unserialize($existingCarrierRatesToPackages);
+            try {
+                $existingCarrierRatesToPackages = $this->serializer->unserialize($existingCarrierRatesToPackages);
+            } catch (\Exception $e) {
+                $existingCarrierRatesToPackages = [];
+            }
             foreach ($existingCarrierRatesToPackages as $carrierId => $serviceIdData) {
                 foreach ($serviceIdData as $serviceIds => $source) {
                     $mergedSource = $source;
