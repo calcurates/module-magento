@@ -161,6 +161,7 @@
                 <item name="rate_shopping_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\SplitCheckout\RateShoppingProcessor</item>
                 <item name="in_store_pickup_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\SplitCheckout\InStorePickupProcessor</item>
                 <item name="product_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\SplitCheckout\ProductProcessor</item>
+                <item name="origin_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\SplitCheckout\OriginProcessor</item>
             </argument>
         </arguments>
     </virtualType>
