@@ -22,6 +22,9 @@ var config = {
             },
             'Magento_Checkout/js/checkout-data': {
                 'Calcurates_ModuleMagento/js/checkout-data-mixin': true
+            },
+            'Magento_Paypal/js/order-review': {
+                'Calcurates_ModuleMagento/js/order-review-mixin': true
             }
         }
     }

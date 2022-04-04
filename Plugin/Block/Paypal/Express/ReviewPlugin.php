@@ -14,7 +14,9 @@ use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter;
 use Calcurates\ModuleMagento\Model\Config;
 use Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplaySource;
+use Magento\Framework\DataObject;
 use Magento\Paypal\Block\Express\Review;
+use Magento\Quote\Model\Quote\Address\Rate;
 
 class ReviewPlugin
 {
@@ -38,12 +40,13 @@ class ReviewPlugin
 
     /**
      * Add delivery date display to shipping method on Paypal Express Checkout
+     * Do not show price for MetaRate method
      *
      * @param Review $subject
-     * @param \Magento\Framework\DataObject $rate
+     * @param DataObject $rate
      * @param string $format
      * @param string $inclTaxFormat
-     * @return void
+     * @return array
      * @see Review::renderShippingRateOption
      */
     public function beforeRenderShippingRateOption(
@@ -51,7 +54,7 @@ class ReviewPlugin
         $rate,
         $format = '%s - %s%s',
         $inclTaxFormat = ' (%s %s)'
-    ): void {
+    ): array {
         $deliveryDatesString = $this->getDeliveryDates($rate);
 
         if ($this->configProvider->getDeliveryDateDisplay() === DeliveryDateDisplaySource::AFTER_METHOD_NAME &&
@@ -61,10 +64,14 @@ class ReviewPlugin
                 $rate->getMethodTitle() . ', ' . $deliveryDatesString
             );
         }
+        if ($rate->getCode() === 'calcurates_MetaRate') {
+            $format = '%s';
+        }
+        return [$rate, $format, $inclTaxFormat];
     }
 
     /**
-     * @param \Magento\Quote\Model\Quote\Address\Rate $rateModel
+     * @param Rate $rateModel
      *
      * @return string|null
      */
