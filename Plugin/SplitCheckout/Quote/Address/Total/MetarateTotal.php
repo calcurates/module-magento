@@ -88,12 +88,14 @@ class MetarateTotal
                         && $rate->getMethod() == explode('_', $splitShipment['method'],2)[1]
                         && $origin == $splitShipment['origin']
                     ) {
+                        /** todo: move saving data from this */
                         $total->addTotalAmount($subject->getCode(), $rate->getPrice());
                         $total->addBaseTotalAmount($subject->getCode(), $rate->getCost());
                         $splitShipment['cost'] = $rate->getCost();
                         $splitShipment['price'] = $rate->getPrice();
                         $splitShipment['products'] = $this->getProductSku($quote, $productData[$origin]);
                         $splitShipment['title'] = $rate->getMethodTitle();
+                        $splitShipment['code'] = $this->metarateData->getOriginData($origin)['code'];
                         $splitShipmentData[$key] = $splitShipment;
                     }
                 }

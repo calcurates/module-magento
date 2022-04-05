@@ -13,6 +13,7 @@ use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Sales\Model\Order;
 use Calcurates\ModuleMagento\Model\Carrier\Method\CarrierData;
+use Calcurates\ModuleMagento\Model\SalesData\OrderData\GetOrderData;
 
 class ShipmentServiceRetriever
 {
@@ -27,13 +28,22 @@ class ShipmentServiceRetriever
     private $shippingMethodManager;
 
     /**
+     * @var GetOrderData
+     */
+    private $getOrderData;
+
+    /**
      * ShipmentServiceRetriever constructor.
      * @param SerializerInterface $serializer
      */
-    public function __construct(SerializerInterface $serializer, ShippingMethodManager $shippingMethodManager)
-    {
+    public function __construct(
+        SerializerInterface $serializer,
+        ShippingMethodManager $shippingMethodManager,
+        GetOrderData $getOrderData
+    ) {
         $this->serializer = $serializer;
         $this->shippingMethodManager = $shippingMethodManager;
+        $this->getOrderData = $getOrderData;
     }
 
     /**
@@ -44,8 +54,18 @@ class ShipmentServiceRetriever
     public function retrieve($order, $requestedSourceCode)
     {
         try {
+            $shippingMethod = $order->getShippingMethod();
+            $orderData = $this->getOrderData->get($order->getId());
+            if ($splitShipments = $orderData->getSplitShipments()) {
+                foreach ($splitShipments as $splitShipment) {
+                    if ($splitShipment['code'] === $requestedSourceCode) {
+                        $shippingMethod = $splitShipment['method'];
+                    }
+                }
+            }
+
             $carrierData = $this->shippingMethodManager->getCarrierData(
-                $order->getShippingMethod(),
+                $shippingMethod,
                 $order->getShippingDescription(),
                 $order->getData(CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE)
             );
