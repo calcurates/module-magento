@@ -100,5 +100,33 @@
         "column": {
             "calcurates_service_id": true
         }
+    },
+    "calcurates_quote_address_data": {
+        "column": {
+            "id": true,
+            "address_id": true,
+            "residential_delivery": true
+        },
+        "index": {
+            "CALCURATES_QUOTE_ADDRESS_DATA_ADDRESS_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "CALCURATES_QUOTE_ADDR_DATA_ADDR_ID_QUOTE_ADDR_ADDR_ID": true
+        }
+    },
+    "calcurates_order_address_data": {
+        "column": {
+            "id": true,
+            "address_id": true,
+            "residential_delivery": true
+        },
+        "index": {
+            "CALCURATES_ORDER_ADDRESS_DATA_ADDRESS_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "CALCURATES_ORDER_ADDR_DATA_ADDR_ID_SALES_ORDER_ADDR_ENTT_ID": true
+        }
     }
 }

@@ -16,6 +16,9 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
 use Calcurates\ModuleMagento\Model\Carrier\Method\CarrierData;
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
+use Calcurates\ModuleMagento\Api\SalesData\QuoteData\QuoteAddressExtensionAttributesInterface;
+use Calcurates\ModuleMagento\Api\SalesData\OrderData\OrderAddressExtensionAttributesInterfaceFactory;
+use Magento\Framework\EntityManager\EntityManager;
 
 class QuoteToOrderConverter
 {
@@ -45,25 +48,41 @@ class QuoteToOrderConverter
     private $convertQuoteData;
 
     /**
+     * @var OrderAddressExtensionAttributesInterfaceFactory
+     */
+    private $orderAddressFactory;
+
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    /**
      * QuoteToOrderConverter constructor.
      * @param ConvertPackages $convertPackages
      * @param ConvertServicesSources $convertServicesSources
      * @param ShippingMethodManager $shippingMethodManager
      * @param OrderRepositoryInterface $orderRepository
      * @param ConvertQuoteData $convertQuoteData
+     * @param OrderAddressExtensionAttributesInterfaceFactory $orderAddressFactory
+     * @param EntityManager $entityManager
      */
     public function __construct(
         ConvertPackages $convertPackages,
         ConvertServicesSources $convertServicesSources,
         ShippingMethodManager $shippingMethodManager,
         OrderRepositoryInterface $orderRepository,
-        ConvertQuoteData $convertQuoteData
+        ConvertQuoteData $convertQuoteData,
+        OrderAddressExtensionAttributesInterfaceFactory $orderAddressFactory,
+        EntityManager $entityManager
     ) {
+        $this->orderAddressFactory = $orderAddressFactory;
         $this->convertPackages = $convertPackages;
         $this->convertServicesSources = $convertServicesSources;
         $this->shippingMethodManager = $shippingMethodManager;
         $this->orderRepository = $orderRepository;
         $this->convertQuoteData = $convertQuoteData;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -92,7 +111,23 @@ class QuoteToOrderConverter
                 $orderChanged = true;
             }
         }
-
+        if ($quote->getShippingAddress()
+            && $quote->getShippingAddress()->getExtensionAttributes()
+        ) {
+            $residentialDelivery = $quote->getShippingAddress()->getExtensionAttributes()->getResidentialDelivery();
+            if ($residentialDelivery instanceof QuoteAddressExtensionAttributesInterface) {
+                $residentialDeliveryExtension = $this->orderAddressFactory->create()
+                    ->setAddressId((int) $order->getShippingAddress()->getEntityId())
+                    ->setResidentialDelivery($residentialDelivery->getResidentialDelivery());
+                $orderAddressExtension = $order
+                    ->getShippingAddress()
+                    ->getExtensionAttributes()
+                    ->setResidentialDelivery($residentialDeliveryExtension);
+                ;
+                $order->getShippingAddress()->setExtensionAttributes($orderAddressExtension);
+                $this->entityManager->save($residentialDeliveryExtension);
+            }
+        }
         $this->convertQuoteData->convert($quote, $order);
 
         if ($orderChanged) {

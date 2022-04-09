@@ -51,6 +51,30 @@
       <column name="quote_id"/>
     </index>
   </table>
+  <table name="calcurates_quote_address_data" resource="default" engine="innodb" comment="Calcurates Quote Address Extension Data Table">
+    <column xsi:type="int" name="id" padding="10" unsigned="true" nullable="false" identity="true" comment="ID"/>
+    <column xsi:type="int" name="address_id" padding="10" unsigned="true" nullable="false" identity="false" comment="Quote Address ID"/>
+    <column xsi:type="int" name="residential_delivery" padding="10" unsigned="true" nullable="true" identity="false" />
+    <constraint xsi:type="primary" referenceId="PRIMARY">
+      <column name="id"/>
+    </constraint>
+    <constraint xsi:type="foreign" referenceId="CALCURATES_QUOTE_ADDRESS_DATA_QUOTE_ID_QUOTE_ENTITY_ID" table="calcurates_quote_address_data" column="address_id" referenceTable="quote_address" referenceColumn="address_id" onDelete="CASCADE"/>
+    <index referenceId="CALCURATES_QUOTE_ADDRESS_DATA_QUOTE_ADDRESS_ID" indexType="btree">
+      <column name="address_id"/>
+    </index>
+  </table>
+  <table name="calcurates_order_address_data" resource="default" engine="innodb" comment="Calcurates Order Address Extension Data Table">
+    <column xsi:type="int" name="id" padding="10" unsigned="true" nullable="false" identity="true" comment="ID"/>
+    <column xsi:type="int" name="address_id" padding="10" unsigned="true" nullable="false" identity="false" comment="Order Address ID"/>
+    <column xsi:type="int" name="residential_delivery" padding="10" unsigned="true" nullable="true" identity="false" />
+    <constraint xsi:type="primary" referenceId="PRIMARY">
+      <column name="id"/>
+    </constraint>
+    <constraint xsi:type="foreign" referenceId="CALCURATES_ORDER_ADDRESS_DATA_QUOTE_ID_QUOTE_ENTITY_ID" table="calcurates_order_address_data" column="address_id" referenceTable="sales_order_address" referenceColumn="entity_id" onDelete="CASCADE"/>
+    <index referenceId="CALCURATES_ORDER_ADDRESS_DATA_ORDER_ADDRESS_ID" indexType="btree">
+      <column name="address_id"/>
+    </index>
+  </table>
   <table name="calcurates_order_data" resource="default" engine="innodb" comment="Calcurates Order Additional Data Table">
     <column xsi:type="int" name="id" padding="10" unsigned="true" nullable="false" identity="true" comment="ID"/>
     <column xsi:type="int" name="order_id" padding="10" unsigned="true" nullable="false" identity="false" comment="Order ID"/>
