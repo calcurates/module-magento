@@ -11,6 +11,10 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Client\Command;
 
 use Calcurates\ModuleMagento\Client\ApiClientProvider;
+use Calcurates\ModuleMagento\Client\Http\ApiException;
+use Psr\Log\LoggerInterface;
+use Calcurates\ModuleMagento\Model\Config;
+use Magento\Framework\Exception\LocalizedException;
 
 class GetShippingOptionsCommand
 {
@@ -26,11 +30,39 @@ class GetShippingOptionsCommand
      */
     private $apiClientProvider;
 
-    public function __construct(ApiClientProvider $apiClientProvider)
-    {
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var Config
+     */
+    private $config;
+
+    /**
+     * GetShippingOptionsCommand constructor.
+     * @param ApiClientProvider $apiClientProvider
+     * @param LoggerInterface $logger
+     * @param Config $config
+     */
+    public function __construct(
+        ApiClientProvider $apiClientProvider,
+        LoggerInterface $logger,
+        Config $config
+    ) {
+        $this->logger = $logger;
+        $this->config = $config;
         $this->apiClientProvider = $apiClientProvider;
     }
 
+    /**
+     * @param int $storeId
+     * @param string|null $type
+     * @return array
+     * @throws LocalizedException
+     * @throws \Zend_Json_Exception
+     */
     public function get(int $storeId, ?string $type = null): array
     {
         $httpClient = $this->apiClientProvider->getClient($storeId);
@@ -48,14 +80,23 @@ class GetShippingOptionsCommand
             ];
 
             if (!in_array($type, $allowedTypes, true)) {
-                throw new \InvalidArgumentException('Invalid type '.$type);
+                throw new \InvalidArgumentException('Invalid type ' . $type);
             }
 
-            $requestPath .= '/'.$type;
+            $requestPath .= '/' . $type;
         }
-
-        $response = $httpClient->get($requestPath);
-
+        try {
+            $response = $httpClient->get($requestPath);
+        } catch (ApiException $exception) {
+            if ($this->config->isDebug($storeId)) {
+                $this->logger->debug(
+                    var_export(['error' => $exception->getMessage(), 'code' => $exception->getCode()], true)
+                );
+            }
+            throw new LocalizedException(
+                __('Cannot get Shipping Options with API Calcurates %1', $exception->getMessage())
+            );
+        }
         return \Zend_Json::decode($response);
     }
 }
