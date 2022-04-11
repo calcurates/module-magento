@@ -29,7 +29,7 @@ class OrderAddress extends AbstractModel implements OrderAddressExtensionAttribu
      */
     public function getAddressId(): int
     {
-        return $this->getData(self::MAGENTO_ORDER_ADDRESS_ID);
+        return (int)$this->getData(self::MAGENTO_ORDER_ADDRESS_ID);
     }
 
     /**
@@ -45,7 +45,9 @@ class OrderAddress extends AbstractModel implements OrderAddressExtensionAttribu
      */
     public function getResidentialDelivery(): ?int
     {
-        return $this->getData(static::EXT_ATTRIBUTE_RESIDENTIAL_DELIVERY);
+        return null !== $this->getData(static::EXT_ATTRIBUTE_RESIDENTIAL_DELIVERY)
+            ? (int)$this->getData(static::EXT_ATTRIBUTE_RESIDENTIAL_DELIVERY)
+            : null;
     }
 
     /**

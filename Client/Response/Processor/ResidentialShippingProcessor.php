@@ -45,13 +45,23 @@ class ResidentialShippingProcessor implements ResponseProcessorInterface
             && $quote->getShippingAddress()
             && $quote->getShippingAddress()->getAddressId()
         ) {
+            switch ($response['metadata']['shipToResidentialIndicator']) {
+                case 'yes':
+                    $shipToResidentialIndicator = 1;
+                    break;
+                case 'no':
+                    $shipToResidentialIndicator = 2;
+                    break;
+                default:
+                    $shipToResidentialIndicator = null;
+            }
             $this->quoteAddressFactory->create()->setsetAddressId($quote->getShippingAddress()->getAddressId())
-                ->setResidentialDelivery($response['metadata']['shipToResidentialIndicator']);
+                ->setResidentialDelivery($shipToResidentialIndicator);
             $addressExtensionAttributes = $quote->getShippingAddress()->getExtensionAttributes();
             $addressExtensionAttributes->setResidentialDelivery(
                 $this->quoteAddressFactory->create()
                     ->setAddressId((int) $quote->getShippingAddress()->getAddressId())
-                    ->setResidentialDelivery($response['metadata']['shipToResidentialIndicator'])
+                    ->setResidentialDelivery($shipToResidentialIndicator)
             );
             $quote->getShippingAddress()->setExtensionAttributes($addressExtensionAttributes);
         }
