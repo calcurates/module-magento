@@ -30,7 +30,7 @@ define([
                 return this._super();
             }
 
-            if (shippingMethod !== null && shippingMethod['carrier_code'] === 'calcurates') {
+            if (shippingMethod !== null && shippingMethod['method_title'] !== null && shippingMethod['carrier_code'] === 'calcurates') {
                 title = shippingMethod['carrier_title'] + ' - ' + shippingMethod['method_title'];
             } else {
                 title = this._super();

@@ -43,6 +43,13 @@
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <config_path>carriers/calcurates/split_checkout</config_path>
                     </field>
+                    <field id="split_checkout_title" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                        <label>Split Checkout by Origins Title</label>
+                        <config_path>carriers/calcurates/split_checkout_title</config_path>
+                        <depends>
+                            <field id="split_checkout">1</field>
+                        </depends>
+                    </field>
                 </group>
                 <group id="design_layout" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Design and Layout</label>

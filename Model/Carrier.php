@@ -16,6 +16,7 @@ use Calcurates\ModuleMagento\Client\Request\RateRequestBuilder;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Response\Strategy\RatesStrategyFactory;
 use Calcurates\ModuleMagento\Model\Carrier\Validator\RateRequestValidator;
+use Calcurates\ModuleMagento\Model\Config;
 use Calcurates\ModuleMagento\Model\Shipment\CustomPackagesProvider;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
@@ -74,6 +75,9 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      */
     private $ratesResponseProcessor;
 
+    /**
+     * @var RatesStrategyFactory
+     */
     private $ratesStrategyFactory;
 
     /**
@@ -102,6 +106,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private $getAllShippingOptionsCommand;
 
     /**
+     * @var Config
+     */
+    private $configProvider;
+
+    /**
      * Carrier constructor.
      * @param ScopeConfigInterface $scopeConfig
      * @param ErrorFactory $rateErrorFactory
@@ -121,11 +130,13 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param \Magento\Framework\Registry $registry
      * @param CalcuratesClientInterface $calcuratesClient
      * @param RatesResponseProcessor $ratesResponseProcessor
+     * @param RatesStrategyFactory $ratesStrategyFactory
      * @param RateRequestBuilder $rateRequestBuilder
      * @param RateRequestValidator $rateRequestValidator
      * @param CustomPackagesProvider $customPackagesProvider
      * @param CreateShippingLabelCommand $createShippingLabelCommand
      * @param GetAllShippingOptionsCommand $getAllShippingOptionsCommand
+     * @param \Calcurates\ModuleMagento\Model\Config $configProvider
      * @param array $data
      */
     public function __construct(
@@ -153,6 +164,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         CustomPackagesProvider $customPackagesProvider,
         CreateShippingLabelCommand $createShippingLabelCommand,
         GetAllShippingOptionsCommand $getAllShippingOptionsCommand,
+        Config $configProvider,
         array $data = []
     ) {
         parent::__construct(
@@ -182,6 +194,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->customPackagesProvider = $customPackagesProvider;
         $this->createShippingLabelCommand = $createShippingLabelCommand;
         $this->getAllShippingOptionsCommand = $getAllShippingOptionsCommand;
+        $this->configProvider = $configProvider;
     }
 
     /**
@@ -282,9 +295,9 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $debugData['request'] = $apiRequestBody;
 
         try {
-            $splitCheckout = 1;
-
-            $ratesStrategy = $this->ratesStrategyFactory->create($splitCheckout);
+            $ratesStrategy = $this->ratesStrategyFactory->create(
+                $this->configProvider->isSplitCheckoutEnabled($this->getStore())
+            );
             $response = $ratesStrategy->getResponse($apiRequestBody, $this->getStore());
             $debugData['result'] = $response;
         } catch (ApiException $e) {

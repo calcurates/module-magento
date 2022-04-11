@@ -137,7 +137,7 @@ class MetaRatesResponseProcessor
         $metarate = $this->rateBuilder->build(
             'MetaRate',
             [],
-            ''
+            $this->calcuratesConfig->getSplitCheckoutTitle($quote->getStoreId())
         );
         $result->append($metarate);
         foreach ($response['origins'] as $key => $origin) {

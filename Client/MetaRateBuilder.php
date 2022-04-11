@@ -73,7 +73,6 @@ class MetaRateBuilder
         $baseAmount = 0;
         $rate->setCarrier(Carrier::CODE);
         $rate->setMethod($methodId);
-        $rate->setMethodTitle('MetaRate');
         $rate->setCarrierTitle($carrierTitle);
         $rate->setInfoMessageEnabled(0);
         $rate->setInfoMessage('');
