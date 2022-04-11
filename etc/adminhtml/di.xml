@@ -21,24 +21,24 @@
                 type="Calcurates\ModuleMagento\Plugin\Block\Adminhtml\Order\Packaging\GridPlugin"/>
     </type>
 
-    <virtualType name="Calcurates\ModuleMagento\Model\Backend\Request\DataPersistor" type="Magento\Framework\App\Request\DataPersistor">
+    <virtualType name="calcurates_backend_data_persistor" type="Magento\Framework\App\Request\DataPersistor">
         <arguments>
             <argument name="session" xsi:type="object">Magento\Backend\Model\Session</argument>
         </arguments>
     </virtualType>
     <type name="Calcurates\ModuleMagento\Model\Shipment\CarriersSettingsProvider">
         <arguments>
-            <argument name="dataPersistor" xsi:type="object">Calcurates\ModuleMagento\Model\Backend\Request\DataPersistor</argument>
+            <argument name="dataPersistor" xsi:type="object">calcurates_backend_data_persistor</argument>
         </arguments>
     </type>
     <type name="Calcurates\ModuleMagento\Plugin\Block\Adminhtml\Order\PackagingPlugin">
         <arguments>
-            <argument name="dataPersistor" xsi:type="object">Calcurates\ModuleMagento\Model\Backend\Request\DataPersistor</argument>
+            <argument name="dataPersistor" xsi:type="object">calcurates_backend_data_persistor</argument>
         </arguments>
     </type>
     <type name="Calcurates\ModuleMagento\Plugin\ShippingLabel\Model\LabelGeneratorPlugin">
         <arguments>
-            <argument name="dataPersistor" xsi:type="object">Calcurates\ModuleMagento\Model\Backend\Request\DataPersistor</argument>
+            <argument name="dataPersistor" xsi:type="object">calcurates_backend_data_persistor</argument>
         </arguments>
     </type>
     <type name="Magento\Shipping\Controller\Adminhtml\Order\Shipment\PrintLabel">
