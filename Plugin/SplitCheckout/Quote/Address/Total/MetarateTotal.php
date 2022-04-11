@@ -81,11 +81,14 @@ class MetarateTotal
         $quoteData = $this->getQuoteData->get($quote->getId());
         $splitShipmentData = $quoteData->getSplitShipments();
         $productData = $this->metarateData->getProductData();
+        if (!$this->metarateData->getRatesData()) {
+            return $result;
+        }
         foreach ($this->metarateData->getRatesData() as $origin => $rates) {
             foreach ($rates as $rate) {
                 foreach ($splitShipmentData as $key => $splitShipment) {
                     if (isset($splitShipment['method'])
-                        && $rate->getMethod() == explode('_', $splitShipment['method'],2)[1]
+                        && $rate->getMethod() == str_replace('calcurates_', '', $splitShipment['method'])
                         && $origin == $splitShipment['origin']
                     ) {
                         /** todo: move saving data from this */

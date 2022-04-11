@@ -9,6 +9,7 @@
 namespace Calcurates\ModuleMagento\ViewModel;
 
 use Calcurates\ModuleMagento\Api\Data\MetaRateDataInterface;
+use Calcurates\ModuleMagento\Api\SalesData\QuoteData\GetQuoteDataInterface;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -28,15 +29,28 @@ class MetaRate implements ArgumentInterface
     private $checkoutSession;
 
     /**
+     * @var GetQuoteDataInterface
+     */
+    private $getQuoteData;
+
+    /**
+     * @var array
+     */
+    private $savedMethods = [];
+
+    /**
      * @param MetaRateDataInterface $metaRateData
      * @param Session $checkoutSession
+     * @param GetQuoteDataInterface $getQuoteData
      */
     public function __construct(
         MetaRateDataInterface $metaRateData,
-        Session               $checkoutSession
+        Session $checkoutSession,
+        GetQuoteDataInterface $getQuoteData
     ) {
         $this->metaRateData = $metaRateData;
         $this->checkoutSession = $checkoutSession;
+        $this->getQuoteData = $getQuoteData;
     }
 
     /**
@@ -74,5 +88,28 @@ class MetaRate implements ArgumentInterface
             }
         }
         return $skus;
+    }
+
+    /**
+     * @param $originId
+     * @param $method
+     * @return bool
+     */
+    public function isSavedMethod($originId, $method): bool
+    {
+        if (!$this->savedMethods) {
+            $quoteData = $this->getQuoteData->get(
+                $this->checkoutSession->getQuoteId()
+            );
+            foreach ($quoteData->getSplitShipments() ?? [] as $splitShipment) {
+                $this->savedMethods[$splitShipment['origin']] = [
+                    'method' => $splitShipment['method']
+                ];
+            }
+        }
+        if ($this->savedMethods && isset($this->savedMethods[$originId])) {
+            return $this->savedMethods[$originId]['method'] === $method;
+        }
+        return false;
     }
 }

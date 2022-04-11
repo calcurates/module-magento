@@ -100,7 +100,7 @@ class QuoteData extends \Magento\Framework\Model\AbstractModel implements QuoteD
         $this->setData(self::DELIVERY_DATES, $deliveryDates);
     }
 
-    public function getSplitShipments()
+    public function getSplitShipments(): array
     {
         $splitShipments = $this->getData(self::SPLIT_SHIPMENTS);
         if ($splitShipments) {
@@ -113,7 +113,7 @@ class QuoteData extends \Magento\Framework\Model\AbstractModel implements QuoteD
         return [];
     }
 
-    public function setSplitShipments(array $shipments)
+    public function setSplitShipments(array $shipments): void
     {
         $this->setData(self::SPLIT_SHIPMENTS, $shipments);
     }
