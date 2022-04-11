@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Client\Command;
 
 use Calcurates\ModuleMagento\Client\ApiClientProvider;
+use Calcurates\ModuleMagento\Client\Http\ApiException;
+use Psr\Log\LoggerInterface;
 
 class GetShippingOptionsCommand
 {
@@ -26,11 +28,30 @@ class GetShippingOptionsCommand
      */
     private $apiClientProvider;
 
-    public function __construct(ApiClientProvider $apiClientProvider)
-    {
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * GetShippingOptionsCommand constructor.
+     * @param ApiClientProvider $apiClientProvider
+     * @param LoggerInterface $logger
+     */
+    public function __construct(
+        ApiClientProvider $apiClientProvider,
+        LoggerInterface $logger
+    ) {
+        $this->logger = $logger;
         $this->apiClientProvider = $apiClientProvider;
     }
 
+    /**
+     * @param int $storeId
+     * @param string|null $type
+     * @return array
+     * @throws \Zend_Json_Exception
+     */
     public function get(int $storeId, ?string $type = null): array
     {
         $httpClient = $this->apiClientProvider->getClient($storeId);
@@ -48,13 +69,19 @@ class GetShippingOptionsCommand
             ];
 
             if (!in_array($type, $allowedTypes, true)) {
-                throw new \InvalidArgumentException('Invalid type '.$type);
+                throw new \InvalidArgumentException('Invalid type ' . $type);
             }
 
-            $requestPath .= '/'.$type;
+            $requestPath .= '/' . $type;
         }
-
-        $response = $httpClient->get($requestPath);
+        try {
+            $response = $httpClient->get($requestPath);
+        } catch (ApiException $exception) {
+            $this->logger->debug(
+                var_export(['error' => $exception->getMessage(), 'code' => $exception->getCode()], true)
+            );
+            return [];
+        }
 
         return \Zend_Json::decode($response);
     }
