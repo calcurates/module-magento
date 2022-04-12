@@ -124,6 +124,7 @@
         <arguments>
             <argument name="processors" xsi:type="array">
                 <item name="metadata_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\MetadataProcessor</item>
+                <item name="residential_shipping_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\ResidentialShippingProcessor</item>
                 <item name="origin_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\OriginProcessor</item>
                 <item name="sort_shipping_options_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\ShippingOptionSortProcessor</item>
                 <item name="free_shipping_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\FreeShippingProcessor</item>
@@ -176,12 +177,49 @@
     <preference for="Calcurates\ModuleMagento\Api\Data\OrderDataInterface" type="Calcurates\ModuleMagento\Model\OrderData"/>
     <preference for="Calcurates\ModuleMagento\Api\SalesData\OrderData\GetOrderDataInterface" type="Calcurates\ModuleMagento\Model\SalesData\OrderData\GetOrderData"/>
     <preference for="Calcurates\ModuleMagento\Api\SalesData\OrderData\SaveOrderDataInterface" type="Calcurates\ModuleMagento\Model\SalesData\OrderData\SaveOrderData"/>
+    <preference for="Calcurates\ModuleMagento\Api\SalesData\QuoteData\QuoteAddressExtensionAttributesInterface" type="Calcurates\ModuleMagento\Model\SalesData\QuoteData\QuoteAddress"/>
+    <preference for="Calcurates\ModuleMagento\Api\SalesData\OrderData\OrderAddressExtensionAttributesInterface" type="Calcurates\ModuleMagento\Model\SalesData\OrderData\OrderAddress"/>
     <!-- Delivery Dates -->
     <preference for="Calcurates\ModuleMagento\Api\Data\DeliveryDate\DateInterface" type="Calcurates\ModuleMagento\Model\DeliveryDate\Date"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\DeliveryDate\TimeIntervalInterface" type="Calcurates\ModuleMagento\Model\DeliveryDate\TimeInterval"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\InStorePickup\PickupLocationInterface" type="Calcurates\ModuleMagento\Model\InStorePickup\PickupLocation"/>
     <preference for="Calcurates\ModuleMagento\Api\InStorePickup\PickupLocationRepositoryInterface" type="Calcurates\ModuleMagento\Model\InStorePickup\PickupLocationRepository"/>
 
+    <type name="Magento\Framework\EntityManager\MetadataPool">
+        <arguments>
+            <argument name="metadata" xsi:type="array">
+                <item name="Calcurates\ModuleMagento\Model\SalesData\QuoteData\QuoteAddress" xsi:type="array">
+                    <item name="entityTableName" xsi:type="string">calcurates_quote_address_data</item>
+                    <item name="identifierField" xsi:type="string">id</item>
+                </item>
+                <item name="Calcurates\ModuleMagento\Model\SalesData\OrderData\OrderAddress" xsi:type="array">
+                    <item name="entityTableName" xsi:type="string">calcurates_order_address_data</item>
+                    <item name="identifierField" xsi:type="string">id</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\EntityManager\HydratorPool">
+        <arguments>
+            <argument name="hydrators" xsi:type="array">
+                <item name="Calcurates\ModuleMagento\Model\SalesData\QuoteData\QuoteAddress" xsi:type="string">Magento\Framework\EntityManager\AbstractModelHydrator</item>
+                <item name="Calcurates\ModuleMagento\Model\SalesData\OrderData\OrderAddress" xsi:type="string">Magento\Framework\EntityManager\AbstractModelHydrator</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Checkout\Api\ShippingInformationManagementInterface">
+        <plugin name="Calcurates_ModuleMagento::SaveDeliveryDatesPlugin"
+                type="Calcurates\ModuleMagento\Plugin\QuoteDataSave\Checkout\Model\SaveDeliveryDateFromShippingInfoPlugin"
+                sortOrder="10"/>
+        <plugin name="Calcurates_ModuleMagento::AddPickupLocationForQuoteAddress"
+                type="Calcurates\ModuleMagento\Plugin\Model\Checkout\AddPickupLocationForQuoteAddress"
+                sortOrder="20"/>
+    </type>
+    <type name="Magento\Sales\Api\Data\OrderInterface">
+        <plugin name="Calcurates_ModuleMagento::AddShippingAddressExtensionAttributesPlugin"
+                type="Calcurates\ModuleMagento\Plugin\Model\Order\AddResidentialExtensionAttribute"
+                sortOrder="10"/>
+    </type>
     <virtualType name="Calcurates\ModuleMagento\Model\Request\DataPersistor" type="Magento\Framework\App\Request\DataPersistor">
         <arguments>
             <argument name="session" xsi:type="object">Magento\Checkout\Model\Session</argument>
