@@ -21,5 +21,5 @@ interface ConfigProviderInterface
      * @return \Calcurates\ModuleMagento\Api\Data\ConfigDataInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException If ID is not found
      */
-    public function getSettings($websiteId = null);
+    public function getSettings(int $websiteId = null);
 }

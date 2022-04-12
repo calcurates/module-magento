@@ -29,13 +29,13 @@ class QuoteAddress extends AbstractModel implements QuoteAddressExtensionAttribu
      */
     public function getAddressId(): int
     {
-        return $this->getData(self::MAGENTO_QUOTE_ADDRESS_ID);
+        return (int)$this->getData(self::MAGENTO_QUOTE_ADDRESS_ID);
     }
 
     /**
      * @inheritdoc
      */
-    public function setAddressId($addressId): QuoteAddressExtensionAttributesInterface
+    public function setAddressId(int $addressId): QuoteAddressExtensionAttributesInterface
     {
         return $this->setData(self::MAGENTO_QUOTE_ADDRESS_ID, $addressId);
     }
@@ -51,7 +51,7 @@ class QuoteAddress extends AbstractModel implements QuoteAddressExtensionAttribu
     /**
      * @inheritdoc
      */
-    public function setResidentialDelivery($residentialDelivery): QuoteAddressExtensionAttributesInterface
+    public function setResidentialDelivery(?int $residentialDelivery): QuoteAddressExtensionAttributesInterface
     {
         return $this->setData(self::EXT_ATTRIBUTE_RESIDENTIAL_DELIVERY, $residentialDelivery);
     }

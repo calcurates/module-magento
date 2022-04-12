@@ -35,7 +35,7 @@ class OrderAddress extends AbstractModel implements OrderAddressExtensionAttribu
     /**
      * @inheritdoc
      */
-    public function setAddressId($addressId): OrderAddressExtensionAttributesInterface
+    public function setAddressId(int $addressId): OrderAddressExtensionAttributesInterface
     {
         return $this->setData(self::MAGENTO_ORDER_ADDRESS_ID, $addressId);
     }
@@ -53,7 +53,7 @@ class OrderAddress extends AbstractModel implements OrderAddressExtensionAttribu
     /**
      * @inheritdoc
      */
-    public function setResidentialDelivery($residentialDelivery): OrderAddressExtensionAttributesInterface
+    public function setResidentialDelivery(?int $residentialDelivery): OrderAddressExtensionAttributesInterface
     {
         return $this->setData(self::EXT_ATTRIBUTE_RESIDENTIAL_DELIVERY, $residentialDelivery);
     }

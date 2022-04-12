@@ -22,15 +22,15 @@ class InfoPlugin
      */
     public function afterGetFormattedAddress(Info $subject, string $result, Address $address): string
     {
-        if ($address->getAddressType() == 'shipping'
+        if ($address->getAddressType() === 'shipping'
             && $address->getExtensionAttributes()
             && $address->getExtensionAttributes()->getResidentialDelivery()
             && $address->getExtensionAttributes()->getResidentialDelivery()->getResidentialDelivery() !== null
         ) {
-            $label = $address->getExtensionAttributes()->getResidentialDelivery()->getResidentialDelivery() == 1
+            $label = $address->getExtensionAttributes()->getResidentialDelivery()->getResidentialDelivery() === 1
                 ? __('Residential')
                 : __('Commercial');
-            $result .= '<br><i class="icon success"></i><em>'. $label .'</em>';
+            $result .= '<br/><i class="icon success"></i><em>'. $label .'</em>';
         }
         return $result;
     }

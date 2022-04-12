@@ -39,7 +39,7 @@ class AddResidentialExtensionAttribute
     {
         if ($collection->getItems()) {
             foreach ($collection->getItems() as $address) {
-                if ($address->getAddressType() == 'shipping') {
+                if ($address->getAddressType() === 'shipping') {
                     $extensionAttributes = $address->getExtensionAttributes();
                     if (!$extensionAttributes->getResidentialDelivery()) {
                         $orderAddressExtension = $this->collectionFactory
