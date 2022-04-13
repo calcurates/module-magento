@@ -114,6 +114,7 @@ class CarrierProcessor implements ResponseProcessorInterface
 
             $existingMethodIds = [];
             foreach ($carrier['rates'] ?? [] as $responseCarrierRate) {
+                $services = [];
                 if (!$responseCarrierRate['success']) {
                     if ($responseCarrierRate['message']) {
                         $services['services'][] = $responseCarrierRate['service'];

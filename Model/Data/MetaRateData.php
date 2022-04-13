@@ -49,7 +49,7 @@ class MetaRateData extends DataObject implements MetaRateDataInterface
      */
     public function setRatesData($originId, $rateData)
     {
-        $this->rates[$originId] = $rateData->getAllRates();
+        $this->rates[$originId] = $rateData;
     }
 
     /**

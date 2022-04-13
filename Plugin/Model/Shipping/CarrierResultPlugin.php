@@ -9,9 +9,17 @@
 namespace Calcurates\ModuleMagento\Plugin\Model\Shipping;
 
 use Magento\Shipping\Model\Rate\CarrierResult;
+use Calcurates\ModuleMagento\Api\Data\MetaRateDataInterface;
 
 class CarrierResultPlugin
 {
+    private $metarateData;
+
+    public function __construct(
+        MetaRateDataInterface $metaRateData
+    ) {
+        $this->metarateData = $metaRateData;
+    }
     /**
      * @param CarrierResult $subject
      * @param array $result
@@ -22,7 +30,9 @@ class CarrierResultPlugin
         if (!is_array($result) || !count($result)) {
             return $result;
         }
-
+        foreach ($this->metarateData->getRatesData() ?? [] as $origin => $rates) {
+            $this->metarateData->setRatesData($origin, $this->sortRates($rates));
+        }
         return $this->sortRates($result);
     }
 

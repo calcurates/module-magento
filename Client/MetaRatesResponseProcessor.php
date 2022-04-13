@@ -143,7 +143,7 @@ class MetaRatesResponseProcessor
         foreach ($response['origins'] as $key => $origin) {
             //$origin['origins'][] = $origin['origin'];
             $childRates = $this->ratesResponseProcessor->processResponse($origin, $quote);
-            $this->metaRateData->setRatesData($origin['origin']['id'], $childRates);
+            $this->metaRateData->setRatesData($origin['origin']['id'], $childRates->getAllRates());
         }
 //        foreach ($metarates as $metarate) {
 //            $this->metaRateData->setRatesData($metarate, $childRates);

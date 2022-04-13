@@ -154,6 +154,7 @@
         <arguments>
             <argument name="processors" xsi:type="array">
                 <item name="metadata_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\MetadataProcessor</item>
+                <item name="sort_shipping_options_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\SplitCheckout\ShippingOptionSortProcessor</item>
                 <item name="free_shipping_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\FreeShippingProcessor</item>
                 <item name="flat_rate_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\FlatRateProcessor</item>
                 <item name="table_rate_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\TableRateProcessor</item>
