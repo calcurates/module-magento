@@ -65,6 +65,7 @@ class ReviewPlugin
             );
         }
         if ($rate->getCode() === 'calcurates_MetaRate') {
+            $rate->setMethodTitle($this->configProvider->getSplitCheckoutTitle());
             $format = '%s';
         }
         return [$rate, $format, $inclTaxFormat];

@@ -13,8 +13,10 @@ use Calcurates\ModuleMagento\Api\SalesData\QuoteData\GetQuoteDataInterface;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Quote\Model\Quote\Item;
+use Magento\Tax\Helper\Data;
 
 class MetaRate implements ArgumentInterface
 {
@@ -39,18 +41,34 @@ class MetaRate implements ArgumentInterface
     private $savedMethods = [];
 
     /**
+     * @var Data
+     */
+    private $taxHelper;
+
+    /**
+     * @var PriceCurrencyInterface
+     */
+    private $priceCurrency;
+
+    /**
      * @param MetaRateDataInterface $metaRateData
      * @param Session $checkoutSession
      * @param GetQuoteDataInterface $getQuoteData
+     * @param Data $taxHelper
+     * @param PriceCurrencyInterface $priceCurrency
      */
     public function __construct(
         MetaRateDataInterface $metaRateData,
         Session $checkoutSession,
-        GetQuoteDataInterface $getQuoteData
+        GetQuoteDataInterface $getQuoteData,
+        Data $taxHelper,
+        PriceCurrencyInterface $priceCurrency
     ) {
         $this->metaRateData = $metaRateData;
         $this->checkoutSession = $checkoutSession;
         $this->getQuoteData = $getQuoteData;
+        $this->priceCurrency = $priceCurrency;
+        $this->taxHelper = $taxHelper;
     }
 
     /**
@@ -111,5 +129,73 @@ class MetaRate implements ArgumentInterface
             return $this->savedMethods[$originId]['method'] === $method;
         }
         return false;
+    }
+
+    /**
+     * @param $rate
+     * @param $format
+     * @param $inclTaxFormat
+     * @return string
+     */
+    public function renderShippingRateOption($rate, $format = '%s - %s%s', $inclTaxFormat = ' (%s %s)')
+    {
+        $renderedInclTax = '';
+        if ($rate->getErrorMessage()) {
+            $price = $rate->getErrorMessage();
+        } else {
+            $price = $this->getShippingPrice(
+                $rate->getPrice(),
+                $this->taxHelper->displayShippingPriceIncludingTax()
+            );
+
+            $incl = $this->getShippingPrice($rate->getPrice(), true);
+            if ($incl != $price && $this->taxHelper->displayShippingBothPrices()) {
+                $renderedInclTax = sprintf($inclTaxFormat, __('Incl. Tax'), $incl);
+            }
+        }
+        return sprintf($format, $rate->getMethodTitle(), $price, $renderedInclTax);
+    }
+
+    /**
+     * Return formatted shipping price
+     *
+     * @param float $price
+     * @param bool $isInclTax
+     * @return string
+     */
+    private function getShippingPrice($price, $isInclTax): string
+    {
+        try {
+            return $this->formatPrice(
+                $this->taxHelper->getShippingPrice(
+                    $price,
+                    $isInclTax,
+                    $this->checkoutSession->getQuote()->getShippingAddress()
+                )
+            );
+        } catch (NoSuchEntityException|LocalizedException $e) {
+            return '';
+        }
+
+    }
+
+    /**
+     * Format price base on store convert price method
+     *
+     * @param float $price
+     * @return string
+     */
+    private function formatPrice($price): string
+    {
+        try {
+            return $this->priceCurrency->convertAndFormat(
+                $price,
+                true,
+                PriceCurrencyInterface::DEFAULT_PRECISION,
+                $this->checkoutSession->getQuote()->getStore()
+            );
+        } catch (NoSuchEntityException|LocalizedException $e) {
+            return '';
+        }
     }
 }

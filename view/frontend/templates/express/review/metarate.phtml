@@ -7,7 +7,7 @@
  */
 
 /**
- * @var $block \Magento\Framework\View\Element\Template
+ * @var $block \Calcurates\ModuleMagento\Block\Paypal\Express\Review\Metarate
  * @var $viewModel \Calcurates\ModuleMagento\ViewModel\MetaRate
  * @var $escaper \Magento\Framework\Escaper
  */
@@ -32,7 +32,7 @@ $shipmentCount = 1;
             <option value="<?= $rate->getMethod() ?>"
                 <?= $viewModel->isSavedMethod($origin['id'], $rate->getMethod()) ? ' selected="selected"' : ''; ?>
             >
-                <?= $rate->getMethodTitle() ?>
+                <?= $viewModel->renderShippingRateOption($rate) ?>
             </option>
         <?php endforeach; ?>
     </select>
