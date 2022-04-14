@@ -97,8 +97,9 @@ class InStorePickupProcessor implements ResponseProcessorInterface
     public function process(Result $result, array &$response, CartInterface $quote): void
     {
         /** @todo */
-    return;
-            foreach ($response['shippingOptions']['inStorePickups'] as $shippingOption) {
+//    return;
+        $origin = $response['origin'];
+        foreach ($response['shippingOptions']['inStorePickups'] as $shippingOption) {
             if (!$shippingOption['success']) {
                 if ($shippingOption['message']) {
                     $failedRate = $this->failedRateBuilder->build(
@@ -135,11 +136,11 @@ class InStorePickupProcessor implements ResponseProcessorInterface
                 );
 
                 foreach ($rates as $rate) {
-                    $rate->setData(RatesResponseProcessor::CALCURATES_MAP_LINK, $this->mapLinkRenderer->render($store['origin']));
+                    $rate->setData(RatesResponseProcessor::CALCURATES_MAP_LINK, $this->mapLinkRenderer->render($origin));
                     $result->append($rate);
                 }
 
-                $pickupLocationData = $this->pickupLocationDataExtractor->extract($store['origin']);
+                $pickupLocationData = $this->pickupLocationDataExtractor->extract($origin);
 
                 $pickupLocation = $this->pickupLocationFactory->create();
                 $this->dataObjectHelper->populateWithArray(
