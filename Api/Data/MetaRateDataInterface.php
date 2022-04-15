@@ -38,7 +38,15 @@ interface MetaRateDataInterface
      */
     public function setProductData($origin, $productData);
 
+    /**
+     * @return mixed
+     */
     public function getOriginData();
 
+    /**
+     * @param $origin
+     * @param $originData
+     * @return mixed
+     */
     public function setOriginData($origin, $originData);
 }

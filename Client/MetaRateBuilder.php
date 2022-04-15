@@ -11,43 +11,23 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Client;
 
 use Calcurates\ModuleMagento\Model\Carrier;
-use Calcurates\ModuleMagento\Model\Config;
-use Calcurates\ModuleMagento\Model\CurrencyConverter;
 use Magento\Quote\Model\Quote\Address\RateResult\MethodFactory;
 
 class MetaRateBuilder
 {
-    public const METHOD_WITH_TAX_SUFFIX = '_tax';
-
-    /**
-     * @var Config
-     */
-    private $calcuratesConfig;
-
     /**
      * @var MethodFactory
      */
     private $rateMethodFactory;
 
     /**
-     * @var CurrencyConverter
-     */
-    private $currencyConverter;
-
-    /**
      * RateBuilder constructor.
      * @param MethodFactory $rateMethodFactory
-     * @param CurrencyConverter $currencyConverter
-     * @param Config $calcuratesConfig
      */
     public function __construct(
-        MethodFactory $rateMethodFactory,
-        CurrencyConverter $currencyConverter,
-        Config $calcuratesConfig
+        MethodFactory $rateMethodFactory
     ) {
         $this->rateMethodFactory = $rateMethodFactory;
-        $this->currencyConverter = $currencyConverter;
-        $this->calcuratesConfig = $calcuratesConfig;
     }
 
     /**

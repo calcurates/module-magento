@@ -100,6 +100,9 @@ class OrderData extends \Magento\Framework\Model\AbstractModel implements OrderD
         $this->setData(self::DELIVERY_DATES, $deliveryDates);
     }
 
+    /**
+     * @return array
+     */
     public function getSplitShipments(): array
     {
         $splitShipments = $this->getData(self::SPLIT_SHIPMENTS);
@@ -113,6 +116,10 @@ class OrderData extends \Magento\Framework\Model\AbstractModel implements OrderD
         return [];
     }
 
+    /**
+     * @param array $shipments
+     * @return void
+     */
     public function setSplitShipments(array $shipments): void
     {
         $this->setData(self::SPLIT_SHIPMENTS, $shipments);

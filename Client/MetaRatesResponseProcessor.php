@@ -8,13 +8,7 @@
 
 namespace Calcurates\ModuleMagento\Client;
 
-use Calcurates\ModuleMagento\Api\Data\QuoteDataInterfaceFactory;
-use Calcurates\ModuleMagento\Api\SalesData\QuoteData\GetQuoteDataInterface;
-use Calcurates\ModuleMagento\Api\SalesData\QuoteData\SaveQuoteDataInterface;
-//use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
-use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
-use Calcurates\ModuleMagento\Client\MetaRateBuilder;
 use Calcurates\ModuleMagento\Model\Config as CalcuratesConfig;
 use Calcurates\ModuleMagento\Model\Data\MetaRateData;
 use Magento\Shipping\Model\Rate\Result;
@@ -38,32 +32,18 @@ class MetaRatesResponseProcessor
     private $calcuratesConfig;
 
     /**
-     * @var ResponseProcessorInterface
-     */
-//    private $responseProcessor;
-
-    /**
      * @var FailedRateBuilder
      */
     private $failedRateBuilder;
 
     /**
-     * @var GetQuoteDataInterface
+     * @var MetaRateData
      */
-    private $getQuoteData;
-
-    /**
-     * @var SaveQuoteDataInterface
-     */
-    private $saveQuoteData;
-
-    /**
-     * @var QuoteDataInterfaceFactory
-     */
-    private $quoteDataFactory;
-
     private $metaRateData;
 
+    /**
+     * @var RatesResponseProcessor
+     */
     private $ratesResponseProcessor;
 
     /**
@@ -75,31 +55,22 @@ class MetaRatesResponseProcessor
      * RatesResponseProcessor constructor.
      * @param ResultFactory $resultFactory
      * @param CalcuratesConfig $calcuratesConfig
-     * @param ResponseProcessorInterface $responseProcessor
      * @param FailedRateBuilder $failedRateBuilder
-     * @param GetQuoteDataInterface $getQuoteData
-     * @param SaveQuoteDataInterface $saveQuoteData
-     * @param QuoteDataInterfaceFactory $quoteDataFactory
+     * @param MetaRateData $metaRateData
+     * @param RatesResponseProcessor $ratesResponseProcessor
+     * @param \Calcurates\ModuleMagento\Client\MetaRateBuilder $metaRateBuilder
      */
     public function __construct(
         ResultFactory $resultFactory,
         CalcuratesConfig $calcuratesConfig,
-//        ResponseProcessorInterface $responseProcessor,
         FailedRateBuilder $failedRateBuilder,
-        GetQuoteDataInterface $getQuoteData,
-        SaveQuoteDataInterface $saveQuoteData,
-        QuoteDataInterfaceFactory $quoteDataFactory,
         MetaRateData $metaRateData,
         RatesResponseProcessor $ratesResponseProcessor,
         MetaRateBuilder $metaRateBuilder
     ) {
         $this->resultFactory = $resultFactory;
         $this->calcuratesConfig = $calcuratesConfig;
-//        $this->responseProcessor = $responseProcessor;
         $this->failedRateBuilder = $failedRateBuilder;
-        $this->getQuoteData = $getQuoteData;
-        $this->saveQuoteData = $saveQuoteData;
-        $this->quoteDataFactory = $quoteDataFactory;
         $this->metaRateData = $metaRateData;
         $this->ratesResponseProcessor = $ratesResponseProcessor;
         $this->rateBuilder = $metaRateBuilder;
@@ -140,36 +111,10 @@ class MetaRatesResponseProcessor
             $this->calcuratesConfig->getSplitCheckoutTitle($quote->getStoreId())
         );
         $result->append($metarate);
-        foreach ($response['origins'] as $key => $origin) {
-            //$origin['origins'][] = $origin['origin'];
+        foreach ($response['origins'] as $origin) {
             $childRates = $this->ratesResponseProcessor->processResponse($origin, $quote);
             $this->metaRateData->setRatesData($origin['origin']['id'], $childRates->getAllRates());
         }
-//        foreach ($metarates as $metarate) {
-//            $this->metaRateData->setRatesData($metarate, $childRates);
-//            $result->append($metarate);
-//        }
-
-        //$this->responseProcessor->process($result, $response, $quote);
-
-        // @TODO: temporary fix, need refactoring
-//        $deliveryDates = [];
-//        foreach ($result->getAllRates() as $rate) {
-//            $rateDeliveryDates = $rate->getData(self::CALCURATES_DELIVERY_DATES);
-//            if ($rateDeliveryDates) {
-//                $deliveryDates[$rate->getCarrier() . '_' . $rate->getMethod()] = $rateDeliveryDates;
-//            }
-//        }
-//
-//        $quoteData = $this->getQuoteData->get((int)$quote->getId());
-//
-//        if (!$quoteData) {
-//            $quoteData = $this->quoteDataFactory->create();
-//            $quoteData->setQuoteId((int)$quote->getId());
-//        }
-//
-//        $quoteData->setDeliveryDates($deliveryDates);
-//        $this->saveQuoteData->save($quoteData);
 
         return $result;
     }

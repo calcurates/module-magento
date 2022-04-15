@@ -25,7 +25,7 @@ interface SplitShipmentInterface
 
     /**
      * @param $origin
-     * @return mixed
+     * @return void
      */
     public function setOrigin($origin);
 
@@ -36,7 +36,7 @@ interface SplitShipmentInterface
 
     /**
      * @param $method
-     * @return mixed
+     * @return void
      */
     public function setMethod($method);
 
@@ -47,7 +47,7 @@ interface SplitShipmentInterface
 
     /**
      * @param $price
-     * @return mixed
+     * @return void
      */
     public function setPrice($price);
 
@@ -58,7 +58,7 @@ interface SplitShipmentInterface
 
     /**
      * @param $cost
-     * @return mixed
+     * @return void
      */
     public function setCost($cost);
 
@@ -69,7 +69,7 @@ interface SplitShipmentInterface
 
     /**
      * @param $products
-     * @return mixed
+     * @return void
      */
     public function setProducts($products);
 }

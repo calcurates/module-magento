@@ -35,6 +35,8 @@ class ShipmentServiceRetriever
     /**
      * ShipmentServiceRetriever constructor.
      * @param SerializerInterface $serializer
+     * @param ShippingMethodManager $shippingMethodManager
+     * @param GetOrderData $getOrderData
      */
     public function __construct(
         SerializerInterface $serializer,

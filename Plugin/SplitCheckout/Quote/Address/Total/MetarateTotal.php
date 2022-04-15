@@ -12,7 +12,6 @@ use Calcurates\ModuleMagento\Api\SalesData\QuoteData\SaveQuoteDataInterface;
 
 class MetarateTotal
 {
-
     /**
      * @var MetaRateDataInterface
      */
@@ -88,7 +87,7 @@ class MetarateTotal
             foreach ($rates as $rate) {
                 foreach ($splitShipmentData as $key => $splitShipment) {
                     if (isset($splitShipment['method'])
-                        && $rate->getMethod() == str_replace('calcurates_', '', $splitShipment['method'])
+                        && $rate->getMethod() == $splitShipment['method']
                         && $origin == $splitShipment['origin']
                     ) {
                         /** todo: move saving data from this */

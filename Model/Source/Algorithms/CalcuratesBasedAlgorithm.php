@@ -65,6 +65,8 @@ class CalcuratesBasedAlgorithm implements SourceSelectionInterface
      * @param ObjectManagerInterface $objectManager
      * @param OrderItemsRetriever $orderItemsRetriever
      * @param SourceServiceContext $sourceServiceContext
+     * @param GetOrderDataInterface $getOrderData
+     * @param GetCalcuratesSplitCheckoutSourcesResult $getCalcuratesSplitCheckoutSourcesResult
      */
     public function __construct(
         GetCalcuratesSortedSourcesResult $getCalcuratesSortedSourcesResult,

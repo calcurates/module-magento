@@ -45,6 +45,9 @@ class SaveShippingMethodPlugin
      */
     private $saveQuoteData;
 
+    /**
+     * @var LoggerInterface
+     */
     private $logger;
 
     /**
@@ -53,6 +56,7 @@ class SaveShippingMethodPlugin
      * @param Session $checkoutSession
      * @param GetQuoteDataInterface $getQuoteData
      * @param SaveQuoteDataInterface $saveQuoteData
+     * @param LoggerInterface $logger
      */
     public function __construct(
         Generic $paypalSession,

@@ -12,6 +12,7 @@ use Calcurates\ModuleMagento\Model\Source\SourceServiceContext;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\InventorySourceSelectionApi\Api\Data\InventoryRequestInterface;
 use Magento\InventorySourceSelectionApi\Api\Data\SourceSelectionItemInterfaceFactory;
+use Magento\InventorySourceSelectionApi\Api\Data\SourceSelectionResultInterface;
 use Magento\InventorySourceSelectionApi\Api\Data\SourceSelectionResultInterfaceFactory;
 use Magento\InventorySourceSelectionApi\Model\GetInStockSourceItemsBySkusAndSortedSource;
 use Magento\InventorySourceSelectionApi\Model\GetSourceItemQtyAvailableInterface;
@@ -38,6 +39,10 @@ class GetCalcuratesSplitCheckoutSourcesResult
      */
     private $getSourceItemQtyAvailable;
 
+    /**
+     * @param ObjectManagerInterface $objectManager
+     * @param SourceServiceContext $sourceServiceContext
+     */
     public function __construct(
         ObjectManagerInterface $objectManager,
         SourceServiceContext $sourceServiceContext
@@ -52,6 +57,12 @@ class GetCalcuratesSplitCheckoutSourcesResult
         }
     }
 
+    /**
+     * @param InventoryRequestInterface $inventoryRequest
+     * @param array $sortedSources
+     * @param array $mainSourceCodesForSkus
+     * @return SourceSelectionResultInterface
+     */
     public function execute(
         InventoryRequestInterface $inventoryRequest,
         array $sortedSources,

@@ -129,7 +129,7 @@ define([
              * @param parentMethod
              */
             selectSplitCheckoutMethod: function (method, metaMethod, parentMethod) {
-                this.splitCheckoutShipments[metaMethod.origin_id](method.carrier_code + '_' + method.method_code)
+                this.splitCheckoutShipments[metaMethod.origin_id](method.method_code)
                 splitCheckoutShipments(this.splitCheckoutShipments)
                 checkoutData.setSelectedSplitCheckoutShipments(this.splitCheckoutShipments)
                 this.selectShippingMethod(parentMethod)

@@ -18,14 +18,26 @@ use Calcurates\ModuleMagento\Model\Data\MetaRateData;
 
 class ProductProcessor implements ResponseProcessorInterface
 {
+    /**
+     * @var MetaRateData
+     */
     private $metaRateData;
 
+    /**
+     * @param MetaRateData $metaRateData
+     */
     public function __construct(
         MetaRateData $metaRateData
     ) {
         $this->metaRateData = $metaRateData;
     }
 
+    /**
+     * @param Result $result
+     * @param array $response
+     * @param CartInterface $quote
+     * @return void
+     */
     public function process(Result $result, array &$response, CartInterface $quote): void
     {
         $products = [];

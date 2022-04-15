@@ -12,7 +12,6 @@ namespace Calcurates\ModuleMagento\Client\Response\Processor\SplitCheckout;
 
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Client\RateBuilder;
-use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Client\Response\Processor\Utils\CarrierRateNameBuilder;
 use Calcurates\ModuleMagento\Client\Response\Processor\Utils\ChildChecker;

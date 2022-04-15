@@ -10,35 +10,12 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Client\Response\Processor\SplitCheckout;
 
-use Calcurates\ModuleMagento\Client\RateBuilder;
-use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Shipping\Model\Rate\Result;
 
 class ShippingOptionSortProcessor implements ResponseProcessorInterface
 {
-    /**
-     * @var FailedRateBuilder
-     */
-    private $failedRateBuilder;
-
-    /**
-     * @var RateBuilder
-     */
-    private $rateBuilder;
-
-    /**
-     * FlatRateProcessor constructor.
-     * @param FailedRateBuilder $failedRateBuilder
-     * @param RateBuilder $rateBuilder
-     */
-    public function __construct(FailedRateBuilder $failedRateBuilder, RateBuilder $rateBuilder)
-    {
-        $this->failedRateBuilder = $failedRateBuilder;
-        $this->rateBuilder = $rateBuilder;
-    }
-
     /**
      * @param Result $result
      * @param array $response
@@ -55,7 +32,6 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
         $this->sortRateShopping($resultShippingOptions);
         $response['shippingOptions'] = $resultShippingOptions;
     }
-
 
     /**
      * @param $resultShippingOptions
@@ -357,32 +333,5 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
 
             return $firstRate['priority'] <=> $secondRate['priority'];
         });
-    }
-
-    /**
-     * @param $resultShippingOptions
-     */
-    private function sortMergedShippingOptions(&$resultShippingOptions): void
-    {
-        if (!$resultShippingOptions['mergedShippingOptions']) {
-            return;
-        }
-        \usort(
-            $resultShippingOptions['mergedShippingOptions'],
-            static function ($firstMethod, $secondMethod): int {
-                if (!$firstMethod['success'] || !$firstMethod['service']['rate']) {
-                    return 1;
-                }
-                if (!$secondMethod['success'] || !$secondMethod['service']['rate']) {
-                    return -1;
-                }
-
-                $result = $firstMethod['service']['rate']['cost'] <=> $secondMethod['service']['rate']['cost'];
-                if (0 === $result) {
-                    $result = $firstMethod['name'] <=> $secondMethod['name'];
-                }
-
-                return $result;
-            });
     }
 }
