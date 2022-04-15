@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Client\Command;
 
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
+use Magento\Framework\Exception\LocalizedException;
 
 class GetAllShippingOptionsCommand
 {
@@ -34,9 +35,13 @@ class GetAllShippingOptionsCommand
      */
     public function getShippingOptions($storeId)
     {
-        $allShippingOptions = $this->getShippingOptionsCommand->get(
-            (int) $storeId
-        );
+        try {
+            $allShippingOptions = $this->getShippingOptionsCommand->get(
+                (int) $storeId
+            );
+        } catch (LocalizedException $exception) {
+            return [];
+        }
 
         $shippingOptions = [];
 

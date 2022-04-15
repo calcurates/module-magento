@@ -11,6 +11,7 @@ namespace Calcurates\ModuleMagento\Observer;
 use Calcurates\ModuleMagento\Model\CheckoutConverter\QuoteToOrderConverter;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\EntityManager\EntityManager;
 
 class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
 {
@@ -19,8 +20,21 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
      */
     private $quoteToOrderConverter;
 
-    public function __construct(QuoteToOrderConverter $quoteToOrderConverter)
-    {
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    /**
+     * SaveOrderBeforeSalesModelQuoteObserver constructor.
+     * @param QuoteToOrderConverter $quoteToOrderConverter
+     * @param EntityManager $entityManager
+     */
+    public function __construct(
+        QuoteToOrderConverter $quoteToOrderConverter,
+        EntityManager $entityManager
+    ) {
+        $this->entityManager = $entityManager;
         $this->quoteToOrderConverter = $quoteToOrderConverter;
     }
 
@@ -36,7 +50,13 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
         $quote = $observer->getEvent()->getData('quote');
 
         $this->quoteToOrderConverter->convert($quote, $order);
-
+        if ($quote->getShippingAddress()
+            && $quote->getShippingAddress()->getExtensionAttributes()
+        ) {
+            $this->entityManager->save(
+                $quote->getShippingAddress()->getExtensionAttributes()->getResidentialDelivery()
+            );
+        }
         return $this;
     }
 }

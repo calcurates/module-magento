@@ -45,4 +45,8 @@
         <plugin name="Calcurates\ModuleMagento\Plugin\Controller\Shipping\Adminhtml\Order\Shipment\PrintLabel"
                 type="Calcurates\ModuleMagento\Plugin\Controller\Shipping\Adminhtml\Order\Shipment\PrintLabel"/>
     </type>
+    <type name="Magento\Sales\Block\Adminhtml\Order\View\Info">
+        <plugin name="Calcurates\ModuleMagento\Plugin\Block\Adminhtml\Order\View\InfoPlugin"
+                type="Calcurates\ModuleMagento\Plugin\Block\Adminhtml\Order\View\InfoPlugin"/>
+    </type>
 </config>

@@ -17,5 +17,17 @@
 
     <extension_attributes for="Magento\Quote\Api\Data\AddressInterface">
         <attribute code="calcurates_pickup_location_quote_address" type="Calcurates\ModuleMagento\Api\Data\InStorePickup\PickupLocationInterface"/>
+        <attribute code="residential_delivery" type="Calcurates\ModuleMagento\Api\SalesData\QuoteData\QuoteAddressExtensionAttributesInterface">
+            <join reference_table="calcurates_quote_address_data" join_on_field="address_id" reference_field="address_id">
+                <field>residential_delivery</field>
+            </join>
+        </attribute>
+    </extension_attributes>
+    <extension_attributes for="Magento\Sales\Api\Data\OrderAddressInterface">
+        <attribute code="residential_delivery" type="Calcurates\ModuleMagento\Api\SalesData\OrderData\OrderAddressExtensionAttributesInterface">
+            <join reference_table="calcurates_order_address_data" join_on_field="entity_id" reference_field="address_id">
+                <field>residential_delivery</field>
+            </join>
+        </attribute>
     </extension_attributes>
 </config>
