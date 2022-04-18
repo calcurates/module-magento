@@ -52,6 +52,7 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
         $this->quoteToOrderConverter->convert($quote, $order);
         if ($quote->getShippingAddress()
             && $quote->getShippingAddress()->getExtensionAttributes()
+            && $quote->getShippingAddress()->getExtensionAttributes()->getResidentialDelivery()
         ) {
             $this->entityManager->save(
                 $quote->getShippingAddress()->getExtensionAttributes()->getResidentialDelivery()
