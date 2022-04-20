@@ -39,14 +39,11 @@ $taxHelper = $block->getData('taxHelper');
                                 value="<?= $escaper->escapeHtmlAttr($_code) ?>"
                                 id="s_method_<?= $escaper->escapeHtmlAttr($_code) ?>" <?= /* @noEscape */ $_checked ?>
                                 class="admin__control-radio required-entry"/>
-                            <?= /* @noEscape */ $secureRenderer->renderEventListenerAsTag(
-                                'onclick',
-                                "order.setShippingMethod(this.value)",
-                                'input#s_method_' . $escaper->escapeHtmlAttr($_code)
-                            ) ?>
                             <label class="admin__field-label" for="s_method_<?= $escaper->escapeHtmlAttr($_code) ?>">
                                 <?= $block->escapeHtml($_rate->getMethodTitle() ?
-                                    $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?> -
+                                    $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?>
+                                <?php if ($_code !== 'calcurates_MetaRate'): ?>
+                                &nbsp;-&nbsp;
                                 <strong>
                                     <?php $_excl = $block->getShippingPrice(
                                         $_rate->getPrice(),
@@ -59,8 +56,17 @@ $taxHelper = $block->getData('taxHelper');
                                         (<?= $block->escapeHtml(__('Incl. Tax')) ?> <?= /* @noEscape */ $_incl ?>)
                                     <?php endif; ?>
                                 </strong>
+                                <?php endif; ?>
                             </label>
-                            <?= $block->getChildHtml('metarate') ?>
+                            <?= /* @noEscape */ $secureRenderer->renderEventListenerAsTag(
+                                'onclick',
+                                "order.setShippingMethod(this.value)",
+                                'input#s_method_' . $escaper->escapeHtmlAttr($_code)
+                            ) ?>
+                            <?php if ($_code === 'calcurates_MetaRate'): ?>
+                                <?php $block->getChildBlock('metarate')->setActiveMethod($block->getActiveMethodRate()) ?>
+                                <?= $block->getChildHtml('metarate') ?>
+                            <?php endif; ?>
                         <?php endif; ?>
                     </li>
                 <?php endforeach; ?>
@@ -70,6 +76,12 @@ $taxHelper = $block->getData('taxHelper');
         </dl>
     </div>
     <?= /* @noEscape */ $secureRenderer->renderStyleAsTag("display:none", 'div#order-shipping-method-choose') ?>
+    <?php $scriptString = <<<script
+require(['prototype'], function(){
+    $('order-shipping-method-choose').show();
+});
+script;
+    ?>
     <?php if ($_rate = $block->getActiveMethodRate()): ?>
         <div id="order-shipping-method-info" class="order-shipping-method-info">
             <dl class="admin__order-shipment-methods">
@@ -93,6 +105,10 @@ $taxHelper = $block->getData('taxHelper');
                     </strong>
                 </dd>
             </dl>
+            <?php if ($_rate->getCode() === 'calcurates_MetaRate'): ?>
+                <?php $block->getChildBlock('metarate')->setIsPreview(true) ?>
+                <?= $block->getChildHtml('metarate', false) ?>
+            <?php endif; ?>
             <a href="#"
                class="action-default">
                 <span><?= $block->escapeHtml(__('Click to change shipping method')) ?></span>
@@ -104,12 +120,6 @@ $taxHelper = $block->getData('taxHelper');
             'div#order-shipping-method-info a.action-default'
         ) ?>
     <?php else: ?>
-        <?php $scriptString = <<<script
-require(['prototype'], function(){
-    $('order-shipping-method-choose').show();
-});
-script;
-        ?>
         <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
     <?php endif; ?>
 <?php elseif ($block->getIsRateRequest()): ?>

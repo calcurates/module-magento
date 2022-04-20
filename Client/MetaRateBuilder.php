@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Client;
 
 use Calcurates\ModuleMagento\Model\Carrier;
+use Magento\Quote\Model\Quote\Address\RateResult\Method;
 use Magento\Quote\Model\Quote\Address\RateResult\MethodFactory;
 
 class MetaRateBuilder
@@ -33,27 +34,30 @@ class MetaRateBuilder
     /**
      * @param string $methodId
      * @param array $responseRate
-     * @param $carrierTitle
-     * @return \Magento\Quote\Model\Quote\Address\RateResult\Method
+     * @param string $methodTitle
+     * @param string $carrierTitle
+     * @return Method
      */
-    public function build(string $methodId, array $responseRate, $carrierTitle = '')
+    public function build(string $methodId, array $responseRate, $methodTitle = '', $carrierTitle = '')
     {
-        return $this->createRate($methodId, $responseRate, $carrierTitle);
+        return $this->createRate($methodId, $responseRate, $methodTitle, $carrierTitle);
     }
 
     /**
      * @param string $methodId
      * @param array $responseRate
-     * @param $carrierTitle
-     * @return \Magento\Quote\Model\Quote\Address\RateResult\Method
+     * @param string $methodTitle
+     * @param string $carrierTitle
+     * @return Method
      */
-    private function createRate(string $methodId, array $responseRate, $carrierTitle = '')
+    private function createRate(string $methodId, array $responseRate, $methodTitle = '', $carrierTitle = '')
     {
         $rate = $this->rateMethodFactory->create();
         $baseAmount = 0;
         $rate->setCarrier(Carrier::CODE);
         $rate->setMethod($methodId);
         $rate->setCarrierTitle($carrierTitle);
+        $rate->setMethodTitle($methodTitle);
         $rate->setInfoMessageEnabled(0);
         $rate->setInfoMessage('');
         $rate->setPriority('');

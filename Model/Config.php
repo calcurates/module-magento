@@ -371,4 +371,17 @@ class Config implements ConfigProviderInterface
             $storeId
         );
     }
+
+    /**
+     * @param $storeId
+     * @return string
+     */
+    public function getCarrierTitle($storeId = null)
+    {
+        return (string)$this->scopeConfig->getValue(
+            self::CONFIG_GROUP . 'title',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
 }
