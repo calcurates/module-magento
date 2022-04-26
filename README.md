@@ -22,6 +22,13 @@ sudo -u magento_user php bin/magento setup:upgrade
 sudo -u magento_user php bin/magento cache:flush
 ```
 
+#### Magento 2.4.4 and newer installations:
+```bash
+cd path_to_magento
+sudo -u magento_user php bin/magento config:set oauth/consumer/enable_integration_as_bearer 1
+sudo -u magento_user php bin/magento cache:flush
+```
+
 #### Upgrades
 Magento provides options to the `setup:install` and `setup:upgrade` commands that enable safe installations and rollbacks:
 - `--safe-mode=1` - Creates a data dump during the installation or upgrade process
