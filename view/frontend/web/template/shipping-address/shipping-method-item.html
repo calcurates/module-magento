@@ -10,16 +10,16 @@
                     'checked': element.rates().length == 1 || element.isSelected" />
     </td>
     <td class="col col-price">
-        <each args="element.getRegion('price')" render="" />
+        <each args="element.getRegion('price')" render=""></each>
     </td>
     <td class="col col-method"
         attr="'id': 'label_method_' + method.method_code + '_' + method.carrier_code">
-        <span text="method.method_title" />
-        <span if="method.extension_attributes && method.extension_attributes.calcurates_data.map_link" text="' - '" />
+        <span text="method.method_title"></span>
+        <span if="method.extension_attributes && method.extension_attributes.calcurates_data.map_link" text="' - '"></span>
         <a if="method.extension_attributes && method.extension_attributes.calcurates_data.map_link"
            attr="'href': method.extension_attributes.calcurates_data.map_link"
            target="_blank"
-           translate="'see on the map'" />
+           translate="'see on the map'"></a>
     </td>
     <td class="col col-logo"
         attr="'id': 'label_logo_' + method.method_code + '_' + method.carrier_code">
