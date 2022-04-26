@@ -84,8 +84,8 @@ class CategoryManagement implements CategoryManagementInterface
     }
 
     /**
-     * @param null|int $rootCategoryId
-     * @param null|int $depth
+     * @param int|null $rootCategoryId
+     * @param int|null $depth
      *
      * @return CategoryTreeInterface
      * @throws LocalizedException

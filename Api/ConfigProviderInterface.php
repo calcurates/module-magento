@@ -16,7 +16,7 @@ interface ConfigProviderInterface
     /**
      * Retrieve shipping settings
      *
-     * @param null|bool|int|string|\Magento\Store\Api\Data\WebsiteInterface $websiteId
+     * @param string|bool|int|null|\Magento\Store\Api\Data\WebsiteInterface $websiteId
      *
      * @return \Calcurates\ModuleMagento\Api\Data\ConfigDataInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException If ID is not found
