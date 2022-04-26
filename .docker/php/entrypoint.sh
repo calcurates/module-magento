@@ -51,6 +51,9 @@ if [[ -f "/mg24.tar.gz" || "${isSourced}" -eq "0" ]]; then
     bin/magento setup:upgrade
     # disable TwoFactorAuth
     bin/magento module:disable Magento_TwoFactorAuth
+    # https://devdocs.magento.com/guides/v2.4/get-started/authentication/gs-authentication-token.html#integration-tokens
+    bin/magento config:set oauth/consumer/enable_integration_as_bearer 1
+
     bin/magento cache:disable full_page
     bin/magento cache:flush
 
@@ -62,7 +65,7 @@ if [[ -f "/mg24.tar.gz" || "${isSourced}" -eq "0" ]]; then
     echo "Configuring the phpcs..."
     php vendor/bin/phpcs --config-set default_standard Magento2
     php vendor/bin/phpcs --config-set colors 1
-    php vendor/bin/phpcs --config-set installed_paths /var/www/magento2/vendor/magento/magento-coding-standard/
+    php vendor/bin/phpcs --config-set installed_paths /var/www/magento2/vendor/magento/magento-coding-standard/,/var/www/magento2/vendor/phpcompatibility/php-compatibility/PHPCompatibility
     php vendor/bin/phpcs --config-set severity 7
     php vendor/bin/phpcs --config-set show_progress 1
 

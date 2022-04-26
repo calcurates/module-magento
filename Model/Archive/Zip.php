@@ -23,7 +23,7 @@ class Zip extends ZipArchiveMagento
      *
      * @param string $source
      * @param string $destination
-     * @param null $sourceAlias
+     * @param string|null $sourceAlias
      * @return string
      * @throws FileSystemException
      */
