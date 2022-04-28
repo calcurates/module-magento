@@ -158,10 +158,10 @@ class RateRequestBuilder
 
             $apiRequestBody['products'][] = [
                 'quoteItemId' => $item->getItemId() ?? $item->getQuoteItemId(),
-                'priceWithTax' => round($item->getBasePriceInclTax(), 2),
-                'priceWithoutTax' => round($item->getBasePrice(), 2),
-                'discountAmount' => round($item->getBaseDiscountAmount() / $item->getQty(), 2),
-                'quantity' => round($item->getQty(), 0),
+                'priceWithTax' => round((float) $item->getBasePriceInclTax(), 2),
+                'priceWithoutTax' => round((float) $item->getBasePrice(), 2),
+                'discountAmount' => round((float) $item->getBaseDiscountAmount() / (int) $item->getQty(), 2),
+                'quantity' => round((int) $item->getQty(), 0),
                 'weight' => $isVirtual ? 0 : $item->getWeight(),
                 'sku' => $item->getSku(),
                 'isVirtual' => $isVirtual,
