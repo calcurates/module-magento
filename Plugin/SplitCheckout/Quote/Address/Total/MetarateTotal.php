@@ -67,7 +67,7 @@ class MetarateTotal
         $found = false;
 
         foreach ($address->getAllShippingRates() as $rate) {
-            if ($rate->getCode() === 'calcurates_MetaRate') {
+            if ($rate->getCode() === 'calcurates_metarate') {
                 $found = true;
                 break;
             }
@@ -80,7 +80,10 @@ class MetarateTotal
         $quoteData = $this->getQuoteData->get($quote->getId());
         $splitShipmentData = $quoteData->getSplitShipments();
         $productData = $this->metarateData->getProductData();
-        if (!$this->metarateData->getRatesData()) {
+        if (!$this->metarateData->getRatesData() || !$splitShipmentData) {
+            $shippingAddress = $quote->getShippingAddress();
+            $total->addTotalAmount($subject->getCode(), $shippingAddress->getShippingAmount());
+            $total->addBaseTotalAmount($subject->getCode(), $shippingAddress->getBaseShippingAmount());
             return $result;
         }
         foreach ($this->metarateData->getRatesData() as $origin => $rates) {

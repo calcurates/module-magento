@@ -106,7 +106,7 @@ class MetaRatesResponseProcessor
         }
 
         $metarate = $this->rateBuilder->build(
-            'MetaRate',
+            'metarate',
             [],
             $this->calcuratesConfig->getSplitCheckoutTitle($quote->getStoreId()),
             $this->calcuratesConfig->getCarrierTitle($quote->getStoreId())

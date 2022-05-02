@@ -50,7 +50,7 @@ define([
                         return self.isSplitCheckout(method)
                     }),
                     selectedSplitCheckoutShipments = checkoutData.getSelectedSplitCheckoutShipments(),
-                    isSavedMetarate = checkoutData.getSelectedShippingRate() === 'calcurates_MetaRate'
+                    isSavedMetarate = checkoutData.getSelectedShippingRate() === 'calcurates_metarate'
 
                 if (metaMethod.length) {
                     metaMethod[0].extension_attributes.calcurates_metarate_data.forEach(function (item) {

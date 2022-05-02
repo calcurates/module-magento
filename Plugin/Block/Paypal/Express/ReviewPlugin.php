@@ -64,7 +64,7 @@ class ReviewPlugin
                 $rate->getMethodTitle() . ', ' . $deliveryDatesString
             );
         }
-        if ($rate->getCode() === 'calcurates_MetaRate') {
+        if ($rate->getCode() === 'calcurates_metarate') {
             $rate->setMethodTitle($this->configProvider->getSplitCheckoutTitle());
             $format = '%s';
         }

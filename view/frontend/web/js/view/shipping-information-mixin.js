@@ -70,7 +70,7 @@ define([
                     return item.origin_id === parseInt(key)
                 })
                 let rate = _.first(metaRate).rates.filter(function (rate) {
-                    return rate.carrier_code + '_' + rate.method_code === val
+                    return rate.method_code === val
                 })
                 selectedView.push(_.first(rate))
             })

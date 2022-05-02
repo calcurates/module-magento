@@ -19,7 +19,7 @@ $origins = $viewModel->getMetaRateData()->getOriginData();
 $rates = $viewModel->getMetaRateData()->getRatesData();
 $productData = $viewModel->getMetaRateData()->getProductData();
 $shipmentCount = 1;
-$isSelected = $block->getActiveMethod() && $block->getActiveMethod()->getCode() === 'calcurates_MetaRate';
+$isSelected = $block->getActiveMethod() && $block->getActiveMethod()->getCode() === 'calcurates_metarate';
 ?>
 <div class="metarates-wrapper"
 <?php if (!$isSelected): ?>
@@ -49,7 +49,7 @@ $isSelected = $block->getActiveMethod() && $block->getActiveMethod()->getCode() 
     </select><br>
     <?= /* @noEscape */ $secureRenderer->renderEventListenerAsTag(
         'onchange',
-        "order.setShippingMethod('calcurates_MetaRate')",
+        "order.setShippingMethod('calcurates_metarate')",
         'select#origin-' . $origin['id']
     ) ?>
     <?php else: ?>

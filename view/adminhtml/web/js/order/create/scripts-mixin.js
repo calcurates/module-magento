@@ -20,7 +20,7 @@ define([
                 if (_.contains(area, 'shipping_method')) {
                     params['collect_shipping_rates'] = 1
                 }
-                if (params && params['order[shipping_method]'] === 'calcurates_MetaRate') {
+                if (params && params['order[shipping_method]'] === 'calcurates_metarate') {
                     $('.metarates-wrapper select').each(function () {
                         params['calcurates_split_shipments[' + $(this).data('origin') + ']'] = $(this).val()
                     })
@@ -29,7 +29,7 @@ define([
             }
 
             AdminOrder.prototype.setShippingMethod = function (method) {
-                if (method === 'calcurates_MetaRate') {
+                if (method === 'calcurates_metarate') {
                     $('.metarates-wrapper').show().find('select').removeClass('ignore-validate')
                     if (!this.validateMetarates()) {
                         return false

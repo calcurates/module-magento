@@ -57,7 +57,7 @@ define([
             },
 
             isSelectedMetaRates: function () {
-                return $(this.options.shippingSelector).val() === 'calcurates_MetaRate'
+                return $(this.options.shippingSelector).val() === 'calcurates_metarate'
             }
         })
 

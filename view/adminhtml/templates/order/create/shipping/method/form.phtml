@@ -42,7 +42,7 @@ $taxHelper = $block->getData('taxHelper');
                             <label class="admin__field-label" for="s_method_<?= $escaper->escapeHtmlAttr($_code) ?>">
                                 <?= $block->escapeHtml($_rate->getMethodTitle() ?
                                     $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?>
-                                <?php if ($_code !== 'calcurates_MetaRate'): ?>
+                                <?php if ($_code !== 'calcurates_metarate'): ?>
                                 &nbsp;-&nbsp;
                                 <strong>
                                     <?php $_excl = $block->getShippingPrice(
@@ -63,7 +63,7 @@ $taxHelper = $block->getData('taxHelper');
                                 "order.setShippingMethod(this.value)",
                                 'input#s_method_' . $escaper->escapeHtmlAttr($_code)
                             ) ?>
-                            <?php if ($_code === 'calcurates_MetaRate'): ?>
+                            <?php if ($_code === 'calcurates_metarate'): ?>
                                 <?php $block->getChildBlock('metarate')->setActiveMethod($block->getActiveMethodRate()) ?>
                                 <?= $block->getChildHtml('metarate') ?>
                             <?php endif; ?>
@@ -89,6 +89,10 @@ script;
                     <?= $block->escapeHtml($block->getCarrierName($_rate->getCarrier())) ?>
                 </dt>
                 <dd class="admin__order-shipment-methods-options">
+                    <?php if ($_rate->getCode() === 'calcurates_metarate'): ?>
+                        <?= $block->escapeHtml($_rate->getMethodTitle() ?
+                            $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?>
+                    <?php else: ?>
                     <?= $block->escapeHtml($_rate->getMethodTitle() ?
                         $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?> -
                     <strong>
@@ -103,9 +107,10 @@ script;
                             (<?= $block->escapeHtml(__('Incl. Tax')) ?> <?= /* @noEscape */ $_incl ?>)
                         <?php endif; ?>
                     </strong>
+                    <?php endif; ?>
                 </dd>
             </dl>
-            <?php if ($_rate->getCode() === 'calcurates_MetaRate'): ?>
+            <?php if ($_rate->getCode() === 'calcurates_metarate'): ?>
                 <?php $block->getChildBlock('metarate')->setIsPreview(true) ?>
                 <?= $block->getChildHtml('metarate', false) ?>
             <?php endif; ?>

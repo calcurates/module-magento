@@ -41,7 +41,7 @@ class OrderSplitShipments implements ArgumentInterface
      */
     public function isSplitShipment()
     {
-        return $this->order->getShippingMethod() === 'calcurates_MetaRate' && $this->orderData->getSplitShipments();
+        return $this->order->getShippingMethod() === 'calcurates_metarate' && $this->orderData->getSplitShipments();
     }
 
     /**

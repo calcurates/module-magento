@@ -10,4 +10,8 @@
         <observer name="calcurates_save_quote_before_collecting_totals"
                   instance="Calcurates\ModuleMagento\Observer\QuoteSaveWhileEditOrderObserver" />
     </event>
+    <event name="adminhtml_sales_order_create_process_data_before">
+        <observer name="calcurates_save_quote_data_split_shipment"
+                  instance="Calcurates\ModuleMagento\Observer\SaveSplitShipmentAdminOrderCreate"/>
+    </event>
 </config>
