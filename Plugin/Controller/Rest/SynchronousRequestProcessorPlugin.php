@@ -14,6 +14,7 @@ use Magento\Framework\Webapi\Rest\Response as RestResponse;
 use Magento\Webapi\Controller\Rest\SynchronousRequestProcessor;
 use Magento\Framework\Webapi\Rest\Request;
 use Magento\Framework\App\ProductMetadataInterface;
+use Calcurates\ModuleMagento\Model\Config;
 
 class SynchronousRequestProcessorPlugin
 {
@@ -28,14 +29,22 @@ class SynchronousRequestProcessorPlugin
     private $productMetadata;
 
     /**
+     * @var Config
+     */
+    private $config;
+
+    /**
      * SynchronousRequestProcessorPlugin constructor.
      * @param RestResponse $response
      * @param ProductMetadataInterface $productMetadata
+     * @param Config $config
      */
     public function __construct(
         RestResponse $response,
-        ProductMetadataInterface $productMetadata
+        ProductMetadataInterface $productMetadata,
+        Config $config
     ) {
+        $this->config = $config;
         $this->productMetadata = $productMetadata;
         $this->response = $response;
     }
@@ -49,14 +58,21 @@ class SynchronousRequestProcessorPlugin
         SynchronousRequestProcessor $subject,
         Request $request
     ) {
-        $this->response->setHeader(
-            'X-Magento-Version',
-            sprintf(
-                'Magento-%1$s-%2$s',
-                $this->productMetadata->getEdition(),
-                $this->productMetadata->getVersion()
-            )
-        );
+        if ($request->getUri() && strpos($request->getUri()->getPath(), 'calcurates')) {
+            $composerData = $this->config->getComposerData();
+            $this->response->setHeader(
+                'X-Magento-Version',
+                sprintf(
+                    'Magento-%1$s-%2$s',
+                    $this->productMetadata->getEdition(),
+                    $this->productMetadata->getVersion()
+                )
+            );
+            $this->response->setHeader(
+                'X-Calcurates-Version',
+                $composerData['name'] . '/' . $composerData['version']
+            );
+        }
         return [$request];
     }
 }
