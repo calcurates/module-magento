@@ -11,6 +11,7 @@
     <preference for="Calcurates\ModuleMagento\Api\ConfigProviderInterface" type="Calcurates\ModuleMagento\Model\Config"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\ConfigDataInterface" type="Calcurates\ModuleMagento\Model\Config\Data"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\RateDataInterface" type="Calcurates\ModuleMagento\Model\Data\RateData"/>
+    <preference for="Calcurates\ModuleMagento\Api\Source\OriginsManagementInterface" type="Calcurates\ModuleMagento\Model\Source\OriginsManagement"/>
 
     <preference for="Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataInterface" type="Calcurates\ModuleMagento\Model\Catalog\Product\Attribute\CustomData"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataOptionInterface" type="Calcurates\ModuleMagento\Model\Catalog\Product\Attribute\CustomDataOption"/>
