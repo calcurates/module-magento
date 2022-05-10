@@ -40,6 +40,13 @@
         </resources>
     </route>
 
+    <route url="/V1/calcurates/origins-by-website/:websiteId" method="GET">
+        <service class="Calcurates\ModuleMagento\Api\Source\OriginsManagementInterface" method="getOrigins" />
+        <resources>
+            <resource ref="Calcurates_ModuleMagento::api" />
+        </resources>
+    </route>
+
     <route url="/V1/calcurates/estimate" method="GET">
         <service class="Calcurates\ModuleMagento\Api\EstimateShippingByProductsInterface" method="estimate"/>
         <resources>
