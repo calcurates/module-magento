@@ -15,6 +15,7 @@ use Magento\Framework\Module\Manager as ModuleManager;
 use Magento\Framework\Api\SortOrder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Store\Api\WebsiteRepositoryInterface;
+use Magento\Framework\Exception\LocalizedException;
 
 class OriginsManagement implements OriginsManagementInterface
 {
@@ -79,10 +80,9 @@ class OriginsManagement implements OriginsManagementInterface
      */
     public function getOrigins($websiteId = null): array
     {
-        $result = ['result' => []];
+        $result = [];
         if (!$websiteId) {
-            $result['result']['errors'][] = __('Target WebsiteId is not specified');
-            return $result;
+            throw new LocalizedException(__('Target WebsiteId is not specified'));
         }
 
         $sources = $this->sourceRepository->getList()->getItems();
@@ -103,7 +103,6 @@ class OriginsManagement implements OriginsManagementInterface
         } else {
             $stocks = [];
             $stockSourceLinks = [];
-            $result['result']['notifications'][] = __('Stock Functionality is not enabled/missing.');
         }
         $websites = $this->websiteRepository->getList();
 
@@ -115,8 +114,7 @@ class OriginsManagement implements OriginsManagementInterface
             }
         }
         if (!$currentWebsiteCode) {
-            $result['result']['errors'][] = __('Cant\'t find current website');
-            return $result;
+            throw new LocalizedException(__('Cant\'t find current website'));
         }
         $isWebsiteAvailable = static function (string $sourceCode)
         use ($stocks, $stockSourceLinks, $currentWebsiteCode): bool {
@@ -141,7 +139,7 @@ class OriginsManagement implements OriginsManagementInterface
             if (!$source->isEnabled() || !$isWebsiteAvailable($source->getSourceCode())) {
                 continue;
             }
-            $result['result']['origins'][] = [
+            $result[] = [
                 'name' => $source->getName(),
                 'description' => $source->getDescription(),
                 'country' => $source->getCountryId(),
