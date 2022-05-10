@@ -28,6 +28,9 @@
         </arguments>
     </type>
 
+    <type name="Magento\Webapi\Controller\Rest\SynchronousRequestProcessor">
+        <plugin name="Calcurates_ModuleMagento::MagentoVersionHeader" type="Calcurates\ModuleMagento\Plugin\Controller\Rest\SynchronousRequestProcessorPlugin"/>
+    </type>
     <type name="Magento\Shipping\Model\Order\Track">
         <plugin name="Calcurates_ModuleMagento::Track" type="Calcurates\ModuleMagento\Plugin\Model\Order\TrackPlugin"/>
     </type>

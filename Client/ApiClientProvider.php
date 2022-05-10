@@ -13,6 +13,7 @@ namespace Calcurates\ModuleMagento\Client;
 use Calcurates\ModuleMagento\Client\Http\HttpClientFactory;
 use Calcurates\ModuleMagento\Client\Http\HttpClient;
 use Calcurates\ModuleMagento\Model\Config;
+use Magento\Framework\App\ProductMetadataInterface;
 
 class ApiClientProvider
 {
@@ -28,10 +29,17 @@ class ApiClientProvider
      */
     private $calcuratesConfig;
 
+    /**
+     * @var ProductMetadataInterface
+     */
+    private $productMetadata;
+
     public function __construct(
         HttpClientFactory $httpClientFactory,
-        Config $calcuratesConfig
+        Config $calcuratesConfig,
+        ProductMetadataInterface $productMetadata
     ) {
+        $this->productMetadata = $productMetadata;
         $this->httpClientFactory = $httpClientFactory;
         $this->calcuratesConfig = $calcuratesConfig;
     }
@@ -50,6 +58,14 @@ class ApiClientProvider
                 $composerData['name'] . '/' . $composerData['version']
             );
             $client->addHeader('X-API-Key', $this->calcuratesConfig->getCalcuratesToken($storeId));
+            $client->addHeader(
+                'X-Magento-Version',
+                sprintf(
+                    'Magento-%1$s-%2$s',
+                    $this->productMetadata->getEdition(),
+                    $this->productMetadata->getVersion()
+                )
+            );
 
             $this->httpClients[$storeId] = $client;
         }
