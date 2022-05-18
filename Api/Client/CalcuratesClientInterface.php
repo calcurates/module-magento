@@ -37,7 +37,7 @@ interface CalcuratesClientInterface
      * @return string
      * @throws LocalizedException
      */
-    public function getLabelContent($url, $storeId);
+    public function getLabelContent(string $url, int $storeId): string;
 
     /**
      * @param string $serviceId
@@ -81,7 +81,7 @@ interface CalcuratesClientInterface
      * @throws LocalizedException
      * @throws ApiException
      */
-    public function getRatesSplitCheckout($request, $storeId);
+    public function getRatesSplitCheckout($request, $storeId): array;
 
     /**
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId

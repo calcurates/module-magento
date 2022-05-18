@@ -134,7 +134,10 @@ class InStorePickupProcessor implements ResponseProcessorInterface
                 );
 
                 foreach ($rates as $rate) {
-                    $rate->setData(RatesResponseProcessor::CALCURATES_MAP_LINK, $this->mapLinkRenderer->render($origin));
+                    $rate->setData(
+                        RatesResponseProcessor::CALCURATES_MAP_LINK,
+                        $this->mapLinkRenderer->render($origin)
+                    );
                     $result->append($rate);
                 }
 

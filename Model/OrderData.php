@@ -101,7 +101,7 @@ class OrderData extends \Magento\Framework\Model\AbstractModel implements OrderD
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getSplitShipments(): array
     {
@@ -117,8 +117,7 @@ class OrderData extends \Magento\Framework\Model\AbstractModel implements OrderD
     }
 
     /**
-     * @param array $shipments
-     * @return void
+     * {@inheritdoc}
      */
     public function setSplitShipments(array $shipments): void
     {

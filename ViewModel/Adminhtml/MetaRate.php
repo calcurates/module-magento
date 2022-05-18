@@ -105,11 +105,11 @@ class MetaRate implements ArgumentInterface
     }
 
     /**
-     * @param $originId
-     * @param $method
+     * @param int $originId
+     * @param string $method
      * @return bool
      */
-    public function isSavedMethod($originId, $method): bool
+    public function isSavedMethod(int $originId, string $method): bool
     {
         if (!$this->savedMethods) {
             $quoteData = $this->getQuoteData->get(
@@ -129,12 +129,15 @@ class MetaRate implements ArgumentInterface
 
     /**
      * @param $rate
-     * @param $format
-     * @param $inclTaxFormat
+     * @param string $format
+     * @param string $inclTaxFormat
      * @return string
      */
-    public function renderShippingRateOption($rate, $format = '%s - %s%s', $inclTaxFormat = ' (%s %s)')
-    {
+    public function renderShippingRateOption(
+        $rate,
+        string $format = '%s - %s%s',
+        string $inclTaxFormat = ' (%s %s)'
+    ): string {
         $renderedInclTax = '';
         if ($rate->getErrorMessage()) {
             $price = $rate->getErrorMessage();
@@ -159,7 +162,7 @@ class MetaRate implements ArgumentInterface
      * @param bool $isInclTax
      * @return string
      */
-    private function getShippingPrice($price, $isInclTax): string
+    private function getShippingPrice(float $price, bool $isInclTax): string
     {
         return $this->formatPrice(
             $this->taxHelper->getShippingPrice(
@@ -176,7 +179,7 @@ class MetaRate implements ArgumentInterface
      * @param float $price
      * @return string
      */
-    private function formatPrice($price): string
+    private function formatPrice(float $price): string
     {
         return $this->priceCurrency->convertAndFormat(
             $price,

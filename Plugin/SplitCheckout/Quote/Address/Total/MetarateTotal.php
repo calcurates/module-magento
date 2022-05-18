@@ -117,7 +117,7 @@ class MetarateTotal
      * @param array $itemId
      * @return array
      */
-    private function getProductSku(Quote $quote, array $itemId)
+    private function getProductSku(Quote $quote, array $itemId): array
     {
         $result = [];
         foreach ($itemId as $id) {

@@ -67,7 +67,7 @@ class GetCalcuratesSplitCheckoutSourcesResult
         InventoryRequestInterface $inventoryRequest,
         array $sortedSources,
         array $mainSourceCodesForSkus = []
-    ) {
+    ): SourceSelectionResultInterface {
         $sourceItemSelections = [];
 
         $itemsTdDeliver = [];
@@ -131,7 +131,7 @@ class GetCalcuratesSplitCheckoutSourcesResult
      * @param string $sku
      * @return string
      */
-    private function normalizeSku($sku)
+    private function normalizeSku(string $sku): string
     {
         return mb_convert_case($sku, MB_CASE_LOWER, 'UTF-8');
     }
@@ -140,10 +140,9 @@ class GetCalcuratesSplitCheckoutSourcesResult
      * Compare float number with some epsilon
      *
      * @param float $floatNumber
-     *
      * @return bool
      */
-    private function isZero($floatNumber)
+    private function isZero(float $floatNumber): bool
     {
         return $floatNumber < 0.0000001;
     }

@@ -71,10 +71,11 @@ class CalcuratesClient implements CalcuratesClientInterface
 
     /**
      * @param string $url
+     * @param int $storeId
      * @return string
      * @throws LocalizedException
      */
-    public function getLabelContent($url, $storeId)
+    public function getLabelContent(string $url, int $storeId): string
     {
         try {
             $httpClient = $this->apiClientProvider->getClient($storeId);
@@ -199,7 +200,7 @@ class CalcuratesClient implements CalcuratesClientInterface
      * @throws LocalizedException
      * @throws ApiException
      */
-    public function getRatesSplitCheckout($request, $storeId)
+    public function getRatesSplitCheckout($request, $storeId): array
     {
         $timeout = $this->calcuratesConfig->getApiGetRatesTimeout($storeId);
         try {

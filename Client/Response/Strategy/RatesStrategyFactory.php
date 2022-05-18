@@ -36,10 +36,10 @@ class RatesStrategyFactory
     }
 
     /**
-     * @param $type
-     * @return mixed
+     * @param int $type
+     * @return RatesStrategyInterface
      */
-    public function create($type)
+    public function create(int $type): RatesStrategyInterface
     {
         if (!isset($this->classByType[$type])) {
             throw new \InvalidArgumentException($type . ' is unknown type');

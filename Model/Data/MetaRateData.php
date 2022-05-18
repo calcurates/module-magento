@@ -16,25 +16,25 @@ use Magento\Framework\DataObject;
 class MetaRateData extends DataObject implements MetaRateDataInterface
 {
     /**
-     * @var
+     * @var array
      */
-    protected $rates;
+    protected $rates = [];
 
     /**
-     * @var
+     * @var array
      */
-    protected $products;
+    protected $products = [];
 
     /**
-     * @var
+     * @var array
      */
-    protected $origins;
+    protected $origins = [];
 
     /**
      * @param $code
-     * @return mixed|null
+     * @return array|null
      */
-    public function getRatesData($code = null)
+    public function getRatesData($code = null): ?array
     {
         if (null === $code) {
             return $this->rates;
@@ -43,20 +43,20 @@ class MetaRateData extends DataObject implements MetaRateDataInterface
     }
 
     /**
-     * @param $originId
-     * @param $rateData
+     * @param int $originId
+     * @param array $rateData
      * @return void
      */
-    public function setRatesData($originId, $rateData)
+    public function setRatesData(int $originId, array $rateData): void
     {
         $this->rates[$originId] = $rateData;
     }
 
     /**
      * @param $code
-     * @return mixed|null
+     * @return array|null
      */
-    public function getProductData($code = null)
+    public function getProductData($code = null): ?array
     {
         if (null === $code) {
             return $this->products;
@@ -65,20 +65,20 @@ class MetaRateData extends DataObject implements MetaRateDataInterface
     }
 
     /**
-     * @param $origin
-     * @param $productData
+     * @param int $origin
+     * @param array $productData
      * @return void
      */
-    public function setProductData($origin, $productData)
+    public function setProductData(int $origin, array $productData): void
     {
         $this->products[$origin] = $productData;
     }
 
     /**
      * @param $code
-     * @return mixed|null
+     * @return array|null
      */
-    public function getOriginData($code = null)
+    public function getOriginData($code = null): ?array
     {
         if (null === $code) {
             return $this->origins;
@@ -87,11 +87,11 @@ class MetaRateData extends DataObject implements MetaRateDataInterface
     }
 
     /**
-     * @param $origin
-     * @param $originData
+     * @param int $origin
+     * @param array $originData
      * @return void
      */
-    public function setOriginData($origin, $originData)
+    public function setOriginData(int $origin, array $originData): void
     {
         $this->origins[$origin] = $originData;
     }

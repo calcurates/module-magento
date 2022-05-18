@@ -171,7 +171,6 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                     return -1;
                 }
 
-
                 $inStorePickupStoreA = $firstRate['stores'][0];
                 $inStorePickupStoreB = $secondRate['stores'][0];
 

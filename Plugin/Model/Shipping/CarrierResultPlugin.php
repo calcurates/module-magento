@@ -13,8 +13,14 @@ use Calcurates\ModuleMagento\Api\Data\MetaRateDataInterface;
 
 class CarrierResultPlugin
 {
+    /**
+     * @var MetaRateDataInterface
+     */
     private $metarateData;
 
+    /**
+     * @param MetaRateDataInterface $metaRateData
+     */
     public function __construct(
         MetaRateDataInterface $metaRateData
     ) {
@@ -25,7 +31,7 @@ class CarrierResultPlugin
      * @param array $result
      * @return array
      */
-    public function afterGetAllRates(CarrierResult $subject, $result)
+    public function afterGetAllRates(CarrierResult $subject, array $result)
     {
         if (!is_array($result) || !count($result)) {
             return $result;

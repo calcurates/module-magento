@@ -17,52 +17,49 @@ class MetaRate extends AbstractSimpleObject implements MetaRateInterface
 {
 
     /**
-     * @return \Magento\Quote\Api\Data\ShippingMethodInterface[]
+     * {@inheritdoc}
      */
-    public function getRates()
+    public function getRates(): array
     {
         return $this->_get(self::RATES);
     }
 
     /**
-     * @param array $rates
-     * @return void
+     * {@inheritdoc}
      */
-    public function setRates(array $rates)
+    public function setRates(array $rates): void
     {
         $this->setData(self::RATES, $rates);
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function getProducts()
+    public function getProducts(): ?array
     {
         return $this->_get(self::PRODUCTS);
     }
 
     /**
-     * @param array $products
-     * @return void
+     * {@inheritdoc}
      */
-    public function setProducts(array $products)
+    public function setProducts(array $products): void
     {
         $this->setData(self::PRODUCTS, $products);
     }
 
     /**
-     * @return int|mixed|null
+     * {@inheritdoc}
      */
-    public function getOriginId()
+    public function getOriginId(): ?int
     {
         return $this->_get(self::ORIGIN);
     }
 
     /**
-     * @param int $id
-     * @return void
+     * {@inheritdoc}
      */
-    public function setOriginId(int $id)
+    public function setOriginId(int $id): void
     {
         $this->setData(self::ORIGIN, $id);
     }

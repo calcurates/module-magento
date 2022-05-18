@@ -13,9 +13,11 @@ namespace Calcurates\ModuleMagento\Client\Response\Strategy;
 use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
 use Calcurates\ModuleMagento\Client\Http\ApiException;
 use Calcurates\ModuleMagento\Client\MetaRatesResponseProcessor;
-use Calcurates\ModuleMagento\Client\Response\Strategy\RatesStrategy;
+use Calcurates\ModuleMagento\Client\Response\Strategy\RatesStrategyInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Shipping\Model\Rate\Result;
 
-class SplitCheckoutStrategy implements RatesStrategy
+class SplitCheckoutStrategy implements RatesStrategyInterface
 {
     /**
      * @var CalcuratesClientInterface
@@ -42,11 +44,11 @@ class SplitCheckoutStrategy implements RatesStrategy
     /**
      * @param $apiRequestBody
      * @param $storeId
-     * @return array|mixed
+     * @return array
      * @throws ApiException
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws LocalizedException
      */
-    public function getResponse($apiRequestBody, $storeId)
+    public function getResponse($apiRequestBody, $storeId): array
     {
         return $this->calcuratesClient->getRatesSplitCheckout($apiRequestBody, $storeId);
     }
@@ -54,9 +56,9 @@ class SplitCheckoutStrategy implements RatesStrategy
     /**
      * @param $response
      * @param $quote
-     * @return \Magento\Shipping\Model\Rate\Result|mixed
+     * @return Result
      */
-    public function processResponse($response, $quote)
+    public function processResponse($response, $quote): Result
     {
         return $this->ratesResponseProcessor->processResponse($response, $quote);
     }

@@ -54,7 +54,9 @@ define([
 
                 if (metaMethod.length) {
                     metaMethod[0].extension_attributes.calcurates_metarate_data.forEach(function (item) {
-                        if (typeof self.splitCheckoutShipments[item.origin_id] === 'function') return
+                        if (typeof self.splitCheckoutShipments[item.origin_id] === 'function') {
+                            return
+                        }
                         self.splitCheckoutShipments[item.origin_id] = ko.observable(
                             selectedSplitCheckoutShipments
                             && selectedSplitCheckoutShipments[item.origin_id]

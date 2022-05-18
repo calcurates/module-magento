@@ -131,7 +131,7 @@ class Config implements ConfigProviderInterface
      * @param int $storeId
      * @return string
      */
-    public function getCalcuratesToken($storeId)
+    public function getCalcuratesToken(int $storeId): string
     {
         return $this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::CONFIG_TOKEN,
@@ -143,7 +143,7 @@ class Config implements ConfigProviderInterface
     /**
      * @return string
      */
-    public function getApiUrl()
+    public function getApiUrl(): string
     {
         return $this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::CONFIG_API_URL
@@ -347,10 +347,10 @@ class Config implements ConfigProviderInterface
     }
 
     /**
-     * @param $storeId
+     * @param int|null $storeId
      * @return bool
      */
-    public function isSplitCheckoutEnabled($storeId = null): bool
+    public function isSplitCheckoutEnabled(int $storeId = null): bool
     {
         return $this->scopeConfig->isSetFlag(
             self::CONFIG_GROUP . self::SPLIT_CHECKOUT_ENABLED,
@@ -360,10 +360,10 @@ class Config implements ConfigProviderInterface
     }
 
     /**
-     * @param $storeId
+     * @param int|null $storeId
      * @return string
      */
-    public function getSplitCheckoutTitle($storeId = null): string
+    public function getSplitCheckoutTitle(int $storeId = null): string
     {
         return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::SPLIT_CHECKOUT_TITLE,
@@ -373,10 +373,10 @@ class Config implements ConfigProviderInterface
     }
 
     /**
-     * @param $storeId
+     * @param int|null $storeId
      * @return string
      */
-    public function getCarrierTitle($storeId = null)
+    public function getCarrierTitle(int $storeId = null): string
     {
         return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . 'title',

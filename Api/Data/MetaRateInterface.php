@@ -19,33 +19,33 @@ interface MetaRateInterface
     /**
      * @return \Magento\Quote\Api\Data\ShippingMethodInterface[]
      */
-    public function getRates();
+    public function getRates(): array;
 
     /**
      * @param array $rates
-     * @return mixed
+     * @return void
      */
-    public function setRates(array $rates);
+    public function setRates(array $rates): void;
 
     /**
-     * @return array
+     * @return array|null
      */
-    public function getProducts();
+    public function getProducts(): ?array;
 
     /**
      * @param array $products
      * @return void
      */
-    public function setProducts(array $products);
+    public function setProducts(array $products): void;
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getOriginId();
+    public function getOriginId(): ?int;
 
     /**
      * @param int $id
      * @return void
      */
-    public function setOriginId(int $id);
+    public function setOriginId(int $id): void;
 }

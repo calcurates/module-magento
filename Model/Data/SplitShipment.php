@@ -16,86 +16,81 @@ use Magento\Framework\Api\AbstractSimpleObject;
 class SplitShipment extends AbstractSimpleObject implements SplitShipmentInterface
 {
     /**
-     * @return mixed|null
+     * {@inheritdoc}
      */
-    public function getOrigin()
+    public function getOrigin(): ?string
     {
         return $this->_get(self::ORIGIN);
     }
 
     /**
-     * @param $origin
-     * @return void
+     * {@inheritdoc}
      */
-    public function setOrigin($origin)
+    public function setOrigin(string $origin): void
     {
         $this->setData(self::ORIGIN, $origin);
     }
 
     /**
-     * @return mixed|null
+     * {@inheritdoc}
      */
-    public function getMethod()
+    public function getMethod(): ?string
     {
         return $this->_get(self::METHOD);
     }
 
     /**
-     * @param $method
-     * @return void
+     * {@inheritdoc}
      */
-    public function setMethod($method)
+    public function setMethod(string $method): void
     {
         $this->setData(self::METHOD, $method);
     }
 
     /**
-     * @return mixed|null
+     * {@inheritdoc}
      */
-    public function getPrice()
+    public function getPrice(): ?float
     {
         return $this->_get(self::PRICE);
     }
 
     /**
-     * @param $price
-     * @return void
+     * {@inheritdoc}
      */
-    public function setPrice($price)
+    public function setPrice($price): void
     {
         $this->setData(self::PRICE, $price);
     }
 
     /**
-     * @return mixed|null
+     * {@inheritdoc}
      */
-    public function getCost()
+    public function getCost(): ?float
     {
         return $this->_get(self::COST);
     }
 
     /**
-     * @param $cost
-     * @return void
+     * {@inheritdoc}
      */
-    public function setCost($cost)
+    public function setCost($cost): void
     {
         $this->setData(self::COST, $cost);
     }
 
     /**
-     * @return mixed|null
+     * {@inheritdoc}
      */
-    public function getProducts()
+    public function getProducts(): ?array
     {
         return $this->_get(self::PRODUCTS);
     }
 
     /**
-     * @param $products
-     * @return void
+     * {@inheritdoc}
      */
-    public function setProducts($products)
+    public function setProducts($products): void
     {
         $this->setData(self::PRODUCTS, $products);
     }

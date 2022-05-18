@@ -38,8 +38,12 @@ class MetaRateBuilder
      * @param string $carrierTitle
      * @return Method
      */
-    public function build(string $methodId, array $responseRate, $methodTitle = '', $carrierTitle = '')
-    {
+    public function build(
+        string $methodId,
+        array $responseRate,
+        string $methodTitle = '',
+        string $carrierTitle = ''
+    ): Method {
         return $this->createRate($methodId, $responseRate, $methodTitle, $carrierTitle);
     }
 
@@ -50,8 +54,12 @@ class MetaRateBuilder
      * @param string $carrierTitle
      * @return Method
      */
-    private function createRate(string $methodId, array $responseRate, $methodTitle = '', $carrierTitle = '')
-    {
+    private function createRate(
+        string $methodId,
+        array $responseRate,
+        string $methodTitle = '',
+        string $carrierTitle = ''
+    ): Method {
         $rate = $this->rateMethodFactory->create();
         $baseAmount = 0;
         $rate->setCarrier(Carrier::CODE);

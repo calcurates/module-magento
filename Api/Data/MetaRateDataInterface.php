@@ -15,38 +15,38 @@ interface MetaRateDataInterface
     const META_RATE_DATA = 'meta_rate_data';
 
     /**
-     * @return mixed
+     * @return array|null
      */
-    public function getRatesData();
+    public function getRatesData(): ?array;
 
     /**
-     * @param $originId
-     * @param $rateData
-     * @return mixed
+     * @param int $originId
+     * @param array $rateData
+     * @return void
      */
-    public function setRatesData($originId, $rateData);
+    public function setRatesData(int $originId, array $rateData): void;
+
+    /**
+     * @return array|null
+     */
+    public function getProductData(): ?array;
+
+    /**
+     * @param int $origin
+     * @param array $productData
+     * @return void
+     */
+    public function setProductData(int $origin, array $productData): void;
 
     /**
      * @return mixed
      */
-    public function getProductData();
+    public function getOriginData(): ?array;
 
     /**
-     * @param $origin
-     * @param $productData
-     * @return mixed
+     * @param int $origin
+     * @param array $originData
+     * @return void
      */
-    public function setProductData($origin, $productData);
-
-    /**
-     * @return mixed
-     */
-    public function getOriginData();
-
-    /**
-     * @param $origin
-     * @param $originData
-     * @return mixed
-     */
-    public function setOriginData($origin, $originData);
+    public function setOriginData(int $origin, array $originData): void;
 }

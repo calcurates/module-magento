@@ -27,7 +27,7 @@ use Zend_Pdf_Color_Rgb;
 class Creditmemo extends MagentoCreditmemo
 {
     /**
-     * @var RtlTextHandler
+     * @var RtlTextHandler|null
      */
     private $rtlTextHandler;
 
@@ -54,21 +54,21 @@ class Creditmemo extends MagentoCreditmemo
      * @param RtlTextHandler|null $rtlTextHandler
      */
     public function __construct(
-        Data                  $paymentData,
-        StringUtils           $string,
-        ScopeConfigInterface  $scopeConfig,
-        Filesystem            $filesystem,
-        Config                $pdfConfig,
-        Factory               $pdfTotalFactory,
-        ItemsFactory          $pdfItemsFactory,
-        TimezoneInterface     $localeDate,
-        StateInterface        $inlineTranslation,
-        Renderer              $addressRenderer,
+        Data $paymentData,
+        StringUtils $string,
+        ScopeConfigInterface $scopeConfig,
+        Filesystem $filesystem,
+        Config $pdfConfig,
+        Factory $pdfTotalFactory,
+        ItemsFactory $pdfItemsFactory,
+        TimezoneInterface $localeDate,
+        StateInterface $inlineTranslation,
+        Renderer $addressRenderer,
         StoreManagerInterface $storeManager,
-        Emulation             $appEmulation,
-        OrderSplitShipments   $viewModel,
-        array                 $data = [],
-        ?RtlTextHandler       $rtlTextHandler = null
+        Emulation $appEmulation,
+        OrderSplitShipments $viewModel,
+        array $data = [],
+        ?RtlTextHandler $rtlTextHandler = null
     ) {
         $this->rtlTextHandler = $rtlTextHandler ?: ObjectManager::getInstance()->get(RtlTextHandler::class);
         $this->viewModel = $viewModel;
@@ -89,7 +89,14 @@ class Creditmemo extends MagentoCreditmemo
         );
     }
 
-    protected function insertOrder(&$page, $obj, $putOrderId = true)
+    /**
+     * @param $page
+     * @param $obj
+     * @param $putOrderId
+     * @return void
+     * @throws \Zend_Pdf_Exception
+     */
+    protected function insertOrder(&$page, $obj, $putOrderId = true): void
     {
         if ($obj instanceof Order) {
             $shipment = null;

@@ -10,19 +10,21 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Client\Response\Strategy;
 
-interface RatesStrategy
+use Magento\Shipping\Model\Rate\Result;
+
+interface RatesStrategyInterface
 {
     /**
      * @param $apiRequestBody
      * @param $storeId
-     * @return mixed
+     * @return array
      */
-    public function getResponse($apiRequestBody, $storeId);
+    public function getResponse($apiRequestBody, $storeId): array;
 
     /**
      * @param $response
      * @param $quote
      * @return mixed
      */
-    public function processResponse($response, $quote);
+    public function processResponse($response, $quote): Result;
 }

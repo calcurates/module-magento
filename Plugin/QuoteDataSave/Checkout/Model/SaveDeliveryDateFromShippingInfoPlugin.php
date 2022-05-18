@@ -94,6 +94,7 @@ class SaveDeliveryDateFromShippingInfoPlugin
             }
             $quoteData->setSplitShipments($splitShipmentArray);
         } catch (\Exception $exception) {
+            $quoteData->setSplitShipments([]);
         }
         $methodCode = $addressInformation->getShippingCarrierCode() . '_' . $addressInformation->getShippingMethodCode();
         if (isset($deliveryDatesData[$methodCode])) {

@@ -19,57 +19,57 @@ interface SplitShipmentInterface
     public const PRODUCTS = 'products';
 
     /**
-     * @return mixed
+     * @return string|null
      */
-    public function getOrigin();
+    public function getOrigin(): ?string;
 
     /**
-     * @param $origin
+     * @param string $origin
      * @return void
      */
-    public function setOrigin($origin);
+    public function setOrigin(string $origin): void;
 
     /**
-     * @return mixed
+     * @return string|null
      */
-    public function getMethod();
+    public function getMethod(): ?string;
 
     /**
-     * @param $method
+     * @param string $method
      * @return void
      */
-    public function setMethod($method);
+    public function setMethod(string $method): void;
 
     /**
-     * @return mixed
+     * @return float|null
      */
-    public function getPrice();
+    public function getPrice(): ?float;
 
     /**
      * @param $price
      * @return void
      */
-    public function setPrice($price);
+    public function setPrice($price): void;
 
     /**
-     * @return mixed
+     * @return float|null
      */
-    public function getCost();
+    public function getCost(): ?float;
 
     /**
      * @param $cost
      * @return void
      */
-    public function setCost($cost);
+    public function setCost($cost): void;
 
     /**
-     * @return mixed
+     * @return array|null
      */
-    public function getProducts();
+    public function getProducts(): ?array;
 
     /**
      * @param $products
      * @return void
      */
-    public function setProducts($products);
+    public function setProducts($products): void;
 }

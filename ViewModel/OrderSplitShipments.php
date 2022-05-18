@@ -16,13 +16,25 @@ use Magento\Sales\Api\Data\OrderInterface;
 
 class OrderSplitShipments implements ArgumentInterface
 {
-    private OrderDataInterface $orderData;
+    /**
+     * @var OrderDataInterface
+     */
+    private $orderData;
 
-    private OrderInterface $order;
+    /**
+     * @var OrderInterface
+     */
+    private $order;
 
-    private GetOrderDataInterface $getOrderData;
+    /**
+     * @var GetOrderDataInterface
+     */
+    private $getOrderData;
 
-    private PriceCurrencyInterface $priceCurrency;
+    /**
+     * @var PriceCurrencyInterface
+     */
+    private $priceCurrency;
 
     /**
      * @param GetOrderDataInterface $getOrderData
@@ -39,7 +51,7 @@ class OrderSplitShipments implements ArgumentInterface
     /**
      * @return bool
      */
-    public function isSplitShipment()
+    public function isSplitShipment(): bool
     {
         return $this->order->getShippingMethod() === 'calcurates_metarate' && $this->orderData->getSplitShipments();
     }
@@ -48,7 +60,7 @@ class OrderSplitShipments implements ArgumentInterface
      * @param OrderInterface $order
      * @return void
      */
-    public function setOrder(OrderInterface $order)
+    public function setOrder(OrderInterface $order): void
     {
         $this->order = $order;
         $this->orderData = $this->getOrderData->get($order->getId());
@@ -65,16 +77,16 @@ class OrderSplitShipments implements ArgumentInterface
     /**
      * @return OrderDataInterface
      */
-    public function getOrderData()
+    public function getOrderData(): OrderDataInterface
     {
         return $this->orderData;
     }
 
     /**
-     * @param $price
+     * @param float $price
      * @return string
      */
-    public function getMethodPrice($price)
+    public function getMethodPrice(float $price): string
     {
         return $this->priceCurrency->convertAndFormat(
             $price,

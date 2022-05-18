@@ -11,6 +11,7 @@ namespace Calcurates\ModuleMagento\Client;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Model\Config as CalcuratesConfig;
 use Calcurates\ModuleMagento\Model\Data\MetaRateData;
+use Magento\Quote\Model\Quote;
 use Magento\Shipping\Model\Rate\Result;
 use Magento\Shipping\Model\Rate\ResultFactory;
 
@@ -58,7 +59,7 @@ class MetaRatesResponseProcessor
      * @param FailedRateBuilder $failedRateBuilder
      * @param MetaRateData $metaRateData
      * @param RatesResponseProcessor $ratesResponseProcessor
-     * @param \Calcurates\ModuleMagento\Client\MetaRateBuilder $metaRateBuilder
+     * @param MetaRateBuilder $metaRateBuilder
      */
     public function __construct(
         ResultFactory $resultFactory,
@@ -80,7 +81,7 @@ class MetaRatesResponseProcessor
      * Prepare shipping rate result based on response
      *
      * @param array $response
-     * @param \Magento\Quote\Model\Quote $quote
+     * @param Quote $quote
      *
      * @return Result
      *
@@ -88,7 +89,7 @@ class MetaRatesResponseProcessor
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.ElseExpression)
      */
-    public function processResponse($response, $quote)
+    public function processResponse(array $response, Quote $quote): Result
     {
         $result = $this->resultFactory->create();
 
@@ -118,17 +119,5 @@ class MetaRatesResponseProcessor
         }
 
         return $result;
-    }
-
-    /**
-     * @deprecated Use FailedRateBuilder instead of this method
-     * @param string $rateName
-     * @param Result $result
-     * @param string $message
-     */
-    public function processFailedRate(string $rateName, Result $result, string $message = '')
-    {
-        $failedRate = $this->failedRateBuilder->build($rateName, $message);
-        $result->append($failedRate);
     }
 }
