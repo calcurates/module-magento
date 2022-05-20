@@ -34,4 +34,14 @@ class Estimation implements ArgumentInterface
     {
         return $this->config->getShippingOnProductFallbackMessage();
     }
+
+    public function isGoogleAddressAutocompleteEnabled(): bool
+    {
+        return $this->config->isGoogleAddressAutocompleteEnabled();
+    }
+
+    public function getGooglePlacesApiKey(): ?string
+    {
+        return $this->config->getGooglePlacesApiKey();
+    }
 }

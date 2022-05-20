@@ -34,6 +34,8 @@ type AvailableShippingMethod {
 type CalcuratesConfig {
     is_shipping_on_product_enabled: Boolean @doc(description: "Is estimate shipping on product page enabled")
     shipping_on_product_fallback_message: String @doc(description: "Fallback message if isn't available")
+    is_google_autocomplete_enabled: Boolean @doc(description: "Is google address autocomplete enabled")
+    google_places_api_key: String @doc(description: "Api Key For Google Places")
 }
 
 type StoreConfig {
