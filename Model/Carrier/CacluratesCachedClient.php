@@ -81,7 +81,7 @@ class CacluratesCachedClient implements CalcuratesClientInterface
      * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
      * @return array|bool
      */
-    public function getRates($request, $storeId)
+    public function getRates(array $request, $storeId)
     {
         $rates = $this->cache->getCachedData($request, $storeId);
         if ($rates === false) {
@@ -107,7 +107,7 @@ class CacluratesCachedClient implements CalcuratesClientInterface
      * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
      * @return array
      */
-    public function getRatesSplitCheckout($request, $storeId): array
+    public function getRatesSplitCheckout(array $request, $storeId): array
     {
         $rates = $this->cache->getCachedData($request, $storeId);
         if ($rates === false) {

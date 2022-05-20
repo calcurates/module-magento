@@ -109,8 +109,8 @@ class MetaRate implements ArgumentInterface
     }
 
     /**
-     * @param $originId
-     * @param $method
+     * @param int $originId
+     * @param array $method
      * @return bool
      */
     public function isSavedMethod($originId, $method): bool

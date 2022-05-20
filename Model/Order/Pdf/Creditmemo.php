@@ -90,9 +90,9 @@ class Creditmemo extends MagentoCreditmemo
     }
 
     /**
-     * @param $page
-     * @param $obj
-     * @param $putOrderId
+     * @param \Zend_Pdf_Page $page
+     * @param Order|Shipment $obj
+     * @param bool $putOrderId
      * @return void
      * @throws \Zend_Pdf_Exception
      */

@@ -136,13 +136,13 @@ class CalcuratesClient implements CalcuratesClientInterface
     }
 
     /**
-     * @param $request
+     * @param array $request
      * @param int $storeId
      * @return array
      * @throws LocalizedException
      * @throws ApiException
      */
-    public function getRates($request, $storeId)
+    public function getRates(array $request, $storeId)
     {
         $timeout = $this->calcuratesConfig->getApiGetRatesTimeout($storeId);
         try {
@@ -194,13 +194,13 @@ class CalcuratesClient implements CalcuratesClientInterface
     }
 
     /**
-     * @param $request
+     * @param array $request
      * @param int $storeId
      * @return array
      * @throws LocalizedException
      * @throws ApiException
      */
-    public function getRatesSplitCheckout($request, $storeId): array
+    public function getRatesSplitCheckout(array $request, $storeId): array
     {
         $timeout = $this->calcuratesConfig->getApiGetRatesTimeout($storeId);
         try {

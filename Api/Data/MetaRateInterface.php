@@ -12,9 +12,9 @@ namespace Calcurates\ModuleMagento\Api\Data;
 
 interface MetaRateInterface
 {
-    const RATES = 'rates';
-    const PRODUCTS = 'products';
-    const ORIGIN = 'origin';
+    public const RATES = 'rates';
+    public const PRODUCTS = 'products';
+    public const ORIGIN = 'origin';
 
     /**
      * @return \Magento\Quote\Api\Data\ShippingMethodInterface[]

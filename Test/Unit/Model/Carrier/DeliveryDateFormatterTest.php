@@ -171,10 +171,10 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $from
-     * @param $to
-     * @param $date
-     * @param $expectedResult
+     * @param string $from
+     * @param string $to
+     * @param string $date
+     * @param string $expectedResult
      * @return void
      * @throws \Exception
      * @dataProvider dataProviderForTimeInterval

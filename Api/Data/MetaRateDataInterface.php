@@ -12,7 +12,7 @@ namespace Calcurates\ModuleMagento\Api\Data;
 
 interface MetaRateDataInterface
 {
-    const META_RATE_DATA = 'meta_rate_data';
+    public const META_RATE_DATA = 'meta_rate_data';
 
     /**
      * @return array|null
@@ -27,9 +27,10 @@ interface MetaRateDataInterface
     public function setRatesData(int $originId, array $rateData): void;
 
     /**
+     * @param string|null $code
      * @return array|null
      */
-    public function getProductData(): ?array;
+    public function getProductData($code = null): ?array;
 
     /**
      * @param int $origin
@@ -39,9 +40,10 @@ interface MetaRateDataInterface
     public function setProductData(int $origin, array $productData): void;
 
     /**
-     * @return mixed
+     * @param string|null $code
+     * @return array|null
      */
-    public function getOriginData(): ?array;
+    public function getOriginData($code = null): ?array;
 
     /**
      * @param int $origin

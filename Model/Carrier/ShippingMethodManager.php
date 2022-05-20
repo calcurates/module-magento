@@ -82,8 +82,8 @@ class ShippingMethodManager
     }
 
     /**
-     * @param $method
-     * @param $orderShippingDescription
+     * @param string $method
+     * @param string $orderShippingDescription
      * @return CarrierData|null
      */
     private function retrieveCarrierData($method, $orderShippingDescription)
@@ -118,8 +118,8 @@ class ShippingMethodManager
     }
 
     /**
-     * @param $method
-     * @param $sourceCodeToService
+     * @param string $method
+     * @param string $sourceCodeToService
      * @return array|null
      */
     private function retrieveCarrierDataFromMergedOption($method, $sourceCodeToService)

@@ -46,7 +46,7 @@ interface SplitShipmentInterface
     public function getPrice(): ?float;
 
     /**
-     * @param $price
+     * @param float|null $price
      * @return void
      */
     public function setPrice($price): void;
@@ -57,7 +57,7 @@ interface SplitShipmentInterface
     public function getCost(): ?float;
 
     /**
-     * @param $cost
+     * @param float|null $cost
      * @return void
      */
     public function setCost($cost): void;
@@ -68,7 +68,7 @@ interface SplitShipmentInterface
     public function getProducts(): ?array;
 
     /**
-     * @param $products
+     * @param array|null $products
      * @return void
      */
     public function setProducts($products): void;

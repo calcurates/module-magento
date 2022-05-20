@@ -53,7 +53,7 @@ class RatesRequestCache
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return array|bool
      */
-    public function getCachedData($request, $storeId)
+    public function getCachedData(array $request, $storeId)
     {
         $cacheKey = $this->getCacheKey($request, $storeId);
         $data = $this->cache->load($cacheKey);
@@ -70,7 +70,7 @@ class RatesRequestCache
      * @param array $response
      * @return bool
      */
-    public function saveCachedData($request, $storeId, $response)
+    public function saveCachedData(array $request, $storeId, $response)
     {
         $cacheKey = $this->getCacheKey($request, $storeId);
         $data = $this->serializer->serialize($response);
@@ -88,7 +88,7 @@ class RatesRequestCache
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return string
      */
-    private function getCacheKey($request, $storeId)
+    private function getCacheKey(array $request, $storeId)
     {
         $storeId = $this->getScalarStoreId($storeId);
 

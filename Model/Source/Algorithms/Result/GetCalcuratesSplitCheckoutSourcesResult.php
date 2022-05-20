@@ -88,7 +88,6 @@ class GetCalcuratesSplitCheckoutSourcesResult
             );
 
         foreach ($sourceItems as $sourceItem) {
-
             $normalizedSku = $this->normalizeSku($sourceItem->getSku());
             $sourceItemQtyAvailable = $this->getSourceItemQtyAvailable->execute($sourceItem);
             $qtyToDeduct = 0.0;

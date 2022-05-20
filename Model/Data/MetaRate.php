@@ -15,7 +15,6 @@ use Magento\Framework\Api\AbstractSimpleObject;
 
 class MetaRate extends AbstractSimpleObject implements MetaRateInterface
 {
-
     /**
      * {@inheritdoc}
      */

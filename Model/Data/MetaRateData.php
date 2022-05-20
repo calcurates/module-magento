@@ -31,7 +31,7 @@ class MetaRateData extends DataObject implements MetaRateDataInterface
     protected $origins = [];
 
     /**
-     * @param $code
+     * @param string|null $code
      * @return array|null
      */
     public function getRatesData($code = null): ?array
@@ -53,7 +53,7 @@ class MetaRateData extends DataObject implements MetaRateDataInterface
     }
 
     /**
-     * @param $code
+     * @param string|null $code
      * @return array|null
      */
     public function getProductData($code = null): ?array
@@ -75,7 +75,7 @@ class MetaRateData extends DataObject implements MetaRateDataInterface
     }
 
     /**
-     * @param $code
+     * @param string|null $code
      * @return array|null
      */
     public function getOriginData($code = null): ?array
