@@ -6,8 +6,10 @@
  */
 
 define([
-    'Magento_Checkout/js/model/quote'
-], function (quote) {
+    'Magento_Checkout/js/model/quote',
+    'Magento_Checkout/js/checkout-data',
+    'underscore'
+], function (quote, checkoutData, _) {
     'use strict';
 
     var storePickupShippingInformation = {
@@ -24,17 +26,56 @@ define([
             var shippingMethod = quote.shippingMethod(),
                 title;
 
-            if (!this.isStorePickup()) {
+            if (!this.isStorePickup() && !this.isSplitCheckout()) {
                 return this._super();
             }
 
-            if (shippingMethod !== null && shippingMethod['carrier_code'] === 'calcurates') {
+            if (shippingMethod !== null && shippingMethod['method_title'] !== null && shippingMethod['carrier_code'] === 'calcurates') {
                 title = shippingMethod['carrier_title'] + ' - ' + shippingMethod['method_title'];
             } else {
                 title = this._super();
             }
 
             return title;
+        },
+
+        /**
+         * Check if selected shipping method is splig checkout
+         * @returns {false|*}
+         */
+        isSplitCheckout: function () {
+            var method = quote.shippingMethod()
+
+            return method
+                && method.carrier_code === 'calcurates'
+                && method.extension_attributes
+                && method.extension_attributes.calcurates_metarate_data
+        },
+
+        /**
+         * Get selected split shipment rates info
+         * @returns {*[]}
+         */
+        getSplitShipments: function () {
+            var shippingMethod = quote.shippingMethod(),
+                selected = checkoutData.getSelectedSplitCheckoutShipments(),
+                selectedView = []
+
+            if (!shippingMethod || !this.isSplitCheckout()) {
+                return []
+            }
+
+            _.each(selected, function (val, key) {
+                let metaRate = shippingMethod.extension_attributes.calcurates_metarate_data.filter(function (item) {
+                    return item.origin_id === parseInt(key)
+                })
+                let rate = _.first(metaRate).rates.filter(function (rate) {
+                    return rate.method_code === val
+                })
+                selectedView.push(_.first(rate))
+            })
+
+            return selectedView
         },
 
         /**

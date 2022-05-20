@@ -9,6 +9,8 @@
 namespace Calcurates\ModuleMagento\Model\Carrier;
 
 use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
+use Calcurates\ModuleMagento\Client\Http\ApiException;
+use Magento\Framework\Exception\LocalizedException;
 
 class CacluratesCachedClient implements CalcuratesClientInterface
 {
@@ -48,7 +50,7 @@ class CacluratesCachedClient implements CalcuratesClientInterface
      * @return string
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function getLabelContent($url, $storeId)
+    public function getLabelContent(string $url, int $storeId): string
     {
         return $this->calcuratesClient->getLabelContent($url, $storeId);
     }
@@ -79,7 +81,7 @@ class CacluratesCachedClient implements CalcuratesClientInterface
      * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
      * @return array|bool
      */
-    public function getRates($request, $storeId)
+    public function getRates(array $request, $storeId)
     {
         $rates = $this->cache->getCachedData($request, $storeId);
         if ($rates === false) {
@@ -98,6 +100,26 @@ class CacluratesCachedClient implements CalcuratesClientInterface
     public function getRatesSimple(array $request, $storeId): array
     {
         return $this->calcuratesClient->getRatesSimple($request, $storeId);
+    }
+
+    /**
+     * @param array $request
+     * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
+     * @return array
+     */
+    public function getRatesSplitCheckout(array $request, $storeId): array
+    {
+        $rates = $this->cache->getCachedData($request, $storeId);
+        if ($rates === false) {
+            try {
+                $rates = $this->calcuratesClient->getRatesSplitCheckout($request, $storeId);
+            } catch (LocalizedException|ApiException $e) {
+                $rates = [];
+            }
+            $this->cache->saveCachedData($request, $storeId, $rates);
+        }
+
+        return $rates;
     }
 
     /**

@@ -20,6 +20,7 @@ interface OrderDataInterface
     public const BASE_DD_FEE_AMOUNT = 'base_dd_fee_amount';
     public const DD_FEE_AMOUNT = 'dd_fee_amount';
     public const DELIVERY_DATES = 'delivery_dates';
+    public const SPLIT_SHIPMENTS = 'split_shipments';
 
     /**
      * @return int
@@ -108,4 +109,15 @@ interface OrderDataInterface
      * @return void
      */
     public function setDeliveryDates(array $deliveryDates): void;
+
+    /**
+     * @return array
+     */
+    public function getSplitShipments(): array;
+
+    /**
+     * @param array $shipments
+     * @return void
+     */
+    public function setSplitShipments(array $shipments): void;
 }

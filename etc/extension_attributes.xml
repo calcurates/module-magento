@@ -8,11 +8,13 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Api/etc/extension_attributes.xsd">
     <extension_attributes for="Magento\Quote\Api\Data\ShippingMethodInterface">
         <attribute code="calcurates_data" type="Calcurates\ModuleMagento\Api\Data\RateDataInterface" />
+        <attribute code="calcurates_metarate_data" type="Calcurates\ModuleMagento\Api\Data\MetaRateInterface[]" />
     </extension_attributes>
 
     <extension_attributes for="Magento\Checkout\Api\Data\ShippingInformationInterface">
         <attribute code="calcurates_delivery_date_id" type="string"/>
         <attribute code="calcurates_delivery_date_time_id" type="string"/>
+        <attribute code="calcurates_split_shipments" type="Calcurates\ModuleMagento\Api\Data\SplitShipmentInterface[]"/>
     </extension_attributes>
 
     <extension_attributes for="Magento\Quote\Api\Data\AddressInterface">

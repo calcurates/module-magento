@@ -71,10 +71,11 @@ class CalcuratesClient implements CalcuratesClientInterface
 
     /**
      * @param string $url
+     * @param int $storeId
      * @return string
      * @throws LocalizedException
      */
-    public function getLabelContent($url, $storeId)
+    public function getLabelContent(string $url, int $storeId): string
     {
         try {
             $httpClient = $this->apiClientProvider->getClient($storeId);
@@ -135,13 +136,13 @@ class CalcuratesClient implements CalcuratesClientInterface
     }
 
     /**
-     * @param $request
+     * @param array $request
      * @param int $storeId
      * @return array
      * @throws LocalizedException
      * @throws ApiException
      */
-    public function getRates($request, $storeId)
+    public function getRates(array $request, $storeId)
     {
         $timeout = $this->calcuratesConfig->getApiGetRatesTimeout($storeId);
         try {
@@ -179,6 +180,35 @@ class CalcuratesClient implements CalcuratesClientInterface
             $httpClient->setTimeout($timeout);
             $response = $httpClient->post(
                 $apiUrl . '/rates-simple',
+                \Zend_Json::encode($request)
+            );
+            $httpClient->setTimeout(null);
+            $response = \Zend_Json::decode($response);
+        } catch (ApiException $e) {
+            throw $e;
+        } catch (\Throwable $e) {
+            throw new LocalizedException(__('Cannot getting rates with API Calcurates %1', $e->getMessage()));
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param array $request
+     * @param int $storeId
+     * @return array
+     * @throws LocalizedException
+     * @throws ApiException
+     */
+    public function getRatesSplitCheckout(array $request, $storeId): array
+    {
+        $timeout = $this->calcuratesConfig->getApiGetRatesTimeout($storeId);
+        try {
+            $httpClient = $this->apiClientProvider->getClient($storeId);
+            $apiUrl = $this->apiClientProvider->getApiUrl();
+            $httpClient->setTimeout($timeout);
+            $response = $httpClient->post(
+                $apiUrl . '/rates-split-checkout',
                 \Zend_Json::encode($request)
             );
             $httpClient->setTimeout(null);

@@ -22,6 +22,8 @@ use Calcurates\ModuleMagento\Model\Config;
 use Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplaySource;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Cart\ShippingMethodConverter;
+use Calcurates\ModuleMagento\Model\Data\MetaRateData;
+use Calcurates\ModuleMagento\Api\Data\MetaRateInterfaceFactory;
 
 class ShippingMethodConverterPlugin
 {
@@ -56,6 +58,16 @@ class ShippingMethodConverterPlugin
     private $metadataInterfaceFactory;
 
     /**
+     * @var MetaRateData
+     */
+    private $metaRateData;
+
+    /**
+     * @var MetaRateInterfaceFactory
+     */
+    private $metaRateFactory;
+
+    /**
      * ShippingMethodConverterPlugin constructor.
      * @param Config $configProvider
      * @param DeliveryDateFormatter $deliveryDateFormatter
@@ -63,6 +75,8 @@ class ShippingMethodConverterPlugin
      * @param DeliveryDateProcessor $deliveryDateProcessor
      * @param MetadataPoolInterface $metadataPool
      * @param MetadataInterfaceFactory $metadataInterfaceFactory
+     * @param MetaRateData $metaRateData
+     * @param MetaRateInterfaceFactory $metaRateInterfaceFactory
      */
     public function __construct(
         Config $configProvider,
@@ -70,7 +84,9 @@ class ShippingMethodConverterPlugin
         RateDataInterfaceFactory $rateDataFactory,
         DeliveryDateProcessor $deliveryDateProcessor,
         MetadataPoolInterface $metadataPool,
-        MetadataInterfaceFactory $metadataInterfaceFactory
+        MetadataInterfaceFactory $metadataInterfaceFactory,
+        MetaRateData $metaRateData,
+        MetaRateInterfaceFactory $metaRateInterfaceFactory
     ) {
         $this->configProvider = $configProvider;
         $this->deliveryDateFormatter = $deliveryDateFormatter;
@@ -78,6 +94,8 @@ class ShippingMethodConverterPlugin
         $this->deliveryDateProcessor = $deliveryDateProcessor;
         $this->metadataPool = $metadataPool;
         $this->metadataInterfaceFactory = $metadataInterfaceFactory;
+        $this->metaRateData = $metaRateData;
+        $this->metaRateFactory = $metaRateInterfaceFactory;
     }
 
     /**
@@ -93,6 +111,26 @@ class ShippingMethodConverterPlugin
         $calcuratesRateData = $result->getExtensionAttributes()->getCalcuratesData();
         if (!$calcuratesRateData) {
             $calcuratesRateData = $this->rateDataFactory->create();
+        }
+
+        $calcuratesMetaRateData = $result->getExtensionAttributes()->getCalcuratesMetaRateData();
+        if (!$calcuratesMetaRateData && $result->getMethodCode() == 'metarate') {
+            $ratesOrigin = $this->metaRateData->getRatesData() ?? [];
+            $address = $rateModel->getAddress();
+            $metarates = [];
+            foreach ($ratesOrigin as $originId => $rates) {
+                $shippings = [];
+                $calcuratesMetaRate = $this->metaRateFactory->create();
+                foreach ($rates as $rate) {
+                    $rate->setAddress($address);
+                    $shippings[] = $subject->modelToDataObject($rate, $quoteCurrencyCode);
+                }
+                $calcuratesMetaRate->setRates($shippings);
+                $calcuratesMetaRate->setProducts($this->metaRateData->getProductData($originId));
+                $calcuratesMetaRate->setOriginId($originId);
+                $metarates[] = $calcuratesMetaRate;
+            }
+            $result->getExtensionAttributes()->setCalcuratesMetaRateData($metarates);
         }
 
         $infoMessage = $rateModel->getData(RatesResponseProcessor::CALCURATES_TOOLTIP_MESSAGE);

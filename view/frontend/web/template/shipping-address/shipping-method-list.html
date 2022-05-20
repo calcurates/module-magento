@@ -1,0 +1,48 @@
+<div id="checkout-shipping-method-load">
+    <table class="table-checkout-shipping-method">
+        <thead>
+        <tr class="row">
+            <th class="col col-method" translate="'Select Method'"></th>
+            <th class="col col-price" translate="'Price'"></th>
+            <th class="col col-method" translate="'Method Title'"></th>
+            <th class="col col-carrier" translate="'Carrier Title'"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- ko foreach: { data: rates(), as: 'method'} -->
+        <!-- ko if: (element.isSplitCheckout(method)) -->
+        <!-- ko foreach: { data: method.extension_attributes.calcurates_metarate_data, as: 'rates'} -->
+        <tr class="shipment-title">
+            <td colspan="6">
+                <span translate="'Shipment %1 of %2'.replace('%1', $index() + 1)
+                    .replace('%2', method.extension_attributes.calcurates_metarate_data.length)"></span>
+            </td>
+        </tr>
+        <tr class="shipment-products-row">
+            <td class="shipment-products">
+                <!-- ko foreach: { data: element.getShipmentQuoteItems($data), as: 'items'} -->
+                <div class="product">
+                    <!-- ko foreach: element.getRegion('shipment_items_details') -->
+                        <!-- ko template: getTemplate() --><!-- /ko -->
+                    <!-- /ko -->
+                </div>
+                <!-- /ko -->
+            </td>
+            <td colspan="5">
+                <table>
+                <!-- ko foreach: { data: rates, as: 'method'} -->
+                    <!--ko template: { name: element.shippingMethodItemTemplate} --><!-- /ko -->
+                <!-- /ko -->
+                </table>
+            </td>
+        </tr>
+        <!-- /ko -->
+        <!-- /ko -->
+
+        <!-- ko ifnot: (element.isSplitCheckout(method)) -->
+            <!--ko template: { name: element.shippingMethodItemTemplate} --><!-- /ko -->
+        <!-- /ko -->
+        <!-- /ko -->
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,64 @@
+<?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
+
+/**
+ * @var $block \Magento\Framework\View\Element\Template
+ * @var $viewModel \Calcurates\ModuleMagento\ViewModel\Adminhtml\MetaRate
+ * @var $secureRenderer \Magento\Framework\View\Helper\SecureHtmlRenderer
+ * @var $escaper \Magento\Framework\Escaper
+ */
+?>
+<?php
+$viewModel = $block->getViewModel();
+$origins = $viewModel->getMetaRateData()->getOriginData();
+$rates = $viewModel->getMetaRateData()->getRatesData();
+$productData = $viewModel->getMetaRateData()->getProductData();
+$shipmentCount = 1;
+$isSelected = $block->getActiveMethod() && $block->getActiveMethod()->getCode() === 'calcurates_metarate';
+?>
+<div class="metarates-wrapper"
+<?php if (!$isSelected): ?>
+     style="display: none;"
+<?php endif; ?>
+>
+<?php foreach ($origins ?? [] as $origin): ?>
+    <b><?= $escaper->escapeHtml(__('Shipment %1 of %2', $shipmentCount++, count($origins))) ?></b><br>
+    <?php $itemIds = $viewModel->getSkusListByItemIds($productData[$origin['id']] ?? []) ?>
+    <span><?= $escaper->escapeHtml(__('Included SKUs: %1', implode(', ', $itemIds))) ?></span><br>
+    <?php if (!$block->getIsPreview()): ?>
+    <select name="origin[<?= $origin['id'] ?>]"
+            id="origin-<?= $origin['id'] ?>"
+            class="select admin__control-select <?= $isSelected ? '' : 'ignore-validate' ?>"
+            data-validate="{'validate-select': true}"
+            data-origin="<?= $origin['id'] ?>">
+        <option value="">
+            <?= $escaper->escapeHtml(__('Please select a shipping method...')); ?>
+        </option>
+        <?php foreach ($rates[$origin['id']] as $rate): ?>
+            <option value="<?= $rate->getMethod() ?>"
+                <?= $viewModel->isSavedMethod($origin['id'], $rate->getMethod()) ? ' selected="selected"' : ''; ?>
+            >
+                <?= $viewModel->renderShippingRateOption($rate) ?>
+            </option>
+        <?php endforeach; ?>
+    </select><br>
+    <?= /* @noEscape */ $secureRenderer->renderEventListenerAsTag(
+        'onchange',
+        "order.setShippingMethod('calcurates_metarate')",
+        'select#origin-' . $origin['id']
+    ) ?>
+    <?php else: ?>
+        <span><?= __('Method:')?></span>
+        <?php foreach ($rates[$origin['id']] as $rate): ?>
+            <?php if ($viewModel->isSavedMethod($origin['id'], $rate->getMethod())): ?>
+                <span><?= $viewModel->renderShippingRateOption($rate) ?></span><br>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    <?php endif; ?>
+<?php endforeach; ?>
+</div>

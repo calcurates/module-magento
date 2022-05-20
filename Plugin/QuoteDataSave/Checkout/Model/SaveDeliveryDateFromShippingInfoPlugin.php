@@ -86,6 +86,16 @@ class SaveDeliveryDateFromShippingInfoPlugin
         $quoteData->setDeliveryDateTimeFrom('');
         $quoteData->setDeliveryDateTimeFee(0.0);
 
+        try {
+            $splitShipments = $addressInformation->getExtensionAttributes()->getCalcuratesSplitShipments();
+            $splitShipmentArray = [];
+            foreach ($splitShipments as $splitShipment) {
+                $splitShipmentArray[] = $splitShipment->__toArray();
+            }
+            $quoteData->setSplitShipments($splitShipmentArray);
+        } catch (\Exception $exception) {
+            $quoteData->setSplitShipments([]);
+        }
         $methodCode = $addressInformation->getShippingCarrierCode() . '_' . $addressInformation->getShippingMethodCode();
         if (isset($deliveryDatesData[$methodCode])) {
             $deliveryDates = $this->deliveryDateProcessor->getDeliveryDates($deliveryDatesData[$methodCode]['timeSlots'] ?? []);

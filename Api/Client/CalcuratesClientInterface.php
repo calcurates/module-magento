@@ -37,7 +37,7 @@ interface CalcuratesClientInterface
      * @return string
      * @throws LocalizedException
      */
-    public function getLabelContent($url, $storeId);
+    public function getLabelContent(string $url, int $storeId): string;
 
     /**
      * @param string $serviceId
@@ -57,13 +57,13 @@ interface CalcuratesClientInterface
     public function createShippingLabel($request, $storeId);
 
     /**
-     * @param $request
+     * @param array $request
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return array
      * @throws LocalizedException
      * @throws ApiException
      */
-    public function getRates($request, $storeId);
+    public function getRates(array $request, $storeId);
 
     /**
      * @param array $request
@@ -73,6 +73,15 @@ interface CalcuratesClientInterface
      * @throws ApiException
      */
     public function getRatesSimple(array $request, $storeId): array;
+
+    /**
+     * @param array $request
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @return array
+     * @throws LocalizedException
+     * @throws ApiException
+     */
+    public function getRatesSplitCheckout(array $request, $storeId): array;
 
     /**
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId

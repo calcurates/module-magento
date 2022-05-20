@@ -20,6 +20,7 @@
                                                 <item name="shippingAddress" xsi:type="array">
                                                     <item name="config" xsi:type="array">
                                                         <item name="shippingMethodItemTemplate" xsi:type="string">Calcurates_ModuleMagento/shipping-address/shipping-method-item</item>
+                                                        <item name="shippingMethodListTemplate" xsi:type="string">Calcurates_ModuleMagento/shipping-address/shipping-method-list</item>
                                                     </item>
                                                     <item name="children" xsi:type="array">
                                                         <item name="calcurates-store-selector" xsi:type="array">
@@ -72,6 +73,20 @@
                                                                     <item name="validation" xsi:type="array">
                                                                         <item name="required-entry" xsi:type="string">true</item>
                                                                     </item>
+                                                                </item>
+                                                            </item>
+                                                        </item>
+                                                        <item name="shipment_items" xsi:type="array">
+                                                            <item name="component" xsi:type="string">Magento_Checkout/js/view/summary/item/details</item>
+                                                            <item name="displayArea" xsi:type="string">shipment_items_details</item>
+                                                            <item name="children" xsi:type="array">
+                                                                <item name="thumbnail" xsi:type="array">
+                                                                    <item name="component" xsi:type="string">Magento_Checkout/js/view/summary/item/details/thumbnail</item>
+                                                                    <item name="displayArea" xsi:type="string">before_details</item>
+                                                                </item>
+                                                                <item name="subtotal" xsi:type="array">
+                                                                    <item name="component" xsi:type="string">Magento_Checkout/js/view/summary/item/details/subtotal</item>
+                                                                    <item name="displayArea" xsi:type="string">after_details</item>
                                                                 </item>
                                                             </item>
                                                         </item>

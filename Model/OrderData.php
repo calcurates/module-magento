@@ -99,4 +99,28 @@ class OrderData extends \Magento\Framework\Model\AbstractModel implements OrderD
     {
         $this->setData(self::DELIVERY_DATES, $deliveryDates);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSplitShipments(): array
+    {
+        $splitShipments = $this->getData(self::SPLIT_SHIPMENTS);
+        if ($splitShipments) {
+            if (!is_array($splitShipments)) {
+                $splitShipments = [];
+            }
+            return $splitShipments;
+        }
+
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSplitShipments(array $shipments): void
+    {
+        $this->setData(self::SPLIT_SHIPMENTS, $shipments);
+    }
 }

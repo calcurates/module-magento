@@ -18,4 +18,8 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Paypal\Controller\Express\SaveShippingMethod">
+        <plugin name="Calcurates_ModuleMagento::SaveShippingMethodPlugin"
+                type="Calcurates\ModuleMagento\Plugin\Paypal\Controller\Express\SaveShippingMethodPlugin"/>
+    </type>
 </config>
