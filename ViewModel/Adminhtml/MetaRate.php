@@ -15,6 +15,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
+use Magento\Quote\Model\Quote\Address\RateResult\Method;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Tax\Helper\Data;
 
@@ -128,13 +129,13 @@ class MetaRate implements ArgumentInterface
     }
 
     /**
-     * @param $rate
+     * @param Method $rate
      * @param string $format
      * @param string $inclTaxFormat
      * @return string
      */
     public function renderShippingRateOption(
-        $rate,
+        Method $rate,
         string $format = '%s - %s%s',
         string $inclTaxFormat = ' (%s %s)'
     ): string {

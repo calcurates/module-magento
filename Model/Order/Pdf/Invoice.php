@@ -29,12 +29,12 @@ class Invoice extends MagentoInvoice
     /**
      * @var RtlTextHandler|null
      */
-    private ?RtlTextHandler $rtlTextHandler;
+    private $rtlTextHandler;
 
     /**
      * @var OrderSplitShipments
      */
-    private OrderSplitShipments $viewModel;
+    private $viewModel;
 
     /**
      * @param Data $paymentData
