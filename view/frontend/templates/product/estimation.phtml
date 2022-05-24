@@ -8,7 +8,7 @@
 ?>
 <?php
 /**
- * @var $block \Calcurates\ModuleMagento\Block\Product\View\Estimation
+ * @var $block \Magento\Framework\View\Element\Template
  * @var $viewModel \Calcurates\ModuleMagento\ViewModel\Estimation
  * @var $escaper \Magento\Framework\Escaper
  */
@@ -29,7 +29,7 @@ $loaderIcon = $escaper->escapeUrl($block->getViewFileUrl('images/loader-2.gif'))
 <script type="text/x-magento-init">
     {
         "*": {
-            "Magento_Ui/js/core/app": <?= /* @noEscape */ $block->getJsLayout();?>
+            "Magento_Ui/js/core/app": <?= /* @noEscape */ $viewModel->getJsLayout($block->getJsLayout());?>
         }
     }
 </script>
