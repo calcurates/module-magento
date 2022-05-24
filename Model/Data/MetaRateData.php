@@ -34,7 +34,7 @@ class MetaRateData extends DataObject implements MetaRateDataInterface
      * @param string|null $code
      * @return array|null
      */
-    public function getRatesData(string $code = null): ?array
+    public function getRatesData(?string $code = null): ?array
     {
         if (null === $code) {
             return $this->rates;
