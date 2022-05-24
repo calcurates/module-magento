@@ -28,6 +28,7 @@
                 <store_pickup_display>shipping_methods</store_pickup_display>
                 <split_checkout>0</split_checkout>
                 <split_checkout_title>Aggregated Shipping</split_checkout_title>
+                <google_places_input_title>Estimate Your Delivery Cost</google_places_input_title>
             </calcurates>
         </carriers>
     </default>

@@ -65,14 +65,15 @@ class EstimateShippingByProducts implements EstimateShippingByProductsInterface
      * @param int[] $productIds
      * @param int $customerId
      * @param int|null $storeId
+     * @param string[]|null $shipTo
      * @return \Calcurates\ModuleMagento\Api\Data\SimpleRateInterface[]
      * @throws LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function estimate(array $productIds, int $customerId, ?int $storeId = null): array
+    public function estimate(array $productIds, int $customerId, ?int $storeId = null, ?array $shipTo = null): array
     {
         $storeId = (int)$this->storeManager->getStore($storeId)->getId();
-        $request = $this->productRateRequestBuilder->build($productIds, $customerId, $storeId);
+        $request = $this->productRateRequestBuilder->build($productIds, $customerId, $storeId, $shipTo);
         try {
             $ratesData = $this->calcuratesClient->getRatesSimple($request, $storeId);
         } catch (ApiException $e) {

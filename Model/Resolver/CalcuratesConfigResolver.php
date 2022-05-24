@@ -39,7 +39,8 @@ class CalcuratesConfigResolver implements ResolverInterface
                 $storeId
             ),
             'is_google_autocomplete_enabled' => $this->configProvider->isGoogleAddressAutocompleteEnabled($storeId),
-            'google_places_api_key' => $this->configProvider->getGooglePlacesApiKey($storeId)
+            'google_places_api_key' => $this->configProvider->getGooglePlacesApiKey($storeId),
+            'google_places_input_title' => $this->configProvider->getGooglePlacesInputTitle($storeId)
         ];
     }
 }

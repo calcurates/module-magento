@@ -131,6 +131,13 @@
                             <field id="shipping_on_product_enabled">1</field>
                         </depends>
                     </field>
+                    <field id="google_places_input_title" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Google Places Input Title</label>
+                        <config_path>carriers/calcurates/google_places_input_title</config_path>
+                        <depends>
+                            <field id="enable_google_address_autocomplete">1</field>
+                        </depends>
+                    </field>
                     <field id="google_places_api_key" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Google Places API Key</label>
                         <config_path>carriers/calcurates/google_places_api_key</config_path>

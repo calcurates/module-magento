@@ -36,6 +36,7 @@ type CalcuratesConfig {
     shipping_on_product_fallback_message: String @doc(description: "Fallback message if isn't available")
     is_google_autocomplete_enabled: Boolean @doc(description: "Is google address autocomplete enabled")
     google_places_api_key: String @doc(description: "Api Key For Google Places")
+    google_places_input_title: String @doc(description: "Google Places Input Title")
 }
 
 type StoreConfig {

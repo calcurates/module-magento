@@ -8,10 +8,12 @@
 define([
     'ko',
     'jquery',
+    'underscore',
     'uiElement',
     'Calcurates_ModuleMagento/js/model/product/rates',
+    'mage/translate',
     'loader'
-], function (ko, $, Element, ratesModel) {
+], function (ko, $, _, Element, ratesModel, $t) {
     'use strict';
 
     return Element.extend({
@@ -21,6 +23,10 @@ define([
             productId: 0,
             fallbackMessage: '',
             isLoggedIn: 0,
+            googlePlacesEnabled: false,
+            googlePlacesApiKey: null,
+            googlePlacesAutocompleteInstance: null,
+            placesAutocompleteUrl: 'https://maps.googleapis.com/maps/api/js?key=API_KEY&libraries=places&callback=initAutocomplete',
             selectors: {
                 addToCartForm: 'form#product_addtocart_form',
                 ratesContainer: '[data-calcurates-js="rates-container"]'
@@ -39,9 +45,8 @@ define([
 
         initialize: function () {
             this._super();
-
+            window.initAutocomplete = this.initPlacesAutocompleteFields.bind(this)
             this._initNodes();
-
             return this;
         },
 
@@ -61,8 +66,72 @@ define([
             this.nodes.ratesContainer = $(this.selectors.ratesContainer);
             this.nodes.addToCartForm = $(this.selectors.ratesContainer);
 
-            ratesModel.loadLocations(this.storeCode, [this.productId], this.isLoggedIn);
+            if (!this.usePlacesAutocomplete()) {
+                ratesModel.loadLocations(this.storeCode, [this.productId], this.isLoggedIn);
+            }
         },
-    });
 
+        usePlacesAutocomplete: function () {
+            return this.googlePlacesEnabled && this.googlePlacesApiKey;
+        },
+
+        initPlacesAutocomplete: function () {
+            if (this.usePlacesAutocomplete()) {
+                require([this.placesAutocompleteUrl.replace('API_KEY', this.googlePlacesApiKey)]);
+            }
+        },
+
+        initPlacesAutocompleteFields: function () {
+            const input = document.getElementById("placesAutocomplete");
+            const options = {
+                fields: ["address_components", "formatted_address", "geometry", "name"],
+                types: ["address"],
+            };
+            this.googlePlacesAutocompleteInstance = new google.maps.places.Autocomplete(input, options);
+            this.googlePlacesAutocompleteInstance.addListener('place_changed', this.onPlaceChanged.bind(this))
+        },
+
+        onPlaceChanged: function () {
+            const place = this.googlePlacesAutocompleteInstance.getPlace();
+            if (!place.geometry) {
+                document.getElementById("placesAutocomplete").value = '';
+            } else {
+                document.getElementById("placesAutocomplete").value = place.formatted_address;
+                ratesModel.loadLocations(
+                    this.storeCode,
+                    [this.productId],
+                    this.isLoggedIn,
+                    this.convertPlaceToAddress(place)
+                );
+
+            }
+        },
+
+        convertPlaceToAddress: function (place) {
+            let address = {},
+                mapper = {
+                    country: 'country',
+                    regionCode: 'administrative_area_level_1',
+                    postalCode: 'postal_code',
+                    city: 'locality',
+                    addressLine1: 'route',
+                    streetNumber: 'street_number',
+                }
+            if (place.address_components && _.isArray(place.address_components)) {
+                place.address_components.forEach(function (component) {
+                    _.each(mapper, function (value, key) {
+                        if (_.contains(component.types, value)) {
+                            address[key] = key === 'country' ? component.short_name : component.long_name
+                        }
+                    })
+                })
+            }
+            if (address['addressLine1'] && address['streetNumber']) {
+                address.addressLine1 = address['streetNumber'] + ' ' + address['addressLine1']
+            }
+            delete address['streetNumber']
+            return address
+        }
+
+    });
 });
