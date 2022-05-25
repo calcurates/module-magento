@@ -71,17 +71,17 @@ class ProductRateRequestBuilder
      * @param int[] $productIds
      * @param int $customerId
      * @param int $storeId
+     * @param string[]|null $shipTo
      * @return array
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function build(array $productIds, int $customerId, int $storeId): array
+    public function build(array $productIds, int $customerId, int $storeId, ?array $shipTo = null): array
     {
         $store = $this->storeManager->getStore($storeId);
         $websiteCode = (string)$this->storeManager->getWebsite($store->getWebsiteId())->getCode();
 
         $customerGroupId = Group::NOT_LOGGED_IN_ID;
-        $shipTo = null;
         if ($customerId) {
             $customer = $this->customerRepository->getById($customerId);
             if ($customer instanceof CustomerInterface) {
@@ -89,7 +89,7 @@ class ProductRateRequestBuilder
             }
             $customerGroupId = $customer->getGroupId();
             $address = $customer->getDefaultShippingAddress();
-            if ($address) {
+            if (!$shipTo && $address) {
                 $shipTo = [
                     'country' => $address->getCountryId(),
                     'regionCode' => $address->getRegionId() ? $address->getRegionCode() : null,

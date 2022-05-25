@@ -43,6 +43,9 @@ class Config implements ConfigProviderInterface
     public const STORE_PICKUP_DISPLAY = 'store_pickup_display';
     public const SPLIT_CHECKOUT_ENABLED = 'split_checkout';
     public const SPLIT_CHECKOUT_TITLE = 'split_checkout_title';
+    public const ENABLE_GOOGLE_ADDRESS_AUTOCOMPLETE = 'enable_google_address_autocomplete';
+    public const GOOGLE_PLACES_API_KEY = 'google_places_api_key';
+    public const GOOGLE_PLACES_INPUT_TITLE = 'google_places_input_title';
 
     public const ACTIVE = 'active';
     public const DEBUG = 'debug';
@@ -380,6 +383,45 @@ class Config implements ConfigProviderInterface
     {
         return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . 'title',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @return bool
+     */
+    public function isGoogleAddressAutocompleteEnabled($storeId = null): bool
+    {
+        return $this->scopeConfig->isSetFlag(
+            self::CONFIG_GROUP . self::ENABLE_GOOGLE_ADDRESS_AUTOCOMPLETE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
+     * @return string
+     */
+    public function getGooglePlacesApiKey($storeId = null): string
+    {
+        return (string)$this->scopeConfig->getValue(
+            self::CONFIG_GROUP . self::GOOGLE_PLACES_API_KEY,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
+     * @return string
+     */
+    public function getGooglePlacesInputTitle($storeId = null): string
+    {
+        return (string)$this->scopeConfig->getValue(
+            self::CONFIG_GROUP . self::GOOGLE_PLACES_INPUT_TITLE,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );

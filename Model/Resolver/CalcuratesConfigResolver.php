@@ -33,12 +33,14 @@ class CalcuratesConfigResolver implements ResolverInterface
     {
         $store = $context->getExtensionAttributes()->getStore();
         $storeId = $store->getId();
-
         return [
             'is_shipping_on_product_enabled' => $this->configProvider->isShippingOnProductEnabled($storeId),
             'shipping_on_product_fallback_message' => $this->configProvider->getShippingOnProductFallbackMessage(
                 $storeId
-            )
+            ),
+            'is_google_autocomplete_enabled' => $this->configProvider->isGoogleAddressAutocompleteEnabled($storeId),
+            'google_places_api_key' => $this->configProvider->getGooglePlacesApiKey($storeId),
+            'google_places_input_title' => $this->configProvider->getGooglePlacesInputTitle($storeId)
         ];
     }
 }
