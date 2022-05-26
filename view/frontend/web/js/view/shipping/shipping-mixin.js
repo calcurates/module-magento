@@ -150,6 +150,7 @@ define([
                     this.resetSplitCheckoutShipments()
                     this.selectShippingMethod(method)
                 }
+                return true;
             }
         });
     };
