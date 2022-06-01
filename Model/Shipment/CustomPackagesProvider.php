@@ -107,7 +107,7 @@ class CustomPackagesProvider
                 $dimensionsUnit = Zend_Measure_Length::INCH;
                 break;
             case 'cm':
-                $weightUnit = Zend_Measure_Length::CENTIMETER;
+                $dimensionsUnit = Zend_Measure_Length::CENTIMETER;
                 break;
             default:
                 throw new InvalidArgumentException('Invalid dimensions units');
