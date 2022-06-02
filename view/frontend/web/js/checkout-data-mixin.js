@@ -21,7 +21,7 @@ define([
                 obj = storage.get('checkout-data')()
 
             _.each(data, function (value, originId) {
-                storageData[originId] = value()
+                storageData[originId] = typeof value === 'function' ? value() : value
             })
             obj.selectedSplitCheckoutShipments = storageData
             storage.set('checkout-data', obj);
