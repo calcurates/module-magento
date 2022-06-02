@@ -31,11 +31,13 @@ define([
 
 
             _.each(splitCheckoutShipments(), function (value, key) {
-                splitShipment = {
-                    origin: key,
-                    method: value()
-                };
-                splitShipments[index++] = splitShipment
+                if (value()) {
+                    splitShipment = {
+                        origin: key,
+                        method: value()
+                    };
+                    splitShipments[index++] = splitShipment
+                }
             })
             payloadOriginal.addressInformation.extension_attributes.calcurates_split_shipments = splitShipments
 

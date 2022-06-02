@@ -23,6 +23,12 @@ var config = {
             'Magento_Checkout/js/checkout-data': {
                 'Calcurates_ModuleMagento/js/checkout-data-mixin': true
             },
+            'Magento_Checkout/js/view/cart/shipping-rates': {
+                'Calcurates_ModuleMagento/js/view/cart/shipping-rates-mixin': true
+            },
+            'Magento_Checkout/js/model/cart/totals-processor/default': {
+                'Calcurates_ModuleMagento/js/model/cart/totals-processor/default-mixin': true
+            },
             'Magento_Paypal/js/order-review': {
                 'Calcurates_ModuleMagento/js/order-review-mixin': true
             }
