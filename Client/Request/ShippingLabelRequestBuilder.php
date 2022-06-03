@@ -133,7 +133,7 @@ class ShippingLabelRequestBuilder
                     'unit' => $this->getWeightUnits($package['params']['weight_units']),
                 ],
             ];
-            if ($package['params']['dimension_units'] !== '') {
+            if ($package['params']['dimension_units']) {
                 $rawPackage['dimensions'] = [
                     'length' => $package['params']['length'],
                     'width' => $package['params']['width'],
