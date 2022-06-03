@@ -55,7 +55,9 @@ class CustomPackagesProvider
 
             foreach ($packages as &$customPackageData) {
                 $customPackageData['weightUnit'] = $this->mapWeightUnit($customPackageData['weightUnit']);
-                $customPackageData['dimensionsUnit'] = $this->mapDimensionsUnit($customPackageData['dimensionsUnit']);
+                $customPackageData['dimensionsUnit'] = !empty($customPackageData['dimensionsUnit'])
+                    ? $this->mapDimensionsUnit($customPackageData['dimensionsUnit'])
+                    : null;
             }
             unset($customPackageData);
 

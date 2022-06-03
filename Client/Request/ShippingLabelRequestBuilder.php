@@ -132,13 +132,15 @@ class ShippingLabelRequestBuilder
                     'value' => $package['params']['weight'],
                     'unit' => $this->getWeightUnits($package['params']['weight_units']),
                 ],
-                'dimensions' => [
+            ];
+            if ($package['params']['dimension_units'] !== '') {
+                $rawPackage['dimensions'] = [
                     'length' => $package['params']['length'],
                     'width' => $package['params']['width'],
                     'height' => $package['params']['height'],
                     'unit' => $this->getDimensionUnits($package['params']['dimension_units']),
-                ],
-            ];
+                ];
+            }
             $apiRequestBody['packages'][] = $rawPackage;
         }
 
