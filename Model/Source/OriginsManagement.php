@@ -76,7 +76,7 @@ class OriginsManagement implements OriginsManagementInterface
 
     /**
      * @param int|null $websiteId
-     * @return array
+     * @return mixed[]
      */
     public function getOrigins($websiteId = null): array
     {
