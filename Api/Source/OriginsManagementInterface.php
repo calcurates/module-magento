@@ -12,7 +12,7 @@ interface OriginsManagementInterface
 {
     /**
      * @param int|null $websiteId
-     * @return array
+     * @return mixed[] - required to process the Api requests, should not be changed to array
      */
     public function getOrigins($websiteId = null): array;
 }
