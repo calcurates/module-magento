@@ -11,10 +11,12 @@ namespace Calcurates\ModuleMagento\ViewModel;
 use Calcurates\ModuleMagento\Api\Data\OrderDataInterface;
 use Calcurates\ModuleMagento\Api\SalesData\OrderData\GetOrderDataInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
+use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Shipping\Model\CarrierFactory;
 
-class OrderSplitShipments implements ArgumentInterface
+class OrderShippingAdditionalInfo implements ArgumentInterface
 {
     /**
      * @var OrderDataInterface
@@ -37,15 +39,31 @@ class OrderSplitShipments implements ArgumentInterface
     private $priceCurrency;
 
     /**
+     * @var CarrierFactory
+     */
+    private $carrierFactory;
+
+    /**
+     * @var Registry
+     */
+    private $registry;
+
+    /**
      * @param GetOrderDataInterface $getOrderData
      * @param PriceCurrencyInterface $priceCurrency
+     * @param CarrierFactory $carrierFactory
+     * @param Registry $registry
      */
     public function __construct(
         GetOrderDataInterface $getOrderData,
-        PriceCurrencyInterface $priceCurrency
+        PriceCurrencyInterface $priceCurrency,
+        CarrierFactory $carrierFactory,
+        Registry $registry
     ) {
         $this->getOrderData = $getOrderData;
         $this->priceCurrency = $priceCurrency;
+        $this->carrierFactory = $carrierFactory;
+        $this->registry = $registry;
     }
 
     /**
@@ -94,5 +112,54 @@ class OrderSplitShipments implements ArgumentInterface
             PriceCurrencyInterface::DEFAULT_PRECISION,
             $this->getOrder()->getStoreId()
         );
+    }
+
+    /**
+     * Get all packages from all shipments
+     * @return array
+     */
+    public function getPackages(): array
+    {
+        $packages = [];
+        foreach ($this->getOrder()->getShipmentsCollection()->getItems() as $shipment) {
+            $this->registry->register('current_shipment', $shipment);
+            foreach ($shipment->getPackages() as $package) {
+                $package['params']['name'] = $this->getContainerTypeByCode($package['params']['container']);
+                $packages[] = $package;
+            }
+            $this->registry->unregister('current_shipment');
+        }
+        return $packages;
+    }
+
+    /**
+     * Get package type quantities
+     * @return array
+     */
+    public function getPackagesQty(): array
+    {
+        $packagesQty = [];
+        foreach ($this->getPackages() as $package) {
+            if (!isset($packagesQty[$package['params']['name']])) {
+                $packagesQty[$package['params']['name']] = 1;
+            } else {
+                $packagesQty[$package['params']['name']] += 1;
+            }
+        }
+        return $packagesQty;
+    }
+
+    /**
+     * @param $code
+     * @return string
+     */
+    public function getContainerTypeByCode($code): string
+    {
+        $carrier = $this->carrierFactory->create($this->getOrder()->getShippingMethod(true)->getCarrierCode());
+        if ($carrier) {
+            $containerTypes = $carrier->getContainerTypes();
+            return !empty($containerTypes[$code]) ? $containerTypes[$code] : '';
+        }
+        return '';
     }
 }

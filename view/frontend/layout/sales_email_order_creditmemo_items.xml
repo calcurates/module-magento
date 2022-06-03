@@ -9,7 +9,9 @@
     <body>
         <referenceBlock name="items" template="Calcurates_ModuleMagento::email/creditmemo/items.phtml">
             <arguments>
-                <argument name="view_model" xsi:type="object">Calcurates\ModuleMagento\ViewModel\OrderSplitShipments</argument>
+                <argument name="view_model" xsi:type="object">
+                    Calcurates\ModuleMagento\ViewModel\OrderShippingAdditionalInfo
+                </argument>
             </arguments>
         </referenceBlock>
     </body>

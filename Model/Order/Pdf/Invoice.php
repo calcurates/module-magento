@@ -2,7 +2,7 @@
 
 namespace Calcurates\ModuleMagento\Model\Order\Pdf;
 
-use Calcurates\ModuleMagento\ViewModel\OrderSplitShipments;
+use Calcurates\ModuleMagento\ViewModel\OrderShippingAdditionalInfo;
 use IntlDateFormatter;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ObjectManager;
@@ -32,7 +32,7 @@ class Invoice extends MagentoInvoice
     private $rtlTextHandler;
 
     /**
-     * @var OrderSplitShipments
+     * @var OrderShippingAdditionalInfo
      */
     private $viewModel;
 
@@ -49,7 +49,7 @@ class Invoice extends MagentoInvoice
      * @param Renderer $addressRenderer
      * @param StoreManagerInterface $storeManager
      * @param Emulation $appEmulation
-     * @param OrderSplitShipments $viewModel
+     * @param OrderShippingAdditionalInfo $viewModel
      * @param array $data
      * @param RtlTextHandler|null $rtlTextHandler
      */
@@ -66,7 +66,7 @@ class Invoice extends MagentoInvoice
         Renderer $addressRenderer,
         StoreManagerInterface $storeManager,
         Emulation $appEmulation,
-        OrderSplitShipments $viewModel,
+        OrderShippingAdditionalInfo $viewModel,
         array $data = [],
         ?RtlTextHandler $rtlTextHandler = null
     ) {
