@@ -8,7 +8,7 @@
 
 /**
  * @var $block \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
- * @var $viewModel \Calcurates\ModuleMagento\ViewModel\OrderSplitShipments
+ * @var $viewModel \Calcurates\ModuleMagento\ViewModel\OrderShippingAdditionalInfo
  * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
  * @var $escaper \Magento\Framework\Escaper
  */
@@ -55,6 +55,12 @@ endif; ?>
                     <?= $escaper->escapeHtml(__('Included SKUs: %1', implode(', ', $splitShipment['products'] ?? []))) ?>
                 </span><br>
             <?php endforeach; ?>
+            <?php if(count($viewModel->getPackages())): ?>
+                <div><b><?= $escaper->escapeHtml(__('Packages'))?>:</b></div>
+                <?php foreach($viewModel->getPackagesQty() as $title => $count): ?>
+                    <span><?= $escaper->escapeHtml(__('%1 x %2', $count, $title)) ?></span><br>
+                <?php endforeach; ?>
+            <?php endif; ?>
         <?php else : ?>
             <?php if ($order->getShippingDescription()): ?>
                 <strong><?= $escaper->escapeHtml($order->getShippingDescription()) ?></strong>
@@ -69,6 +75,12 @@ endif; ?>
                 <?= /** @noEscape */ $_excl ?>
                 <?php if ($taxHelper->displayShippingBothPrices() && $_incl != $_excl): ?>
                     (<?= $escaper->escapeHtml(__('Incl. Tax')) ?> <?= /** @noEscape */ $_incl ?>)
+                <?php endif; ?>
+                <?php if(count($viewModel->getPackages())): ?>
+                    <div><b><?= $escaper->escapeHtml(__('Packages'))?>:</b></div>
+                    <?php foreach($viewModel->getPackagesQty() as $title => $count): ?>
+                        <span><?= $escaper->escapeHtml(__('%1 x %2', $count, $title)) ?></span><br>
+                    <?php endforeach; ?>
                 <?php endif; ?>
             <?php else: ?>
                 <?= $escaper->escapeHtml(__('No shipping information available')) ?>

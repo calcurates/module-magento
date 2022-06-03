@@ -9,7 +9,9 @@
     <body>
         <referenceBlock name="sales.order.print.creditmemo" template="Calcurates_ModuleMagento::order/print/creditmemo.phtml">
             <arguments>
-                <argument name="view_model" xsi:type="object">Calcurates\ModuleMagento\ViewModel\OrderSplitShipments</argument>
+                <argument name="view_model" xsi:type="object">
+                    Calcurates\ModuleMagento\ViewModel\OrderShippingAdditionalInfo
+                </argument>
             </arguments>
         </referenceBlock>
     </body>
