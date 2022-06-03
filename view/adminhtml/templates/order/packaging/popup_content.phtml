@@ -171,7 +171,10 @@
                         <td class="col-measure">
                             <select name="container_dimension_units"
                                     class="options-units-dimensions measures admin__control-select">
-                                <option value="<?= /* @noEscape */ Zend_Measure_Length::INCH ?>" selected="selected" >
+                                <option value hidden>
+                                    ---
+                                </option>
+                                <option value="<?= /* @noEscape */ Zend_Measure_Length::INCH ?>" selected="selected">
                                     <?= $block->escapeHtml(__('in')) ?>
                                 </option>
                                 <option value="<?= /* @noEscape */ Zend_Measure_Length::CENTIMETER ?>" >
