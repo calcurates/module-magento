@@ -56,7 +56,7 @@ endif; ?>
                 </span><br>
             <?php endforeach; ?>
             <?php if(count($viewModel->getPackages())): ?>
-                <div><b><?= $escaper->escapeHtml(__('Packages'))?>:</b></div>
+                <div class="shipping-packages-title"><b><?= $escaper->escapeHtml(__('Packages'))?>:</b></div>
                 <?php foreach($viewModel->getPackagesQty() as $title => $count): ?>
                     <span><?= $escaper->escapeHtml(__('%1 x %2', $count, $title)) ?></span><br>
                 <?php endforeach; ?>
@@ -77,7 +77,7 @@ endif; ?>
                     (<?= $escaper->escapeHtml(__('Incl. Tax')) ?> <?= /** @noEscape */ $_incl ?>)
                 <?php endif; ?>
                 <?php if(count($viewModel->getPackages())): ?>
-                    <div><b><?= $escaper->escapeHtml(__('Packages'))?>:</b></div>
+                    <div class="shipping-packages-title"><b><?= $escaper->escapeHtml(__('Packages'))?>:</b></div>
                     <?php foreach($viewModel->getPackagesQty() as $title => $count): ?>
                         <span><?= $escaper->escapeHtml(__('%1 x %2', $count, $title)) ?></span><br>
                     <?php endforeach; ?>
