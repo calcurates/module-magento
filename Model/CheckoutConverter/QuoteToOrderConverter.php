@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Model\CheckoutConverter;
 
+use Calcurates\ModuleMagento\Api\SalesData\QuoteData\GetQuoteDataInterface;
+use Calcurates\ModuleMagento\Model\Carrier;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\OrderRepositoryInterface;
@@ -58,6 +60,11 @@ class QuoteToOrderConverter
     private $entityManager;
 
     /**
+     * @var GetQuoteDataInterface
+     */
+    private $getQuoteData;
+
+    /**
      * QuoteToOrderConverter constructor.
      * @param ConvertPackages $convertPackages
      * @param ConvertServicesSources $convertServicesSources
@@ -66,6 +73,7 @@ class QuoteToOrderConverter
      * @param ConvertQuoteData $convertQuoteData
      * @param OrderAddressExtensionAttributesInterfaceFactory $orderAddressFactory
      * @param EntityManager $entityManager
+     * @param GetQuoteDataInterface $getQuoteData
      */
     public function __construct(
         ConvertPackages $convertPackages,
@@ -74,7 +82,8 @@ class QuoteToOrderConverter
         OrderRepositoryInterface $orderRepository,
         ConvertQuoteData $convertQuoteData,
         OrderAddressExtensionAttributesInterfaceFactory $orderAddressFactory,
-        EntityManager $entityManager
+        EntityManager $entityManager,
+        GetQuoteDataInterface $getQuoteData
     ) {
         $this->orderAddressFactory = $orderAddressFactory;
         $this->convertPackages = $convertPackages;
@@ -83,6 +92,7 @@ class QuoteToOrderConverter
         $this->orderRepository = $orderRepository;
         $this->convertQuoteData = $convertQuoteData;
         $this->entityManager = $entityManager;
+        $this->getQuoteData = $getQuoteData;
     }
 
     /**
@@ -99,6 +109,22 @@ class QuoteToOrderConverter
             '',
             $quote->getData(CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE)
         );
+
+        if (!$carrierData) {
+            $quoteData = $this->getQuoteData->get((int)$quote->getId());
+            if ($quoteData && $splitShipments = $quoteData->getSplitShipments()) {
+                foreach ($splitShipments as $splitShipment) {
+                    if (!isset($splitShipment['method'])) {
+                        continue;
+                    }
+                    $carrierData[] = $this->shippingMethodManager->getCarrierData(
+                        Carrier::CODE . '_' . $splitShipment['method'],
+                        '',
+                        $quote->getData(CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE)
+                    );
+                }
+            }
+        }
 
         if ($carrierData instanceof CarrierData) {
             $this->convertPackages->convert($quote, $order, $carrierData);

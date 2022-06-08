@@ -10,6 +10,7 @@ namespace Calcurates\ModuleMagento\ViewModel;
 
 use Calcurates\ModuleMagento\Api\Data\OrderDataInterface;
 use Calcurates\ModuleMagento\Api\SalesData\OrderData\GetOrderDataInterface;
+use Calcurates\ModuleMagento\Model\Shipment\CarrierPackagesRetriever;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
@@ -49,21 +50,29 @@ class OrderShippingAdditionalInfo implements ArgumentInterface
     private $registry;
 
     /**
+     * @var CarrierPackagesRetriever
+     */
+    private $packagesRetriever;
+
+    /**
      * @param GetOrderDataInterface $getOrderData
      * @param PriceCurrencyInterface $priceCurrency
      * @param CarrierFactory $carrierFactory
      * @param Registry $registry
+     * @param CarrierPackagesRetriever $packagesRetriever
      */
     public function __construct(
         GetOrderDataInterface $getOrderData,
         PriceCurrencyInterface $priceCurrency,
         CarrierFactory $carrierFactory,
-        Registry $registry
+        Registry $registry,
+        CarrierPackagesRetriever $packagesRetriever
     ) {
         $this->getOrderData = $getOrderData;
         $this->priceCurrency = $priceCurrency;
         $this->carrierFactory = $carrierFactory;
         $this->registry = $registry;
+        $this->packagesRetriever = $packagesRetriever;
     }
 
     /**
@@ -129,6 +138,9 @@ class OrderShippingAdditionalInfo implements ArgumentInterface
             }
             $this->registry->unregister('current_shipment');
         }
+        if (empty($packages)) {
+            $packages = $this->packagesRetriever->retrievePackages($this->getOrder());
+        }
         return $packages;
     }
 
@@ -140,10 +152,11 @@ class OrderShippingAdditionalInfo implements ArgumentInterface
     {
         $packagesQty = [];
         foreach ($this->getPackages() as $package) {
-            if (!isset($packagesQty[$package['params']['name']])) {
-                $packagesQty[$package['params']['name']] = 1;
+            $packageName = $package['params']['name'] ?? $package['name'];
+            if (!isset($packagesQty[$packageName])) {
+                $packagesQty[$packageName] = 1;
             } else {
-                $packagesQty[$package['params']['name']] += 1;
+                $packagesQty[$packageName] += 1;
             }
         }
         return $packagesQty;
