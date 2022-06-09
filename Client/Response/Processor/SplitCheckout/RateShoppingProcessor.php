@@ -114,6 +114,7 @@ class RateShoppingProcessor implements ResponseProcessorInterface
 
                 $existingMethodIds = [];
                 foreach ($carrier['rates'] ?? [] as $rate) {
+                    $services = [];
                     if (!$rate['success']) {
                         if ($rate['message']) {
                             $services['services'][] = $rate['service'];
@@ -134,12 +135,17 @@ class RateShoppingProcessor implements ResponseProcessorInterface
                     }
 
                     $serviceIds = $messages = [];
-                    foreach ($rate['services'] as $service) {
+                    foreach ($rate['services'] ?? [] as $service) {
                         if (!empty($service['message'])) {
                             $messages[] = $service['message'];
                         }
 
                         $serviceIds[] = $service['id'];
+                    }
+
+                    if (isset($rate['service']['id'])) {
+                        $serviceIds[] = $rate['service']['id'];
+                        $rate = array_merge($rate, $rate['service']);
                     }
 
                     $serviceIdsString = implode(',', $serviceIds);
