@@ -90,8 +90,8 @@ class ConvertPackages
             foreach ($orderPackages as &$orderPackage) {
                 $packageProducts = array_filter(
                     $orderPackage['products'],
-                    function($product) use ($orderPackage, $orderItemIdToSku, $splitShipmentsIdx, $carrierData) {
-                        list(,,$serviceIdString) = explode(
+                    function ($product) use ($orderPackage, $orderItemIdToSku, $splitShipmentsIdx, $carrierData) {
+                        list(, , $serviceIdString) = explode(
                             '_',
                             $splitShipmentsIdx[$orderPackage['origin_id']]['method'],
                             3
@@ -106,7 +106,7 @@ class ConvertPackages
                 $orderPackage['products'] = $packageProducts;
             }
         }
-        $orderPackages = array_filter($orderPackages, function($package) {
+        $orderPackages = array_filter($orderPackages, function ($package) {
             return !empty($package['products']);
         });
 

@@ -58,7 +58,7 @@ class SynchronousRequestProcessorPlugin
         SynchronousRequestProcessor $subject,
         Request $request
     ) {
-        if ($request->getUri() && strpos($request->getUri()->getPath(), 'calcurates')) {
+        if ($request->getUri() && false !== strpos($request->getUri()->getPath(), 'calcurates')) {
             $composerData = $this->config->getComposerData();
             $this->response->setHeader(
                 'X-Magento-Version',

@@ -116,8 +116,7 @@ class OriginsManagement implements OriginsManagementInterface
         if (!$currentWebsiteCode) {
             throw new LocalizedException(__('Cant\'t find current website'));
         }
-        $isWebsiteAvailable = static function (string $sourceCode)
-        use ($stocks, $stockSourceLinks, $currentWebsiteCode): bool {
+        $isWebsiteAvailable = static function (string $sourceCode) use ($stocks, $stockSourceLinks, $currentWebsiteCode): bool {
             foreach ($stockSourceLinks as $stockSourceLink) {
                 if ($stockSourceLink->getSourceCode() === $sourceCode) {
                     foreach ($stocks as $stock) {
