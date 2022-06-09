@@ -65,6 +65,7 @@ define([
                                 : null
                         )
                     })
+                    splitCheckoutShipments(this.splitCheckoutShipments)
                 }
             },
 
