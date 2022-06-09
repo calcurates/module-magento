@@ -1,0 +1,87 @@
+<?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
+
+/**
+ * @var $block \Magento\Sales\Block\Order\Email\Items
+ * @var $viewModel \Calcurates\ModuleMagento\ViewModel\OrderShippingAdditionalInfo
+ * @var $escaper \Magento\Framework\Escaper
+ */
+?>
+<?php $_order = $block->getOrder() ?>
+<?php if ($_order) : ?>
+    <?php $viewModel = $block->getViewModel() ?>
+    <?php $viewModel->setOrder($_order) ?>
+    <?php if($viewModel->isSplitShipment()) : ?>
+    <table class="order-details">
+        <tbody>
+            <tr>
+                <td><h3><?= $escaper->escapeHtml(__('Split Shipments')) ?></h3></td>
+            </tr>
+        <?php $shipmentCount = count($viewModel->getOrderData()->getSplitShipments()) ?>
+        <?php foreach ($viewModel->getOrderData()->getSplitShipments() as $key => $splitShipment): ?>
+            <tr>
+                <td>
+                    <b><?= $escaper->escapeHtml(__('Shipment %1 of %2:', $key + 1, $shipmentCount)) ?></b><br>
+                    <span><?= $escaper->escapeHtml($splitShipment['title'] ?? '')?></span><br>
+                    <span>
+                        <?= $escaper->escapeHtml(__('Included SKUs: %1', implode(', ', $splitShipment['products'] ?? []))) ?>
+                    </span><br>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <?php endif; ?>
+    <?php $_items = $_order->getAllItems(); ?>
+    <table class="email-items">
+        <thead>
+            <tr>
+                <th class="item-info">
+                    <?= $block->escapeHtml(__('Items')) ?>
+                </th>
+                <th class="item-qty">
+                    <?= $block->escapeHtml(__('Qty')) ?>
+                </th>
+                <th class="item-price">
+                    <?= $block->escapeHtml(__('Price')) ?>
+                </th>
+            </tr>
+        </thead>
+        <?php foreach ($_items as $_item) : ?>
+            <?php if (!$_item->getParentItem()) : ?>
+                <tbody>
+                    <?= $block->getItemHtml($_item) ?>
+                </tbody>
+            <?php endif; ?>
+        <?php endforeach; ?>
+        <tfoot class="order-totals">
+            <?= $block->getChildHtml('order_totals') ?>
+        </tfoot>
+    </table>
+    <?php if ($this->helper(\Magento\GiftMessage\Helper\Message::class)
+            ->isMessagesAllowed('order', $_order, $_order->getStore())
+        && $_order->getGiftMessageId()
+    ) : ?>
+        <?php $_giftMessage = $this->helper(\Magento\GiftMessage\Helper\Message::class)
+            ->getGiftMessage($_order->getGiftMessageId()); ?>
+        <?php if ($_giftMessage) : ?>
+            <br />
+            <table class="message-gift">
+                <tr>
+                    <td>
+                        <h3><?= $block->escapeHtml(__('Gift Message for this Order')) ?></h3>
+                        <strong><?= $block->escapeHtml(__('From:')) ?></strong> <?= $block->escapeHtml($_giftMessage->getSender()) ?>
+                        <br /><strong><?= $block->escapeHtml(__('To:')) ?></strong> <?= $block->escapeHtml($_giftMessage->getRecipient()) ?>
+                        <br /><strong><?= $block->escapeHtml(__('Message:')) ?></strong>
+                        <br /><?= $block->escapeHtml($_giftMessage->getMessage()) ?>
+                    </td>
+                </tr>
+            </table>
+        <?php endif; ?>
+    <?php endif; ?>
+<?php endif; ?>

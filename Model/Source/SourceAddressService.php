@@ -61,7 +61,7 @@ class SourceAddressService
     }
 
     /**
-     * @param $sourceCode
+     * @param string $sourceCode
      * @return array|null
      */
     private function getBySourceCode($sourceCode)

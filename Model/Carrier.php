@@ -14,7 +14,9 @@ use Calcurates\ModuleMagento\Client\Command\GetAllShippingOptionsCommand;
 use Calcurates\ModuleMagento\Client\Http\ApiException;
 use Calcurates\ModuleMagento\Client\Request\RateRequestBuilder;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
+use Calcurates\ModuleMagento\Client\Response\Strategy\RatesStrategyFactory;
 use Calcurates\ModuleMagento\Model\Carrier\Validator\RateRequestValidator;
+use Calcurates\ModuleMagento\Model\Config;
 use Calcurates\ModuleMagento\Model\Shipment\CustomPackagesProvider;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
@@ -74,6 +76,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private $ratesResponseProcessor;
 
     /**
+     * @var RatesStrategyFactory
+     */
+    private $ratesStrategyFactory;
+
+    /**
      * @var RateRequestBuilder
      */
     private $rateRequestBuilder;
@@ -99,6 +106,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private $getAllShippingOptionsCommand;
 
     /**
+     * @var Config
+     */
+    private $configProvider;
+
+    /**
      * Carrier constructor.
      * @param ScopeConfigInterface $scopeConfig
      * @param ErrorFactory $rateErrorFactory
@@ -118,11 +130,13 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param \Magento\Framework\Registry $registry
      * @param CalcuratesClientInterface $calcuratesClient
      * @param RatesResponseProcessor $ratesResponseProcessor
+     * @param RatesStrategyFactory $ratesStrategyFactory
      * @param RateRequestBuilder $rateRequestBuilder
      * @param RateRequestValidator $rateRequestValidator
      * @param CustomPackagesProvider $customPackagesProvider
      * @param CreateShippingLabelCommand $createShippingLabelCommand
      * @param GetAllShippingOptionsCommand $getAllShippingOptionsCommand
+     * @param \Calcurates\ModuleMagento\Model\Config $configProvider
      * @param array $data
      */
     public function __construct(
@@ -144,11 +158,13 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         \Magento\Framework\Registry $registry,
         CalcuratesClientInterface $calcuratesClient,
         RatesResponseProcessor $ratesResponseProcessor,
+        RatesStrategyFactory $ratesStrategyFactory,
         RateRequestBuilder $rateRequestBuilder,
         RateRequestValidator $rateRequestValidator,
         CustomPackagesProvider $customPackagesProvider,
         CreateShippingLabelCommand $createShippingLabelCommand,
         GetAllShippingOptionsCommand $getAllShippingOptionsCommand,
+        Config $configProvider,
         array $data = []
     ) {
         parent::__construct(
@@ -173,10 +189,12 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->calcuratesClient = $calcuratesClient;
         $this->ratesResponseProcessor = $ratesResponseProcessor;
         $this->rateRequestBuilder = $rateRequestBuilder;
+        $this->ratesStrategyFactory = $ratesStrategyFactory;
         $this->rateRequestValidator = $rateRequestValidator;
         $this->customPackagesProvider = $customPackagesProvider;
         $this->createShippingLabelCommand = $createShippingLabelCommand;
         $this->getAllShippingOptionsCommand = $getAllShippingOptionsCommand;
+        $this->configProvider = $configProvider;
     }
 
     /**
@@ -277,7 +295,10 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $debugData['request'] = $apiRequestBody;
 
         try {
-            $response = $this->calcuratesClient->getRates($apiRequestBody, $this->getStore());
+            $ratesStrategy = $this->ratesStrategyFactory->create(
+                $this->configProvider->isSplitCheckoutEnabled($this->getStore())
+            );
+            $response = $ratesStrategy->getResponse($apiRequestBody, $this->getStore());
             $debugData['result'] = $response;
         } catch (ApiException $e) {
             $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
@@ -289,7 +310,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             $this->_debug($debugData);
         }
 
-        return $this->ratesResponseProcessor->processResponse($response, $quote);
+        return $ratesStrategy->processResponse($response, $quote);
     }
 
     /**

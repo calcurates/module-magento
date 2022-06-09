@@ -78,6 +78,8 @@ class ConvertQuoteData
             $deliveryDatesForCurrentShippingMethod = $deliveryDates[$order->getShippingMethod(false)] ?? [];
             $orderData->setDeliveryDates($deliveryDatesForCurrentShippingMethod);
 
+            $orderData->setSplitShipments($quoteData->getSplitShipments());
+
             $this->saveOrderData->save($orderData);
         }
     }

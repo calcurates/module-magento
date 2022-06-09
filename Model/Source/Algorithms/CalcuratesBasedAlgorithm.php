@@ -9,7 +9,10 @@
 namespace Calcurates\ModuleMagento\Model\Source\Algorithms;
 
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
+use Calcurates\ModuleMagento\Api\Data\OrderDataInterface;
+use Calcurates\ModuleMagento\Api\SalesData\OrderData\GetOrderDataInterface;
 use Calcurates\ModuleMagento\Model\Source\Algorithms\Result\GetCalcuratesSortedSourcesResult;
+use Calcurates\ModuleMagento\Model\Source\Algorithms\Result\GetCalcuratesSplitCheckoutSourcesResult;
 use Calcurates\ModuleMagento\Model\Source\SourceServiceContext;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\InventoryApi\Api\Data\SourceInterface;
@@ -47,17 +50,31 @@ class CalcuratesBasedAlgorithm implements SourceSelectionInterface
     private $orderItemsRetriever;
 
     /**
+     * @var GetOrderDataInterface
+     */
+    private GetOrderDataInterface $getOrderData;
+
+    /**
+     * @var GetCalcuratesSplitCheckoutSourcesResult
+     */
+    private GetCalcuratesSplitCheckoutSourcesResult $getCalcuratesSplitCheckoutSourcesResult;
+
+    /**
      * CalcuratesBasedAlgorithm constructor.
      * @param GetCalcuratesSortedSourcesResult $getCalcuratesSortedSourcesResult
      * @param ObjectManagerInterface $objectManager
      * @param OrderItemsRetriever $orderItemsRetriever
      * @param SourceServiceContext $sourceServiceContext
+     * @param GetOrderDataInterface $getOrderData
+     * @param GetCalcuratesSplitCheckoutSourcesResult $getCalcuratesSplitCheckoutSourcesResult
      */
     public function __construct(
         GetCalcuratesSortedSourcesResult $getCalcuratesSortedSourcesResult,
         ObjectManagerInterface $objectManager,
         OrderItemsRetriever $orderItemsRetriever,
-        SourceServiceContext $sourceServiceContext
+        SourceServiceContext $sourceServiceContext,
+        GetOrderDataInterface $getOrderData,
+        GetCalcuratesSplitCheckoutSourcesResult $getCalcuratesSplitCheckoutSourcesResult
     ) {
         $this->getCalcuratesSortedSourcesResult = $getCalcuratesSortedSourcesResult;
         if ($sourceServiceContext->isInventoryEnabled()) {
@@ -66,6 +83,8 @@ class CalcuratesBasedAlgorithm implements SourceSelectionInterface
             );
         }
         $this->orderItemsRetriever = $orderItemsRetriever;
+        $this->getOrderData = $getOrderData;
+        $this->getCalcuratesSplitCheckoutSourcesResult = $getCalcuratesSplitCheckoutSourcesResult;
     }
 
     /**
@@ -86,6 +105,15 @@ class CalcuratesBasedAlgorithm implements SourceSelectionInterface
         $stockId = $inventoryRequest->getStockId();
         $sortedSources = $this->getEnabledSourcesOrderedByPriorityByStockId($stockId);
 
+        /** @var OrderDataInterface $orderData */
+        $orderData = $this->getOrderData->get($this->orderItemsRetriever->getOrderId());
+        if ($orderData->getId() && $orderData->getSplitShipments()) {
+            return $this->getCalcuratesSplitCheckoutSourcesResult->execute(
+                $inventoryRequest,
+                $sortedSources,
+                $mainSourceCodesForSkus
+            );
+        }
         return $this->getCalcuratesSortedSourcesResult->execute($inventoryRequest, $sortedSources, $mainSourceCodesForSkus);
     }
 

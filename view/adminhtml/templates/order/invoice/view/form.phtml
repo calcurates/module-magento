@@ -1,0 +1,119 @@
+<?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
+
+/**
+ * @var \Magento\Sales\Block\Adminhtml\Order\Invoice\View\Form $block
+ * @var $viewModel \Calcurates\ModuleMagento\ViewModel\OrderShippingAdditionalInfo
+ * @var $escaper \Magento\Framework\Escaper
+ */
+?>
+<?php
+$_invoice = $block->getInvoice();
+$_order = $_invoice->getOrder();
+$viewModel = $block->getViewModel();
+$viewModel->setOrder($_order);
+?>
+<?= $block->getChildHtml('order_info') ?>
+
+<section class="admin__page-section order-view-billing-shipping">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Payment &amp; Shipping Method')) ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <div class="admin__page-section-item order-payment-method<?php if ($_order->getIsVirtual()) : ?> order-payment-method-virtual<?php endif; ?> admin__fieldset-wrapper">
+            <?php /*Billing Address */ ?>
+            <div class="admin__page-section-item-title">
+                <span class="title"><?= $block->escapeHtml(__('Payment Information')) ?></span>
+            </div>
+            <div class="admin__page-section-item-content">
+                <div class="order-payment-method-title"><?= $block->getChildHtml('order_payment') ?></div>
+                <div class="order-payment-currency">
+                    <?= $block->escapeHtml(__('The order was placed using %1.', $_order->getOrderCurrencyCode())) ?>
+                </div>
+                <div class="order-payment-additional"><?= $block->getChildHtml('order_payment_additional') ?></div>
+            </div>
+        </div>
+
+        <?php if (!$_order->getIsVirtual()) : ?>
+            <div class="admin__page-section-item order-shipping-address">
+                <?php /*Shipping Address */ ?>
+                <div class="admin__page-section-item-title">
+                    <span class="title"><?= $block->escapeHtml(__('Shipping Information')) ?></span>
+                </div>
+                <div class="admin__page-section-item-content shipping-description-wrapper">
+                    <?php if($viewModel->isSplitShipment()) : ?>
+                        <?php $shipmentCount = count($viewModel->getOrderData()->getSplitShipments()) ?>
+                        <?php foreach ($viewModel->getOrderData()->getSplitShipments() as $key => $splitShipment): ?>
+                            <b><?= $escaper->escapeHtml(__('Shipment %1 of %2:', $key + 1, $shipmentCount)) ?></b><br>
+                            <span><?= $escaper->escapeHtml($splitShipment['title'] ?? '')?></span>&nbsp;-&nbsp;
+                            <b><?= $escaper->escapeHtml($viewModel->getMethodPrice($splitShipment['price'] ?? 0)) ?></b>
+                            <br>
+                            <span>
+                                <?= $escaper->escapeHtml(__('Included SKUs: %1', implode(', ', $splitShipment['products'] ?? []))) ?>
+                            </span><br>
+                        <?php endforeach; ?>
+                    <?php else : ?>
+                    <div class="shipping-description-title">
+                        <?= $block->escapeHtml($_order->getShippingDescription()) ?>
+                    </div>
+                    <div class="shipping-description-content">
+                        <?= $block->escapeHtml(__('Total Shipping Charges')) ?>:
+
+                        <?php if ($this->helper(\Magento\Tax\Helper\Data::class)->displayShippingPriceIncludingTax()) : ?>
+                            <?php $_excl = $block->displayShippingPriceInclTax($_order); ?>
+                        <?php else : ?>
+                            <?php $_excl = $block->displayPriceAttribute('shipping_amount', false, ' '); ?>
+                        <?php endif; ?>
+                        <?php $_incl = $block->displayShippingPriceInclTax($_order); ?>
+
+                        <?= /* @noEscape */ $_excl ?>
+                        <?php if ($this->helper(\Magento\Tax\Helper\Data::class)->displayShippingBothPrices() && $_incl != $_excl) : ?>
+                            (<?= $block->escapeHtml(__('Incl. Tax')) ?> <?= /* @noEscape */ $_incl ?>)
+                        <?php endif; ?>
+                        <div><?= $block->getChildHtml('shipment_tracking') ?></div>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+
+    </div>
+</section>
+
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Items Invoiced')) ?></span>
+    </div>
+
+    <div id="invoice_item_container" class="admin__page-section-content">
+        <?= $block->getChildHtml('invoice_items') ?>
+    </div>
+</section>
+
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Order Total')) ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <div class="admin__page-section-item order-comments-history">
+            <div class="admin__page-section-item-title">
+                <span class="title"><?= $block->escapeHtml(__('Invoice History')) ?></span>
+            </div>
+            <div class="admin__page-section-item-content">
+                <?= $block->getChildHtml('order_comments') ?>
+            </div>
+        </div>
+
+        <div id="history_form" class="admin__page-section-item order-totals">
+            <div class="admin__page-section-item-title">
+                <span class="title"><?= $block->escapeHtml(__('Invoice Totals')) ?></span>
+            </div>
+            <?= $block->getChildHtml('invoice_totals') ?>
+        </div>
+    </div>
+</section>

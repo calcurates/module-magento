@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Model\CheckoutConverter;
 
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
+use Calcurates\ModuleMagento\Api\SalesData\QuoteData\GetQuoteDataInterface;
 use Calcurates\ModuleMagento\Model\Carrier\Method\CarrierData;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Quote\Model\Quote;
@@ -23,9 +24,21 @@ class ConvertPackages
      */
     private $serializer;
 
-    public function __construct(SerializerInterface $serializer)
-    {
+    /**
+     * @var GetQuoteDataInterface
+     */
+    private $getQuoteData;
+
+    /**
+     * @param SerializerInterface $serializer
+     * @param GetQuoteDataInterface $getQuoteData
+     */
+    public function __construct(
+        SerializerInterface $serializer,
+        GetQuoteDataInterface $getQuoteData
+    ) {
         $this->serializer = $serializer;
+        $this->getQuoteData = $getQuoteData;
     }
 
     /**
@@ -67,6 +80,36 @@ class ConvertPackages
             $orderPackages[] = $package;
         }
 
+        $splitShipments = $this->getQuoteData->get((int)$quote->getId())->getSplitShipments();
+        if (!empty($splitShipments) && !empty($orderPackages)) {
+            $splitShipmentsIdx = [];
+            foreach ($splitShipments as $shipment) {
+                $splitShipmentsIdx[$shipment['origin']] = $shipment;
+            }
+            $orderItemIdToSku = $this->getOrderItemIdToSkuMap($order);
+            foreach ($orderPackages as &$orderPackage) {
+                $packageProducts = array_filter(
+                    $orderPackage['products'],
+                    function ($product) use ($orderPackage, $orderItemIdToSku, $splitShipmentsIdx, $carrierData) {
+                        list(, , $serviceIdString) = explode(
+                            '_',
+                            $splitShipmentsIdx[$orderPackage['origin_id']]['method'],
+                            3
+                        );
+                        return $carrierData->getServiceIdsString() === $serviceIdString
+                            && in_array(
+                                $orderItemIdToSku[$product['item_id']],
+                                $splitShipmentsIdx[$orderPackage['origin_id']]['products'] ?? []
+                            );
+                    }
+                );
+                $orderPackage['products'] = $packageProducts;
+            }
+        }
+        $orderPackages = array_filter($orderPackages, function ($package) {
+            return !empty($package['products']);
+        });
+
         if ($orderPackages) {
             if ($order->getData(CustomSalesAttributesInterface::CARRIER_PACKAGES)) {
                 $packagesSet = $this->serializer->unserialize(
@@ -88,6 +131,20 @@ class ConvertPackages
         $map = [];
         foreach ($order->getAllItems() as $orderItem) {
             $map[$orderItem->getQuoteItemId()] = $orderItem->getItemId();
+        }
+
+        return $map;
+    }
+
+    /**
+     * @param Order $order
+     * @return array
+     */
+    private function getOrderItemIdToSkuMap(Order $order)
+    {
+        $map = [];
+        foreach ($order->getAllItems() as $orderItem) {
+            $map[$orderItem->getId()] = $orderItem->getSku();
         }
 
         return $map;

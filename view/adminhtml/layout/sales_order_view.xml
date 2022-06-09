@@ -16,5 +16,12 @@
                 </arguments>
             </block>
         </referenceContainer>
+        <referenceBlock name="order_shipping_view" template="Calcurates_ModuleMagento::order/view/info.phtml">
+            <arguments>
+                <argument name="view_model" xsi:type="object">
+                    Calcurates\ModuleMagento\ViewModel\OrderShippingAdditionalInfo
+                </argument>
+            </arguments>
+        </referenceBlock>
     </body>
 </page>

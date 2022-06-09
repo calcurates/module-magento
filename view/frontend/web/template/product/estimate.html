@@ -1,13 +1,24 @@
 <div class="calcurates-rates-container">
-    <div class="calcurates-rates-title">
-        <span translate="'Estimated Delivery'"></span>
-    </div>
+    <ifnot args="usePlacesAutocomplete()">
+        <div class="calcurates-rates-title">
+            <span translate="'Estimated Delivery'"></span>
+        </div>
+    </ifnot>
 
-    <ifnot args="rates().length">
+    <if args="usePlacesAutocomplete()">
+        <div class="calcurates-rates-title">
+            <span text="googlePlacesInputTitle"></span>
+        </div>
+        <div class="calcurates-address-autocomplete" data-bind="afterRender: initPlacesAutocomplete">
+            <input type="text" id="placesAutocomplete" data-bind="attr:{placeholder: $t('Enter an address...')} "/>
+        </div>
+    </if>
+
+    <if args="!rates().length && !usePlacesAutocomplete()">
         <div class="calcurates-rates-container">
             <span text="fallbackMessage"></span>
         </div>
-    </ifnot>
+    </if>
 
     <if args="rates().length">
         <div class="calcurates-rates-list">

@@ -59,8 +59,8 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
 
 
     /**
-     * @param $resultShippingOptions
-     * @param $type
+     * @param array $resultShippingOptions
+     * @param string $type
      */
     private function prioritySortByType(&$resultShippingOptions, $type): void
     {
@@ -95,7 +95,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
     }
 
     /**
-     * @param $resultShippingOptions
+     * @param array $resultShippingOptions
      */
     private function sortTableRates(&$resultShippingOptions): void
     {
@@ -161,7 +161,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
     }
 
     /**
-     * @param $resultShippingOptions
+     * @param array $resultShippingOptions
      */
     private function sortInStorePickups(&$resultShippingOptions): void
     {
@@ -229,7 +229,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
     }
 
     /**
-     * @param $resultShippingOptions
+     * @param array $resultShippingOptions
      */
     private function sortCarriers(&$resultShippingOptions): void
     {
@@ -288,7 +288,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
     }
 
     /**
-     * @param $resultShippingOptions
+     * @param array $resultShippingOptions
      */
     private function sortRateShopping(&$resultShippingOptions): void
     {
@@ -361,7 +361,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
     }
 
     /**
-     * @param $resultShippingOptions
+     * @param array $resultShippingOptions
      */
     private function sortMergedShippingOptions(&$resultShippingOptions): void
     {

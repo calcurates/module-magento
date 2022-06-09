@@ -1,0 +1,66 @@
+<?php
+/**
+ * @author Calcurates Team
+ * @copyright Copyright © 2020 Calcurates (https://www.calcurates.com)
+ * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @package Calcurates_ModuleMagento
+ */
+
+/**
+ * @var $block \Magento\Sales\Block\Order\Email\Creditmemo\Items
+ * @var $viewModel \Calcurates\ModuleMagento\ViewModel\OrderShippingAdditionalInfo
+ * @var $escaper \Magento\Framework\Escaper
+ */
+?>
+<?php $_creditmemo = $block->getCreditmemo() ?>
+<?php $_order      = $block->getOrder() ?>
+<?php if ($_creditmemo && $_order) : ?>
+    <?php $viewModel = $block->getViewModel() ?>
+    <?php $viewModel->setOrder($_order) ?>
+    <?php if($viewModel->isSplitShipment()) : ?>
+        <table class="order-details">
+            <tbody>
+            <tr>
+                <td><h3><?= $escaper->escapeHtml(__('Split Shipments')) ?></h3></td>
+            </tr>
+            <?php $shipmentCount = count($viewModel->getOrderData()->getSplitShipments()) ?>
+            <?php foreach ($viewModel->getOrderData()->getSplitShipments() as $key => $splitShipment): ?>
+                <tr>
+                    <td>
+                        <b><?= $escaper->escapeHtml(__('Shipment %1 of %2:', $key + 1, $shipmentCount)) ?></b><br>
+                        <span><?= $escaper->escapeHtml($splitShipment['title'] ?? '')?></span><br>
+                        <span>
+                        <?= $escaper->escapeHtml(__('Included SKUs: %1', implode(', ', $splitShipment['products'] ?? []))) ?>
+                    </span><br>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+    <table class="email-items">
+        <thead>
+            <tr>
+                <th class="item-info">
+                    <?= $block->escapeHtml(__('Items')) ?>
+                </th>
+                <th class="item-qty">
+                    <?= $block->escapeHtml(__('Qty')) ?>
+                </th>
+                <th class="item-subtotal">
+                    <?= $block->escapeHtml(__('Subtotal')) ?>
+                </th>
+            </tr>
+        </thead>
+        <?php foreach ($_creditmemo->getAllItems() as $_item) : ?>
+            <?php if (!$_item->getOrderItem()->getParentItem()) : ?>
+                <tbody>
+                    <?= $block->getItemHtml($_item) ?>
+                </tbody>
+            <?php endif; ?>
+        <?php endforeach; ?>
+        <tfoot class="order-totals">
+            <?= $block->getChildHtml('creditmemo_totals') ?>
+        </tfoot>
+    </table>
+<?php endif; ?>

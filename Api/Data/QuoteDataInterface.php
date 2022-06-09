@@ -20,6 +20,7 @@ interface QuoteDataInterface
     public const DELIVERY_DATE_TIME_TO = 'delivery_date_time_to';
     public const DELIVERY_DATE_TIME_FEE = 'delivery_date_time_fee';
     public const DELIVERY_DATES = 'delivery_dates';
+    public const SPLIT_SHIPMENTS = 'split_shipments';
 
     /**
      * @return int
@@ -108,4 +109,15 @@ interface QuoteDataInterface
      * @return void
      */
     public function setDeliveryDates(array $deliveryDates): void;
+
+    /**
+     * @return array
+     */
+    public function getSplitShipments(): array;
+
+    /**
+     * @param array $shipments
+     * @return void
+     */
+    public function setSplitShipments(array $shipments): void;
 }

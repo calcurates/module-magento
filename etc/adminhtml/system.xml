@@ -38,6 +38,18 @@
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <config_path>carriers/calcurates/ignore_virtual</config_path>
                     </field>
+                    <field id="split_checkout" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                        <label>Split Checkout by Origins</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>carriers/calcurates/split_checkout</config_path>
+                    </field>
+                    <field id="split_checkout_title" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                        <label>Split Checkout by Origins Title</label>
+                        <config_path>carriers/calcurates/split_checkout_title</config_path>
+                        <depends>
+                            <field id="split_checkout">1</field>
+                        </depends>
+                    </field>
                 </group>
                 <group id="design_layout" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Design and Layout</label>
@@ -109,6 +121,28 @@
                         <config_path>carriers/calcurates/shipping_on_product_fallback_message</config_path>
                         <depends>
                             <field id="shipping_on_product_enabled">1</field>
+                        </depends>
+                    </field>
+                    <field id="enable_google_address_autocomplete" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Enable Google Address Autocomplete</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>carriers/calcurates/enable_google_address_autocomplete</config_path>
+                        <depends>
+                            <field id="shipping_on_product_enabled">1</field>
+                        </depends>
+                    </field>
+                    <field id="google_places_input_title" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Google Places Input Title</label>
+                        <config_path>carriers/calcurates/google_places_input_title</config_path>
+                        <depends>
+                            <field id="enable_google_address_autocomplete">1</field>
+                        </depends>
+                    </field>
+                    <field id="google_places_api_key" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Google Places API Key</label>
+                        <config_path>carriers/calcurates/google_places_api_key</config_path>
+                        <depends>
+                            <field id="enable_google_address_autocomplete">1</field>
                         </depends>
                     </field>
                 </group>

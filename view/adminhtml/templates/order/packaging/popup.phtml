@@ -33,10 +33,11 @@ $smartPackages = $smartPackaging->getPackages($shipment);
         "jquery",
         "Calcurates_ModuleMagento/js/model/smart-packaging",
         "underscore",
+        "mage/template",
         "prototype",
         "Magento_Shipping/order/packaging",
         "Magento_Ui/js/modal/modal"
-    ], function (jQuery, smartPackaging, _) {
+    ], function (jQuery, smartPackaging, _, template) {
         var isShipmentNew = <?= $isShipmentNew ? 'true' : 'false' ?>,
             smartPackages = <?= $smartPackages ?>;
         window.packaging = new Packaging(<?= /* @noEscape */ $block->getConfigDataJson() ?>);
@@ -80,7 +81,7 @@ $smartPackages = $smartPackaging->getPackages($shipment);
 
         Packaging.prototype.validate = function () {
             var dimensionElements = $('packaging_window').select(
-                'input[name=container_length],input[name=container_width],input[name=container_height],input[name=container_girth]:not("._disabled")'
+                'input[name=container_length]:not([disabled]),input[name=container_width]:not([disabled]),input[name=container_height]:not([disabled]),input[name=container_girth]:not("._disabled")'
             );
 
             dimensionElements.each(function (element) {
@@ -184,7 +185,7 @@ $smartPackages = $smartPackaging->getPackages($shipment);
                 var dimensionUnitsSelect = $pack.find('select[name="container_dimension_units"]').get(0);
                 var packageId = packaging.getPackageId(pack);
 
-                var overviewHtml = renderTemplate('#packages_content_overview_template', {
+                var overviewHtml = template('#packages_content_overview_template', {
                     packageId: packageId,
                     weight: parseFloat($pack.find('input[name="container_weight"]').get(0).value || 0),
                     length: parseFloat($pack.find('input[name="container_length"]').get(0).value || 0),
@@ -197,7 +198,7 @@ $smartPackages = $smartPackaging->getPackages($shipment);
 
                 for (var packedItemId in packaging.packages[packageId]['items']) {
                     if (!isNaN(packedItemId)) {
-                        var overviewItemsHtml = renderTemplate('#packages_content_overview_items_template', {
+                        var overviewItemsHtml = template('#packages_content_overview_items_template', {
                             productName: packaging.defaultItemsName[packedItemId],
                             productWeight: packaging.defaultItemsWeight[packedItemId],
                             productQty: packaging.packages[packageId]['items'][packedItemId]['qty']
@@ -208,14 +209,6 @@ $smartPackages = $smartPackaging->getPackages($shipment);
                 }
 
             });
-        }
-
-        function renderTemplate(templateSelector, params) {
-            var template = jQuery(templateSelector).html();
-            for (var paramKey in params) {
-                template = template.replace("{" + paramKey + "}", params[paramKey]);
-            }
-            return template;
         }
 
         if (!_.isEmpty(smartPackages)) {
@@ -297,17 +290,20 @@ $block->fetchView($block->getTemplateFile('Calcurates_ModuleMagento::order/packa
 
     <div id="packages_content_overview"></div>
 
-    <div id="packages_content_overview_template" style="display: none">
+    <script id="packages_content_overview_template" type="text/x-magento-template">
         <div class="admin__page-section-title">
             <span class="title">
-                <?= __('Package') ?> <span data-role="package-number">{packageId}</span>
+                <?= __('Package') ?> <span data-role="package-number"><%- packageId %></span>
             </span>
         </div>
         <div style="margin-bottom: 10px;font-weight: 600;">
-            <?= __('Custom Package') ?>, {weight} {weightUnits}, {length}x{width}x{height} {dimensionUnits}
+            <?= __('Custom Package') ?>, <%- weight %> <%- weightUnits %>
+            <% if(length && width && height) { %>
+                , <%- length %>x<%- width %>x<%- height %> <%- dimensionUnits %>
+            <% } %>
         </div>
-    </div>
-    <div id="packages_content_overview_items_template" style="display: none">
+    </script>
+    <script id="packages_content_overview_items_template" type="text/x-magento-template">
         <div class="admin__page-subsection package_items">
             <div class="grid">
                 <div class="admin__table-wrapper">
@@ -321,14 +317,14 @@ $block->fetchView($block->getTemplateFile('Calcurates_ModuleMagento::order/packa
                         </thead>
                         <tbody>
                         <tr class="data-grid-controls-row data-row ">
-                            <td>{productName}</td>
-                            <td data-role="item-weight">{productWeight}</td>
-                            <td>{productQty}</td>
+                            <td><%- productName %></td>
+                            <td data-role="item-weight"><%- productWeight %></td>
+                            <td><%- productQty %></td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-    </div>
+    </script>
 </div>

@@ -109,9 +109,15 @@
                             packageData = this.getPackageData(packageId);
 
                         if (packageData) {
-                            lengthField.val(packageData.dimensionsLength);
-                            widthField.val(packageData.dimensionsWidth);
-                            heightField.val(packageData.dimensionsHeight);
+                            packageData.dimensionsLength ?
+                                lengthField.val(packageData.dimensionsLength) :
+                                lengthField.removeClass('validate-greater-than-zero').attr('disabled', true);
+                            packageData.dimensionsWidth ?
+                                widthField.val(packageData.dimensionsWidth) :
+                                widthField.removeClass('validate-greater-than-zero').attr('disabled', true);
+                            packageData.dimensionsHeight ?
+                                heightField.val(packageData.dimensionsHeight) :
+                                heightField.removeClass('validate-greater-than-zero').attr('disabled', true);
 
                             if (templateReplacement) {
                                 this.replaceSelectedOption(dimensionUnitsField, packageData.dimensionsUnit);
@@ -127,12 +133,16 @@
                     replaceSelectedOption: function (select, value) {
                         select.find('option').each(function () {
                             var elem = jQuery(this);
-                            if (elem.attr('value') == value) {
-                                elem.attr('selected', 'selected')
+                            if (elem.attr('value') === value) {
+                                elem.attr('selected', true)
+                            } else if (elem.attr('value') === '' && value === null) {
+                                elem.attr('selected', true)
+                                elem.removeAttr('hidden')
                             } else {
                                 elem.removeAttr('selected');
                             }
                         })
+                        select.attr('disabled', value === null)
                     },
 
                     appendPackageTareWeight: function (packageBlock, weightTare, resetCurrentValue) {

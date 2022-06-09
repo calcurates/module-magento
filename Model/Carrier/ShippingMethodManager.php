@@ -25,6 +25,7 @@ class ShippingMethodManager
     public const CARRIER = 'carrier';
     public const IN_STORE_PICKUP = 'inStorePickup';
     public const RATE_SHOPPING = 'rateShopping';
+    public const META_RATE = 'metaRate';
 
     /**
      * @var CarrierDataFactory
@@ -81,25 +82,30 @@ class ShippingMethodManager
     }
 
     /**
-     * @param $method
-     * @param $orderShippingDescription
+     * @param string $method
+     * @param string $orderShippingDescription
      * @return CarrierData|null
      */
     private function retrieveCarrierData($method, $orderShippingDescription)
     {
-        list($method, $additional) = explode('_', $method, 2);
+        try {
+            list($method, $additional) = explode('_', $method, 2);
+        } catch (\Exception $exception) {
+            return null;
+        }
 
         if ($method !== self::CARRIER) {
             return null;
         }
 
-        list($carrierId, $serviceIds) = explode('_', $additional);
+        list($carrierId, $serviceIds, $inc) = array_pad(explode('_', $additional), 3, '');
 
         $serviceIdsArray = explode(',', $serviceIds);
 
         $titleArray = explode('-', $orderShippingDescription);
         $carrierLabel = trim(array_shift($titleArray));
         $serviceLabel = trim(implode('-', $titleArray));
+        $serviceIds = $inc ? $serviceIds . '_' . $inc : $serviceIds;
 
         return $this->carrierDataFactory->create([
             'data' => [
@@ -113,8 +119,8 @@ class ShippingMethodManager
     }
 
     /**
-     * @param $method
-     * @param $sourceCodeToService
+     * @param string $method
+     * @param string $sourceCodeToService
      * @return array|null
      */
     private function retrieveCarrierDataFromMergedOption($method, $sourceCodeToService)
@@ -122,7 +128,11 @@ class ShippingMethodManager
         if (!$sourceCodeToService) {
             return null;
         }
-        list($method, $additional) = explode('_', $method, 2);
+        try {
+            list($method, $additional) = explode('_', $method, 2);
+        } catch (\Exception $exception) {
+            return null;
+        }
 
         if ($method !== self::MERGRED_SHIPPING) {
             return null;
@@ -170,7 +180,11 @@ class ShippingMethodManager
             return null;
         }
 
-        list($method, $additional) = explode('_', $shippingMethodCode, 2);
+        try {
+            list($method, $additional) = explode('_', $shippingMethodCode, 2);
+        } catch (\Exception $exception) {
+            return null;
+        }
 
         if ($method !== self::IN_STORE_PICKUP) {
             return null;

@@ -8,8 +8,9 @@
 define([
     'ko',
     'mage/storage',
+    'underscore',
     'Calcurates_ModuleMagento/js/action/estimation-loader'
-], function (ko, storage, estimationLoaderAction) {
+], function (ko, storage, _, estimationLoaderAction) {
     'use strict';
 
     return {
@@ -19,9 +20,10 @@ define([
          * @param {String} storeCode
          * @param {Array} productIds
          * @param {Boolean} isLoggedIn
+         * @param {Object} shipTo
          * @return {void}
          */
-        loadLocations: function (storeCode, productIds, isLoggedIn) {
+        loadLocations: function (storeCode, productIds, isLoggedIn, shipTo = null) {
             var estimateUrl = 'rest/' + storeCode + '/V1/calcurates/estimate?',
                 estimateGuestUrl = 'rest/' + storeCode + '/V1/calcurates/estimate-guest?',
                 url;
@@ -32,10 +34,15 @@ define([
                 url = estimateGuestUrl;
             }
 
-            productIds.forEach(function (productId) {
-                url += 'productIds[]=' + productId;
-            });
+            url += productIds.map(function (productId) {
+                return 'productIds[]=' + productId;
+            }).join('&');
 
+            if (_.isObject(shipTo) && !_.isEmpty(shipTo)) {
+                url += '&' + Object.keys(shipTo).map(function(key) {
+                    return 'shipTo[' + key + ']' + '=' + shipTo[key];
+                }).join('&');
+            }
 
             estimationLoaderAction.show();
 

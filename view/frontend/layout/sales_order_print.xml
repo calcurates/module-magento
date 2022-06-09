@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+  @author Calcurates Team
+  @copyright Copyright © 2021 Calcurates (https://www.calcurates.com)
+  @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+  @package Calcurates_ModuleMagento
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="sales.order.print.info" template="Calcurates_ModuleMagento::order/info.phtml">
+            <arguments>
+                <argument name="view_model" xsi:type="object">
+                    Calcurates\ModuleMagento\ViewModel\OrderShippingAdditionalInfo
+                </argument>
+            </arguments>
+        </referenceBlock>
+    </body>
+</page>
