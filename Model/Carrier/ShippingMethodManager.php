@@ -98,13 +98,14 @@ class ShippingMethodManager
             return null;
         }
 
-        list($carrierId, $serviceIds) = explode('_', $additional);
+        list($carrierId, $serviceIds, $inc) = array_pad(explode('_', $additional), 3, '');
 
         $serviceIdsArray = explode(',', $serviceIds);
 
         $titleArray = explode('-', $orderShippingDescription);
         $carrierLabel = trim(array_shift($titleArray));
         $serviceLabel = trim(implode('-', $titleArray));
+        $serviceIds = $inc ? $serviceIds . '_' . $inc : $serviceIds;
 
         return $this->carrierDataFactory->create([
             'data' => [

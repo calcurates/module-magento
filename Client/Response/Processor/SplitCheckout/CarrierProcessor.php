@@ -112,6 +112,7 @@ class CarrierProcessor implements ResponseProcessorInterface
             }
 
             $existingMethodIds = [];
+            $existingServiceIds = [];
             foreach ($carrier['rates'] ?? [] as $responseCarrierRate) {
                 $services = [];
                 if (!$responseCarrierRate['success']) {
@@ -139,6 +140,7 @@ class CarrierProcessor implements ResponseProcessorInterface
                 $packages = [];
 
                 foreach ($responseCarrierRate['service']['packages'] ?? [] as $package) {
+                    $package['origin_id'] = $response['origin']['id'];
                     $packages[] = $package;
                 }
 
@@ -154,12 +156,18 @@ class CarrierProcessor implements ResponseProcessorInterface
                     $sourceToServiceId[$sourceCode] = $responseCarrierRate['service']['id'];
                 }
 
-                $serviceIdsString = implode(',', $serviceIds);
                 $services['services'][] = $responseCarrierRate['service'];
                 $responseCarrierRate['name'] = $this->carrierRateNameBuilder->buildName(
                     $services,
                     $this->configProvider->isDisplayPackageNameForCarrier()
                 );
+
+                $serviceIdsString = $this->stringUniqueIncrement->getUniqueString(
+                    implode(',', $serviceIds),
+                    $existingServiceIds
+                );
+
+                $existingServiceIds[$serviceIdsString] = true;
 
                 $carrierServicesToOrigins[$carrier['id']][$serviceIdsString] = $sourceToServiceId;
                 $carrierRatesToPackages[$carrier['id']][$serviceIdsString] = $packages;
@@ -215,7 +223,10 @@ class CarrierProcessor implements ResponseProcessorInterface
                 foreach ($serviceIdData as $serviceIds => $source) {
                     $mergedSource = $source;
                     if (isset($carrierRatesToPackages[$carrierId][$serviceIds])) {
-                        $mergedSource = array_merge($source, $carrierRatesToPackages[$carrierId][$serviceIds]);
+                        $mergedSource = array_unique(
+                            array_merge($source, $carrierRatesToPackages[$carrierId][$serviceIds]),
+                            SORT_REGULAR
+                        );
                     }
                     $carrierRatesToPackages[$carrierId][$serviceIds] = $mergedSource;
                 }

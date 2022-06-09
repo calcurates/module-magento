@@ -112,6 +112,7 @@ class CarrierProcessor implements ResponseProcessorInterface
             }
 
             $existingMethodIds = [];
+            $existingServiceIds = [];
             foreach ($carrier['rates'] ?? [] as $responseCarrierRate) {
                 if (!$responseCarrierRate['success']) {
                     if ($responseCarrierRate['message']) {
@@ -153,11 +154,16 @@ class CarrierProcessor implements ResponseProcessorInterface
                     }
                 }
 
-                $serviceIdsString = implode(',', $serviceIds);
                 $responseCarrierRate['name'] = $this->carrierRateNameBuilder->buildName(
                     $responseCarrierRate,
                     $this->configProvider->isDisplayPackageNameForCarrier()
                 );
+
+                $serviceIdsString = $this->stringUniqueIncrement->getUniqueString(
+                    implode(',', $serviceIds),
+                    $existingServiceIds
+                );
+                $existingServiceIds[$serviceIdsString] = true;
 
                 $carrierServicesToOrigins[$carrier['id']][$serviceIdsString] = $sourceToServiceId;
                 $carrierRatesToPackages[$carrier['id']][$serviceIdsString] = $packages;
@@ -220,7 +226,10 @@ class CarrierProcessor implements ResponseProcessorInterface
                 foreach ($serviceIdData as $serviceIds => $source) {
                     $mergedSource = $source;
                     if (isset($carrierRatesToPackages[$carrierId][$serviceIds])) {
-                        $mergedSource = array_merge($source, $carrierRatesToPackages[$carrierId][$serviceIds]);
+                        $mergedSource = array_unique(
+                            array_merge($source, $carrierRatesToPackages[$carrierId][$serviceIds]),
+                            SORT_REGULAR
+                        );
                     }
                     $carrierRatesToPackages[$carrierId][$serviceIds] = $mergedSource;
                 }
