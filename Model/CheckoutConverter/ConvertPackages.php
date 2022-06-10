@@ -91,14 +91,14 @@ class ConvertPackages
                 $packageProducts = array_filter(
                     $orderPackage['products'],
                     function ($product) use ($orderPackage, $orderItemIdToSku, $splitShipmentsIdx, $carrierData) {
-                        list(, , $serviceIdString) = explode(
+                        list(, , $serviceIdString) = array_pad(explode(
                             '_',
-                            $splitShipmentsIdx[$orderPackage['origin_id']]['method'],
+                            $splitShipmentsIdx[$orderPackage['origin_id']]['method'] ?? '',
                             3
-                        );
+                        ), 3, '');
                         return $carrierData->getServiceIdsString() === $serviceIdString
                             && in_array(
-                                $orderItemIdToSku[$product['item_id']],
+                                $orderItemIdToSku[$product['item_id']] ?? '',
                                 $splitShipmentsIdx[$orderPackage['origin_id']]['products'] ?? []
                             );
                     }
