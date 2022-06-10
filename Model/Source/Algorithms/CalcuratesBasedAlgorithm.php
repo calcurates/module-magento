@@ -52,12 +52,12 @@ class CalcuratesBasedAlgorithm implements SourceSelectionInterface
     /**
      * @var GetOrderDataInterface
      */
-    private GetOrderDataInterface $getOrderData;
+    private $getOrderData;
 
     /**
      * @var GetCalcuratesSplitCheckoutSourcesResult
      */
-    private GetCalcuratesSplitCheckoutSourcesResult $getCalcuratesSplitCheckoutSourcesResult;
+    private $getCalcuratesSplitCheckoutSourcesResult;
 
     /**
      * CalcuratesBasedAlgorithm constructor.
