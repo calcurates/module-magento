@@ -190,7 +190,7 @@ class PrintLabel
                         return $this->fileFactory->create(
                             $archiveName,
                             $archiveContent,
-                            DirectoryList::VAR_DIR,
+                            DirectoryList::VAR_DIR
                         );
                     }
                 }

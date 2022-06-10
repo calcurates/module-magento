@@ -6,6 +6,7 @@ use Calcurates\ModuleMagento\ViewModel\OrderShippingAdditionalInfo;
 use IntlDateFormatter;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\ProductMetadata;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\Stdlib\StringUtils;
@@ -18,8 +19,6 @@ use Magento\Sales\Model\Order\Pdf\Creditmemo as MagentoCreditmemo;
 use Magento\Sales\Model\Order\Pdf\ItemsFactory;
 use Magento\Sales\Model\Order\Pdf\Total\Factory;
 use Magento\Sales\Model\Order\Shipment;
-use Magento\Sales\Model\RtlTextHandler;
-use Magento\Store\Model\App\Emulation;
 use Magento\Store\Model\StoreManagerInterface;
 use Zend_Pdf_Color_GrayScale;
 use Zend_Pdf_Color_Rgb;
@@ -27,7 +26,7 @@ use Zend_Pdf_Color_Rgb;
 class Creditmemo extends MagentoCreditmemo
 {
     /**
-     * @var RtlTextHandler|null
+     * @var mixed
      */
     private $rtlTextHandler;
 
@@ -48,10 +47,9 @@ class Creditmemo extends MagentoCreditmemo
      * @param StateInterface $inlineTranslation
      * @param Renderer $addressRenderer
      * @param StoreManagerInterface $storeManager
-     * @param Emulation $appEmulation
      * @param OrderShippingAdditionalInfo $viewModel
+     * @param ProductMetadata $magentoMetadata
      * @param array $data
-     * @param RtlTextHandler|null $rtlTextHandler
      */
     public function __construct(
         Data $paymentData,
@@ -65,12 +63,18 @@ class Creditmemo extends MagentoCreditmemo
         StateInterface $inlineTranslation,
         Renderer $addressRenderer,
         StoreManagerInterface $storeManager,
-        Emulation $appEmulation,
         OrderShippingAdditionalInfo $viewModel,
-        array $data = [],
-        ?RtlTextHandler $rtlTextHandler = null
+        ProductMetadata $magentoMetadata,
+        array $data = []
     ) {
-        $this->rtlTextHandler = $rtlTextHandler ?: ObjectManager::getInstance()->get(RtlTextHandler::class);
+        if (version_compare($magentoMetadata->getVersion(), '2.4.0', '>=')) {
+            $this->rtlTextHandler = ObjectManager::getInstance()->get('\Magento\Sales\Model\RtlTextHandler');
+        }
+        if (version_compare($magentoMetadata->getVersion(), '2.4.1', '>=')) {
+            $appEmulation = ObjectManager::getInstance()->get('\Magento\Store\Model\App\Emulation');
+        } else {
+            $appEmulation = ObjectManager::getInstance()->get('\Magento\Framework\Locale\ResolverInterface');
+        }
         $this->viewModel = $viewModel;
         parent::__construct(
             $paymentData,
@@ -197,7 +201,7 @@ class Creditmemo extends MagentoCreditmemo
             if ($value !== '') {
                 $text = [];
                 foreach ($this->string->split($value, 45, true, true) as $_value) {
-                    $text[] = $this->rtlTextHandler->reverseRtlText($_value);
+                    $text[] = $this->rtlTextHandler ? $this->rtlTextHandler->reverseRtlText($_value) : $_value;
                 }
                 foreach ($text as $part) {
                     $page->drawText(strip_tags(ltrim($part)), 35, $this->y, 'UTF-8');
@@ -214,7 +218,7 @@ class Creditmemo extends MagentoCreditmemo
                 if ($value !== '') {
                     $text = [];
                     foreach ($this->string->split($value, 45, true, true) as $_value) {
-                        $text[] = $this->rtlTextHandler->reverseRtlText($_value);
+                        $text[] = $this->rtlTextHandler ? $this->rtlTextHandler->reverseRtlText($_value) : $_value;
                     }
                     foreach ($text as $part) {
                         $page->drawText(strip_tags(ltrim($part)), 285, $this->y, 'UTF-8');
