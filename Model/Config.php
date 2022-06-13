@@ -226,10 +226,8 @@ class Config implements ConfigProviderInterface
             $storeId
         );
 
-        $list = explode(',', $list);
-        $list = array_filter($list);
-
-        return $list;
+        $list = explode(',', $list ?? '');
+        return array_filter($list);
     }
 
     /**
