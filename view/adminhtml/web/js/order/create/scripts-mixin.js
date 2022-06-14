@@ -17,10 +17,13 @@ define([
                 originalLoadArea = AdminOrder.prototype.loadArea
 
             AdminOrder.prototype.loadArea = function (area, indicator, params) {
+                if (!params || !$('.metarates-wrapper').length) {
+                    return originalLoadArea.apply(this, arguments)
+                }
                 if (_.contains(area, 'shipping_method')) {
                     params['collect_shipping_rates'] = 1
                 }
-                if (params && params['order[shipping_method]'] === 'calcurates_metarate') {
+                if (params['order[shipping_method]'] === 'calcurates_metarate') {
                     $('.metarates-wrapper select').each(function () {
                         params['calcurates_split_shipments[' + $(this).data('origin') + ']'] = $(this).val()
                     })
