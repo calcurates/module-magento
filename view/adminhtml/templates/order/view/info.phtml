@@ -13,12 +13,12 @@
  * @var $escaper \Magento\Framework\Escaper
  */
 
-/** @var \Magento\Shipping\Helper\Data $shippingHelper */
-$shippingHelper = $block->getData('shippingHelper');
-/** @var \Magento\Tax\Helper\Data $taxHelper */
-$taxHelper = $block->getData('taxHelper');
 $viewModel = $block->getViewModel();
 $viewModel->setOrder($block->getOrder());
+/** @var \Magento\Shipping\Helper\Data $shippingHelper */
+$shippingHelper = $block->getData('shippingHelper') ?? $viewModel->getShippingHelper();
+/** @var \Magento\Tax\Helper\Data $taxHelper */
+$taxHelper = $block->getData('taxHelper') ?? $viewModel->getTaxHelper();
 ?>
 <?php $order = $block->getOrder() ?>
 <?php if ($order->getIsVirtual()):
@@ -28,42 +28,51 @@ endif; ?>
 <?php /* Shipping Method */ ?>
 <div class="admin__page-section-item order-shipping-method">
     <div class="admin__page-section-item-title">
-        <span class="title"><?= $escaper->escapeHtml(__('Shipping &amp; Handling Information')) ?></span>
+        <span class="title"><?= $block->escapeHtml(__('Shipping &amp; Handling Information')) ?></span>
     </div>
     <div class="admin__page-section-item-content">
         <?php  if ($order->getTracksCollection()->count()): ?>
-            <p>
-                <a href="#" id="linkId" title="<?= $escaper->escapeHtmlAttr(__('Track Order')) ?>">
-                    <?= $escaper->escapeHtml(__('Track Order')) ?>
-                </a>
-            </p>
-            <?= /* @noEscape */ $secureRenderer->renderEventListenerAsTag(
-                'onclick',
-                "popWin('" . $block->escapeJs($shippingHelper->getTrackingPopupUrlBySalesModel($order)) .
-                "','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')",
-                'a#linkId'
-            ) ?>
+            <?php if (isset($secureRenderer)): ?>
+                <p>
+                    <a href="#" id="linkId" title="<?= $block->escapeHtmlAttr(__('Track Order')) ?>">
+                        <?= $block->escapeHtml(__('Track Order')) ?>
+                    </a>
+                </p>
+                <?= /* @noEscape */ $secureRenderer->renderEventListenerAsTag(
+                    'onclick',
+                    "popWin('" . $block->escapeJs($shippingHelper->getTrackingPopupUrlBySalesModel($order)) .
+                    "','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')",
+                    'a#linkId'
+                ) ?>
+            <?php else: ?>
+                <p><a href="#" id="linkId" onclick="popWin('<?= $block->escapeHtmlAttr($block->escapeJs(
+                    $block->escapeUrl($shippingHelper->getTrackingPopupUrlBySalesModel($order))
+                )) ?>','trackorder','width=800,height=600,resizable=yes,scrollbars=yes')"
+                      title="<?= $block->escapeHtmlAttr(__('Track Order')) ?>">
+                    <?= $block->escapeHtml(__('Track Order')) ?>
+                </a></p>
+            <?php endif; ?>
         <?php endif; ?>
-        <?php if($viewModel->isSplitShipment()) : ?>
+        <?php if ($viewModel->isSplitShipment()): ?>
             <?php $shipmentCount = count($viewModel->getOrderData()->getSplitShipments()) ?>
             <?php foreach ($viewModel->getOrderData()->getSplitShipments() as $key => $splitShipment): ?>
-                <b><?= $escaper->escapeHtml(__('Shipment %1 of %2:', $key + 1, $shipmentCount)) ?></b><br>
-                <span><?= $escaper->escapeHtml($splitShipment['title'] ?? '')?></span>&nbsp;-&nbsp;
-                <b><?= $escaper->escapeHtml($viewModel->getMethodPrice($splitShipment['price'] ?? 0)) ?></b>
+                <b><?= $block->escapeHtml(__('Shipment %1 of %2:', $key + 1, $shipmentCount)) ?></b><br>
+                <span><?= $block->escapeHtml($splitShipment['title'] ?? '')?></span>&nbsp;-&nbsp;
+                <b><?= $block->escapeHtml($viewModel->getMethodPrice($splitShipment['price'] ?? 0)) ?></b>
                 <br>
                 <span>
-                    <?= $escaper->escapeHtml(__('Included SKUs: %1', implode(', ', $splitShipment['products'] ?? []))) ?>
+                    <?= $block->escapeHtml(__('Included SKUs: %1', implode(', ', $splitShipment['products'] ?? []))) ?>
                 </span><br>
             <?php endforeach; ?>
-            <?php if(count($viewModel->getPackages())): ?>
-                <div class="shipping-packages-title"><b><?= $escaper->escapeHtml(__('Packages'))?>:</b></div>
-                <?php foreach($viewModel->getPackagesQty() as $title => $count): ?>
-                    <span><?= $escaper->escapeHtml(__('%1 x %2', $count, $title)) ?></span><br>
+            <?php if (count($viewModel->getPackages())): ?>
+                <div class="shipping-packages-title"><b><?= $block->escapeHtml(__('Packages'))?>:</b></div>
+                <?php foreach ($viewModel->getPackagesQty() as $title => $count): ?>
+                    <span><?= $block->escapeHtml(__('%1 x %2', $count, $title)) ?></span><br>
                 <?php endforeach; ?>
             <?php endif; ?>
-        <?php else : ?>
+        <?php else: ?>
             <?php if ($order->getShippingDescription()): ?>
-                <strong><?= $escaper->escapeHtml($order->getShippingDescription()) ?></strong>
+                <strong><?= $block->escapeHtml($order->getShippingDescription()) ?></strong>
 
                 <?php if ($taxHelper->displayShippingPriceIncludingTax()): ?>
                     <?php $_excl = $block->displayShippingPriceInclTax($order); ?>
@@ -74,16 +83,16 @@ endif; ?>
 
                 <?= /** @noEscape */ $_excl ?>
                 <?php if ($taxHelper->displayShippingBothPrices() && $_incl != $_excl): ?>
-                    (<?= $escaper->escapeHtml(__('Incl. Tax')) ?> <?= /** @noEscape */ $_incl ?>)
+                    (<?= $block->escapeHtml(__('Incl. Tax')) ?> <?= /** @noEscape */ $_incl ?>)
                 <?php endif; ?>
-                <?php if(count($viewModel->getPackages())): ?>
-                    <div class="shipping-packages-title"><b><?= $escaper->escapeHtml(__('Packages'))?>:</b></div>
-                    <?php foreach($viewModel->getPackagesQty() as $title => $count): ?>
-                        <span><?= $escaper->escapeHtml(__('%1 x %2', $count, $title)) ?></span><br>
+                <?php if (count($viewModel->getPackages())): ?>
+                    <div class="shipping-packages-title"><b><?= $block->escapeHtml(__('Packages'))?>:</b></div>
+                    <?php foreach ($viewModel->getPackagesQty() as $title => $count): ?>
+                        <span><?= $block->escapeHtml(__('%1 x %2', $count, $title)) ?></span><br>
                     <?php endforeach; ?>
                 <?php endif; ?>
             <?php else: ?>
-                <?= $escaper->escapeHtml(__('No shipping information available')) ?>
+                <?= $block->escapeHtml(__('No shipping information available')) ?>
             <?php endif; ?>
         <?php endif; ?>
     </div>

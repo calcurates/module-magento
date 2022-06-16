@@ -24,19 +24,19 @@ $downloadLinkLabel = isset($block->getShippingLabel()->getLabelData()['formDownl
 ?>
 
 <div class="admin__page-section-item-title">
-    <span class="title"><?= $escaper->escapeHtml(__('Label Info')) ?></span>
+    <span class="title"><?= $block->escapeHtml(__('Label Info')) ?></span>
 </div>
 <table class="admin__table-secondary">
     <tbody>
     <?php foreach ($items as $item): ?>
         <tr>
-            <th><?= $escaper->escapeHtml($item['label']) ?></th>
-            <td><?= $escaper->escapeHtml($item['value']) ?></td>
+            <th><?= $block->escapeHtml($item['label']) ?></th>
+            <td><?= $block->escapeHtml($item['value']) ?></td>
         </tr>
     <?php endforeach; ?>
     <tr>
         <th></th>
-        <td><a href="<?= $escaper->escapeUrl($printUrl) ?>"><?= $escaper->escapeHtml($downloadLinkLabel) ?></a></td>
+        <td><a href="<?= $block->escapeUrl($printUrl) ?>"><?= $block->escapeHtml($downloadLinkLabel) ?></a></td>
     </tr>
     </tbody>
 </table>

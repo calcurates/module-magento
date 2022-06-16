@@ -15,7 +15,9 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Shipping\Helper\Data as ShippingHelper;
 use Magento\Shipping\Model\CarrierFactory;
+use Magento\Tax\Helper\Data as TaxHelper;
 
 class OrderShippingAdditionalInfo implements ArgumentInterface
 {
@@ -53,6 +55,8 @@ class OrderShippingAdditionalInfo implements ArgumentInterface
      * @var CarrierPackagesRetriever
      */
     private $packagesRetriever;
+    private TaxHelper $taxHelper;
+    private ShippingHelper $shippingHelper;
 
     /**
      * @param GetOrderDataInterface $getOrderData
@@ -66,13 +70,17 @@ class OrderShippingAdditionalInfo implements ArgumentInterface
         PriceCurrencyInterface $priceCurrency,
         CarrierFactory $carrierFactory,
         Registry $registry,
-        CarrierPackagesRetriever $packagesRetriever
+        CarrierPackagesRetriever $packagesRetriever,
+        TaxHelper $taxHelper,
+        ShippingHelper $shippingHelper
     ) {
         $this->getOrderData = $getOrderData;
         $this->priceCurrency = $priceCurrency;
         $this->carrierFactory = $carrierFactory;
         $this->registry = $registry;
         $this->packagesRetriever = $packagesRetriever;
+        $this->taxHelper = $taxHelper;
+        $this->shippingHelper = $shippingHelper;
     }
 
     /**
@@ -176,5 +184,21 @@ class OrderShippingAdditionalInfo implements ArgumentInterface
             return !empty($containerTypes[$code]) ? $containerTypes[$code] : '';
         }
         return '';
+    }
+
+    /**
+     * @return TaxHelper
+     */
+    public function getTaxHelper()
+    {
+        return $this->taxHelper;
+    }
+
+    /**
+     * @return ShippingHelper
+     */
+    public function getShippingHelper()
+    {
+        return $this->shippingHelper;
     }
 }

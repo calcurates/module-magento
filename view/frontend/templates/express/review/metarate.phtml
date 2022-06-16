@@ -21,18 +21,20 @@ $shipmentCount = 1;
 ?>
 <div class="metarates-wrapper" style="display: none;">
 <?php foreach ($origins ?? [] as $origin): ?>
-    <b><?= $escaper->escapeHtml(__('Shipment %1 of %2', $shipmentCount++, count($origins))) ?></b><br>
+    <b><?= $block->escapeHtml(__('Shipment %1 of %2', $shipmentCount++, count($origins))) ?></b><br>
     <?php $itemIds = $viewModel->getSkusListByItemIds($productData[$origin['id']] ?? []) ?>
-    <span><?= $escaper->escapeHtml(__('Included SKUs: %1', implode(', ', $itemIds))) ?></span>
-    <select name="origin[<?= $origin['id'] ?>]" id="origin-<?= $origin['id'] ?>" class="select">
+    <span><?= $block->escapeHtml(__('Included SKUs: %1', implode(', ', $itemIds))) ?></span>
+    <select name="origin[<?= /* @noEscape */ $origin['id'] ?>]"
+            id="origin-<?= /* @noEscape */ $origin['id'] ?>"
+            class="select">
         <option value="">
-            <?= $escaper->escapeHtml(__('Please select a shipping method...')); ?>
+            <?= $block->escapeHtml(__('Please select a shipping method...')); ?>
         </option>
         <?php foreach ($rates[$origin['id']] as $rate): ?>
-            <option value="<?= $rate->getMethod() ?>"
+            <option value="<?= /* @noEscape */ $rate->getMethod() ?>"
                 <?= $viewModel->isSavedMethod($origin['id'], $rate->getMethod()) ? ' selected="selected"' : ''; ?>
             >
-                <?= $viewModel->renderShippingRateOption($rate) ?>
+                <?= /* @noEscape */ $viewModel->renderShippingRateOption($rate) ?>
             </option>
         <?php endforeach; ?>
     </select>

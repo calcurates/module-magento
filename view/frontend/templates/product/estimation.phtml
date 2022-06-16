@@ -17,7 +17,7 @@ $viewModel = $block->getViewModel();
 if (!$viewModel->isEnabled()) {
     return;
 }
-$loaderIcon = $escaper->escapeUrl($block->getViewFileUrl('images/loader-2.gif'));
+$loaderIcon = $block->escapeUrl($block->getViewFileUrl('images/loader-2.gif'));
 ?>
 <div class="calcurates-estimate-block"
      data-bind="scope: 'calcurates_rates'"

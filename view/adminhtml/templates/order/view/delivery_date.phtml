@@ -21,7 +21,7 @@ if ($orderData) {
 <?php if ($deliveryDatesFormatted || $hasDeliveryDateAndTime): ?>
     <section class="admin__page-section order-view-billing-shipping">
         <div class="admin__page-section-title">
-            <span class="title"><?= $escaper->escapeHtml(__('Delivery Dates')) ?></span>
+            <span class="title"><?= $block->escapeHtml(__('Delivery Dates')) ?></span>
         </div>
         <div class="admin__page-section-content">
             <div class="admin__page-section-item order-information">
@@ -31,24 +31,27 @@ if ($orderData) {
                         <tbody>
                         <?php if ($deliveryDatesFormatted): ?>
                             <tr>
-                                <th><?= $escaper->escapeHtml(__('Estimated Delivery Dates')) ?></th>
-                                <td><?= $escaper->escapeHtml($deliveryDatesFormatted) ?></td>
+                                <th><?= $block->escapeHtml(__('Estimated Delivery Dates')) ?></th>
+                                <td><?= $block->escapeHtml($deliveryDatesFormatted) ?></td>
                             </tr>
                         <?php endif; ?>
 
                         <?php if ($hasDeliveryDateAndTime): ?>
                             <tr>
-                                <th><?= $escaper->escapeHtml(__('Selected Delivery Date')) ?></th>
+                                <th><?= $block->escapeHtml(__('Selected Delivery Date')) ?></th>
                                 <td>
-                                    <?= $viewModel->formatDate($orderData->getDeliveryDate()) ?>
+                                    <?= /** @noEscape  */ $viewModel->formatDate($orderData->getDeliveryDate()) ?>
                                 </td>
                             </tr>
 
                             <?php if ($orderData->getDeliveryDateTimeFrom() || $orderData->getDeliveryDateTimeTo()): ?>
                                 <tr>
-                                    <th><?= $escaper->escapeHtml(__('Selected Delivery Time')) ?></th>
+                                    <th><?= $block->escapeHtml(__('Selected Delivery Time')) ?></th>
                                     <td>
-                                        <?= $viewModel->formatTimeInterval($orderData->getDeliveryDateTimeFrom(), $orderData->getDeliveryDateTimeTo()) ?>
+                                        <?= /** @noEscape  */ $viewModel->formatTimeInterval(
+                                            $orderData->getDeliveryDateTimeFrom(),
+                                            $orderData->getDeliveryDateTimeTo()
+                                        ) ?>
                                     </td>
                                 </tr>
                             <?php endif; ?>

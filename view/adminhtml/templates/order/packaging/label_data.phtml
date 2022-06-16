@@ -20,7 +20,7 @@ if (!$label) {
 }
 ?>
 <div id="calcurates-shipping-label-data">
-    <?= $block->getChildBlock('label_data_renderer')->render($label, $printUrl) ?>
+    <?= /** @noEscape  */ $block->getChildBlock('label_data_renderer')->render($label, $printUrl) ?>
 </div>
 <script>
     require([

@@ -25,34 +25,35 @@ $hsCodeFieldRenderer->setShipment($block->getShipment());
                     <label class="data-grid-checkbox-cell-inner">
                         <input type="checkbox"
                                id="select-items-<?= /* @noEscape */ $randomId ?>"
+                                <?php if (!isset($secureRenderer)): ?>
+                                onchange="packaging.checkAllItems(this);"
+                                <?php endif; ?>
                                class="checkbox admin__control-checkbox"
                                title="<?= $block->escapeHtmlAttr(__('Select All')) ?>">
-                        <?= /* @noEscape */ $secureRenderer->renderEventListenerAsTag(
-                            'onchange',
-                            'packaging.checkAllItems(this);',
-                            'input#select-items-' . /* @noEscape */ $randomId
-                        ) ?>
+                        <?php if (!isset($secureRenderer)): ?>
+                            <?= /* @noEscape */ $secureRenderer->renderEventListenerAsTag(
+                                'onchange',
+                                'packaging.checkAllItems(this);',
+                                'input#select-items-' . /* @noEscape */ $randomId
+                            ) ?>
+                        <?php endif; ?>
                         <label for="select-items-<?= /* @noEscape */ $randomId ?>"></label>
                     </label>
                 </th>
                 <th class="data-grid-th"><?= $block->escapeHtml(__('Product Name')) ?></th>
                 <th class="data-grid-th"><?= $block->escapeHtml(__('Weight')) ?></th>
-                <th class="data-grid-th custom-value">
+                <th class="data-grid-th custom-value"
+                    <?php if (!$block->displayCustomsValue()): ?>
+                        style="display: none;"
+                    <?php endif; ?>
+                >
                     <?= $block->escapeHtml(__('Customs Value')) ?>
                 </th>
-                <?php if (!$block->displayCustomsValue()): ?>
-                    <?= /* @noEscape */ $secureRenderer->renderStyleAsTag(
-                        'display:none',
-                        '#packaging-data-grid-' . $randomId . ' th.custom-value'
-                    ) ?>
-                <?php endif ?>
-                <th class="data-grid-th hs-code-field"><?= $block->escapeHtml(__('HS Code')) ?></th>
-                <?php if (!$hsCodeFieldRenderer->isFieldRenderable()): ?>
-                    <?= /* @noEscape */ $secureRenderer->renderStyleAsTag(
-                        'display:none',
-                        '#packaging-data-grid-' . $randomId . ' th.hs-code-field'
-                    ) ?>
-                <?php endif ?>
+                <th class="data-grid-th hs-code-field"
+                    <?php if (!$hsCodeFieldRenderer->isFieldRenderable()): ?>
+                        style="display: none;"
+                    <?php endif ?>
+                ><?= $block->escapeHtml(__('HS Code')) ?></th>
                 <th class="data-grid-th"><?= $block->escapeHtml(__('Qty Ordered')) ?></th>
                 <th class="data-grid-th"><?= $block->escapeHtml(__('Qty')) ?></th>
             </tr>
@@ -100,25 +101,21 @@ $hsCodeFieldRenderer->setShipment($block->getShipment());
                     <td id="custom-value-<?= /* @noEscape */ $randomId . '-' . $id ?>" class="custom-value">
                         <input type="text"
                                name="customs_value"
+                                <?php if (!$block->displayCustomsValue()): ?>
+                                    style="display: none;"
+                                <?php endif ?>
                                class="input-text admin__control-text <?= /* @noEscape */ $customsValueValidation ?>"
                                value="<?= $block->escapeHtmlAttr($block->formatPrice($item->getPrice())) ?>"
                                size="10">
                     </td>
-                    <?php if (!$block->displayCustomsValue()): ?>
-                        <?= /* @noEscape */ $secureRenderer->renderStyleAsTag(
-                            'display:none',
-                            'td#custom-value-' . $randomId . '-' . $id
-                        ) ?>
-                    <?php endif ?>
-                    <td id="hs-code-value-<?= /* @noEscape */ $randomId . '-' . $id ?>" class="hs-code-value">
-                        <?= $hsCodeFieldRenderer->render($item->getOrderItem()->getProduct()); ?>
+                    <td id="hs-code-value-<?= /* @noEscape */ $randomId . '-' . $id ?>"
+                        class="hs-code-value"
+                        <?php if (!$hsCodeFieldRenderer->isFieldRenderable()): ?>
+                            style="display: none;"
+                        <?php endif ?>
+                    >
+                        <?= /** @noEscape  */$hsCodeFieldRenderer->render($item->getOrderItem()->getProduct()); ?>
                     </td>
-                    <?php if (!$hsCodeFieldRenderer->isFieldRenderable()): ?>
-                        <?= /* @noEscape */ $secureRenderer->renderStyleAsTag(
-                            'display:none',
-                            'td#hs-code-value-' . $randomId . '-' . $id
-                        ) ?>
-                    <?php endif ?>
                     <td>
                         <?= /* @noEscape */ $item->getOrderItem()->getQtyOrdered() * 1 ?>
                     </td>
@@ -133,14 +130,11 @@ $hsCodeFieldRenderer->setShipment($block->getShipment());
                             <?php endif ?>">&nbsp;
                         <button type="button"
                                 id="packaging-delete-item-<?= /* @noEscape */ $randomId . '-' . $id ?>"
+                                style="display: none;"
                                 class="action-delete"
                                 data-action="package-delete-item">
                             <span><?= $block->escapeHtml(__('Delete')) ?></span>
                         </button>
-                        <?= /* @noEscape */ $secureRenderer->renderStyleAsTag(
-                            'display:none',
-                            'button#packaging-delete-item-' . $randomId . '-' . $id
-                        ) ?>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -155,6 +149,12 @@ $hsCodeFieldRenderer->setShipment($block->getShipment());
         });
 script;
         ?>
-        <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
+        <?php if (isset($secureRenderer)): ?>
+            <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
+        <?php else: ?>
+            <script>
+                <?= /** @noEscape  */ $scriptString ?>
+            </script>
+        <?php endif; ?>
     </div>
 </div>
