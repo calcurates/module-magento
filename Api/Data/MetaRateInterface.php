@@ -28,7 +28,7 @@ interface MetaRateInterface
     public function setRates(array $rates): void;
 
     /**
-     * @return array|null
+     * @return \Magento\Catalog\Api\Data\ProductInterface[]|null
      */
     public function getProducts(): ?array;
 

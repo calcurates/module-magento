@@ -63,7 +63,7 @@ interface SplitShipmentInterface
     public function setCost($cost): void;
 
     /**
-     * @return array|null
+     * @return \Magento\Catalog\Api\Data\ProductInterface[]|null
      */
     public function getProducts(): ?array;
 

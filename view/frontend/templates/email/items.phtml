@@ -13,23 +13,25 @@
  */
 ?>
 <?php $_order = $block->getOrder() ?>
-<?php if ($_order) : ?>
+<?php if ($_order): ?>
     <?php $viewModel = $block->getViewModel() ?>
     <?php $viewModel->setOrder($_order) ?>
-    <?php if($viewModel->isSplitShipment()) : ?>
+    <?php if ($viewModel->isSplitShipment()): ?>
     <table class="order-details">
         <tbody>
             <tr>
-                <td><h3><?= $escaper->escapeHtml(__('Split Shipments')) ?></h3></td>
+                <td><h3><?= $block->escapeHtml(__('Split Shipments')) ?></h3></td>
             </tr>
         <?php $shipmentCount = count($viewModel->getOrderData()->getSplitShipments()) ?>
         <?php foreach ($viewModel->getOrderData()->getSplitShipments() as $key => $splitShipment): ?>
             <tr>
                 <td>
-                    <b><?= $escaper->escapeHtml(__('Shipment %1 of %2:', $key + 1, $shipmentCount)) ?></b><br>
-                    <span><?= $escaper->escapeHtml($splitShipment['title'] ?? '')?></span><br>
+                    <b><?= $block->escapeHtml(__('Shipment %1 of %2:', $key + 1, $shipmentCount)) ?></b><br>
+                    <span><?= $block->escapeHtml($splitShipment['title'] ?? '')?></span><br>
                     <span>
-                        <?= $escaper->escapeHtml(__('Included SKUs: %1', implode(', ', $splitShipment['products'] ?? []))) ?>
+                        <?= $block->escapeHtml(
+                            __('Included SKUs: %1', implode(', ', $splitShipment['products'] ?? []))
+                        ) ?>
                     </span><br>
                 </td>
             </tr>
@@ -52,8 +54,8 @@
                 </th>
             </tr>
         </thead>
-        <?php foreach ($_items as $_item) : ?>
-            <?php if (!$_item->getParentItem()) : ?>
+        <?php foreach ($_items as $_item): ?>
+            <?php if (!$_item->getParentItem()): ?>
                 <tbody>
                     <?= $block->getItemHtml($_item) ?>
                 </tbody>
@@ -66,17 +68,19 @@
     <?php if ($this->helper(\Magento\GiftMessage\Helper\Message::class)
             ->isMessagesAllowed('order', $_order, $_order->getStore())
         && $_order->getGiftMessageId()
-    ) : ?>
+    ): ?>
         <?php $_giftMessage = $this->helper(\Magento\GiftMessage\Helper\Message::class)
             ->getGiftMessage($_order->getGiftMessageId()); ?>
-        <?php if ($_giftMessage) : ?>
+        <?php if ($_giftMessage): ?>
             <br />
             <table class="message-gift">
                 <tr>
                     <td>
                         <h3><?= $block->escapeHtml(__('Gift Message for this Order')) ?></h3>
-                        <strong><?= $block->escapeHtml(__('From:')) ?></strong> <?= $block->escapeHtml($_giftMessage->getSender()) ?>
-                        <br /><strong><?= $block->escapeHtml(__('To:')) ?></strong> <?= $block->escapeHtml($_giftMessage->getRecipient()) ?>
+                        <strong><?= $block->escapeHtml(__('From:')) ?></strong>
+                        <?= $block->escapeHtml($_giftMessage->getSender()) ?>
+                        <br /><strong><?= $block->escapeHtml(__('To:')) ?></strong>
+                        <?= $block->escapeHtml($_giftMessage->getRecipient()) ?>
                         <br /><strong><?= $block->escapeHtml(__('Message:')) ?></strong>
                         <br /><?= $block->escapeHtml($_giftMessage->getMessage()) ?>
                     </td>

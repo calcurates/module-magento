@@ -17,12 +17,12 @@ $viewModel = $block->getViewModel();
 $viewModel->setOrder($_order);
 $_creditmemo = $block->getCreditmemo();
 ?>
-<?php if ($_creditmemo) : ?>
+<?php if ($_creditmemo): ?>
     <?php $_creditmemos = [$_creditmemo]; ?>
-<?php else : ?>
+<?php else: ?>
     <?php $_creditmemos = $_order->getCreditmemosCollection() ?>
 <?php endif; ?>
-<?php foreach ($_creditmemos as $_creditmemo) : ?>
+<?php foreach ($_creditmemos as $_creditmemo): ?>
 <div class="order-details-items creditmemo">
     <div class="order-title">
         <strong><?= $block->escapeHtml(__('Refund #%1', $_creditmemo->getIncrementId())) ?></strong>
@@ -42,8 +42,8 @@ $_creditmemo = $block->getCreditmemo();
                 </tr>
             </thead>
             <?php $_items = $_creditmemo->getAllItems(); ?>
-            <?php foreach ($_items as $_item) : ?>
-                <?php if (!$_item->getOrderItem()->getParentItem()) : ?>
+            <?php foreach ($_items as $_item): ?>
+                <?php if (!$_item->getOrderItem()->getParentItem()): ?>
                     <tbody>
                         <?= $block->getItemHtml($_item) ?>
                     </tbody>
@@ -59,7 +59,7 @@ $_creditmemo = $block->getCreditmemo();
             <strong><?= $block->escapeHtml(__('Order Information')) ?></strong>
         </div>
         <div class="block-content">
-        <?php if (!$_order->getIsVirtual()) : ?>
+        <?php if (!$_order->getIsVirtual()): ?>
             <div class="box box-order-shipping-address">
                 <div class="box-title">
                     <strong><?= $block->escapeHtml(__('Shipping Address')) ?></strong>
@@ -74,16 +74,18 @@ $_creditmemo = $block->getCreditmemo();
                     <strong><?= $block->escapeHtml(__('Shipping Method')) ?></strong>
                 </div>
                 <div class="box-content">
-                    <?php if($viewModel->isSplitShipment()) : ?>
+                    <?php if ($viewModel->isSplitShipment()): ?>
                         <?php $shipmentCount = count($viewModel->getOrderData()->getSplitShipments()) ?>
                         <?php foreach ($viewModel->getOrderData()->getSplitShipments() as $key => $splitShipment): ?>
-                            <b><?= $escaper->escapeHtml(__('Shipment %1 of %2:', $key + 1, $shipmentCount)) ?></b><br>
-                            <span><?= $escaper->escapeHtml($splitShipment['title'] ?? '')?></span><br>
+                            <b><?= $block->escapeHtml(__('Shipment %1 of %2:', $key + 1, $shipmentCount)) ?></b><br>
+                            <span><?= $block->escapeHtml($splitShipment['title'] ?? '')?></span><br>
                             <span>
-                                <?= $escaper->escapeHtml(__('Included SKUs: %1', implode(', ', $splitShipment['products'] ?? []))) ?>
+                                <?= $block->escapeHtml(
+                                    __('Included SKUs: %1', implode(', ', $splitShipment['products'] ?? []))
+                                ) ?>
                             </span><br>
                         <?php endforeach; ?>
-                    <?php else : ?>
+                    <?php else: ?>
                         <?= $block->escapeHtml($_order->getShippingDescription()) ?>
                     <?php endif; ?>
                 </div>
@@ -95,7 +97,9 @@ $_creditmemo = $block->getCreditmemo();
                 </div>
                 <div class="box-content">
                     <?php $_billing = $_creditmemo->getbillingAddress() ?>
-                    <address><?= /* @noEscape */ $block->formatAddress($_order->getBillingAddress(), 'html') ?></address>
+                    <address>
+                        <?= /* @noEscape */ $block->formatAddress($_order->getBillingAddress(), 'html') ?>
+                    </address>
                 </div>
             </div>
             <div class="box box-order-billing-method">

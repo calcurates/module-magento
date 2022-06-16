@@ -19,12 +19,12 @@ $viewModel->setOrder($_order);
 ?>
 <div class="block block-order-details-view">
     <div class="block-title">
-        <strong><?= $escaper->escapeHtml(__('Order Information')) ?></strong>
+        <strong><?= $block->escapeHtml(__('Order Information')) ?></strong>
     </div>
     <div class="block-content">
-        <?php if (!$_order->getIsVirtual()) : ?>
+        <?php if (!$_order->getIsVirtual()): ?>
             <div class="box box-order-shipping-address">
-                <strong class="box-title"><span><?= $escaper->escapeHtml(__('Shipping Address')) ?></span></strong>
+                <strong class="box-title"><span><?= $block->escapeHtml(__('Shipping Address')) ?></span></strong>
                 <div class="box-content">
                     <address><?= /* @noEscape */ $block->getFormattedAddress($_order->getShippingAddress()) ?></address>
                 </div>
@@ -32,23 +32,25 @@ $viewModel->setOrder($_order);
 
             <div class="box box-order-shipping-method">
                 <strong class="box-title">
-                    <span><?= $escaper->escapeHtml(__('Shipping Method')) ?></span>
+                    <span><?= $block->escapeHtml(__('Shipping Method')) ?></span>
                 </strong>
                 <div class="box-content">
-                <?php if($viewModel->isSplitShipment()) : ?>
+                <?php if ($viewModel->isSplitShipment()): ?>
                     <?php $shipmentCount = count($viewModel->getOrderData()->getSplitShipments()) ?>
                     <?php foreach ($viewModel->getOrderData()->getSplitShipments() as $key => $splitShipment): ?>
-                        <b><?= $escaper->escapeHtml(__('Shipment %1 of %2:', $key + 1, $shipmentCount)) ?></b><br>
-                        <span><?= $escaper->escapeHtml($splitShipment['title'] ?? '')?></span><br>
+                        <b><?= $block->escapeHtml(__('Shipment %1 of %2:', $key + 1, $shipmentCount)) ?></b><br>
+                        <span><?= $block->escapeHtml($splitShipment['title'] ?? '')?></span><br>
                         <span>
-                            <?= $escaper->escapeHtml(__('Included SKUs: %1', implode(', ', $splitShipment['products'] ?? []))) ?>
+                            <?= $block->escapeHtml(
+                                __('Included SKUs: %1', implode(', ', $splitShipment['products'] ?? []))
+                            ) ?>
                         </span><br>
                     <?php endforeach; ?>
-                <?php else : ?>
-                    <?php if ($_order->getShippingDescription()) : ?>
-                        <?= $escaper->escapeHtml($_order->getShippingDescription()) ?>
-                    <?php else : ?>
-                        <?= $escaper->escapeHtml(__('No shipping information available')) ?>
+                <?php else: ?>
+                    <?php if ($_order->getShippingDescription()): ?>
+                        <?= $block->escapeHtml($_order->getShippingDescription()) ?>
+                    <?php else: ?>
+                        <?= $block->escapeHtml(__('No shipping information available')) ?>
                     <?php endif; ?>
                 <?php endif; ?>
                 </div>
@@ -57,7 +59,7 @@ $viewModel->setOrder($_order);
 
         <div class="box box-order-billing-address">
             <strong class="box-title">
-                <span><?= $escaper->escapeHtml(__('Billing Address')) ?></span>
+                <span><?= $block->escapeHtml(__('Billing Address')) ?></span>
             </strong>
             <div class="box-content">
                 <address><?= /* @noEscape */ $block->getFormattedAddress($_order->getBillingAddress()) ?></address>
@@ -65,7 +67,7 @@ $viewModel->setOrder($_order);
         </div>
         <div class="box box-order-billing-method">
             <strong class="box-title">
-                <span><?= $escaper->escapeHtml(__('Payment Method')) ?></span>
+                <span><?= $block->escapeHtml(__('Payment Method')) ?></span>
             </strong>
             <div class="box-content">
                 <?= $block->getPaymentInfoHtml() ?>
