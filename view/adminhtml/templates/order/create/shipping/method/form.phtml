@@ -16,7 +16,7 @@ $taxHelper = $block->getData('taxHelper');
 ?>
 <?php $_shippingRateGroups = $block->getShippingRates(); ?>
 <?php if ($_shippingRateGroups): ?>
-    <div id="order-shipping-method-choose" class="control">
+    <div id="order-shipping-method-choose" class="control" style="display: none;">
         <dl class="admin__order-shipment-methods">
         <?php foreach ($_shippingRateGroups as $code => $_rates): ?>
             <dt class="admin__order-shipment-methods-title"><?= $block->escapeHtml($block->getCarrierName($code)) ?>
@@ -36,10 +36,13 @@ $taxHelper = $block->getData('taxHelper');
                         <?php else: ?>
                             <?php $_checked = $block->isMethodActive($_code) ? 'checked="checked"' : '' ?>
                             <input <?= /* @noEscape */ $_radioProperty ?>
-                                value="<?= $escaper->escapeHtmlAttr($_code) ?>"
-                                id="s_method_<?= $escaper->escapeHtmlAttr($_code) ?>" <?= /* @noEscape */ $_checked ?>
+                                value="<?= $block->escapeHtmlAttr($_code) ?>"
+                                <?php if (!isset($secureRenderer)): ?>
+                                    onclick="order.setShippingMethod(this.value)"
+                                <?php endif; ?>
+                                id="s_method_<?= $block->escapeHtmlAttr($_code) ?>" <?= /* @noEscape */ $_checked ?>
                                 class="admin__control-radio required-entry"/>
-                            <label class="admin__field-label" for="s_method_<?= $escaper->escapeHtmlAttr($_code) ?>">
+                            <label class="admin__field-label" for="s_method_<?= $block->escapeHtmlAttr($_code) ?>">
                                 <?= $block->escapeHtml($_rate->getMethodTitle() ?
                                     $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?>
                                 <?php if ($_code !== 'calcurates_metarate'): ?>
@@ -58,13 +61,16 @@ $taxHelper = $block->getData('taxHelper');
                                 </strong>
                                 <?php endif; ?>
                             </label>
-                            <?= /* @noEscape */ $secureRenderer->renderEventListenerAsTag(
-                                'onclick',
-                                "order.setShippingMethod(this.value)",
-                                'input#s_method_' . $escaper->escapeHtmlAttr($_code)
-                            ) ?>
+                            <?php if (isset($secureRenderer)): ?>
+                                <?= /* @noEscape */ $secureRenderer->renderEventListenerAsTag(
+                                    'onclick',
+                                    "order.setShippingMethod(this.value)",
+                                    'input#s_method_' . $block->escapeHtmlAttr($_code)
+                                ) ?>
+                            <?php endif; ?>
                             <?php if ($_code === 'calcurates_metarate'): ?>
-                                <?php $block->getChildBlock('metarate')->setActiveMethod($block->getActiveMethodRate()) ?>
+                                <?php $block->getChildBlock('metarate')
+                                    ->setActiveMethod($block->getActiveMethodRate()) ?>
                                 <?= $block->getChildHtml('metarate') ?>
                             <?php endif; ?>
                         <?php endif; ?>
@@ -75,7 +81,6 @@ $taxHelper = $block->getData('taxHelper');
         <?php endforeach; ?>
         </dl>
     </div>
-    <?= /* @noEscape */ $secureRenderer->renderStyleAsTag("display:none", 'div#order-shipping-method-choose') ?>
     <?php $scriptString = <<<script
 require(['prototype'], function(){
     $('order-shipping-method-choose').show();
@@ -93,8 +98,8 @@ script;
                         <?= $block->escapeHtml($_rate->getMethodTitle() ?
                             $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?>
                     <?php else: ?>
-                    <?= $block->escapeHtml($_rate->getMethodTitle() ?
-                        $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?> -
+                        <?= $block->escapeHtml($_rate->getMethodTitle() ?
+                            $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?> -
                     <strong>
                         <?php $_excl = $block->getShippingPrice(
                             $_rate->getPrice(),
@@ -115,6 +120,9 @@ script;
                 <?= $block->getChildHtml('metarate', false) ?>
             <?php endif; ?>
             <a href="#"
+                <?php if (!isset($secureRenderer)): ?>
+               onclick="$('order-shipping-method-info').hide();$('order-shipping-method-choose').show();return false"
+                <?php endif; ?>
                class="action-default">
                 <span><?= $block->escapeHtml(__('Click to change shipping method')) ?></span>
             </a>
@@ -125,7 +133,13 @@ script;
             'div#order-shipping-method-info a.action-default'
         ) ?>
     <?php else: ?>
-        <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
+        <?php if (isset($secureRenderer)): ?>
+            <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
+        <?php else: ?>
+            <script>
+                <?= /** @noEscape  */ $scriptString ?>
+            </script>
+        <?php endif; ?>
     <?php endif; ?>
 <?php elseif ($block->getIsRateRequest()): ?>
     <div class="order-shipping-method-summary">
@@ -135,21 +149,26 @@ script;
     </div>
 <?php else: ?>
     <div id="order-shipping-method-summary" class="order-shipping-method-summary">
-        <a href="#" class="action-default">
+        <a href="#"
+            <?php if (!isset($secureRenderer)): ?>
+                onclick="order.loadShippingRates();event.preventDefault();"
+            <?php endif; ?>
+           class="action-default">
             <span><?= $block->escapeHtml(__('Get shipping methods and rates')) ?></span>
         </a>
         <input type="hidden" name="order[has_shipping]" value="" class="required-entry" />
     </div>
-    <?= /* @noEscape */ $secureRenderer->renderEventListenerAsTag(
-        'onclick',
-        "order.loadShippingRates();event.preventDefault();",
-        'div#order-shipping-method-summary a.action-default'
-    ) ?>
+    <?php if (isset($secureRenderer)): ?>
+        <?= /* @noEscape */ $secureRenderer->renderEventListenerAsTag(
+            'onclick',
+            "order.loadShippingRates();event.preventDefault();",
+            'div#order-shipping-method-summary a.action-default'
+        ) ?>
+    <?php endif; ?>
 <?php endif; ?>
-<div id="shipping-method-overlay" class="order-methods-overlay">
+<div id="shipping-method-overlay" class="order-methods-overlay" style="display: none;">
     <span><?= $block->escapeHtml(__('You don\'t need to select a shipping method.')) ?></span>
 </div>
-<?= /* @noEscape */ $secureRenderer->renderStyleAsTag("display: none;", 'div#shipping-method-overlay') ?>
 <?php $scriptString = <<<script
     require(["Magento_Sales/order/create/form"], function(){
 
@@ -163,4 +182,10 @@ $scriptString .= <<<script
     });
 script;
 ?>
-<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
+<?php if (isset($secureRenderer)): ?>
+    <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
+<?php else: ?>
+    <script>
+        <?= /** @noEscape  */ $scriptString ?>
+    </script>
+<?php endif; ?>

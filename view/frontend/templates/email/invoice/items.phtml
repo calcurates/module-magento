@@ -14,23 +14,25 @@
 ?>
 <?php $_invoice = $block->getInvoice() ?>
 <?php $_order   = $block->getOrder() ?>
-<?php if ($_invoice && $_order) : ?>
+<?php if ($_invoice && $_order): ?>
     <?php $viewModel = $block->getViewModel() ?>
     <?php $viewModel->setOrder($_order) ?>
-    <?php if($viewModel->isSplitShipment()) : ?>
+    <?php if ($viewModel->isSplitShipment()): ?>
         <table class="order-details">
             <tbody>
             <tr>
-                <td><h3><?= $escaper->escapeHtml(__('Split Shipments')) ?></h3></td>
+                <td><h3><?= $block->escapeHtml(__('Split Shipments')) ?></h3></td>
             </tr>
             <?php $shipmentCount = count($viewModel->getOrderData()->getSplitShipments()) ?>
             <?php foreach ($viewModel->getOrderData()->getSplitShipments() as $key => $splitShipment): ?>
                 <tr>
                     <td>
-                        <b><?= $escaper->escapeHtml(__('Shipment %1 of %2:', $key + 1, $shipmentCount)) ?></b><br>
-                        <span><?= $escaper->escapeHtml($splitShipment['title'] ?? '')?></span><br>
+                        <b><?= $block->escapeHtml(__('Shipment %1 of %2:', $key + 1, $shipmentCount)) ?></b><br>
+                        <span><?= $block->escapeHtml($splitShipment['title'] ?? '')?></span><br>
                         <span>
-                        <?= $escaper->escapeHtml(__('Included SKUs: %1', implode(', ', $splitShipment['products'] ?? []))) ?>
+                        <?= $block->escapeHtml(
+                            __('Included SKUs: %1', implode(', ', $splitShipment['products'] ?? []))
+                        ) ?>
                     </span><br>
                     </td>
                 </tr>
@@ -42,18 +44,18 @@
         <thead>
             <tr>
                 <th class="item-info">
-                    <?= $escaper->escapeHtml(__('Items')) ?>
+                    <?= $block->escapeHtml(__('Items')) ?>
                 </th>
                 <th class="item-qty">
-                    <?= $escaper->escapeHtml(__('Qty')) ?>
+                    <?= $block->escapeHtml(__('Qty')) ?>
                 </th>
                 <th class="item-subtotal">
-                    <?= $escaper->escapeHtml(__('Subtotal')) ?>
+                    <?= $block->escapeHtml(__('Subtotal')) ?>
                 </th>
             </tr>
         </thead>
-        <?php foreach ($_invoice->getAllItems() as $_item) : ?>
-            <?php if (!$_item->getOrderItem()->getParentItem()) : ?>
+        <?php foreach ($_invoice->getAllItems() as $_item): ?>
+            <?php if (!$_item->getOrderItem()->getParentItem()): ?>
                 <tbody>
                     <?= $block->getItemHtml($_item) ?>
                 </tbody>

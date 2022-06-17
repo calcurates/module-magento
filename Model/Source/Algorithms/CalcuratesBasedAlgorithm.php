@@ -107,7 +107,7 @@ class CalcuratesBasedAlgorithm implements SourceSelectionInterface
 
         /** @var OrderDataInterface $orderData */
         $orderData = $this->getOrderData->get($this->orderItemsRetriever->getOrderId());
-        if ($orderData->getId() && $orderData->getSplitShipments()) {
+        if ($orderData && $orderData->getId() && $orderData->getSplitShipments()) {
             return $this->getCalcuratesSplitCheckoutSourcesResult->execute(
                 $inventoryRequest,
                 $sortedSources,

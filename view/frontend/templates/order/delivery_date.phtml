@@ -16,18 +16,21 @@ $hasDeliveryDateAndTime = $orderData && $orderData->getDeliveryDate();
 <?php if ($hasDeliveryDateAndTime): ?>
     <div class="block block-order-details-view">
         <div class="block-title">
-            <strong><?= $escaper->escapeHtml(__('Delivery Dates')) ?></strong>
+            <strong><?= $block->escapeHtml(__('Delivery Dates')) ?></strong>
         </div>
         <div class="block-content">
-            <strong><?= $escaper->escapeHtml(__('Selected Delivery Date')) ?></strong>
+            <strong><?= $block->escapeHtml(__('Selected Delivery Date')) ?></strong>
 
-            <?= $viewModel->formatDate($orderData->getDeliveryDate()) ?>
+            <?= /* @noEscape */ $viewModel->formatDate($orderData->getDeliveryDate()) ?>
 
 
             <?php if ($orderData->getDeliveryDateTimeFrom() || $orderData->getDeliveryDateTimeTo()): ?>
                 <br>
-                <strong><?= $escaper->escapeHtml(__('Selected Delivery Time')) ?></strong>
-                <?= $viewModel->formatTimeInterval($orderData->getDeliveryDateTimeFrom(), $orderData->getDeliveryDateTimeTo()) ?>
+                <strong><?= $block->escapeHtml(__('Selected Delivery Time')) ?></strong>
+                <?= /* @noEscape */ $viewModel->formatTimeInterval(
+                    $orderData->getDeliveryDateTimeFrom(),
+                    $orderData->getDeliveryDateTimeTo()
+                ) ?>
 
             <?php endif; ?>
         </div>

@@ -14,8 +14,8 @@
  */
 ?>
 <div id="packaging_window">
-    <div class="message message-warning"></div>
-    <section class="admin__page-section" id="package_template">
+    <div class="message message-warning" style="display: none;"></div>
+    <section class="admin__page-section" id="package_template" style="display: none;">
         <div class="admin__page-section-title">
             <span class="title">
                 <?= $block->escapeHtml(__('Package')) ?> <span data-role="package-number"></span>
@@ -43,12 +43,13 @@
                         <th class="col-girth"><?= $block->escapeHtml(__('Girth')) ?></th>
                         <th>&nbsp;</th>
                         <?php endif; ?>
-                        <th class="col-custom">
+                        <th class="col-custom"
+                            <?php if (!$block->displayCustomsValue()): ?>
+                                style="display: none;"
+                            <?php endif ?>
+                        >
                             <?= $block->escapeHtml(__('Customs Value')) ?>
                         </th>
-                        <?php if (!$block->displayCustomsValue()): ?>
-                            <?= /* @noEscape */ $secureRenderer->renderStyleAsTag('display: none', 'th.col-custom') ?>
-                        <?php endif ?>
                         <th class="col-total-weight"><?= $block->escapeHtml(__('Total Weight')) ?></th>
                         <th class="col-length"><?= $block->escapeHtml(__('Length')) ?></th>
                         <th class="col-width"><?= $block->escapeHtml(__('Width')) ?></th>
@@ -116,7 +117,11 @@
                             $customsValueValidation = '';
                         }
                         ?>
-                        <td class="col-custom">
+                        <td class="col-custom"
+                            <?php if (!$block->displayCustomsValue()): ?>
+                                style="display: none;"
+                            <?php endif ?>
+                        >
                             <div class="admin__control-addon">
                                 <input type="text"
                                        class="customs-value input-text admin__control-text <?=
@@ -129,9 +134,6 @@
                                 </span>
                             </div>
                         </td>
-                        <?php if (!$block->displayCustomsValue()): ?>
-                            <?= /* @noEscape */ $secureRenderer->renderStyleAsTag('display: none', 'td.col-custom') ?>
-                        <?php endif ?>
                         <td class="col-total-weight">
                             <div class="admin__control-addon">
                             <input type="text"
@@ -238,7 +240,6 @@
         </div>
     </section>
     <div id="packages_content"></div>
-    <?= /* @noEscape */ $secureRenderer->renderStyleAsTag('display:none', '#package_template') ?>
     <?php $scriptString = <<<script
 require(['jquery'], function($){
     $("div#packages_content").on('click', "button[data-action='package-save-items']",
@@ -275,9 +276,11 @@ script;
 })
 script;
     ?>
-    <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
+    <?php if (isset($secureRenderer)): ?>
+        <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
+    <?php else: ?>
+        <script>
+            <?= /** @noEscape  */ $scriptString ?>
+        </script>
+    <?php endif; ?>
 </div>
-<?= /* @noEscape */ $secureRenderer->renderStyleAsTag(
-    'display:none',
-    'div#packaging_window div.message.message-warning'
-) ?>
