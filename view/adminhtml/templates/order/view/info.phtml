@@ -31,7 +31,7 @@ endif; ?>
         <span class="title"><?= $block->escapeHtml(__('Shipping &amp; Handling Information')) ?></span>
     </div>
     <div class="admin__page-section-item-content">
-        <?php  if ($order->getTracksCollection()->count()): ?>
+        <?php  if ($order->getTracksCollection()->count() && $viewModel->isTrackable()): ?>
             <?php if (isset($secureRenderer)): ?>
                 <p>
                     <a href="#" id="linkId" title="<?= $block->escapeHtmlAttr(__('Track Order')) ?>">
