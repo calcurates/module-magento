@@ -7,26 +7,26 @@
 
 @calcurates-chose-shipping-or-pickup-button-chosen__background: @color-white;
 
-.calcurates-rate-img {
-  width: 50px;
-  min-width: 50px;
-  display: block;
-  margin: 0 10px;
-}
-
-.field-tooltip-action {
-  &.action-calendar {
-    &:before {
-      content: '\e612';
-    }
-  }
-}
-
 //
 //  Common
 //  -------------------------------------------
 
 & when (@media-common = true) {
+  .calcurates-rate-img {
+    width: 50px;
+    min-width: 50px;
+    display: block;
+    margin: 0 10px;
+  }
+
+  .field-tooltip-action {
+    &.action-calendar {
+      &:before {
+        content: '\e612';
+      }
+    }
+  }
+
   .calcurates-rates-container {
     & {
       margin-top: 20px;
@@ -114,10 +114,19 @@
     tr.shipment-products-row {
       td {
         border-top-width: 0;
+
+        &.col:not(:first-child):not(.col-logo):not(.col-carrier) {
+          padding-right: 0.5rem;
+          padding-left: 0.5rem;
+        }
+        &.col-carrier {
+          width: 23%;
+        }
       }
+
       td.shipment-products {
         vertical-align: top;
-        width: 35%;
+        width: 30%;
 
         .product {
           .lib-vendor-prefix-display(flex);
@@ -140,6 +149,9 @@
             }
           }
         }
+      }
+      >td[colspan="5"] {
+        padding-right: 0;
       }
     }
   }
