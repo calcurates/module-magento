@@ -132,6 +132,9 @@ class QuoteToOrderConverter
             $orderChanged = true;
         } elseif (is_array($carrierData)) {
             foreach ($carrierData as $carrier) {
+                if (!$carrier instanceof CarrierData) {
+                    continue;
+                }
                 $this->convertPackages->convert($quote, $order, $carrier);
                 $this->convertServicesSources->convert($quote, $order);
                 $orderChanged = true;
