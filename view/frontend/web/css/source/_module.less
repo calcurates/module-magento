@@ -96,6 +96,14 @@
     }
   }
 
+  // Amasty OneStepCheckout compatibility - start
+  #checkout:not(.am-checkout) #opc-shipping_method #checkout-shipping-method-load {
+    .table-checkout-shipping-method:not(.amcheckout-shipping-methods) {
+      max-width: unset;
+    }
+  }
+  // Amasty OneStepCheckout compatibility - end
+
   .table-checkout-shipping-method {
     > tbody > tr > th,
     > tfoot > tr > th,
