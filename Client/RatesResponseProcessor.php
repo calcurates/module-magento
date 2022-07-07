@@ -126,6 +126,10 @@ class RatesResponseProcessor
             }
         }
 
+        if (null === $quote->getId()) {
+            return $result;
+        }
+
         $quoteData = $this->getQuoteData->get((int)$quote->getId());
 
         if (!$quoteData) {
