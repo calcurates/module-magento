@@ -75,9 +75,9 @@ class Estimation implements ArgumentInterface
     }
 
     /**
-     * @return bool
+     * @return int
      */
-    public function isEnabled(): bool
+    public function isEnabled(): int
     {
         return $this->configProvider->isShippingOnProductEnabled();
     }

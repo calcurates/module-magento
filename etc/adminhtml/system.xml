@@ -113,14 +113,14 @@
                     </field>
                     <field id="shipping_on_product_enabled" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Display Shipping on Product Pages</label>
-                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <source_model>Calcurates\ModuleMagento\Model\Config\Source\ShippingOnProductPages</source_model>
                         <config_path>carriers/calcurates/shipping_on_product_enabled</config_path>
                     </field>
                     <field id="shipping_on_product_fallback_message" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Fallback Message for Shipping on Product Pages</label>
                         <config_path>carriers/calcurates/shipping_on_product_fallback_message</config_path>
                         <depends>
-                            <field id="shipping_on_product_enabled">1</field>
+                            <field id="shipping_on_product_enabled" separator=",">1,2</field>
                         </depends>
                     </field>
                     <field id="enable_google_address_autocomplete" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -128,7 +128,7 @@
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <config_path>carriers/calcurates/enable_google_address_autocomplete</config_path>
                         <depends>
-                            <field id="shipping_on_product_enabled">1</field>
+                            <field id="shipping_on_product_enabled" separator=",">1,2</field>
                         </depends>
                     </field>
                     <field id="google_places_input_title" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
