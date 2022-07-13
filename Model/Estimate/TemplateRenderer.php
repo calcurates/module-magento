@@ -27,6 +27,6 @@ class TemplateRenderer
         );
         $values = array_values($variables);
 
-        return str_replace($vars, $values, nl2br($template));
+        return str_replace($vars, $values, nl2br(htmlspecialchars($template)));
     }
 }
