@@ -1,4 +1,5 @@
-<div class="calcurates-rates-container">
+<div class="calcurates-rates-container"
+     if="isEnabled === 1 || usePlacesAutocomplete() || isEnabled === 2 && rates().length">
     <ifnot args="usePlacesAutocomplete()">
         <div class="calcurates-rates-title">
             <span translate="'Estimated Delivery'"></span>
