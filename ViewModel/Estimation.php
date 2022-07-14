@@ -93,7 +93,6 @@ class Estimation implements ArgumentInterface
         $jsLayout['components']['calcurates_rates']['storeCode'] = $this->storeManager->getStore()->getCode();
         $jsLayout['components']['calcurates_rates']['isLoggedIn'] = $isLoggedIn;
         $jsLayout['components']['calcurates_rates']['productId'] = $this->getProductId();
-        $jsLayout['components']['calcurates_rates']['isEnabled'] = $this->isEnabled();
         $jsLayout['components']['calcurates_rates']['fallbackMessage'] =
             $this->configProvider->getShippingOnProductFallbackMessage();
         $jsLayout['components']['calcurates_rates']['googlePlacesApiKey'] =
