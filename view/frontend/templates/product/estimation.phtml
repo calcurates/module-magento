@@ -13,15 +13,14 @@
  * @var $escaper \Magento\Framework\Escaper
  */
 $viewModel = $block->getViewModel();
-
 $enabled = $viewModel->isEnabled();
-if (!(bool) $enabled) {
+if (!$enabled || $enabled === 2 && !$viewModel->isAttrMatch()) {
     return;
 }
 $loaderIcon = $block->escapeUrl($block->getViewFileUrl('images/loader-2.gif'));
 ?>
 <div class="calcurates-estimate-block"
-     data-bind="scope: 'calcurates_rates', visible: <?= /* @noEscape */ $enabled === 2 ? 'false' : 'true' ?>"
+     data-bind="scope: 'calcurates_rates'"
      data-mage-init='{"loader": { "icon": "<?= /* @noEscape */ $loaderIcon ?>"}}'
      data-calcurates-js="rates-container">
     <!-- ko template: getTemplate() --><!-- /ko -->

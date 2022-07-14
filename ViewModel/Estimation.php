@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\ViewModel;
 
 use Calcurates\ModuleMagento\Model\Config;
+use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Customer\Model\Context;
 use Magento\Framework\App\Http\Context as HttpContext;
 use Magento\Framework\App\RequestInterface;
@@ -54,24 +55,32 @@ class Estimation implements ArgumentInterface
     private $request;
 
     /**
+     * @var ProductRepositoryInterface
+     */
+    private $productRepository;
+
+    /**
      * @param Config $configProvider
      * @param HttpContext $httpContext
      * @param StoreManagerInterface $storeManager
      * @param SerializerInterface $serializer
      * @param RequestInterface $request
+     * @param ProductRepositoryInterface $productRepository
      */
     public function __construct(
         Config $configProvider,
         HttpContext $httpContext,
         StoreManagerInterface $storeManager,
         SerializerInterface $serializer,
-        RequestInterface $request
+        RequestInterface $request,
+        ProductRepositoryInterface $productRepository
     ) {
         $this->configProvider = $configProvider;
         $this->httpContext = $httpContext;
         $this->storeManager = $storeManager;
         $this->serializer = $serializer;
         $this->request = $request;
+        $this->productRepository = $productRepository;
     }
 
     /**
@@ -111,5 +120,30 @@ class Estimation implements ArgumentInterface
     public function getProductId(): int
     {
         return (int)$this->request->getParam('id');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAttrMatch(): bool
+    {
+        try {
+            $product = $this->productRepository->getById($this->getProductId());
+        } catch (NoSuchEntityException $e) {
+            return false;
+        }
+
+        $attributeCode = $this->configProvider->getProductShippingAttributeCode();
+        if (!$attributeCode) {
+            return false;
+        }
+
+        $attributeValue = $this->configProvider->getProductShippingAttributeValue();
+
+        if (is_array($product->getAttributeText($attributeCode))) {
+            return in_array($attributeValue, $product->getAttributeText($attributeCode));
+        } else {
+            return (string)$product->getAttributeText($attributeCode) === $attributeValue;
+        }
     }
 }
