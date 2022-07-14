@@ -10,11 +10,13 @@ namespace Calcurates\ModuleMagento\ViewModel;
 
 use Calcurates\ModuleMagento\Api\Data\OrderDataInterface;
 use Calcurates\ModuleMagento\Api\SalesData\OrderData\GetOrderDataInterface;
+use Calcurates\ModuleMagento\Api\ShippingLabelRepositoryInterface;
 use Calcurates\ModuleMagento\Model\Shipment\CarrierPackagesRetriever;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Api\Data\ShipmentInterface;
 use Magento\Shipping\Helper\Data as ShippingHelper;
 use Magento\Shipping\Model\CarrierFactory;
 use Magento\Tax\Helper\Data as TaxHelper;
@@ -55,8 +57,21 @@ class OrderShippingAdditionalInfo implements ArgumentInterface
      * @var CarrierPackagesRetriever
      */
     private $packagesRetriever;
-    private TaxHelper $taxHelper;
-    private ShippingHelper $shippingHelper;
+
+    /**
+     * @var TaxHelper
+     */
+    private $taxHelper;
+
+    /**
+     * @var ShippingHelper
+     */
+    private $shippingHelper;
+
+    /**
+     * @var ShippingLabelRepositoryInterface
+     */
+    private $labelRepository;
 
     /**
      * @param GetOrderDataInterface $getOrderData
@@ -64,6 +79,9 @@ class OrderShippingAdditionalInfo implements ArgumentInterface
      * @param CarrierFactory $carrierFactory
      * @param Registry $registry
      * @param CarrierPackagesRetriever $packagesRetriever
+     * @param TaxHelper $taxHelper
+     * @param ShippingHelper $shippingHelper
+     * @param ShippingLabelRepositoryInterface $labelRepository
      */
     public function __construct(
         GetOrderDataInterface $getOrderData,
@@ -72,7 +90,8 @@ class OrderShippingAdditionalInfo implements ArgumentInterface
         Registry $registry,
         CarrierPackagesRetriever $packagesRetriever,
         TaxHelper $taxHelper,
-        ShippingHelper $shippingHelper
+        ShippingHelper $shippingHelper,
+        ShippingLabelRepositoryInterface $labelRepository
     ) {
         $this->getOrderData = $getOrderData;
         $this->priceCurrency = $priceCurrency;
@@ -81,6 +100,7 @@ class OrderShippingAdditionalInfo implements ArgumentInterface
         $this->packagesRetriever = $packagesRetriever;
         $this->taxHelper = $taxHelper;
         $this->shippingHelper = $shippingHelper;
+        $this->labelRepository = $labelRepository;
     }
 
     /**
@@ -187,9 +207,35 @@ class OrderShippingAdditionalInfo implements ArgumentInterface
     }
 
     /**
+     * Check if all carrier services in shipment(s) cannot track orders
+     * Get data from Calcurates labels data.
+     * @param ShipmentInterface|null $shipment
+     * @return bool
+     */
+    public function isTrackable(?ShipmentInterface $shipment = null): bool
+    {
+        $isTrackable = true;
+        $untrackableCount = 0;
+        $currentShipment = $shipment ?? $this->registry->registry('current_shipment');
+        $shipments = $currentShipment ? [$currentShipment] : $this->getOrder()->getShipmentsCollection()->getItems();
+        try {
+            foreach ($shipments as $shipment) {
+                /** @var ShipmentInterface $shipment */
+                $labelData = $this->labelRepository->getLastByShipmentId((int)$shipment->getId())->getLabelData();
+                if ($labelData['trackable'] === false) {
+                    $untrackableCount++;
+                }
+            }
+            $isTrackable = count($shipments) !== $untrackableCount;
+        } catch (\Exception $e) {
+        }
+        return $isTrackable;
+    }
+
+    /**
      * @return TaxHelper
      */
-    public function getTaxHelper()
+    public function getTaxHelper(): TaxHelper
     {
         return $this->taxHelper;
     }
@@ -197,7 +243,7 @@ class OrderShippingAdditionalInfo implements ArgumentInterface
     /**
      * @return ShippingHelper
      */
-    public function getShippingHelper()
+    public function getShippingHelper(): ShippingHelper
     {
         return $this->shippingHelper;
     }

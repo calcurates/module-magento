@@ -12,7 +12,9 @@ define([
     'Magento_Checkout/js/model/quote',
     'Calcurates_ModuleMagento/js/model/shipping-save-processor/split-checkout-shipments',
     'Magento_Checkout/js/model/shipping-service',
-    'Magento_Checkout/js/checkout-data'
+    'Magento_Checkout/js/checkout-data',
+    'mage/translate',
+    'underscore'
 ], function (
     ko,
     registry,
@@ -20,7 +22,9 @@ define([
     quote,
     splitCheckoutShipments,
     shippingService,
-    checkoutData
+    checkoutData,
+    $t,
+    _
 ) {
     'use strict';
 
@@ -30,13 +34,18 @@ define([
             defaults: {
                 splitCheckoutShipments: {}
             },
+            errorValidationMessage: ko.observable(false),
 
             /**
              * @returns {*}
              */
             initialize: function () {
+                var self = this;
                 this._super();
-                shippingService.getShippingRates().subscribe(this.initSplitCheckoutShipments.bind(this))
+                shippingService.getShippingRates().subscribe(this.initSplitCheckoutShipments.bind(this));
+                quote.shippingMethod.subscribe(function () {
+                    self.errorValidationMessage(false);
+                });
                 return this;
             },
 
@@ -83,7 +92,8 @@ define([
              * @return {Boolean}
              */
             validateShippingInformation: function () {
-                var superResult = this._super();
+                var self = this,
+                    superResult = this._super();
 
                 if (superResult) {
                     if ('undefined' !== typeof deliveryDateList.currentDeliveryDatesList()
@@ -98,6 +108,16 @@ define([
                         if (!dateSelectValidationResult || !timeSelectValidationResult) {
                             return false;
                         }
+                    }
+                    if (quote.shippingMethod() && quote.shippingMethod()['method_code'] === 'metarate') {
+                        _.each(this.splitCheckoutShipments, function (observable) {
+                            if (observable() === null) {
+                                self.errorValidationMessage(
+                                    $t('The shipping method is missing. Select the shipping method and try again.')
+                                );
+                                superResult = false;
+                            }
+                        });
                     }
                 }
                 return superResult;

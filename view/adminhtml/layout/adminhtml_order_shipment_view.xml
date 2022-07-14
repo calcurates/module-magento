@@ -8,6 +8,20 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="content">
+            <referenceBlock name="form" template="Calcurates_ModuleMagento::shipment/view/form.phtml">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">
+                        Calcurates\ModuleMagento\ViewModel\OrderShippingAdditionalInfo
+                    </argument>
+                </arguments>
+                <referenceBlock name="shipment_tracking" template="Calcurates_ModuleMagento::order/tracking/view.phtml">
+                    <arguments>
+                        <argument name="view_model" xsi:type="object">
+                            Calcurates\ModuleMagento\ViewModel\OrderShippingAdditionalInfo
+                        </argument>
+                    </arguments>
+                </referenceBlock>
+            </referenceBlock>
             <block class="Magento\Shipping\Block\Adminhtml\Order\Packaging"
                    name="calcurates_shipment_data"
                    template="Calcurates_ModuleMagento::order/packaging/label_data.phtml">

@@ -14,7 +14,8 @@
  */
 $viewModel = $block->getViewModel();
 
-if (!$viewModel->isEnabled()) {
+$enabled = $viewModel->isEnabled();
+if (!(bool) $enabled) {
     return;
 }
 $loaderIcon = $block->escapeUrl($block->getViewFileUrl('images/loader-2.gif'));

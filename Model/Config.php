@@ -310,11 +310,11 @@ class Config implements ConfigProviderInterface
 
     /**
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
-     * @return bool
+     * @return int
      */
-    public function isShippingOnProductEnabled($storeId = null): bool
+    public function isShippingOnProductEnabled($storeId = null): int
     {
-        return $this->scopeConfig->isSetFlag(
+        return (int) $this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::SHIPPING_ON_PRODUCT_ENABLED,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
