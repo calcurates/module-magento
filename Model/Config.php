@@ -46,6 +46,8 @@ class Config implements ConfigProviderInterface
     public const ENABLE_GOOGLE_ADDRESS_AUTOCOMPLETE = 'enable_google_address_autocomplete';
     public const GOOGLE_PLACES_API_KEY = 'google_places_api_key';
     public const GOOGLE_PLACES_INPUT_TITLE = 'google_places_input_title';
+    public const SHIPPING_ON_PRODUCT_ATTRIBUTE_CODE = 'shipping_on_product_attribute_code';
+    public const SHIPPING_ON_PRODUCT_ATTRIBUTE_VALUE = 'shipping_on_product_attribute_value';
 
     public const ACTIVE = 'active';
     public const DEBUG = 'debug';
@@ -420,6 +422,32 @@ class Config implements ConfigProviderInterface
     {
         return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::GOOGLE_PLACES_INPUT_TITLE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
+     * @return string
+     */
+    public function getProductShippingAttributeCode($storeId = null): string
+    {
+        return (string)$this->scopeConfig->getValue(
+            self::CONFIG_GROUP . self::SHIPPING_ON_PRODUCT_ATTRIBUTE_CODE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
+     * @return string
+     */
+    public function getProductShippingAttributeValue($storeId = null): string
+    {
+        return (string)$this->scopeConfig->getValue(
+            self::CONFIG_GROUP . self::SHIPPING_ON_PRODUCT_ATTRIBUTE_VALUE,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );

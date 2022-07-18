@@ -16,7 +16,7 @@ class ShippingOnProductPages implements OptionSourceInterface
 {
     public const DO_NOT_DISPLAY = 0;
     public const DISPLAY_ALWAYS = 1;
-    public const METHODS_AVAILABLE = 2;
+    public const SPECIFIC_PRODUCT_ATTRIBUTE = 2;
 
     /**
      * @return array
@@ -25,7 +25,7 @@ class ShippingOnProductPages implements OptionSourceInterface
     {
         return [
             ['label' => __('Always'), 'value' => self::DISPLAY_ALWAYS],
-            ['label' => __('Only if methods are available'), 'value' => self::METHODS_AVAILABLE],
+            ['label' => __('Only for Specific Products'), 'value' => self::SPECIFIC_PRODUCT_ATTRIBUTE],
             ['label' => __('No'), 'value' => self::DO_NOT_DISPLAY],
         ];
     }

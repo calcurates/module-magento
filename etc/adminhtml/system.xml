@@ -123,6 +123,21 @@
                             <field id="shipping_on_product_enabled" separator=",">1,2</field>
                         </depends>
                     </field>
+                    <field id="shipping_on_product_attribute_code" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Shipping on Product - Attribute</label>
+                        <source_model>Calcurates\ModuleMagento\Model\Config\Source\ProductAttributeSource</source_model>
+                        <config_path>carriers/calcurates/shipping_on_product_attribute_code</config_path>
+                        <depends>
+                            <field id="shipping_on_product_enabled">2</field>
+                        </depends>
+                    </field>
+                    <field id="shipping_on_product_attribute_value" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Shipping on Product - Attribute Value</label>
+                        <config_path>carriers/calcurates/shipping_on_product_attribute_value</config_path>
+                        <depends>
+                            <field id="shipping_on_product_enabled">2</field>
+                        </depends>
+                    </field>
                     <field id="enable_google_address_autocomplete" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Enable Google Address Autocomplete</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
