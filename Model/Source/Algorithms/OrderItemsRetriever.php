@@ -79,8 +79,9 @@ class OrderItemsRetriever
     public function getOrderId(): int
     {
         $postData = $this->request->getPost()->toArray();
-        return (int) ($this->request->getParam('order_id') ?? isset($postData['orderId'])
-                ? $postData['orderId']
-                : null);
+        $orderId = array_key_exists('orderId', $postData)
+            ? $postData['orderId']
+            : null;
+        return (int) ($this->request->getParam('order_id') ?? $orderId);
     }
 }

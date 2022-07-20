@@ -23,7 +23,7 @@ define([
          * @param {Object} shipTo
          * @return {void}
          */
-        loadLocations: function (storeCode, productIds, isLoggedIn, shipTo = null, showLoader = true) {
+        loadLocations: function (storeCode, productIds, isLoggedIn, shipTo = null) {
             var estimateUrl = 'rest/' + storeCode + '/V1/calcurates/estimate?',
                 estimateGuestUrl = 'rest/' + storeCode + '/V1/calcurates/estimate-guest?',
                 url;
@@ -44,9 +44,7 @@ define([
                 }).join('&');
             }
 
-            if (showLoader) {
-                estimationLoaderAction.show();
-            }
+            estimationLoaderAction.show();
 
             storage
                 .get(url)

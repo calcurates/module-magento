@@ -13,9 +13,8 @@
  * @var $escaper \Magento\Framework\Escaper
  */
 $viewModel = $block->getViewModel();
-
 $enabled = $viewModel->isEnabled();
-if (!(bool) $enabled) {
+if (!$enabled || $enabled === 2 && !$viewModel->isAttrMatch()) {
     return;
 }
 $loaderIcon = $block->escapeUrl($block->getViewFileUrl('images/loader-2.gif'));

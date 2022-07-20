@@ -67,7 +67,7 @@ define([
             this.nodes.addToCartForm = $(this.selectors.ratesContainer);
 
             if (!this.usePlacesAutocomplete()) {
-                ratesModel.loadLocations(this.storeCode, [this.productId], this.isLoggedIn, null, this.isEnabled !== 2);
+                ratesModel.loadLocations(this.storeCode, [this.productId], this.isLoggedIn);
             }
         },
 

@@ -40,7 +40,7 @@ class ProductAttributesService
                 continue;
             }
 
-            if ($attribute->getIsHtmlAllowedOnFront()) {
+            if ($attribute->getIsHtmlAllowedOnFront() && is_string($value)) {
                 $value = strip_tags($value);
             }
 
