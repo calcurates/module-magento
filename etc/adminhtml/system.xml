@@ -61,6 +61,11 @@
                         <label>Default Error Message</label>
                         <config_path>carriers/calcurates/specificerrmsg</config_path>
                     </field>
+                    <field id="info_message_display_position" translate="label" type="select" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                        <label>Info Message Display Settings</label>
+                        <source_model>Calcurates\ModuleMagento\Model\Config\Source\InfoMessageDisplayPositionSource</source_model>
+                        <config_path>carriers/calcurates/info_message_display_position</config_path>
+                    </field>
                     <field id="display_shipping_options_images" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                         <label>Display Images for Shipping Options</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>

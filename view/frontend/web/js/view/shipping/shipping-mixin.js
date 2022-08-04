@@ -172,6 +172,16 @@ define([
                     this.selectShippingMethod(method)
                 }
                 return true;
+            },
+
+            /**
+             * Get tooltip position
+             * @returns {*|string}
+             */
+            getInfoMessagePosition: function () {
+                return window.checkoutConfig.calcurates && window.checkoutConfig.calcurates.info_message_display_position
+                    ? window.checkoutConfig.calcurates.info_message_display_position
+                    : 'in_tooltip';
             }
         });
     };
