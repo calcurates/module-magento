@@ -22,4 +22,13 @@
         <plugin name="Calcurates_ModuleMagento::SaveShippingMethodPlugin"
                 type="Calcurates\ModuleMagento\Plugin\Paypal\Controller\Express\SaveShippingMethodPlugin"/>
     </type>
+
+    <!-- Add Calcurates config values to window.chekcoutConfig object   -->
+    <type name="Magento\Checkout\Model\CompositeConfigProvider">
+        <arguments>
+            <argument name="configProviders" xsi:type="array">
+                <item name="calcurates_provider" xsi:type="object">Calcurates\ModuleMagento\Model\CheckoutConfigProvider\CalcuratesConfigProvider</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

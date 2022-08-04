@@ -32,6 +32,11 @@ var config = {
             'Magento_Paypal/js/order-review': {
                 'Calcurates_ModuleMagento/js/order-review-mixin': true
             }
+        },
+    },
+    map: {
+        '*': {
+            'Amasty_CheckoutCore/template/onepage/shipping/methods.html': 'Calcurates_ModuleMagento/template/am_osc/shipping/methods.html'
         }
     }
 };
