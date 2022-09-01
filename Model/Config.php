@@ -234,10 +234,10 @@ class Config implements ConfigProviderInterface
     }
 
     /**
-     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
      * @return bool
      */
-    public function isActive($storeId)
+    public function isActive($storeId = null)
     {
         return $this->scopeConfig->isSetFlag(
             self::CONFIG_GROUP . self::ACTIVE,
