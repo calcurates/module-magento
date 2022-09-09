@@ -128,6 +128,7 @@ class RateRequestBuilder
         $itemsSkus = [];
         foreach ($items as $item) {
             $itemsSkus[$item->getSku()] = $item->getSku();
+            $itemsSkus[$item->getProduct()->getData('sku')] = $item->getProduct()->getData('sku');
         }
 
         $itemsSkus = array_values($itemsSkus);
@@ -166,7 +167,7 @@ class RateRequestBuilder
                 'sku' => $item->getSku(),
                 'isVirtual' => $isVirtual,
                 'attributes' => $attributes,
-                'inventories' => $itemsSourceCodes[$item->getSku()] ?? []
+                'inventories' => $itemsSourceCodes[$attributedProduct->getSku()] ?? []
             ];
         }
 
