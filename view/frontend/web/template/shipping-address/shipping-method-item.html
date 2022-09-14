@@ -32,6 +32,10 @@
            attr="'href': method.extension_attributes.calcurates_data.map_link"
            target="_blank"
            translate="'see on the map'"></a>
+        <div class="info-message"
+             if="method.extension_attributes && method.extension_attributes.calcurates_data.info_message && element.getInfoMessagePosition() == 'below_method'">
+            <span translate="method.extension_attributes.calcurates_data.info_message"></span>
+        </div>
     </td>
     <td class="col col-logo"
         attr="'id': 'label_logo_' + method.method_code + '_' + method.carrier_code">
@@ -63,7 +67,7 @@
         </div>
         <div class="field-tooltip toggle"
              style="position: relative"
-             if="method.extension_attributes && method.extension_attributes.calcurates_data.info_message">
+             if="method.extension_attributes && method.extension_attributes.calcurates_data.info_message && element.getInfoMessagePosition() == 'in_tooltip'">
             <span id="tooltip-label" class="label"><!-- ko i18n: 'Tooltip' --><!-- /ko --></span>
             <span
                     id="tooltip"
