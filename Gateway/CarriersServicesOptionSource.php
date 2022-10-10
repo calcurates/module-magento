@@ -12,6 +12,7 @@ namespace Calcurates\ModuleMagento\Gateway;
 
 use Calcurates\ModuleMagento\Client\Command\GetShippingOptionsCommand;
 use Calcurates\ModuleMagento\Client\Http\ApiException;
+use Magento\Framework\Exception\LocalizedException;
 
 class CarriersServicesOptionSource
 {
@@ -36,7 +37,7 @@ class CarriersServicesOptionSource
                 $storeId,
                 GetShippingOptionsCommand::TYPE_CARRIERS
             );
-        } catch (ApiException $e) {
+        } catch (ApiException | LocalizedException $e) {
             return [];
         }
 
