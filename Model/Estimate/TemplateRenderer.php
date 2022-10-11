@@ -10,8 +10,23 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Model\Estimate;
 
+use Magento\Framework\Escaper;
+
 class TemplateRenderer
 {
+    /**
+     * @var Escaper
+     */
+    private $escaper;
+
+    /**
+     * @param Escaper $escaper
+     */
+    public function __construct(Escaper $escaper)
+    {
+        $this->escaper = $escaper;
+    }
+
     /**
      * @param string $template
      * @param array $variables
@@ -27,6 +42,13 @@ class TemplateRenderer
         );
         $values = array_values($variables);
 
-        return str_replace($vars, $values, nl2br(htmlspecialchars($template)));
+        return str_replace(
+            $vars,
+            $values,
+            $this->escaper->escapeHtml(
+                nl2br($template),
+                ['span', 'b', 'strong', 'div', 'ul', 'li', 'i', 'em', 'br', 'hr']
+            )
+        );
     }
 }

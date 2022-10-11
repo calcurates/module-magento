@@ -14,7 +14,9 @@ use Calcurates\ModuleMagento\Api\Data\SimpleRateInterface;
 use Calcurates\ModuleMagento\Api\Data\SimpleRateInterfaceFactory;
 use Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter;
 use Calcurates\ModuleMagento\Model\CurrencyConverter;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
+use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 
 class SimpleRateBuilder
 {
@@ -43,24 +45,40 @@ class SimpleRateBuilder
      */
     private $simpleRateFactory;
 
+    /**
+     * @var TimezoneInterface
+     */
+    private $timezone;
+
+    /**
+     * @param CurrencyConverter $currencyConverter
+     * @param PriceCurrencyInterface $priceCurrency
+     * @param DeliveryDateFormatter $deliveryDateFormatter
+     * @param TemplateRenderer $renderer
+     * @param SimpleRateInterfaceFactory $simpleRateFactory
+     * @param TimezoneInterface $timezone
+     */
     public function __construct(
         CurrencyConverter $currencyConverter,
         PriceCurrencyInterface $priceCurrency,
         DeliveryDateFormatter $deliveryDateFormatter,
         TemplateRenderer $renderer,
-        SimpleRateInterfaceFactory $simpleRateFactory
+        SimpleRateInterfaceFactory $simpleRateFactory,
+        TimezoneInterface $timezone
     ) {
         $this->currencyConverter = $currencyConverter;
         $this->priceCurrency = $priceCurrency;
         $this->deliveryDateFormatter = $deliveryDateFormatter;
         $this->renderer = $renderer;
         $this->simpleRateFactory = $simpleRateFactory;
+        $this->timezone = $timezone;
     }
 
     /**
      * Build rate object from rate data array
      * @param array $rateData
      * @return SimpleRateInterface
+     * @throws LocalizedException
      */
     public function build(array $rateData): SimpleRateInterface
     {
@@ -103,6 +121,19 @@ class SimpleRateBuilder
         $rate->setDeliveryDateTo($toDate);
         $rate->setTemplate($rateData['template']);
         $rate->setType($rateData['type']);
+        if (isset($rateData['estimatedDeliveryDate']['cutOffTime'])) {
+            $localTime = $this->timezone->date();
+            $localTime->setTime(
+                $rateData['estimatedDeliveryDate']['cutOffTime']['hour'],
+                $rateData['estimatedDeliveryDate']['cutOffTime']['minute']
+            );
+            $utcTime = new \DateTime(
+                $this->timezone->convertConfigTimeToUtc($localTime),
+                new \DateTimeZone($this->timezone->getDefaultTimezone())
+            );
+            $rate->setCutOffTimeHour((int)$utcTime->format('G'));
+            $rate->setCutOffTimeMinute((int)$utcTime->format('i'));
+        }
 
         return $rate;
     }
