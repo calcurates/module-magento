@@ -9,7 +9,7 @@
 namespace Calcurates\ModuleMagento\Model\Catalog;
 
 use Calcurates\ModuleMagento\Api\Catalog\CategoryManagementInterface;
-use Calcurates\ModuleMagento\Model\Catalog\Category\Tree;
+use Calcurates\ModuleMagento\Model\Catalog\Category\TreeFactory;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryTreeInterface;
 use Magento\Catalog\Model\Category;
@@ -30,7 +30,7 @@ class CategoryManagement implements CategoryManagementInterface
     private $categoryRepository;
 
     /**
-     * @var Tree
+     * @var TreeFactory
      */
     private $categoryTree;
 
@@ -51,7 +51,7 @@ class CategoryManagement implements CategoryManagementInterface
 
     public function __construct(
         CategoryRepositoryInterface $categoryRepository,
-        Tree $categoryTree,
+        TreeFactory $categoryTree,
         CollectionFactory $categoriesFactory,
         StoreManagerInterface $storeManager,
         ScopeResolverInterface $scopeResolver
@@ -70,17 +70,19 @@ class CategoryManagement implements CategoryManagementInterface
      */
     public function getTree($websiteId = null, $depth = null)
     {
-        $rootCategoryId = null;
+        $result = [];
 
         if ($websiteId) {
-            $rootCategoryId = $this->storeManager->getWebsite($websiteId)
-                ->getDefaultGroup()->getRootCategoryId();
+            $groups = $this->storeManager->getWebsite($websiteId)->getGroups();
+            foreach ($groups as $group) {
+                $rootCategoryId = $group->getRootCategoryId();
+                $tree = $this->getTreeByCategoryId($rootCategoryId, $depth);
+                $this->filterTree($tree);
+                $result[$rootCategoryId] = $tree;
+            }
         }
 
-        $tree = $this->getTreeByCategoryId($rootCategoryId, $depth);
-        $this->filterTree($tree);
-
-        return $tree;
+        return array_values($result);
     }
 
     /**
@@ -101,9 +103,9 @@ class CategoryManagement implements CategoryManagementInterface
         } elseif ($this->isAdminStore()) {
             $category = $this->getTopLevelCategory();
         }
-
-        return $this->categoryTree->getTree(
-            $this->categoryTree->getRootNode($category),
+        $tree = $this->categoryTree->create();
+        return $tree->getTree(
+            $tree->getRootNode($category),
             $depth
         );
     }
