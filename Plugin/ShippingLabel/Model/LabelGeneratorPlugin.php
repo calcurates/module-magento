@@ -47,12 +47,17 @@ class LabelGeneratorPlugin
         RequestInterface $request
     ) {
         $shippingServiceId = $request->getParam('calcuratesShippingServiceId');
-
         if (!$shippingServiceId) {
             throw new LocalizedException(__('Invalid Shipping Method'));
         }
 
+        $shippingDate = $request->getParam('calcuratesShippingDate');
+        if (!$shippingDate) {
+            throw new LocalizedException(__('Invalid Shipping Date'));
+        }
+
         $shipment->setData('calcuratesShippingServiceId', (int)$shippingServiceId);
+        $shipment->setData('calcuratesShippingDate', $shippingDate);
     }
 
     /**
