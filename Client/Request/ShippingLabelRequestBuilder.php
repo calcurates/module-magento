@@ -87,6 +87,7 @@ class ShippingLabelRequestBuilder
             'serviceCode' => $request->getData('calcurates_service_code'),
             'carrierCode' => $request->getData('calcurates_carrier_code'),
             'providerCode' => $request->getData('calcurates_provider_code'),
+            'shipDateUtc' => $request->getData('calcurates_shipping_date'),
             'shipTo' => [
                 'contactName' => $request->getRecipientContactPersonName(),
                 'contactPhone' => $request->getRecipientContactPhoneNumber(),
