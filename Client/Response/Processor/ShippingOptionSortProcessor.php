@@ -62,12 +62,12 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
      * @param array $resultShippingOptions
      * @param string $type
      */
-    private function prioritySortByType(&$resultShippingOptions, $type): void
+    private function prioritySortByType(array &$resultShippingOptions, $type): void
     {
         if (!$resultShippingOptions[$type]) {
             return;
         }
-        \usort($resultShippingOptions[$type], static function ($firstRate, $secondRate): int {
+        \usort($resultShippingOptions[$type], static function (array $firstRate, array $secondRate): int {
             if ($firstRate['priority'] === $secondRate['priority']) {
                 if (!$firstRate['success'] || !$firstRate['rate']) {
                     return 1;
@@ -97,14 +97,14 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
     /**
      * @param array $resultShippingOptions
      */
-    private function sortTableRates(&$resultShippingOptions): void
+    private function sortTableRates(array &$resultShippingOptions): void
     {
         if (!$resultShippingOptions['tableRates']) {
             return;
         }
 
         foreach ($resultShippingOptions['tableRates'] as &$tableRate) {
-            \usort($tableRate['methods'], static function ($firstMethod, $secondMethod): int {
+            \usort($tableRate['methods'], static function (array $firstMethod, array $secondMethod): int {
                 if (!$firstMethod['success'] || !$firstMethod['rate']) {
                     return 1;
                 }
@@ -112,16 +112,27 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                     return -1;
                 }
 
-                $result = $firstMethod['rate']['cost'] <=> $secondMethod['rate']['cost'];
-                if (0 === $result) {
-                    $result = $firstMethod['name'] <=> $secondMethod['name'];
+                if ($firstMethod['priority'] === $secondMethod['priority']) {
+                    $result = $firstMethod['rate']['cost'] <=> $secondMethod['rate']['cost'];
+                    if (0 === $result) {
+                        $result = $firstMethod['name'] <=> $secondMethod['name'];
+                    }
+
+                    return $result;
                 }
 
-                return $result;
+                if (null === $firstMethod['priority']) {
+                    return 1;
+                }
+                if (null === $secondMethod['priority']) {
+                    return -1;
+                }
+
+                return $firstMethod['priority'] <=> $secondMethod['priority'];
             });
         }
 
-        \usort($resultShippingOptions['tableRates'], static function ($firstRate, $secondRate): int {
+        \usort($resultShippingOptions['tableRates'], static function (array $firstRate, array $secondRate): int {
             if ($firstRate['priority'] === $secondRate['priority']) {
                 if (!$firstRate['success'] || !$firstRate['methods']) {
                     return 1;
@@ -132,22 +143,26 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                 $methodA = $firstRate['methods'][0];
                 $methodB = $secondRate['methods'][0];
 
-                $cheapestCostA = $methodA['rate'] ? $methodA['rate']['cost'] : null;
-                $cheapestCostB = $methodB['rate'] ? $methodB['rate']['cost'] : null;
+                if ($methodA['priority'] === $methodB['priority']) {
+                    $cheapestCostA = $methodA['rate'] ? $methodA['rate']['cost'] : null;
+                    $cheapestCostB = $methodB['rate'] ? $methodB['rate']['cost'] : null;
 
-                if (null === $cheapestCostA) {
-                    return 1;
-                }
-                if (null === $cheapestCostB) {
-                    return -1;
+                    if (null === $cheapestCostA) {
+                        return 1;
+                    }
+                    if (null === $cheapestCostB) {
+                        return -1;
+                    }
+
+                    $result = $cheapestCostA <=> $cheapestCostB;
+                    if (0 === $result) {
+                        $result = $methodA['name'] <=> $methodB['name'];
+                    }
+
+                    return $result;
                 }
 
-                $result = $cheapestCostA <=> $cheapestCostB;
-                if (0 === $result) {
-                    $result = $methodA['name'] <=> $methodB['name'];
-                }
-
-                return $result;
+                return $methodA['priority'] <=> $methodB['priority'];
             }
             if (null === $firstRate['priority']) {
                 return 1;
@@ -163,14 +178,14 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
     /**
      * @param array $resultShippingOptions
      */
-    private function sortInStorePickups(&$resultShippingOptions): void
+    private function sortInStorePickups(array &$resultShippingOptions): void
     {
         if (!$resultShippingOptions['inStorePickups']) {
             return;
         }
 
         foreach ($resultShippingOptions['inStorePickups'] as &$inStorePickup) {
-            \usort($inStorePickup['stores'], static function ($firstStore, $secondStore): int {
+            \usort($inStorePickup['stores'], static function (array $firstStore, array $secondStore): int {
                 if (!$firstStore['success'] || !$firstStore['rate']) {
                     return 1;
                 }
@@ -178,16 +193,27 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                     return -1;
                 }
 
-                $result = $firstStore['rate']['cost'] <=> $secondStore['rate']['cost'];
-                if (0 === $result) {
-                    $result = $firstStore['name'] <=> $secondStore['name'];
+                if ($firstStore['priority'] === $secondStore['priority']) {
+                    $result = $firstStore['rate']['cost'] <=> $secondStore['rate']['cost'];
+                    if (0 === $result) {
+                        $result = $firstStore['name'] <=> $secondStore['name'];
+                    }
+
+                    return $result;
                 }
 
-                return $result;
+                if (null === $firstStore['priority']) {
+                    return 1;
+                }
+                if (null === $secondStore['priority']) {
+                    return -1;
+                }
+
+                return $firstStore['priority'] <=> $secondStore['priority'];
             });
         }
 
-        \usort($resultShippingOptions['inStorePickups'], static function ($firstRate, $secondRate): int {
+        \usort($resultShippingOptions['inStorePickups'], static function (array $firstRate, array $secondRate): int {
             if ($firstRate['priority'] === $secondRate['priority']) {
                 if (!$firstRate['success'] || !$firstRate['stores']) {
                     return 1;
@@ -196,26 +222,29 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                     return -1;
                 }
 
-
                 $inStorePickupStoreA = $firstRate['stores'][0];
                 $inStorePickupStoreB = $secondRate['stores'][0];
 
-                $cheapestCostA = $inStorePickupStoreA['rate'] ? $inStorePickupStoreA['rate']['cost'] : null;
-                $cheapestCostB = $inStorePickupStoreB['rate'] ? $inStorePickupStoreB['rate']['cost'] : null;
+                if ($inStorePickupStoreA['priority'] === $inStorePickupStoreB['priority']) {
+                    $cheapestCostA = $inStorePickupStoreA['rate'] ? $inStorePickupStoreA['rate']['cost'] : null;
+                    $cheapestCostB = $inStorePickupStoreB['rate'] ? $inStorePickupStoreB['rate']['cost'] : null;
 
-                if (null === $cheapestCostA) {
-                    return 1;
-                }
-                if (null === $cheapestCostB) {
-                    return -1;
+                    if (null === $cheapestCostA) {
+                        return 1;
+                    }
+                    if (null === $cheapestCostB) {
+                        return -1;
+                    }
+
+                    $result = $cheapestCostA <=> $cheapestCostB;
+                    if (0 === $result) {
+                        $result = $inStorePickupStoreA['name'] <=> $inStorePickupStoreB['name'];
+                    }
+
+                    return $result;
                 }
 
-                $result = $cheapestCostA <=> $cheapestCostB;
-                if (0 === $result) {
-                    $result = $inStorePickupStoreA['name'] <=> $inStorePickupStoreB['name'];
-                }
-
-                return $result;
+                return $inStorePickupStoreA['priority'] <=> $inStorePickupStoreB['priority'];
             }
             if (null === $firstRate['priority']) {
                 return 1;
@@ -231,7 +260,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
     /**
      * @param array $resultShippingOptions
      */
-    private function sortCarriers(&$resultShippingOptions): void
+    private function sortCarriers(array &$resultShippingOptions): void
     {
         if (!$resultShippingOptions['carriers']) {
             return;
@@ -241,18 +270,48 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
             if (!$carrier['rates']) {
                 continue;
             }
-            \usort($carrier['rates'], static function ($firstRate, $secondRate): int {
+            \usort($carrier['rates'], static function (array $firstRate, array $secondRate): int {
                 if (!$firstRate['success'] || !$firstRate['rate']) {
                     return 1;
                 }
                 if (!$secondRate['success'] || !$secondRate['rate']) {
                     return -1;
                 }
-                return $firstRate['rate']['cost'] <=> $secondRate['rate']['cost'];
+
+
+                $firstRatePriority = null;
+                $secondRatePriority = null;
+                foreach ($firstRate['services'] as $service) {
+                    if (null !== $service['priority']) {
+                        $firstRatePriority += $service['priority'];
+                    }
+                }
+                foreach ($secondRate['services'] as $service) {
+                    if (null !== $service['priority']) {
+                        $secondRatePriority += $service['priority'];
+                    }
+                }
+                if ($firstRatePriority === $secondRatePriority) {
+                    $result = $firstRate['rate']['cost'] <=> $firstRate['rate']['cost'];
+                    if (0 === $result) {
+                        $result = $firstRate['services'][0]['name'] <=> $secondRate['services'][0]['name'];
+                    }
+
+                    return $result;
+                }
+
+                if (null === $firstRatePriority) {
+                    return 1;
+                }
+                if (null === $secondRatePriority) {
+                    return -1;
+                }
+
+                return $firstRatePriority <=> $secondRatePriority;
             });
         }
 
-        \usort($resultShippingOptions['carriers'], static function ($firstCarrier, $secondCarrier): int {
+        \usort($resultShippingOptions['carriers'], static function (array $firstCarrier, array $secondCarrier): int {
             if ($firstCarrier['priority'] === $secondCarrier['priority']) {
                 if (!$firstCarrier['success'] || !$firstCarrier['rates']) {
                     return 1;
@@ -263,18 +322,40 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
 
                 $carrierA = $firstCarrier['rates'][0];
                 $carrierB = $secondCarrier['rates'][0];
-
-                $cheapestCostA = $carrierA['rate'] ? $carrierA['rate']['cost'] : null;
-                $cheapestCostB = $carrierB['rate'] ? $carrierB['rate']['cost'] : null;
-
-                if (null === $cheapestCostA) {
-                    return 1;
+                $firstRatePriority = null;
+                $secondRatePriority = null;
+                foreach ($carrierA['services'] as $service) {
+                    if (null !== $service['priority']) {
+                        $firstRatePriority += $service['priority'];
+                    }
                 }
-                if (null === $cheapestCostB) {
-                    return -1;
+                foreach ($carrierB['services'] as $service) {
+                    if (null !== $service['priority']) {
+                        $secondRatePriority += $service['priority'];
+                    }
                 }
 
-                return $cheapestCostA <=> $cheapestCostB;
+
+                if ($firstRatePriority === $secondRatePriority) {
+                    $cheapestCostA = $carrierA['rate'] ? $carrierA['rate']['cost'] : null;
+                    $cheapestCostB = $carrierB['rate'] ? $carrierB['rate']['cost'] : null;
+
+                    if (null === $cheapestCostA) {
+                        return 1;
+                    }
+                    if (null === $cheapestCostB) {
+                        return -1;
+                    }
+
+                    $result = $cheapestCostA <=> $cheapestCostB;
+                    if (0 === $result) {
+                        $result = $carrierA['services'][0]['name'] <=> $carrierB['services'][0]['name'];
+                    }
+
+                    return $result;
+                }
+
+                return $firstRatePriority <=> $secondRatePriority;
             }
             if (null === $firstCarrier['priority']) {
                 return 1;
@@ -290,7 +371,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
     /**
      * @param array $resultShippingOptions
      */
-    private function sortRateShopping(&$resultShippingOptions): void
+    private function sortRateShopping(array &$resultShippingOptions): void
     {
         if (!$resultShippingOptions['rateShopping']) {
             return;
@@ -304,14 +385,43 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                 if (!$carrier['rates']) {
                     continue;
                 }
-                \usort($carrier['rates'], static function ($firstRate, $secondRate): int {
+                \usort($carrier['rates'], static function (array $firstRate, array $secondRate): int {
                     if (!$firstRate['success'] || !$firstRate['rate']) {
                         return 1;
                     }
                     if (!$secondRate['success'] || !$secondRate['rate']) {
                         return -1;
                     }
-                    return $firstRate['rate']['cost'] <=> $secondRate['rate']['cost'];
+
+                    $firstRatePriority = null;
+                    $secondRatePriority = null;
+                    foreach ($firstRate['services'] as $service) {
+                        if (null !== $service['priority']) {
+                            $firstRatePriority += $service['priority'];
+                        }
+                    }
+                    foreach ($secondRate['services'] as $service) {
+                        if (null !== $service['priority']) {
+                            $secondRatePriority += $service['priority'];
+                        }
+                    }
+                    if ($firstRatePriority === $secondRatePriority) {
+                        $result = $firstRate['rate']['cost'] <=> $firstRate['rate']['cost'];
+                        if (0 === $result) {
+                            $result = $firstRate['services'][0]['name'] <=> $secondRate['services'][0]['name'];
+                        }
+
+                        return $result;
+                    }
+
+                    if (null === $firstRatePriority) {
+                        return 1;
+                    }
+                    if (null === $secondRatePriority) {
+                        return -1;
+                    }
+
+                    return $firstRatePriority <=> $secondRatePriority;
                 });
             }
         }
@@ -328,26 +438,47 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                 $carrierA = $firstRate['carriers'][0];
                 $carrierB = $secondRate['carriers'][0];
 
-                $cheapestCostA = $carrierA['rates'] && $carrierA['rates'][0] && $carrierA['rates'][0]['rate']
-                    ? $carrierA['rates'][0]['rate']['cost']
-                    : null;
-                $cheapestCostB = $carrierB['rates'] && $carrierB['rates'][0] && $carrierB['rates'][0]['rate']
-                    ? $carrierB['rates'][0]['rate']['cost']
-                    : null;
-
-                if (null === $cheapestCostA) {
-                    return 1;
+                $firstRatePriority = null;
+                $secondRatePriority = null;
+                foreach ((array)$carrierA['rates'] as $rate) {
+                    foreach ($rate['services'] as $service) {
+                        if (null !== $service['priority']) {
+                            $firstRatePriority += $service['priority'];
+                        }
+                    }
                 }
-                if (null === $cheapestCostB) {
-                    return -1;
-                }
-
-                $result = $cheapestCostA <=> $cheapestCostB;
-                if (0 === $result) {
-                    $result = $carrierB['name'] <=> $carrierB['name'];
+                foreach ((array)$carrierB['rates'] as $rate) {
+                    foreach ($rate['services'] as $service) {
+                        if (null !== $service['priority']) {
+                            $secondRatePriority += $service['priority'];
+                        }
+                    }
                 }
 
-                return $result;
+
+                if ($firstRatePriority === $secondRatePriority) {
+                    $cheapestCostA = $carrierA['rates'] && $carrierA['rates'][0] && $carrierA['rates'][0]['rate']
+                        ? $carrierA['rates'][0]['rate']['cost']
+                        : null;
+                    $cheapestCostB = $carrierB['rates'] && $carrierB['rates'][0] && $carrierB['rates'][0]['rate']
+                        ? $carrierB['rates'][0]['rate']['cost']
+                        : null;
+                    if (null === $cheapestCostA) {
+                        return 1;
+                    }
+                    if (null === $cheapestCostB) {
+                        return -1;
+                    }
+
+                    $result = $cheapestCostA <=> $cheapestCostB;
+                    if (0 === $result) {
+                        $result = @$carrierA['rates'][0]['services'][0]['name'] <=> @$carrierB['rates'][0]['services'][0]['name'];
+                    }
+
+                    return $result;
+                }
+
+                return $firstRatePriority <=> $secondRatePriority;
             }
             if (null === $firstRate['priority']) {
                 return 1;
@@ -363,14 +494,14 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
     /**
      * @param array $resultShippingOptions
      */
-    private function sortMergedShippingOptions(&$resultShippingOptions): void
+    private function sortMergedShippingOptions(array &$resultShippingOptions): void
     {
         if (!$resultShippingOptions['mergedShippingOptions']) {
             return;
         }
         \usort(
             $resultShippingOptions['mergedShippingOptions'],
-            static function ($firstMethod, $secondMethod): int {
+            static function (array $firstMethod, array $secondMethod): int {
                 if (!$firstMethod['success'] || !$firstMethod['rate']) {
                     return 1;
                 }
