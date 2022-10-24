@@ -19,6 +19,8 @@ interface SimpleRateInterface
     public const DELIVERY_DATE_TO = 'delivery_date_to';
     public const TEMPLATE = 'template';
     public const TYPE = 'type';
+    public const CUT_OFF_TIME_HOUR = 'cut_off_time_hour';
+    public const CUT_OFF_TIME_MINUTE = 'cut_off_time_minute';
 
     /**
      * @return string
@@ -96,4 +98,26 @@ interface SimpleRateInterface
      * @return void
      */
     public function setType(string $type): void;
+
+    /**
+     * @return int|null
+     */
+    public function getCutOffTimeHour();
+
+    /**
+     * @param int $hour
+     * @return void
+     */
+    public function setCutOffTimeHour(int $hour): void;
+
+    /**
+     * @return int|null
+     */
+    public function getCutOffTimeMinute();
+
+    /**
+     * @param int $minute
+     * @return void
+     */
+    public function setCutOffTimeMinute(int $minute): void;
 }

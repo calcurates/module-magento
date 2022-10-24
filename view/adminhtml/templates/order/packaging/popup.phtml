@@ -22,8 +22,8 @@ $smartPackaging = $block->getCalcuratesSmartPackaging();
 $smartPackages = $smartPackaging->getPackages($shipment);
 ?>
 <?php /** fix for magento 2.3.3 validation styles. Remove after fixing in magento */ ?>
-<style type="text/css">
-    .data-table input[type="text"].validation-failed {
+<style>
+    input[type="text"].validation-failed {
         border-color: #e22626;
         box-shadow: 0 0 8px rgba(226, 38, 38, 0.6);
     }
@@ -105,8 +105,21 @@ $smartPackages = $smartPackaging->getPackages($shipment);
             'attr': {'data-action': 'save-packages'},
             'class': 'action-primary',
             click: function () {
+                let dateElm = jQuery('#calcurates_change_shipping_date'),
+                    now = new Date(),
+                    date = new Date(dateElm.val());
+
+                if (date.toString() === "Invalid Date") {
+                    dateElm.addClass('validation-failed');
+                    return;
+                }
+                dateElm.removeClass('validation-failed');
+
+                date.setHours(now.getHours());
+                date.setMinutes(now.getMinutes());
                 packaging.setParamsCreateLabelRequest({
-                    calcuratesShippingServiceId: jQuery('#calcurates_change_shipping_method_select').val()
+                    calcuratesShippingServiceId: jQuery('#calcurates_change_shipping_method_select').val(),
+                    calcuratesShippingDate: date.toISOString().slice(0, 10)
                 });
                 packaging.confirmPackaging();
             }
@@ -262,7 +275,30 @@ $block->fetchView($block->getTemplateFile('Calcurates_ModuleMagento::order/packa
             </div>
         </div>
     </div>
-
+    <div class="admin__page-section">
+        <div class="admin__page-section-content">
+            <div class="admin__page-section-item order-payment-method">
+                <div class="admin__page-section-item-title">
+                    <span class="title"><?= __('Shipping Date') ?></span>
+                </div>
+                <div class="admin__page-section-item-content">
+                    <input name="calcurates_change_shipping_date"
+                           type="text"
+                           id="calcurates_change_shipping_date"
+                           class="required-entry admin__control-text"/>
+                    <script>
+                        require(['jquery', 'calendar'], function ($) {
+                            $('#calcurates_change_shipping_date').calendar({
+                                "minDate" : 0,
+                                "defaultDate" : 0,
+                                "dateFormat" : "yy-mm-dd"
+                            }).datepicker('setDate', new Date());
+                        })
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <section class="admin__page-section order-addresses">
         <div class="admin__page-section-content">

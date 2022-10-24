@@ -12,8 +12,9 @@ define([
     'uiElement',
     'Calcurates_ModuleMagento/js/model/product/rates',
     'mage/translate',
+    'mage/template',
     'loader'
-], function (ko, $, _, Element, ratesModel, $t) {
+], function (ko, $, _, Element, ratesModel, $t, mageTemplate) {
     'use strict';
 
     return Element.extend({
@@ -40,7 +41,9 @@ define([
                 flat_rate: 'Calcurates_ModuleMagento/product/rate/default',
                 table_rates: 'Calcurates_ModuleMagento/product/rate/default',
                 in_store_pickup: 'Calcurates_ModuleMagento/product/rate/default',
-            }
+            },
+            timeTmplString: '<%= hours %>h <%= minutes %>m <%= seconds %>s',
+            countDowns: []
         },
 
         initialize: function () {
@@ -54,6 +57,9 @@ define([
             this._super();
 
             this.rates = ratesModel.rates;
+            ratesModel.rates.subscribe(function () {
+                this.countDowns.map(clearInterval)
+            }.bind(this))
 
             return this;
         },
@@ -103,7 +109,6 @@ define([
                     this.isLoggedIn,
                     this.convertPlaceToAddress(place)
                 );
-
             }
         },
 
@@ -131,7 +136,59 @@ define([
             }
             delete address['streetNumber']
             return address
-        }
+        },
 
+        /**
+         * Run countdown timer if needed
+         * @param rate
+         * @param element
+         */
+        runCountdown: function (rate, element) {
+            if (rate['cut_off_time_hour'] === undefined
+                || rate['cut_off_time_minute'] === undefined
+                || rate['rendered_template'].indexOf('{countdown}') === -1
+            ) {
+                return
+            }
+            let now = new Date(),
+                cutoff = new Date()
+
+            cutoff.setUTCHours(rate['cut_off_time_hour'])
+            cutoff.setUTCMinutes(rate['cut_off_time_minute'])
+            if (now > cutoff) {
+                cutoff.setDate(cutoff.getDate() + 1)
+            }
+
+            this.countdown(cutoff, element, rate['rendered_template'])
+            this.countDowns.push(
+                setInterval(
+                    this.countdown.bind(this),
+                    1000,
+                    cutoff,
+                    element,
+                    rate['rendered_template']
+                )
+            )
+        },
+
+        /**
+         * Countdown ticker
+         * @param cutoff
+         * @param element
+         * @param initialTmpl
+         */
+        countdown: function (cutoff, element, initialTmpl) {
+            let now = new Date(),
+                interval = new Date(cutoff - now),
+                tmpl = mageTemplate(this.timeTmplString, {
+                    hours: interval.getHours(),
+                    minutes: interval.getMinutes(),
+                    seconds: interval.getSeconds()
+                })
+            if (interval <= 0) {
+                return
+            }
+            $(element).html(initialTmpl.replace('{countdown}', tmpl))
+        }
     });
 });

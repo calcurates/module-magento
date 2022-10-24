@@ -87,6 +87,7 @@ class ShippingLabelRequestBuilder
             'serviceCode' => $request->getData('calcurates_service_code'),
             'carrierCode' => $request->getData('calcurates_carrier_code'),
             'providerCode' => $request->getData('calcurates_provider_code'),
+            'shipDateUtc' => $request->getData('calcurates_shipping_date'),
             'shipTo' => [
                 'contactName' => $request->getRecipientContactPersonName(),
                 'contactPhone' => $request->getRecipientContactPhoneNumber(),
@@ -112,10 +113,10 @@ class ShippingLabelRequestBuilder
             $isVirtual = (bool) $item->getIsVirtual();
 
             $apiRequestBody['products'][] = [
-                'priceWithTax' => round($item->getBasePriceInclTax(), 2),
-                'priceWithoutTax' => round($item->getBasePrice(), 2),
-                'discountAmount' => round($item->getBaseDiscountAmount() / $item->getQty(), 2),
-                'quantity' => round($item->getQty(), 0),
+                'priceWithTax' => round($item->getBasePriceInclTax() ?? 0, 2),
+                'priceWithoutTax' => round($item->getBasePrice() ?? 0, 2),
+                'discountAmount' => round($item->getBaseDiscountAmount() ?? 0 / $item->getQty(), 2),
+                'quantity' => round($item->getQty() ?? 0, 0),
                 'weight' => $isVirtual ? 0 : $item->getWeight(),
                 'sku' => $item->getSku(),
                 'isVirtual' => $isVirtual,

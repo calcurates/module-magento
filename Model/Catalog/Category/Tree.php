@@ -8,31 +8,51 @@
 
 namespace Calcurates\ModuleMagento\Model\Catalog\Category;
 
-use Magento\Catalog\Model\Category;
+use Magento\Catalog\Api\Data\CategoryTreeInterfaceFactory;
 use Magento\Catalog\Model\Category\Tree as OriginalTree;
-use Magento\Framework\Data\Tree\Node;
+use Magento\Catalog\Model\ResourceModel\Category\Collection;
+use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
+use Magento\Catalog\Model\ResourceModel\Category\Tree as TreeResource;
+use Magento\Catalog\Model\ResourceModel\Category\TreeFactory;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\NoSuchEntityException as NoSuchEntityExceptionAlias;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Store\Model\StoreManagerInterface;
 
 class Tree extends OriginalTree
 {
     /**
-     * Bug fix for Magento 2.3.2 where name and product count don't show up when loading tree by category id
-     * @see OriginalTree::getNode
-     *
-     * @param Category $category
-     *
-     * @return Node
-     * @throws LocalizedException
-     * @throws NoSuchEntityExceptionAlias
+     * @var CollectionFactory
      */
-    protected function getNode(Category $category)
-    {
-        $node = $this->categoryTree->loadNode($category->getId());
-        $node->loadChildren();
-        $this->prepareCollection();
-        $this->categoryTree->addCollectionData($this->categoryCollection);
+    private $collectionFactory;
 
-        return $node;
+    public function __construct(
+        TreeResource $categoryTree,
+        StoreManagerInterface $storeManager,
+        Collection $categoryCollection,
+        CategoryTreeInterfaceFactory $treeFactory,
+        CollectionFactory $collectionFactory,
+        TreeFactory $treeResourceFactory = null
+    ) {
+        parent::__construct(
+            $categoryTree,
+            $storeManager,
+            $categoryCollection,
+            $treeFactory,
+            $treeResourceFactory
+        );
+        $this->collectionFactory = $collectionFactory;
+    }
+
+    /**
+     * @return void
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     */
+    protected function prepareCollection()
+    {
+        if ($this->categoryCollection->isLoaded()) {
+            $this->categoryCollection = $this->collectionFactory->create();
+        }
+        parent::prepareCollection();
     }
 }

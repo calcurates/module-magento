@@ -32,6 +32,9 @@ var config = {
             },
             'Magento_Paypal/js/order-review': {
                 'Calcurates_ModuleMagento/js/order-review-mixin': isEnabled
+            },
+            'Magento_Checkout/js/action/select-shipping-method': {
+                'Calcurates_ModuleMagento/js/action/select-shipping-method-mixin': isEnabled
             }
         },
     },

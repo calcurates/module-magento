@@ -84,4 +84,24 @@ class SimpleRate extends AbstractSimpleObject implements SimpleRateInterface
     {
         $this->setData(self::TYPE, $type);
     }
+
+    public function getCutOffTimeHour()
+    {
+        return $this->_get(self::CUT_OFF_TIME_HOUR);
+    }
+
+    public function setCutOffTimeHour(int $hour): void
+    {
+        $this->setData(self::CUT_OFF_TIME_HOUR, $hour);
+    }
+
+    public function getCutOffTimeMinute()
+    {
+        return $this->_get(self::CUT_OFF_TIME_MINUTE);
+    }
+
+    public function setCutOffTimeMinute(int $minute): void
+    {
+        $this->setData(self::CUT_OFF_TIME_MINUTE, $minute);
+    }
 }
