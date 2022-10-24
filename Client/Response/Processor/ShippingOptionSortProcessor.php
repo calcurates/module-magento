@@ -472,7 +472,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
 
                     $result = $cheapestCostA <=> $cheapestCostB;
                     if (0 === $result) {
-                        $result = @$carrierA['rates'][0]['services'][0]['name'] <=> @$carrierB['rates'][0]['services'][0]['name'];
+                        $result = ($carrierA['rates'][0]['services'][0]['name'] ?? null) <=> ($carrierB['rates'][0]['services'][0]['name'] ?? null);
                     }
 
                     return $result;
