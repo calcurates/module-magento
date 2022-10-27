@@ -10,35 +10,12 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Client\Response\Processor;
 
-use Calcurates\ModuleMagento\Client\RateBuilder;
-use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Shipping\Model\Rate\Result;
 
 class ShippingOptionSortProcessor implements ResponseProcessorInterface
 {
-    /**
-     * @var FailedRateBuilder
-     */
-    private $failedRateBuilder;
-
-    /**
-     * @var RateBuilder
-     */
-    private $rateBuilder;
-
-    /**
-     * FlatRateProcessor constructor.
-     * @param FailedRateBuilder $failedRateBuilder
-     * @param RateBuilder $rateBuilder
-     */
-    public function __construct(FailedRateBuilder $failedRateBuilder, RateBuilder $rateBuilder)
-    {
-        $this->failedRateBuilder = $failedRateBuilder;
-        $this->rateBuilder = $rateBuilder;
-    }
-
     /**
      * @param Result $result
      * @param array $response
@@ -292,7 +269,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                     }
                 }
                 if ($firstRatePriority === $secondRatePriority) {
-                    $result = $firstRate['rate']['cost'] <=> $firstRate['rate']['cost'];
+                    $result = $firstRate['rate']['cost'] <=> $secondRate['rate']['cost'];
                     if (0 === $result) {
                         $result = $firstRate['services'][0]['name'] <=> $secondRate['services'][0]['name'];
                     }
@@ -406,7 +383,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                         }
                     }
                     if ($firstRatePriority === $secondRatePriority) {
-                        $result = $firstRate['rate']['cost'] <=> $firstRate['rate']['cost'];
+                        $result = $firstRate['rate']['cost'] <=> $secondRate['rate']['cost'];
                         if (0 === $result) {
                             $result = $firstRate['services'][0]['name'] <=> $secondRate['services'][0]['name'];
                         }

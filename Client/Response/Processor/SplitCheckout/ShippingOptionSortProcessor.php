@@ -37,7 +37,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
      * @param array $resultShippingOptions
      * @param string $type
      */
-    private function prioritySortByType(&$resultShippingOptions, $type): void
+    private function prioritySortByType(array &$resultShippingOptions, $type): void
     {
         if (!$resultShippingOptions[$type]) {
             return;
@@ -72,14 +72,14 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
     /**
      * @param array $resultShippingOptions
      */
-    private function sortTableRates(&$resultShippingOptions): void
+    private function sortTableRates(array &$resultShippingOptions): void
     {
         if (!$resultShippingOptions['tableRates']) {
             return;
         }
 
         foreach ($resultShippingOptions['tableRates'] as &$tableRate) {
-            \usort($tableRate['methods'], static function ($firstMethod, $secondMethod): int {
+            \usort($tableRate['methods'], static function (array $firstMethod, array $secondMethod): int {
                 if (!$firstMethod['success'] || !$firstMethod['rate']) {
                     return 1;
                 }
@@ -96,7 +96,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
             });
         }
 
-        \usort($resultShippingOptions['tableRates'], static function ($firstRate, $secondRate): int {
+        \usort($resultShippingOptions['tableRates'], static function (array $firstRate, array $secondRate): int {
             if ($firstRate['priority'] === $secondRate['priority']) {
                 if (!$firstRate['success'] || !$firstRate['methods']) {
                     return 1;
@@ -138,14 +138,14 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
     /**
      * @param array $resultShippingOptions
      */
-    private function sortInStorePickups(&$resultShippingOptions): void
+    private function sortInStorePickups(array &$resultShippingOptions): void
     {
         if (!$resultShippingOptions['inStorePickups']) {
             return;
         }
 
         foreach ($resultShippingOptions['inStorePickups'] as &$inStorePickup) {
-            \usort($inStorePickup['stores'], static function ($firstStore, $secondStore): int {
+            \usort($inStorePickup['stores'], static function (array $firstStore, array $secondStore): int {
                 if (!$firstStore['success'] || !$firstStore['rate']) {
                     return 1;
                 }
@@ -162,7 +162,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
             });
         }
 
-        \usort($resultShippingOptions['inStorePickups'], static function ($firstRate, $secondRate): int {
+        \usort($resultShippingOptions['inStorePickups'], static function (array $firstRate, array $secondRate): int {
             if ($firstRate['priority'] === $secondRate['priority']) {
                 if (!$firstRate['success'] || !$firstRate['stores']) {
                     return 1;
@@ -205,7 +205,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
     /**
      * @param array $resultShippingOptions
      */
-    private function sortCarriers(&$resultShippingOptions): void
+    private function sortCarriers(array &$resultShippingOptions): void
     {
         if (!$resultShippingOptions['carriers']) {
             return;
@@ -215,7 +215,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
             if (!$carrier['rates']) {
                 continue;
             }
-            \usort($carrier['rates'], static function ($firstRate, $secondRate): int {
+            \usort($carrier['rates'], static function (array $firstRate, array $secondRate): int {
                 if (!$firstRate['success'] || !$firstRate['service']['rate']) {
                     return 1;
                 }
@@ -226,7 +226,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
             });
         }
 
-        \usort($resultShippingOptions['carriers'], static function ($firstCarrier, $secondCarrier): int {
+        \usort($resultShippingOptions['carriers'], static function (array $firstCarrier, array $secondCarrier): int {
             if ($firstCarrier['priority'] === $secondCarrier['priority']) {
                 if (!$firstCarrier['success'] || !$firstCarrier['rates']) {
                     return 1;
@@ -264,7 +264,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
     /**
      * @param array $resultShippingOptions
      */
-    private function sortRateShopping(&$resultShippingOptions): void
+    private function sortRateShopping(array &$resultShippingOptions): void
     {
         if (!$resultShippingOptions['rateShopping']) {
             return;
@@ -278,7 +278,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                 if (!$carrier['rates']) {
                     continue;
                 }
-                \usort($carrier['rates'], static function ($firstRate, $secondRate): int {
+                \usort($carrier['rates'], static function (array $firstRate, array $secondRate): int {
                     if (!$firstRate['success'] || !$firstRate['service']['rate']) {
                         return 1;
                     }
@@ -290,7 +290,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
             }
         }
 
-        \usort($resultShippingOptions['rateShopping'], static function ($firstRate, $secondRate): int {
+        \usort($resultShippingOptions['rateShopping'], static function (array $firstRate, array $secondRate): int {
             if ($firstRate['priority'] === $secondRate['priority']) {
                 if (!$firstRate['carriers']) {
                     return 1;
@@ -318,7 +318,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
 
                 $result = $cheapestCostA <=> $cheapestCostB;
                 if (0 === $result) {
-                    $result = $carrierB['name'] <=> $carrierB['name'];
+                    $result = $carrierA['name'] <=> $carrierB['name'];
                 }
 
                 return $result;
