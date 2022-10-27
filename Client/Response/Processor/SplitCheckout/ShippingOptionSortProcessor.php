@@ -87,12 +87,23 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                     return -1;
                 }
 
-                $result = $firstMethod['rate']['cost'] <=> $secondMethod['rate']['cost'];
-                if (0 === $result) {
-                    $result = $firstMethod['name'] <=> $secondMethod['name'];
+                if ($firstMethod['priority'] === $secondMethod['priority']) {
+                    $result = $firstMethod['rate']['cost'] <=> $secondMethod['rate']['cost'];
+                    if (0 === $result) {
+                        $result = $firstMethod['name'] <=> $secondMethod['name'];
+                    }
+
+                    return $result;
                 }
 
-                return $result;
+                if (null === $firstMethod['priority']) {
+                    return 1;
+                }
+                if (null === $secondMethod['priority']) {
+                    return -1;
+                }
+
+                return $firstMethod['priority'] <=> $secondMethod['priority'];
             });
         }
 
@@ -107,22 +118,26 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                 $methodA = $firstRate['methods'][0];
                 $methodB = $secondRate['methods'][0];
 
-                $cheapestCostA = $methodA['rate'] ? $methodA['rate']['cost'] : null;
-                $cheapestCostB = $methodB['rate'] ? $methodB['rate']['cost'] : null;
+                if ($methodA['priority'] === $methodB['priority']) {
+                    $cheapestCostA = $methodA['rate'] ? $methodA['rate']['cost'] : null;
+                    $cheapestCostB = $methodB['rate'] ? $methodB['rate']['cost'] : null;
 
-                if (null === $cheapestCostA) {
-                    return 1;
-                }
-                if (null === $cheapestCostB) {
-                    return -1;
+                    if (null === $cheapestCostA) {
+                        return 1;
+                    }
+                    if (null === $cheapestCostB) {
+                        return -1;
+                    }
+
+                    $result = $cheapestCostA <=> $cheapestCostB;
+                    if (0 === $result) {
+                        $result = $methodA['name'] <=> $methodB['name'];
+                    }
+
+                    return $result;
                 }
 
-                $result = $cheapestCostA <=> $cheapestCostB;
-                if (0 === $result) {
-                    $result = $methodA['name'] <=> $methodB['name'];
-                }
-
-                return $result;
+                return $methodA['priority'] <=> $methodB['priority'];
             }
             if (null === $firstRate['priority']) {
                 return 1;
@@ -153,12 +168,23 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                     return -1;
                 }
 
-                $result = $firstStore['rate']['cost'] <=> $secondStore['rate']['cost'];
-                if (0 === $result) {
-                    $result = $firstStore['name'] <=> $secondStore['name'];
+                if ($firstStore['priority'] === $secondStore['priority']) {
+                    $result = $firstStore['rate']['cost'] <=> $secondStore['rate']['cost'];
+                    if (0 === $result) {
+                        $result = $firstStore['name'] <=> $secondStore['name'];
+                    }
+
+                    return $result;
                 }
 
-                return $result;
+                if (null === $firstStore['priority']) {
+                    return 1;
+                }
+                if (null === $secondStore['priority']) {
+                    return -1;
+                }
+
+                return $firstStore['priority'] <=> $secondStore['priority'];
             });
         }
 
@@ -174,22 +200,26 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                 $inStorePickupStoreA = $firstRate['stores'][0];
                 $inStorePickupStoreB = $secondRate['stores'][0];
 
-                $cheapestCostA = $inStorePickupStoreA['rate'] ? $inStorePickupStoreA['rate']['cost'] : null;
-                $cheapestCostB = $inStorePickupStoreB['rate'] ? $inStorePickupStoreB['rate']['cost'] : null;
+                if ($inStorePickupStoreA['priority'] === $inStorePickupStoreB['priority']) {
+                    $cheapestCostA = $inStorePickupStoreA['rate'] ? $inStorePickupStoreA['rate']['cost'] : null;
+                    $cheapestCostB = $inStorePickupStoreB['rate'] ? $inStorePickupStoreB['rate']['cost'] : null;
 
-                if (null === $cheapestCostA) {
-                    return 1;
-                }
-                if (null === $cheapestCostB) {
-                    return -1;
+                    if (null === $cheapestCostA) {
+                        return 1;
+                    }
+                    if (null === $cheapestCostB) {
+                        return -1;
+                    }
+
+                    $result = $cheapestCostA <=> $cheapestCostB;
+                    if (0 === $result) {
+                        $result = $inStorePickupStoreA['name'] <=> $inStorePickupStoreB['name'];
+                    }
+
+                    return $result;
                 }
 
-                $result = $cheapestCostA <=> $cheapestCostB;
-                if (0 === $result) {
-                    $result = $inStorePickupStoreA['name'] <=> $inStorePickupStoreB['name'];
-                }
-
-                return $result;
+                return $inStorePickupStoreA['priority'] <=> $inStorePickupStoreB['priority'];
             }
             if (null === $firstRate['priority']) {
                 return 1;
@@ -222,7 +252,24 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                 if (!$secondRate['success'] || !$secondRate['service']['rate']) {
                     return -1;
                 }
-                return $firstRate['service']['rate']['cost'] <=> $secondRate['service']['rate']['cost'];
+
+                if ($firstRate['service']['priority'] === $secondRate['service']['priority']) {
+                    $result = $firstRate['service']['rate']['cost'] <=> $secondRate['service']['rate']['cost'];
+                    if (0 === $result) {
+                        $result = $firstRate['service']['name'] <=> $secondRate['service']['name'];
+                    }
+
+                    return $result;
+                }
+
+                if (null === $firstRate['service']['priority']) {
+                    return 1;
+                }
+                if (null === $secondRate['service']['priority']) {
+                    return -1;
+                }
+
+                return $firstRate['service']['priority'] <=> $secondRate['service']['priority'];
             });
         }
 
@@ -238,17 +285,26 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                 $carrierA = $firstCarrier['rates'][0];
                 $carrierB = $secondCarrier['rates'][0];
 
-                $cheapestCostA = $carrierA['service']['rate'] ? $carrierA['service']['rate']['cost'] : null;
-                $cheapestCostB = $carrierB['service']['rate'] ? $carrierB['service']['rate']['cost'] : null;
+                if ($carrierA['priority'] === $carrierB['priority']) {
+                    $cheapestCostA = $carrierA['service']['rate'] ? $carrierA['service']['rate']['cost'] : null;
+                    $cheapestCostB = $carrierB['service']['rate'] ? $carrierB['service']['rate']['cost'] : null;
 
-                if (null === $cheapestCostA) {
-                    return 1;
-                }
-                if (null === $cheapestCostB) {
-                    return -1;
+                    if (null === $cheapestCostA) {
+                        return 1;
+                    }
+                    if (null === $cheapestCostB) {
+                        return -1;
+                    }
+
+                    $result = $cheapestCostA <=> $cheapestCostB;
+                    if (0 === $result) {
+                        $result = $carrierA['service']['name'] <=> $carrierB['service']['name'];
+                    }
+
+                    return $result;
                 }
 
-                return $cheapestCostA <=> $cheapestCostB;
+                return $carrierA['priority'] <=> $carrierB['priority'];
             }
             if (null === $firstCarrier['priority']) {
                 return 1;
@@ -285,7 +341,24 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                     if (!$secondRate['success'] || !$secondRate['service']['rate']) {
                         return -1;
                     }
-                    return $firstRate['service']['rate']['cost'] <=> $secondRate['service']['rate']['cost'];
+
+                    if ($firstRate['service']['priority'] === $secondRate['service']['priority']) {
+                        $result = $firstRate['service']['rate']['cost'] <=> $secondRate['service']['rate']['cost'];
+                        if (0 === $result) {
+                            $result = $firstRate['service']['name'] <=> $secondRate['service']['name'];
+                        }
+
+                        return $result;
+                    }
+
+                    if (null === $firstRate['service']['priority']) {
+                        return 1;
+                    }
+                    if (null === $secondRate['service']['priority']) {
+                        return -1;
+                    }
+
+                    return $firstRate['service']['priority'] <=> $secondRate['service']['priority'];
                 });
             }
         }
@@ -301,27 +374,50 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
 
                 $carrierA = $firstRate['carriers'][0];
                 $carrierB = $secondRate['carriers'][0];
+                $priorityA = null;
+                $priorityB = null;
+                foreach ((array)$carrierA['rates'] as $rate) {
+                    if (null !== $rate['service']['priority']) {
+                        $priorityA += $rate['service']['priority'];
+                    }
+                }
+                foreach ((array)$carrierB['rates'] as $rate) {
+                    if (null !== $rate['service']['priority']) {
+                        $priorityB += $rate['service']['priority'];
+                    }
+                }
 
-                $cheapestCostA = $carrierA['rates'] && $carrierA['rates'][0] && $carrierA['rates'][0]['service']['rate']
-                    ? $carrierA['rates'][0]['service']['rate']['cost']
-                    : null;
-                $cheapestCostB = $carrierB['rates'] && $carrierB['rates'][0] && $carrierB['rates'][0]['service']['rate']
-                    ? $carrierB['rates'][0]['service']['rate']['cost']
-                    : null;
+                if ($priorityA === $priorityB) {
+                    $cheapestCostA = $carrierA['rates'] && $carrierA['rates'][0] && $carrierA['rates'][0]['service']['rate']
+                        ? $carrierA['rates'][0]['service']['rate']['cost']
+                        : null;
+                    $cheapestCostB = $carrierB['rates'] && $carrierB['rates'][0] && $carrierB['rates'][0]['service']['rate']
+                        ? $carrierB['rates'][0]['service']['rate']['cost']
+                        : null;
 
-                if (null === $cheapestCostA) {
+                    if (null === $cheapestCostA) {
+                        return 1;
+                    }
+                    if (null === $cheapestCostB) {
+                        return -1;
+                    }
+
+                    $result = $cheapestCostA <=> $cheapestCostB;
+                    if (0 === $result) {
+                        $result = $carrierA['name'] <=> $carrierB['name'];
+                    }
+
+                    return $result;
+                }
+
+                if (null === $priorityA) {
                     return 1;
                 }
-                if (null === $cheapestCostB) {
+                if (null === $priorityB) {
                     return -1;
                 }
 
-                $result = $cheapestCostA <=> $cheapestCostB;
-                if (0 === $result) {
-                    $result = $carrierA['name'] <=> $carrierB['name'];
-                }
-
-                return $result;
+                return $priorityA <=> $priorityB;
             }
             if (null === $firstRate['priority']) {
                 return 1;

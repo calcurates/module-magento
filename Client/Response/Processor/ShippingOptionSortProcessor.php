@@ -455,6 +455,13 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                     return $result;
                 }
 
+                if (null === $firstRatePriority) {
+                    return 1;
+                }
+                if (null === $secondRatePriority) {
+                    return -1;
+                }
+
                 return $firstRatePriority <=> $secondRatePriority;
             }
             if (null === $firstRate['priority']) {
