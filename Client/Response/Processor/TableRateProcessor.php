@@ -99,7 +99,7 @@ class TableRateProcessor implements ResponseProcessorInterface
                     continue;
                 }
 
-                $responseRateMethod['priority'] = $tableRate['priority'];
+                $responseRateMethod['priority'] = $tableRate['priority'] + $responseRateMethod['priority'] * 0.001;
                 $responseRateMethod['imageUri'] = $responseRateMethod['imageUri'] ?: $tableRate['imageUri'];
                 $responseRateMethod['name'] = $this->tableRateNameBuilder->buildName(
                     $responseRateMethod,
