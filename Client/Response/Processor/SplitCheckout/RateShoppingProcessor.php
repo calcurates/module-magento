@@ -134,6 +134,7 @@ class RateShoppingProcessor implements ResponseProcessorInterface
                         continue;
                     }
 
+                    $servicesPriority = 0;
                     $serviceIds = $messages = [];
                     foreach ($rate['services'] ?? [] as $service) {
                         if (!empty($service['message'])) {
@@ -141,6 +142,9 @@ class RateShoppingProcessor implements ResponseProcessorInterface
                         }
 
                         $serviceIds[] = $service['id'];
+                        if (!empty($service['priority'])) {
+                            $servicesPriority += $service['priority'] * 0.001;
+                        }
                     }
 
                     if (isset($rate['service']['id'])) {
@@ -164,7 +168,7 @@ class RateShoppingProcessor implements ResponseProcessorInterface
 
                     $existingMethodIds[$methodId] = true;
 
-                    $rate['priority'] = $rateShopping['priority'];
+                    $rate['priority'] = $rateShopping['priority'] + $rate['service']['priority'] * 0.001;
                     $rate['imageUri'] = $rateShopping['imageUri'];
                     $rate['message'] = implode(' ', $messages);
 

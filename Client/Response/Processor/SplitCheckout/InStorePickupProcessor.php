@@ -125,7 +125,7 @@ class InStorePickupProcessor implements ResponseProcessorInterface
                     continue;
                 }
 
-                $store['priority'] = $shippingOption['priority'];
+                $store['priority'] = $shippingOption['priority'] + $store['priority'] * 0.001;
                 $store['imageUri'] = $store['imageUri'] ?: $shippingOption['imageUri'];
                 $rates = $this->rateBuilder->build(
                     ShippingMethodManager::IN_STORE_PICKUP . '_' . $shippingOption['id'] . '_' . $store['id'],
