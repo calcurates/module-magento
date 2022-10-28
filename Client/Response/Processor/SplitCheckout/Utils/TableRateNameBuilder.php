@@ -24,7 +24,8 @@ class TableRateNameBuilder
     {
         $uniqueMethodNames = [];
 
-        $name = $uniqueMethodNames[$rateMethod['name']] ?? $rateMethod['name'] . ' - ';
+        $name = $uniqueMethodNames[$rateMethod['name']]
+            ?? ($rateMethod['displayName']?? $rateMethod['name']) . ' - ';
 
         if ($includePackageNames) {
             $packageNames = [];
@@ -32,6 +33,10 @@ class TableRateNameBuilder
                 $packageNames[] = $package['name'];
             }
             $name .= implode(';', $packageNames);
+        }
+
+        if (!empty($rateMethod['additionalText'])) {
+            $name .= ' (' . implode(' ', $rateMethod['additionalText']) . ')';
         }
 
         $uniqueMethodNames[$rateMethod['name']] = $name;

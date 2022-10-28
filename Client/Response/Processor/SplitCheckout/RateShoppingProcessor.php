@@ -172,6 +172,7 @@ class RateShoppingProcessor implements ResponseProcessorInterface
                     $rate['imageUri'] = $rateShopping['imageUri'];
                     $rate['message'] = implode(' ', $messages);
 
+                    unset($rate['displayName'], $rate['additionalText']);
                     $rates = $this->rateBuilder->build(
                         $methodId,
                         $rate,

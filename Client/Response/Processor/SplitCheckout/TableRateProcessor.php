@@ -105,10 +105,12 @@ class TableRateProcessor implements ResponseProcessorInterface
                     $responseRateMethod,
                     $this->configProvider->isDisplayPackageNameForCarrier()
                 );
+
+                unset($responseRateMethod['displayName'], $responseRateMethod['additionalText']);
                 $rates = $this->rateBuilder->build(
                     ShippingMethodManager::TABLE_RATE . '_' . $tableRate['id'] . '_' . $responseRateMethod['id'],
                     $responseRateMethod,
-                    $tableRate['name']
+                    $tableRate['displayName'] ?? $tableRate['name']
                 );
 
                 foreach ($rates as $rate) {

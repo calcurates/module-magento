@@ -129,7 +129,7 @@ class InStorePickupProcessor implements ResponseProcessorInterface
                 $rates = $this->rateBuilder->build(
                     ShippingMethodManager::IN_STORE_PICKUP . '_' . $shippingOption['id'] . '_' . $store['id'],
                     $store,
-                    $shippingOption['name']
+                    $shippingOption['displayName'] ?? $shippingOption['name']
                 );
 
                 foreach ($rates as $rate) {
