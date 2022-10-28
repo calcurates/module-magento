@@ -24,7 +24,8 @@ class CarrierRateNameBuilder
     {
         $uniqueServiceNames = [];
         foreach ($carrierRate['services'] as $service) {
-            $name = $uniqueServiceNames[$service['name']] ?? $service['name'] . ' - ';
+            $name = $uniqueServiceNames[$service['name']]
+                ?? ($service['displayName'] ?? $service['name']) . ' - ';
 
             if ($includePackageNames) {
                 $packageNames = [];
@@ -32,6 +33,10 @@ class CarrierRateNameBuilder
                     $packageNames[] = $package['name'];
                 }
                 $name .= implode(';', $packageNames);
+            }
+
+            if (!empty($service['additionalText'])) {
+                $name .= ' (' . implode(' ', $service['additionalText']) . ')';
             }
 
             $uniqueServiceNames[$service['name']] = $name;

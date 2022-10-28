@@ -186,7 +186,7 @@ class CarrierProcessor implements ResponseProcessorInterface
                 $rates = $this->rateBuilder->build(
                     $methodId,
                     $responseCarrierRate,
-                    $carrier['name']
+                    $carrier['displayName'] ?? $carrier['name']
                 );
 
                 foreach ($rates as $rate) {
