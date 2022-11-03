@@ -105,7 +105,19 @@ class RatesResponseProcessor
 
         // status only for errors
         $status = $response['status'] ?? null;
-        if (!$response || empty($response['shippingOptions']) || $status) {
+        if ($response && isset($response['shippingOptions']) && is_array($response['shippingOptions'])) {
+            $shippingOptionsExist = false;
+            foreach ($response['shippingOptions'] as $ratesGroupName => $ratesData) {
+                if ($ratesData) {
+                    $shippingOptionsExist = true;
+                }
+            }
+        }
+        if (!$response
+            || empty($response['shippingOptions'])
+            || $status
+            || (isset($shippingOptionsExist) && !$shippingOptionsExist)
+        ) {
             $failedRate = $this->failedRateBuilder->build(
                 $this->calcuratesConfig->getTitle($quote->getStoreId()),
                 $this->calcuratesConfig->getErrorMessage($quote->getStoreId())

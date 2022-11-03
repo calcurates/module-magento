@@ -31,7 +31,7 @@ class Config implements ConfigProviderInterface
     public const CONFIG_API_URL = 'api_url';
     public const CONFIG_DISPLAY_RATES_WITH_TAX = 'display_rates_with_tax';
     public const CONFIG_ERROR_MESSAGE = 'specificerrmsg';
-    public const CONFIG_TITLE = 'specificerrmsg';
+    public const CONFIG_TITLE = 'title';
     public const API_GET_RATES_TIMEOUT = 'api_get_rates_timeout';
     public const SHIPPING_METHODS_FOR_FALLBACK = 'shipping_methods_for_fallback';
     public const DELIVERY_DATE_DISPLAY = 'delivery_date_display';
