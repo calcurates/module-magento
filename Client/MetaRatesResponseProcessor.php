@@ -95,16 +95,17 @@ class MetaRatesResponseProcessor
 
         // status only for errors
         $status = $response['status'] ?? null;
-        if ($response && isset($response['shippingOptions']) && is_array($response['shippingOptions'])) {
+        if ($response && isset($response['origins']) && is_array($response['origins'])) {
             $shippingOptionsExist = false;
-            foreach ($response['shippingOptions'] as $ratesGroupName => $ratesData) {
-                if ($ratesData) {
-                    $shippingOptionsExist = true;
+            foreach ($response['origins'] as $origin) {
+                foreach ($origin['shippingOptions'] ?? [] as $ratesGroupName => $ratesData) {
+                    if ($ratesData) {
+                        $shippingOptionsExist = true;
+                    }
                 }
             }
         }
         if (!$response
-            || empty($response['shippingOptions'])
             || $status
             || (isset($shippingOptionsExist) && !$shippingOptionsExist)
         ) {
