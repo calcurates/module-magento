@@ -113,17 +113,16 @@ class RatesResponseProcessor
                 }
             }
         }
+        $failedRate = $this->failedRateBuilder->build(
+            $this->calcuratesConfig->getTitle($quote->getStoreId()),
+            $this->calcuratesConfig->getErrorMessage($quote->getStoreId())
+        );
         if (!$response
             || empty($response['shippingOptions'])
             || $status
             || (isset($shippingOptionsExist) && !$shippingOptionsExist)
         ) {
-            $failedRate = $this->failedRateBuilder->build(
-                $this->calcuratesConfig->getTitle($quote->getStoreId()),
-                $this->calcuratesConfig->getErrorMessage($quote->getStoreId())
-            );
             $result->append($failedRate);
-
             return $result;
         }
 
@@ -136,6 +135,11 @@ class RatesResponseProcessor
             if ($rateDeliveryDates) {
                 $deliveryDates[$rate->getCarrier() . '_' . $rate->getMethod()] = $rateDeliveryDates;
             }
+        }
+
+        if (empty($result->getAllRates())) {
+            $result->append($failedRate);
+            return $result;
         }
 
         if (null === $quote->getId()) {
