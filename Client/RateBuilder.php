@@ -100,7 +100,7 @@ class RateBuilder
         );
         $methodTitle = $responseRate['displayName'] ?? $responseRate['name'];
         if (!empty($responseRate['additionalText'])) {
-            $methodTitle .= ' (' . implode(' ', $responseRate['additionalText']) . ')';
+            $methodTitle .= ' - (' . implode(' ', $responseRate['additionalText']) . ')';
         }
         $rate->setCarrier(Carrier::CODE);
         $rate->setMethod($methodId);

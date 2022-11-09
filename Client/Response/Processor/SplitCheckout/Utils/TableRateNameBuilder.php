@@ -10,11 +10,27 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Client\Response\Processor\SplitCheckout\Utils;
 
+use Magento\Framework\App\Area;
+use Magento\Framework\App\State;
+
 /**
  * Build long rate name with method and packages names
  */
 class TableRateNameBuilder
 {
+    /**
+     * @var State
+     */
+    private $appState;
+
+    /**
+     * @param State $appState
+     */
+    public function __construct(State $appState)
+    {
+        $this->appState = $appState;
+    }
+
     /**
      * @param array $rateMethod
      * @param bool $includePackageNames
@@ -24,8 +40,12 @@ class TableRateNameBuilder
     {
         $uniqueMethodNames = [];
 
-        $name = $uniqueMethodNames[$rateMethod['name']]
-            ?? ($rateMethod['displayName']?? $rateMethod['name']) . ' - ';
+        if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
+            $name = $rateMethod['name'] . (!empty($rateMethod['displayName']) ? " ({$rateMethod['displayName']})" : '');
+        } else {
+            $name = $rateMethod['displayName'] ?? $rateMethod['name'];
+        }
+        $name .= ' - ';
 
         if ($includePackageNames) {
             $packageNames = [];

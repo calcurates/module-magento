@@ -14,6 +14,8 @@ use Calcurates\ModuleMagento\Client\RateBuilder;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
+use Magento\Framework\App\Area;
+use Magento\Framework\App\State;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Shipping\Model\Rate\Result;
 
@@ -30,14 +32,24 @@ class FreeShippingProcessor implements ResponseProcessorInterface
     private $rateBuilder;
 
     /**
+     * @var State
+     */
+    private $appState;
+
+    /**
      * FreeShippingProcessor constructor.
      * @param FailedRateBuilder $failedRateBuilder
      * @param RateBuilder $rateBuilder
+     * @param State $appState
      */
-    public function __construct(FailedRateBuilder $failedRateBuilder, RateBuilder $rateBuilder)
-    {
+    public function __construct(
+        FailedRateBuilder $failedRateBuilder,
+        RateBuilder $rateBuilder,
+        State $appState
+    ) {
         $this->failedRateBuilder = $failedRateBuilder;
         $this->rateBuilder = $rateBuilder;
+        $this->appState = $appState;
     }
 
     /**
@@ -62,6 +74,13 @@ class FreeShippingProcessor implements ResponseProcessorInterface
 
             $responseRate['rate']['cost'] = 0;
             $responseRate['rate']['currency'] = null;
+
+            if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
+                $responseRate['displayName'] = $responseRate['name']
+                    . (!empty($responseRate['displayName']) ? " ({$responseRate['displayName']})" : '');
+            } else {
+                $responseRate['displayName'] = $responseRate['displayName'] ?? $responseRate['name'];
+            }
 
             $rates = $this->rateBuilder->build(
                 ShippingMethodManager::FREE_SHIPPING . '_' . $responseRate['id'],
