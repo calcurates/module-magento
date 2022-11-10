@@ -10,11 +10,27 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Client\Response\Processor\Utils;
 
+use Magento\Framework\App\Area;
+use Magento\Framework\App\State;
+
 /**
  * Build long carrier rate name with services' names (unique) and packages' names in it
  */
 class CarrierRateNameBuilder
 {
+    /**
+     * @var State
+     */
+    private $appState;
+
+    /**
+     * @param State $appState
+     */
+    public function __construct(State $appState)
+    {
+        $this->appState = $appState;
+    }
+
     /**
      * @param array $carrierRate
      * @param bool $includePackageNames
@@ -24,8 +40,13 @@ class CarrierRateNameBuilder
     {
         $uniqueServiceNames = [];
         foreach ($carrierRate['services'] as $service) {
-            $name = $uniqueServiceNames[$service['name']]
-                ?? ($service['displayName'] ?? $service['name']) . ' - ';
+            if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
+                $name = $service['name'] . (!empty($service['displayName']) ? " ({$service['displayName']})" : '');
+            } else {
+                $name = $service['displayName'] ?? $service['name'];
+            }
+            $name .= ' - ';
+            $name = $uniqueServiceNames[$service['name']] ?? $name;
 
             if ($includePackageNames) {
                 $packageNames = [];
