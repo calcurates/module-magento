@@ -38,3 +38,24 @@
 .shipping-packages-title {
   margin-top: 1.5rem;
 }
+.tax-identifiers-table {
+  th.column {
+    width: 24%;
+  }
+  td.check,
+  td.action {
+    text-align: center;
+    vertical-align: middle;
+  }
+  .action-new {
+    .action-icon();
+    padding-left: 0;
+    padding-right: 0;
+
+    &:before {
+      &:extend(.abs-icon all);
+      content: @icon-plus__content;
+      font-size: 2rem;
+    }
+  }
+}

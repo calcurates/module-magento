@@ -106,6 +106,7 @@ class CreateShippingLabelCommand
 
         $shippingServiceId = $request->getOrderShipment()->getData('calcuratesShippingServiceId');
         $shippingDate = $request->getOrderShipment()->getData('calcuratesShippingDate');
+        $taxIds = $request->getOrderShipment()->getData('calcuratesTaxIds');
         $shippingCarrierData = $this->getDataByShippingServiceId($shippingServiceId);
         if (!$shippingCarrierData) {
             throw new LocalizedException(__('Incorrect shipping service'));
@@ -115,6 +116,7 @@ class CreateShippingLabelCommand
         $request->setData('calcurates_provider_code', $shippingCarrierData['carrierProvider']);
         $request->setData('calcurates_service_code', $shippingCarrierData['service']['code']);
         $request->setData('calcurates_shipping_date', $shippingDate);
+        $request->setData('calcurates_tax_ids', $taxIds);
 
         $apiRequestBody = $this->shippingLabelRequestBuilder->build(
             $request,
