@@ -130,5 +130,17 @@
             "PRIMARY": true,
             "CALCURATES_ORDER_ADDR_DATA_ADDR_ID_SALES_ORDER_ADDR_ENTT_ID": true
         }
+    },
+    "calcurates_tax_identifiers": {
+        "column": {
+            "id": true,
+            "identifier_type": true,
+            "value": true,
+            "issuing_authority": true,
+            "taxable_entity_type": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
     }
 }

@@ -8,6 +8,7 @@
 
 namespace Calcurates\ModuleMagento\Client\Request;
 
+use Calcurates\ModuleMagento\Api\Data\TaxIdentifierInterface;
 use Calcurates\ModuleMagento\Model\Catalog\Product\Attribute\Resolver\HsCodeAttributeResolver;
 use Calcurates\ModuleMagento\Model\Source\ShipmentSourceCodeRetriever;
 use InvalidArgumentException;
@@ -106,6 +107,15 @@ class ShippingLabelRequestBuilder
             'validateAddress' => 'no_validation',
             'products' => [],
         ];
+
+        foreach ($request['calcurates_tax_ids'] ?? [] as $taxId) {
+            $apiRequestBody['taxIdentifiers'][] = [
+                'identifierType' => $taxId[TaxIdentifierInterface::TYPE],
+                'issuingAuthority' => $taxId[TaxIdentifierInterface::ISSUING_AUTHORITY],
+                'taxableEntityType' => $taxId[TaxIdentifierInterface::ENTITY_TYPE],
+                'value' => $taxId[TaxIdentifierInterface::VALUE]
+            ];
+        }
 
         /** @var ShipmentItemInterface $item */
         foreach ($request->getOrderShipment()->getAllItems() as $item) {

@@ -94,6 +94,16 @@
       <column name="order_id"/>
     </index>
   </table>
+  <table name="calcurates_tax_identifiers" resource="default" engine="innodb" comment="Shipping Labels Tax Identifiers">
+    <column xsi:type="int" name="id" padding="10" unsigned="true" nullable="false" identity="true" comment="ID"/>
+    <column xsi:type="varchar" name="identifier_type" nullable="true" length="255" comment="Tax Identifier Type"/>
+    <column xsi:type="varchar" name="value" nullable="true" length="255" comment="Tax Identifier Value"/>
+    <column xsi:type="varchar" name="issuing_authority" nullable="true" length="255" comment="Tax Identifier Issuing Authority"/>
+    <column xsi:type="varchar" name="taxable_entity_type" nullable="true" length="255" comment="Tax Identifier Entity Type"/>
+    <constraint xsi:type="primary" referenceId="PRIMARY">
+      <column name="id"/>
+    </constraint>
+  </table>
   <table name="quote">
     <column xsi:type="longtext" name="calcurates_carrier_packages" nullable="true"/>
     <column xsi:type="longtext" name="calcurates_carrier_srvs_srs_codes" nullable="true"/>
