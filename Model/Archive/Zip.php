@@ -32,9 +32,10 @@ class Zip extends ZipArchiveMagento
         $zip = new \ZipArchive();
         if (true !== $zip->open($destination, \ZipArchive::CREATE)) {
             throw new FileSystemException(
-                __('\'%1\' destination source could not been open', $destination)
+                __('\'%1\' destination source could not been opened', $destination)
             );
         }
+        $sourceAlias = $sourceAlias ?? basename($source);
         $zip->addFile($source, $sourceAlias);
         $zip->close();
         return $destination;
