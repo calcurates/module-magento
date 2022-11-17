@@ -105,13 +105,24 @@ class RatesResponseProcessor
 
         // status only for errors
         $status = $response['status'] ?? null;
-        if (!$response || empty($response['shippingOptions']) || $status) {
-            $failedRate = $this->failedRateBuilder->build(
-                $this->calcuratesConfig->getTitle($quote->getStoreId()),
-                $this->calcuratesConfig->getErrorMessage($quote->getStoreId())
-            );
+        if ($response && isset($response['shippingOptions']) && is_array($response['shippingOptions'])) {
+            $shippingOptionsExist = false;
+            foreach ($response['shippingOptions'] as $ratesGroupName => $ratesData) {
+                if ($ratesData) {
+                    $shippingOptionsExist = true;
+                }
+            }
+        }
+        $failedRate = $this->failedRateBuilder->build(
+            $this->calcuratesConfig->getTitle($quote->getStoreId()),
+            $this->calcuratesConfig->getErrorMessage($quote->getStoreId())
+        );
+        if (!$response
+            || empty($response['shippingOptions'])
+            || $status
+            || (isset($shippingOptionsExist) && !$shippingOptionsExist)
+        ) {
             $result->append($failedRate);
-
             return $result;
         }
 
@@ -124,6 +135,11 @@ class RatesResponseProcessor
             if ($rateDeliveryDates) {
                 $deliveryDates[$rate->getCarrier() . '_' . $rate->getMethod()] = $rateDeliveryDates;
             }
+        }
+
+        if (empty($result->getAllRates())) {
+            $result->append($failedRate);
+            return $result;
         }
 
         if (null === $quote->getId()) {

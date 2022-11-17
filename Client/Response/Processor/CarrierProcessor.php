@@ -136,6 +136,7 @@ class CarrierProcessor implements ResponseProcessorInterface
                 $sourceToServiceId = [];
                 $message = [];
                 $packages = [];
+                $servicesPriority = 0;
                 foreach ($responseCarrierRate['services'] as $service) {
                     foreach ($service['packages'] ?? [] as $package) {
                         $packages[] = $package;
@@ -143,6 +144,10 @@ class CarrierProcessor implements ResponseProcessorInterface
 
                     if (!empty($service['message'])) {
                         $message[] = $service['message'];
+                    }
+
+                    if (!empty($service['priority'])) {
+                        $servicesPriority += $service['priority'] * 0.001;
                     }
 
                     $serviceIds[] = $service['id'];
@@ -175,13 +180,13 @@ class CarrierProcessor implements ResponseProcessorInterface
 
                 $existingMethodIds[$methodId] = true;
 
-                $responseCarrierRate['priority'] = $carrier['priority'];
+                $responseCarrierRate['priority'] = $carrier['priority'] + $servicesPriority;
                 $responseCarrierRate['imageUri'] = $carrier['imageUri'];
                 $responseCarrierRate['message'] = implode(' ', $message);
                 $rates = $this->rateBuilder->build(
                     $methodId,
                     $responseCarrierRate,
-                    $carrier['name']
+                    $carrier['displayName'] ?? $carrier['name']
                 );
 
                 foreach ($rates as $rate) {

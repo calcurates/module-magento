@@ -10,10 +10,14 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Plugin\ShippingLabel\Model;
 
+use Calcurates\ModuleMagento\Api\Data\TaxIdentifierInterface;
+use Calcurates\ModuleMagento\Model\ResourceModel\TaxIdentifier\CollectionFactory;
 use Calcurates\ModuleMagento\Model\Shipment\CarriersSettingsProvider;
+use Calcurates\ModuleMagento\Model\TaxIdentifierFactory;
 use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Sales\Model\Order\Shipment;
 use Magento\Shipping\Model\Shipping\LabelGenerator;
 
@@ -25,12 +29,36 @@ class LabelGeneratorPlugin
     private $dataPersistor;
 
     /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    /**
+     * @var CollectionFactory
+     */
+    private $taxIdsCollectionFactory;
+
+    /**
+     * @var TaxIdentifierFactory
+     */
+    private $taxIdFactory;
+
+    /**
      * @param DataPersistorInterface $dataPersistor
+     * @param SerializerInterface $serializer
+     * @param CollectionFactory $taxIdsCollectionFactory
+     * @param TaxIdentifierFactory $taxIdFactory
      */
     public function __construct(
-        DataPersistorInterface $dataPersistor
+        DataPersistorInterface $dataPersistor,
+        SerializerInterface $serializer,
+        CollectionFactory $taxIdsCollectionFactory,
+        TaxIdentifierFactory $taxIdFactory
     ) {
         $this->dataPersistor = $dataPersistor;
+        $this->serializer = $serializer;
+        $this->taxIdsCollectionFactory = $taxIdsCollectionFactory;
+        $this->taxIdFactory = $taxIdFactory;
     }
 
     /**
@@ -56,6 +84,21 @@ class LabelGeneratorPlugin
             throw new LocalizedException(__('Invalid Shipping Date'));
         }
 
+        if ($taxIdentifiers = $request->getParam('calcuratesTaxIds')) {
+            $ids = $this->serializer->unserialize($taxIdentifiers);
+            $this->saveTaxIdentifiers($ids);
+            $shipment->setData(
+                'calcuratesTaxIds',
+                array_filter(
+                    $ids,
+                    function ($v) {
+                        return $v['selected'] == true;
+                    },
+                    ARRAY_FILTER_USE_BOTH
+                )
+            );
+        }
+
         $shipment->setData('calcuratesShippingServiceId', (int)$shippingServiceId);
         $shipment->setData('calcuratesShippingDate', $shippingDate);
     }
@@ -75,5 +118,25 @@ class LabelGeneratorPlugin
         RequestInterface $request
     ) {
         $this->dataPersistor->clear(CarriersSettingsProvider::CARRIERS_SETTINGS_DATA_CODE);
+    }
+
+    /**
+     * @param array|null $identifiers
+     * @return void
+     */
+    private function saveTaxIdentifiers($identifiers)
+    {
+        if (empty($identifiers)) {
+            return;
+        }
+        $this->taxIdsCollectionFactory->create()->walk('delete');
+        foreach ($identifiers as $identifier) {
+            $this->taxIdFactory->create()
+                ->setType($identifier[TaxIdentifierInterface::TYPE])
+                ->setValue($identifier[TaxIdentifierInterface::VALUE])
+                ->setIssueAuthority($identifier[TaxIdentifierInterface::ISSUING_AUTHORITY])
+                ->setEntityType($identifier[TaxIdentifierInterface::ENTITY_TYPE])
+                ->save();
+        }
     }
 }

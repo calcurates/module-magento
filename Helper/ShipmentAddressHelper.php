@@ -12,14 +12,20 @@ use Calcurates\ModuleMagento\Gateway\CarriersServicesOptionSource;
 use Calcurates\ModuleMagento\Model\Source\ShipmentServiceRetriever;
 use Calcurates\ModuleMagento\Model\Source\ShipmentSourceCodeRetriever;
 use Calcurates\ModuleMagento\Model\Source\SourceAddressService;
+use Magento\Backend\Model\Auth\Session;
+use Magento\Directory\Model\RegionFactory;
+use Magento\Directory\Model\ResourceModel\Country\CollectionFactory;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Address;
+use Magento\Sales\Model\Order\Address\Renderer;
+use Magento\Sales\Model\Order\AddressFactory;
 use Magento\Sales\Model\Order\Shipment;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\Store;
 
 class ShipmentAddressHelper extends AbstractHelper
 {
@@ -29,12 +35,12 @@ class ShipmentAddressHelper extends AbstractHelper
     private $addressRenderer;
 
     /**
-     * @var \Magento\Backend\Model\Auth\Session
+     * @var Session
      */
     private $authSession;
 
     /**
-     * @var \Magento\Sales\Model\Order\AddressFactory
+     * @var AddressFactory
      */
     private $addressFactory;
 
@@ -44,7 +50,7 @@ class ShipmentAddressHelper extends AbstractHelper
     private $sourceAddressService;
 
     /**
-     * @var \Magento\Directory\Model\RegionFactory
+     * @var RegionFactory
      */
     private $regionFactory;
 
@@ -63,16 +69,34 @@ class ShipmentAddressHelper extends AbstractHelper
      */
     private $carriersServicesOptionSource;
 
+    /**
+     * @var CollectionFactory
+     */
+    private $countryCollectionFactory;
+
+    /**
+     * @param Context $context
+     * @param Renderer $addressRenderer
+     * @param Session $authSession
+     * @param AddressFactory $addressFactory
+     * @param SourceAddressService $sourceAddressService
+     * @param RegionFactory $regionFactory
+     * @param ShipmentSourceCodeRetriever $shipmentSourceCodeRetriever
+     * @param ShipmentServiceRetriever $shipmentServiceRetriever
+     * @param CarriersServicesOptionSource $carriersServicesOptionSource
+     * @param CollectionFactory $countryCollectionFactory
+     */
     public function __construct(
         Context $context,
         Address\Renderer $addressRenderer,
-        \Magento\Backend\Model\Auth\Session $authSession,
-        \Magento\Sales\Model\Order\AddressFactory $addressFactory,
+        Session $authSession,
+        AddressFactory $addressFactory,
         SourceAddressService $sourceAddressService,
-        \Magento\Directory\Model\RegionFactory $regionFactory,
+        RegionFactory $regionFactory,
         ShipmentSourceCodeRetriever $shipmentSourceCodeRetriever,
         ShipmentServiceRetriever $shipmentServiceRetriever,
-        CarriersServicesOptionSource $carriersServicesOptionSource
+        CarriersServicesOptionSource $carriersServicesOptionSource,
+        CollectionFactory $countryCollectionFactory
     ) {
         parent::__construct($context);
         $this->addressRenderer = $addressRenderer;
@@ -83,6 +107,7 @@ class ShipmentAddressHelper extends AbstractHelper
         $this->shipmentSourceCodeRetriever = $shipmentSourceCodeRetriever;
         $this->shipmentServiceRetriever = $shipmentServiceRetriever;
         $this->carriersServicesOptionSource = $carriersServicesOptionSource;
+        $this->countryCollectionFactory = $countryCollectionFactory;
     }
 
     /**
@@ -98,10 +123,9 @@ class ShipmentAddressHelper extends AbstractHelper
 
     /**
      * @param Shipment $orderShipment
-     * @return string|null
-     * @throws LocalizedException
+     * @return Address
      */
-    public function getOriginAddressHtml(Shipment $orderShipment)
+    public function getOriginAddress(Shipment $orderShipment)
     {
         $addressData = $this->sourceAddressService->getAddressDataByShipment(
             $orderShipment
@@ -114,7 +138,17 @@ class ShipmentAddressHelper extends AbstractHelper
         $address = $this->addressFactory->create(['data' => $addressData]);
         $address->setAddressType(Address::TYPE_SHIPPING);
 
-        return $this->getFormattedAddress($address);
+        return $address;
+    }
+
+    /**
+     * @param Shipment $orderShipment
+     * @return string|null
+     * @throws LocalizedException
+     */
+    public function getOriginAddressHtml(Shipment $orderShipment)
+    {
+        return $this->getFormattedAddress($this->getOriginAddress($orderShipment));
     }
 
     /**
@@ -136,6 +170,15 @@ class ShipmentAddressHelper extends AbstractHelper
         $sourceCode = $this->shipmentSourceCodeRetriever->retrieve($shipment);
 
         return  $this->shipmentServiceRetriever->retrieve($order, $sourceCode);
+    }
+
+    /**
+     * @param null|int|string|Store $store
+     * @return array
+     */
+    public function getCountriesOptions($store = null)
+    {
+        return $this->countryCollectionFactory->create()->loadByStore($store)->toOptionArray();
     }
 
     /**

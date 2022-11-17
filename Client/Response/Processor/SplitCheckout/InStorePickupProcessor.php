@@ -21,6 +21,8 @@ use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Calcurates\ModuleMagento\Model\InStorePickup\Extractor\PickupLocationDataExtractor;
 use Calcurates\ModuleMagento\Model\InStorePickup\PickupLocationPersistor;
 use Magento\Framework\Api\DataObjectHelper;
+use Magento\Framework\App\Area;
+use Magento\Framework\App\State;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Shipping\Model\Rate\Result;
 
@@ -62,6 +64,11 @@ class InStorePickupProcessor implements ResponseProcessorInterface
     private $dataObjectHelper;
 
     /**
+     * @var State
+     */
+    private $appState;
+
+    /**
      * InStorePickupProcessor constructor.
      * @param FailedRateBuilder $failedRateBuilder
      * @param RateBuilder $rateBuilder
@@ -70,6 +77,7 @@ class InStorePickupProcessor implements ResponseProcessorInterface
      * @param PickupLocationPersistor $pickupLocationPersistor
      * @param PickupLocationInterfaceFactory $pickupLocationFactory
      * @param DataObjectHelper $dataObjectHelper
+     * @param State $appState
      */
     public function __construct(
         FailedRateBuilder $failedRateBuilder,
@@ -78,7 +86,8 @@ class InStorePickupProcessor implements ResponseProcessorInterface
         PickupLocationDataExtractor $pickupLocationDataExtractor,
         PickupLocationPersistor $pickupLocationPersistor,
         PickupLocationInterfaceFactory $pickupLocationFactory,
-        DataObjectHelper $dataObjectHelper
+        DataObjectHelper $dataObjectHelper,
+        State $appState
     ) {
         $this->failedRateBuilder = $failedRateBuilder;
         $this->rateBuilder = $rateBuilder;
@@ -87,6 +96,7 @@ class InStorePickupProcessor implements ResponseProcessorInterface
         $this->pickupLocationPersistor = $pickupLocationPersistor;
         $this->pickupLocationFactory = $pickupLocationFactory;
         $this->dataObjectHelper = $dataObjectHelper;
+        $this->appState = $appState;
     }
 
     /**
@@ -125,12 +135,18 @@ class InStorePickupProcessor implements ResponseProcessorInterface
                     continue;
                 }
 
-                $store['priority'] = $shippingOption['priority'];
+                $store['priority'] = $shippingOption['priority'] + $store['priority'] * 0.001;
                 $store['imageUri'] = $store['imageUri'] ?: $shippingOption['imageUri'];
+                if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
+                    $store['displayName'] = $store['name']
+                        . (!empty($store['displayName']) ? " ({$store['displayName']})" : '');
+                } else {
+                    $store['displayName'] = $store['displayName'] ?? $store['name'];
+                }
                 $rates = $this->rateBuilder->build(
                     ShippingMethodManager::IN_STORE_PICKUP . '_' . $shippingOption['id'] . '_' . $store['id'],
                     $store,
-                    $shippingOption['name']
+                    $shippingOption['displayName'] ?? $shippingOption['name']
                 );
 
                 foreach ($rates as $rate) {

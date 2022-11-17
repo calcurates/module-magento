@@ -98,9 +98,13 @@ class RateBuilder
             $responseRate['rate']['cost'],
             $responseRate['rate']['currency']
         );
+        $methodTitle = $responseRate['displayName'] ?? $responseRate['name'];
+        if (!empty($responseRate['additionalText'])) {
+            $methodTitle .= ' - (' . implode(' ', $responseRate['additionalText']) . ')';
+        }
         $rate->setCarrier(Carrier::CODE);
         $rate->setMethod($methodId);
-        $rate->setMethodTitle($responseRate['name']);
+        $rate->setMethodTitle($methodTitle);
         $rate->setCarrierTitle($carrierTitle);
         if (array_key_exists('message', $responseRate)) {
             $rate->setInfoMessageEnabled((bool)$responseRate['message']);

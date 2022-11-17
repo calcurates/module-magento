@@ -95,8 +95,20 @@ class MetaRatesResponseProcessor
 
         // status only for errors
         $status = $response['status'] ?? null;
-        $splitCheckout = true;
-        if (!$response || (empty($response['shippingOptions']) && !$splitCheckout) || $status) {
+        if ($response && isset($response['origins']) && is_array($response['origins'])) {
+            $shippingOptionsExist = false;
+            foreach ($response['origins'] as $origin) {
+                foreach ($origin['shippingOptions'] ?? [] as $ratesGroupName => $ratesData) {
+                    if ($ratesData) {
+                        $shippingOptionsExist = true;
+                    }
+                }
+            }
+        }
+        if (!$response
+            || $status
+            || (isset($shippingOptionsExist) && !$shippingOptionsExist)
+        ) {
             $failedRate = $this->failedRateBuilder->build(
                 $this->calcuratesConfig->getTitle($quote->getStoreId()),
                 $this->calcuratesConfig->getErrorMessage($quote->getStoreId())

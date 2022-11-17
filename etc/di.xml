@@ -321,4 +321,6 @@
                 type="Calcurates\ModuleMagento\Plugin\Model\Checkout\CalculateTotalsInformation"
                 sortOrder="10"/>
     </type>
+    <preference for="Calcurates\ModuleMagento\Api\Data\TaxIdentifierInterface"
+                type="Calcurates\ModuleMagento\Model\TaxIdentifier"/>
 </config>

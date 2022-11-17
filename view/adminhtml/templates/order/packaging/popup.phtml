@@ -6,7 +6,12 @@
  * @package Calcurates_ModuleMagento
  */
 ?>
-<?php /** @var $block \Magento\Shipping\Block\Adminhtml\Order\Packaging */ ?>
+<?php
+/**
+ * @var $block \Magento\Shipping\Block\Adminhtml\Order\Packaging
+ * @var $taxIdsViewModel \Calcurates\ModuleMagento\ViewModel\TaxIdentifiers
+ */
+?>
 <?php
 $sizeSource = $block->getSourceSizeModel()->toOptionArray(); // used in included `popup_content.phtml` file
 $girthEnabled = $block->isDisplayGirthValue() && $block->isGirthAllowed(
@@ -20,6 +25,8 @@ $isShipmentNew = !$shipment->getId();
 /** @var \Calcurates\ModuleMagento\ViewModel\SmartPackaging $smartPackaging */
 $smartPackaging = $block->getCalcuratesSmartPackaging();
 $smartPackages = $smartPackaging->getPackages($shipment);
+$taxIdsMeta = $block->getTaxIdentifiersMeta() ?? [];
+$taxIdsViewModel = $block->getTaxIdentifiersViewModel();
 ?>
 <?php /** fix for magento 2.3.3 validation styles. Remove after fixing in magento */ ?>
 <style>
@@ -34,10 +41,11 @@ $smartPackages = $smartPackaging->getPackages($shipment);
         "Calcurates_ModuleMagento/js/model/smart-packaging",
         "underscore",
         "mage/template",
+        'mageUtils',
         "prototype",
         "Magento_Shipping/order/packaging",
         "Magento_Ui/js/modal/modal"
-    ], function (jQuery, smartPackaging, _, template) {
+    ], function (jQuery, smartPackaging, _, template, utils) {
         var isShipmentNew = <?= $isShipmentNew ? 'true' : 'false' ?>,
             smartPackages = <?= $smartPackages ?>;
         window.packaging = new Packaging(<?= /* @noEscape */ $block->getConfigDataJson() ?>);
@@ -107,7 +115,9 @@ $smartPackages = $smartPackaging->getPackages($shipment);
             click: function () {
                 let dateElm = jQuery('#calcurates_change_shipping_date'),
                     now = new Date(),
-                    date = new Date(dateElm.val());
+                    date = new Date(dateElm.val()),
+                    params,
+                    taxIds = [];
 
                 if (date.toString() === "Invalid Date") {
                     dateElm.addClass('validation-failed');
@@ -117,10 +127,25 @@ $smartPackages = $smartPackaging->getPackages($shipment);
 
                 date.setHours(now.getHours());
                 date.setMinutes(now.getMinutes());
-                packaging.setParamsCreateLabelRequest({
+
+                params = {
                     calcuratesShippingServiceId: jQuery('#calcurates_change_shipping_method_select').val(),
                     calcuratesShippingDate: date.toISOString().slice(0, 10)
-                });
+                }
+
+                jQuery('.tax-identifiers-table .tax-id-row').each(function () {
+                    var row = jQuery(this)
+                    taxIds.push({
+                        selected: row.find('input[name*="calcurates_tax_id\["]').is(':checked'),
+                        identifier_type: row.find('select[name*=calcurates_tax_id_type]').val(),
+                        value: row.find('input[name*=calcurates_tax_id_value]').val(),
+                        issuing_authority: row.find('select[name*=calcurates_tax_authority]').val(),
+                        taxable_entity_type: row.find('select[name*=calcurates_tax_entity_type]').val(),
+                    })
+                })
+                params['calcuratesTaxIds'] = JSON.stringify(taxIds)
+
+                packaging.setParamsCreateLabelRequest(params);
                 packaging.confirmPackaging();
             }
         }, {
@@ -227,6 +252,18 @@ $smartPackages = $smartPackaging->getPackages($shipment);
         if (!_.isEmpty(smartPackages)) {
             smartPackaging.init(window.packaging, smartPackages);
         }
+        jQuery('.tax-identifiers-table .action-new').click(function () {
+            var taxIdsRowHtml = template('#tax_identifiers_row_template', {
+                rowId: utils.uniqueid()
+            })
+            jQuery(this).parents('tr').before(taxIdsRowHtml);
+        })
+        if (!jQuery('.tax-identifiers-table .tax-id-row').length) {
+            jQuery('.tax-identifiers-table .action-new').click()
+        }
+        jQuery('.tax-identifiers-table').on('click', '.action-delete', function () {
+            jQuery(this).parents('tr').remove()
+        })
     });
 </script>
 <?php
@@ -299,7 +336,107 @@ $block->fetchView($block->getTemplateFile('Calcurates_ModuleMagento::order/packa
             </div>
         </div>
     </div>
-
+    <?php if ($helper->getOriginAddress($block->getShipment())->getCountryId()
+            !== $block->getShipment()->getShippingAddress()->getCountryId()) : ?>
+    <div class="admin__page-section">
+        <div class="admin__page-section-content">
+            <div class="admin__page-section-item">
+                <div class="admin__page-section-item-title">
+                    <span class="title"><?= __('Tax Identifiers') ?></span>
+                    <span class="message message-notice notice hint">
+                        <?= __('Specify tax identifiers for international shipment (optional)') ?>
+                    </span>
+                </div>
+                <div class="admin__page-section-item-content">
+                    <table class="admin__control-table tax-identifiers-table">
+                        <thead>
+                            <tr>
+                                <th><?= __('Use') ?></th>
+                                <th class="column"><?= __('Tax ID Type') ?></th>
+                                <th class="column"><?= __('Value') ?></th>
+                                <th class="column"><?= __('Issuing Authority') ?></th>
+                                <th class="column"><?= __('Entity Type') ?></th>
+                                <th class="column"><?= __('Action') ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($taxIdsViewModel->getTaxIdentifiers() as $taxId) : ?>
+                            <tr class="tax-id-row" data-tax-row-id="<?= $taxId->getId() ?>">
+                                <td class="check">
+                                    <input type="checkbox"
+                                           name="calcurates_tax_id[<?= $taxId->getId() ?>]"
+                                           id="calcurates_tax_id[<?= $taxId->getId() ?>]"
+                                           class="admin__control-checkbox"/>
+                                    <label for="calcurates_tax_id"></label>
+                                </td>
+                                <td>
+                                    <select name="calcurates_tax_id_type[<?= $taxId->getId() ?>]"
+                                           id="calcurates_tax_id_type[<?= $taxId->getId() ?>]"
+                                           class="admin__control-select select">
+                                        <option value=""></option>
+                                        <?php foreach ($taxIdsMeta['type'] ?? [] as $type) : ?>
+                                            <option value="<?= $type ?>"
+                                                <?php if ($taxId->getType() === $type) : ?>
+                                                    selected
+                                                <?php endif; ?>
+                                            >
+                                                <?= $type ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input name="calcurates_tax_id_value[<?= $taxId->getId() ?>]"
+                                           id="calcurates_tax_id_value[<?= $taxId->getId() ?>]"
+                                           value="<?= $taxId->getValue() ?>"
+                                           type="text"
+                                           class="admin__control-text"/>
+                                </td>
+                                <td>
+                                    <select name="calcurates_tax_authority[<?= $taxId->getId() ?>]"
+                                            id="calcurates_tax_authority[<?= $taxId->getId() ?>]"
+                                            class="admin__control-select select">
+                                        <?php foreach ($helper->getCountriesOptions($order->getStoreId()) as $country) : ?>
+                                            <option value="<?= $country['value'] ?>"
+                                                <?php if ($taxId->getIssueAuthority() === $country['value']) : ?>
+                                                    selected
+                                                <?php endif; ?>
+                                            >
+                                                <?= $country['label'] ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="calcurates_tax_entity_type[<?= $taxId->getId() ?>]"
+                                            id="calcurates_tax_entity_type[<?= $taxId->getId() ?>]"
+                                            class="admin__control-select select">
+                                        <option value=""></option>
+                                        <?php foreach ($taxIdsMeta['entity_type'] ?? [] as $type) : ?>
+                                            <option value="<?= $type ?>"
+                                                <?php if ($taxId->getEntityType() === $type) : ?>
+                                                    selected
+                                                <?php endif; ?>
+                                            >
+                                                <?= $type ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </td>
+                                <td class="action"><button type="button" class="action-delete"></button></td>
+                            </tr>
+                        <?php endforeach; ?>
+                            <tr class="new-row">
+                                <td colspan="5"></td>
+                                <td class="action"><button type="button" class="action-new"></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
     <section class="admin__page-section order-addresses">
         <div class="admin__page-section-content">
             <div class="admin__page-section-item order-billing-address">
@@ -362,5 +499,52 @@ $block->fetchView($block->getTemplateFile('Calcurates_ModuleMagento::order/packa
                 </div>
             </div>
         </div>
+    </script>
+    <script id="tax_identifiers_row_template" type="text/x-magento-template">
+        <tr class="tax-id-row" data-tax-row-id="<%- rowId %>">
+            <td class="check">
+                <input type="checkbox"
+                       name="calcurates_tax_id[<%- rowId %>]"
+                       id="calcurates_tax_id_<%- rowId %>"
+                       class="admin__control-checkbox"/>
+                <label for="calcurates_tax_id_<%- rowId %>"></label>
+            </td>
+            <td>
+                <select name="calcurates_tax_id_type[<%- rowId %>]"
+                        id="calcurates_tax_id_type_<%- rowId %>"
+                        class="admin__control-select select">
+                    <option value=""></option>
+                    <?php foreach ($taxIdsMeta['type'] ?? [] as $type) : ?>
+                        <option value="<?= $type ?>"><?= $type ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </td>
+            <td>
+                <input name="calcurates_tax_id_value[<%- rowId %>]"
+                       type="text"
+                       id="calcurates_tax_id_value_<%- rowId %>"
+                       class="admin__control-text"/>
+            </td>
+            <td>
+                <select name="calcurates_tax_authority[<%- rowId %>]"
+                        id="calcurates_tax_authority_<%- rowId %>"
+                        class="admin__control-select select">
+                    <?php foreach ($helper->getCountriesOptions($order->getStoreId()) as $country) : ?>
+                        <option value="<?= $country['value'] ?>"><?= $country['label'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </td>
+            <td>
+                <select name="calcurates_tax_entity_type[<%- rowId %>]"
+                        id="calcurates_tax_entity_type_<%- rowId %>"
+                        class="admin__control-select select">
+                    <option value=""></option>
+                    <?php foreach ($taxIdsMeta['entity_type'] ?? [] as $type) : ?>
+                        <option value="<?= $type ?>"><?= $type ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </td>
+            <td class="action"><button type="button" class="action-delete"></button></td>
+        </tr>
     </script>
 </div>

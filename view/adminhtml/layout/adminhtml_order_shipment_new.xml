@@ -10,5 +10,28 @@
         <referenceContainer name="content">
             <block class="Calcurates\ModuleMagento\Block\Adminhtml\Shipping\Packaging" name="calcurates_shipping_packaging" template="Calcurates_ModuleMagento::shipping/packaging.phtml" />
         </referenceContainer>
+        <referenceBlock name="shipment_packaging">
+            <arguments>
+                <argument name="tax_identifiers_view_model" xsi:type="object">
+                    Calcurates\ModuleMagento\ViewModel\TaxIdentifiers
+                </argument>
+                <argument name="tax_identifiers_meta" xsi:type="array">
+                    <item name="type" xsi:type="array">
+                        <item name="1" xsi:type="string">vat</item>
+                        <item name="2" xsi:type="string">eori</item>
+                        <item name="3" xsi:type="string">ssn</item>
+                        <item name="4" xsi:type="string">ein</item>
+                        <item name="5" xsi:type="string">tin</item>
+                        <item name="6" xsi:type="string">ioss</item>
+                        <item name="7" xsi:type="string">pan</item>
+                        <item name="8" xsi:type="string">voec</item>
+                    </item>
+                    <item name="entity_type" xsi:type="array">
+                        <item name="1" xsi:type="string">shipper</item>
+                        <item name="2" xsi:type="string">recipient</item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
     </body>
 </page>

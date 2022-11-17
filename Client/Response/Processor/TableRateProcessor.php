@@ -99,16 +99,17 @@ class TableRateProcessor implements ResponseProcessorInterface
                     continue;
                 }
 
-                $responseRateMethod['priority'] = $tableRate['priority'];
+                $responseRateMethod['priority'] = $tableRate['priority'] + $responseRateMethod['priority'] * 0.001;
                 $responseRateMethod['imageUri'] = $responseRateMethod['imageUri'] ?: $tableRate['imageUri'];
                 $responseRateMethod['name'] = $this->tableRateNameBuilder->buildName(
                     $responseRateMethod,
                     $this->configProvider->isDisplayPackageNameForCarrier()
                 );
+                unset($responseRateMethod['displayName'], $responseRateMethod['additionalText']);
                 $rates = $this->rateBuilder->build(
                     ShippingMethodManager::TABLE_RATE . '_' . $tableRate['id'] . '_' . $responseRateMethod['id'],
                     $responseRateMethod,
-                    $tableRate['name']
+                    $tableRate['displayName'] ?? $tableRate['name']
                 );
 
                 foreach ($rates as $rate) {
