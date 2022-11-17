@@ -13,10 +13,10 @@ interface TaxIdentifierInterface
     /**
      * String constants for property names
      */
-    const TYPE = "identifier_type";
-    const VALUE = "value";
-    const ISSUING_AUTHORITY = "issuing_authority";
-    const ENTITY_TYPE = "taxable_entity_type";
+    public const TYPE = "identifier_type";
+    public const VALUE = "value";
+    public const ISSUING_AUTHORITY = "issuing_authority";
+    public const ENTITY_TYPE = "taxable_entity_type";
 
     /**
      * Getter for Type.

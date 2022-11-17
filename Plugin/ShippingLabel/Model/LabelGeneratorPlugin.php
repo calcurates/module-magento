@@ -89,10 +89,13 @@ class LabelGeneratorPlugin
             $this->saveTaxIdentifiers($ids);
             $shipment->setData(
                 'calcuratesTaxIds',
-                array_filter($ids, function ($v) {
-                    return $v['selected'] == true;
-                },
-                ARRAY_FILTER_USE_BOTH)
+                array_filter(
+                    $ids,
+                    function ($v) {
+                        return $v['selected'] == true;
+                    },
+                    ARRAY_FILTER_USE_BOTH
+                )
             );
         }
 

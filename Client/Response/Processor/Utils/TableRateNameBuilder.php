@@ -40,7 +40,6 @@ class TableRateNameBuilder
     {
         $uniqueMethodNames = [];
         foreach ($rateMethod['rates'] ?? [] as $rate) {
-
             if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
                 $name = $rateMethod['name']
                     . (!empty($rateMethod['displayName']) ? " ({$rateMethod['displayName']})" : '');
