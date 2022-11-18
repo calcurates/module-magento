@@ -21,7 +21,7 @@ class ShipmentSourceCodeRetriever
         $sourceCode = '';
         if (method_exists($shipment, 'getExtensionAttributes')) {
             $extensionAttributes = $shipment->getExtensionAttributes();
-            if (method_exists($extensionAttributes, 'getSourceCode')) {
+            if ($extensionAttributes && method_exists($extensionAttributes, 'getSourceCode')) {
                 $sourceCode = $extensionAttributes->getSourceCode();
             }
         }

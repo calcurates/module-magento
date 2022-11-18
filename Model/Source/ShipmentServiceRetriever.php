@@ -58,7 +58,7 @@ class ShipmentServiceRetriever
         try {
             $shippingMethod = $order->getShippingMethod();
             $orderData = $this->getOrderData->get($order->getId());
-            if ($splitShipments = $orderData->getSplitShipments()) {
+            if ($orderData && $splitShipments = $orderData->getSplitShipments()) {
                 foreach ($splitShipments as $splitShipment) {
                     if ($splitShipment['code'] === $requestedSourceCode) {
                         $shippingMethod = $splitShipment['method'];
@@ -75,7 +75,7 @@ class ShipmentServiceRetriever
             $carrierData = null;
         }
         if (!$carrierData) {
-            return "";
+            return '';
         }
         try {
             $carrierServicesToOrigins = $order->getData(
@@ -105,5 +105,6 @@ class ShipmentServiceRetriever
             }
             return current($shippingServicesArray);
         }
+        return '';
     }
 }

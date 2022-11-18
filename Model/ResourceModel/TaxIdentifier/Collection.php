@@ -6,6 +6,8 @@
  * @package Calcurates_ModuleMagento
  */
 
+declare(strict_types=1);
+
 namespace Calcurates\ModuleMagento\Model\ResourceModel\TaxIdentifier;
 
 use Calcurates\ModuleMagento\Model\ResourceModel\TaxIdentifier as ResourceModel;
