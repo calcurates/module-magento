@@ -6,6 +6,8 @@
  * @package Calcurates_ModuleMagento
  */
 
+declare(strict_types=1);
+
 namespace Calcurates\ModuleMagento\Model\ResourceModel;
 
 use Calcurates\ModuleMagento\Api\Data\ShippingLabelInterface;

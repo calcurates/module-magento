@@ -27,8 +27,6 @@ class SaveQuoteData implements SaveQuoteDataInterface
     }
 
     /**
-     * @param int $quoteId
-     * @return \Calcurates\ModuleMagento\Api\Data\QuoteDataInterface|null
      * @throws \Magento\Framework\Exception\AlreadyExistsException
      */
     public function save(QuoteDataInterface $calcuratesQuote): QuoteDataInterface

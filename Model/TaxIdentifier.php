@@ -22,7 +22,7 @@ class TaxIdentifier extends AbstractModel implements TaxIdentifierInterface
     /**
      * Initialize magento model.
      *
-     * @return $this
+     * @return void
      */
     protected function _construct()
     {

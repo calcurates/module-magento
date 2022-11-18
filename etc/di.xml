@@ -20,9 +20,9 @@
     <preference for="Calcurates\ModuleMagento\Api\Data\ShippingDataInterface" type="Calcurates\ModuleMagento\Model\Data\ShippingData"/>
 
     <preference for="Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface"
-                type="Calcurates\ModuleMagento\Model\Carrier\CacluratesCachedClient"/>
+                type="Calcurates\ModuleMagento\Model\Carrier\CalcuratesCachedClient"/>
 
-    <type name="Calcurates\ModuleMagento\Model\Carrier\CacluratesCachedClient">
+    <type name="Calcurates\ModuleMagento\Model\Carrier\CalcuratesCachedClient">
         <arguments>
             <argument name="calcuratesClient" xsi:type="object">Calcurates\ModuleMagento\Client\CalcuratesClient\Proxy</argument>
         </arguments>

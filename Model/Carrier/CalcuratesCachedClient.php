@@ -12,7 +12,7 @@ use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
 use Calcurates\ModuleMagento\Client\Http\ApiException;
 use Magento\Framework\Exception\LocalizedException;
 
-class CacluratesCachedClient implements CalcuratesClientInterface
+class CalcuratesCachedClient implements CalcuratesClientInterface
 {
     /**
      * @var CalcuratesClientInterface
@@ -25,7 +25,7 @@ class CacluratesCachedClient implements CalcuratesClientInterface
     private $cache;
 
     /**
-     * CacluratesCachedClient constructor.
+     * CalcuratesCachedClient constructor.
      * @param CalcuratesClientInterface $calcuratesClient
      * @param RatesRequestCache $cache
      */

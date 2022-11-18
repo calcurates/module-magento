@@ -53,7 +53,7 @@ class SourceAddressService
     {
         $sourceCode = $this->shipmentSourceCodeRetriever->retrieve($shipment);
         $addressData = null;
-        if ($this->sourceServiceContext->isInventoryEnabled() && !empty($sourceCode)) {
+        if ($sourceCode && $this->sourceServiceContext->isInventoryEnabled()) {
             $addressData = $this->getBySourceCode($sourceCode);
         }
 
