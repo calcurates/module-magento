@@ -17,6 +17,7 @@
                     <label>General</label>
                     <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                         <label>Enabled</label>
+                        <comment><![CDATA[Enter Calcurates API Token below to enable module]]></comment>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <config_path>carriers/calcurates/active</config_path>
                         <requires>
@@ -25,7 +26,7 @@
                     </field>
                     <field id="calcurates_token" translate="label comment" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Calcurates API Token</label>
-                        <comment><![CDATA[Token supplied by Calcurates]]></comment>
+                        <comment><![CDATA[Token can be found in Calcurates account (Website settings)]]></comment>
                         <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                         <config_path>carriers/calcurates/calcurates_token</config_path>
                     </field>
