@@ -104,6 +104,20 @@
       max-width: unset;
     }
   }
+  #checkout.am-checkout {
+    &.-modern {
+      .table-checkout-shipping-method tbody {
+        tr.shipment-title:first-child td {
+          width: auto;
+        }
+        .shipment-products-row,
+        .shipment-title {
+          width: 100%;
+        }
+      }
+    }
+  }
+
   // Amasty OneStepCheckout compatibility - end
 
   .table-checkout-shipping-method {

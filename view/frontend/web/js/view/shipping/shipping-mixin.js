@@ -41,8 +41,8 @@ define([
              */
             initialize: function () {
                 var self = this;
-                this._super();
                 shippingService.getShippingRates().subscribe(this.initSplitCheckoutShipments.bind(this));
+                this._super();
                 quote.shippingMethod.subscribe(function () {
                     self.errorValidationMessage(false);
                 });
