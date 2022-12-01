@@ -30,9 +30,39 @@
                                 <tbody class="amcheckout-items">
 
                                 <!-- ko foreach: { data: rates(), as: 'method'} -->
+                                <!-- ko let: { element: $parent } -->
+                                <!-- ko if: (element.isSplitCheckout(method)) -->
+                                <!-- ko foreach: { data: method.extension_attributes.calcurates_metarate_data, as: 'rates'} -->
+                                <tr class="shipment-title">
+                                    <td colspan="6">
+                <span translate="'Shipment %1 of %2'.replace('%1', $index() + 1)
+                    .replace('%2', method.extension_attributes.calcurates_metarate_data.length)"></span>
+                                    </td>
+                                </tr>
+                                <tr class="shipment-products-row">
+                                    <td class="shipment-products">
+                                        <!-- ko foreach: { data: element.getShipmentQuoteItems($data), as: 'items'} -->
+                                        <div class="product">
+                                            <!-- ko foreach: element.getRegion('shipment_items_details') -->
+                                            <!-- ko template: getTemplate() --><!-- /ko -->
+                                            <!-- /ko -->
+                                        </div>
+                                        <!-- /ko -->
+                                    </td>
+                                    <td colspan="5">
+                                        <table>
+                                            <!-- ko foreach: { data: rates, as: 'method'} -->
+                                            <!--ko template: { name: element.shippingMethodItemTemplate} --><!-- /ko -->
+                                            <!-- /ko -->
+                                        </table>
+                                    </td>
+                                </tr>
+                                <!-- /ko -->
+                                <!-- /ko -->
+                                <!-- ko ifnot: (element.isSplitCheckout(method)) -->
                                 <tr class="row amcheckout-method"
                                     data-bind="
-                                        click: $parent.selectShippingMethod,
+                                        click: element.handleSelectShippingMethod.bind(element, $data, $parent, $parents[1]),
                                         css : { '-selected' : $parent.isSelected() == (method.carrier_code + '_' + method.method_code) }">
                                     <td class="col col-method">
                                         <!-- ko ifnot: method.error_message -->
@@ -84,24 +114,8 @@
                                         <!-- /ko -->
                                     </td>
                                     <td class="col col-method"
-                                        data-bind="attr: {'id': 'label_method_' + method.method_code + '_' + method.carrier_code}">
-                                        <span text="method.method_title"></span>
-                                        <span if="method.extension_attributes && method.extension_attributes.calcurates_data.map_link" text="' - '"></span>
-                                        <a if="method.extension_attributes && method.extension_attributes.calcurates_data.map_link"
-                                           attr="'href': method.extension_attributes.calcurates_data.map_link"
-                                           target="_blank"
-                                           translate="'see on the map'"></a>
-                                        <div class="info-message"
-                                             if="method.extension_attributes && method.extension_attributes.calcurates_data.info_message && $parent.getInfoMessagePosition() == 'below_method'">
-                                            <span translate="method.extension_attributes.calcurates_data.info_message"></span>
-                                        </div>
-                                    </td>
-                                    <td class="col col-logo"
-                                        if="method.extension_attributes && method.extension_attributes.calcurates_data.image_url"
-                                        attr="'id': 'label_logo_' + method.method_code + '_' + method.carrier_code">
-                                        <img class="calcurates-rate-img"
-                                             attr="'src': method.extension_attributes.calcurates_data.image_url"/>
-                                    </td>
+                                        data-bind="text: method.method_title, attr: {'id': 'label_method_' + method.method_code + '_' + method.carrier_code}"></td>
+
                                     <td class="col col-carrier"
                                         data-bind="text: method.carrier_title, attr: {'id': 'label_carrier_' + method.method_code + '_' + method.carrier_code, 'colspan': $parent.getColspanCarrier(method)}"></td>
 
@@ -110,61 +124,29 @@
                                         <div class="control">
                                             <div data-bind="attr: {'class': 'field-tooltip toggle ' + $parent.getAdditionalClassForIcons(method)}">
                                                 <span class="field-tooltip-action"
-                                                    tabindex="0"
-                                                    data-toggle="dropdown"
-                                                    data-bind="mageInit: {'dropdown':{'activeClass': '_active'}}">
+                                                      tabindex="0"
+                                                      data-toggle="dropdown"
+                                                      data-bind="mageInit: {'dropdown':{'activeClass': '_active'}}">
                                                 </span>
                                                 <div class="field-tooltip-content"
                                                      data-target="dropdown"
-                                                    data-bind="html: $parent.getMethodTooltipText(method)">
+                                                     data-bind="html: $parent.getMethodTooltipText(method)">
                                                 </div>
                                             </div>
                                         </div>
                                     </td>
                                     <!-- /ko -->
-                                    <td class="col" if="(method.extension_attributes && method.extension_attributes.calcurates_data) && (method.extension_attributes.calcurates_data.tooltip_message || method.extension_attributes.calcurates_data.info_message && $parent.getInfoMessagePosition() == 'in_tooltip')">
-                                        <div class="field-tooltip toggle"
-                                             style="position: relative"
-                                             if="method.extension_attributes && method.extension_attributes.calcurates_data.tooltip_message">
-                                            <span id="calendar-label" class="label"><!-- ko i18n: 'Tooltip' --><!-- /ko --></span>
-                                            <span
-                                                    id="calendar"
-                                                    class="field-tooltip-action action-calendar"
-                                                    tabindex="0"
-                                                    data-toggle="dropdown"
-                                                    data-bind="mageInit: {'dropdown':{'activeClass': '_active', 'parent': '.field-tooltip.toggle'}}"
-                                                    aria-labelledby="tooltip-label"
-                                            ></span>
-                                            <div class="field-tooltip-content"
-                                                 data-target="dropdown" translate="method.extension_attributes.calcurates_data.tooltip_message">
-                                            </div>
-                                        </div>
-                                        <div class="field-tooltip toggle"
-                                             style="position: relative"
-                                             if="method.extension_attributes && method.extension_attributes.calcurates_data.info_message && $parent.getInfoMessagePosition() == 'in_tooltip'">
-                                            <span id="tooltip-label" class="label"><!-- ko i18n: 'Tooltip' --><!-- /ko --></span>
-                                            <span
-                                                    id="tooltip"
-                                                    class="field-tooltip-action action-help"
-                                                    tabindex="0"
-                                                    aria-labelledby="tooltip-label"
-                                                    data-bind="mageInit: {'dropdown':{'activeClass': '_active', 'parent': '.field-tooltip.toggle'}}"
-                                            ></span>
-                                            <div class="field-tooltip-content" translate="method.extension_attributes.calcurates_data.info_message">
-                                            </div>
-                                        </div>
-                                    </td>
 
                                     <!-- TIG PostNL modification start -->
-                                        <!-- ko if: $parent.isPostNlEnable() && $parent.isModernDesign() -->
-                                            <td class="col col-price">
-                                                <!-- ko ifnot: $parent.canUsePostnlDeliveryOptions(method)-->
+                                    <!-- ko if: $parent.isPostNlEnable() && $parent.isModernDesign() -->
+                                    <td class="col col-price">
+                                        <!-- ko ifnot: $parent.canUsePostnlDeliveryOptions(method)-->
 
-                                                    <!-- ko fastForEach: $parent.getRegion('price') -->
-                                                    <!-- ko template: getTemplate() --><!-- /ko -->
-                                                <!-- /ko -->
-                                            <!-- /ko -->
-                                        </td>
+                                        <!-- ko fastForEach: $parent.getRegion('price') -->
+                                        <!-- ko template: getTemplate() --><!-- /ko -->
+                                        <!-- /ko -->
+                                        <!-- /ko -->
+                                    </td>
                                     <!-- /ko -->
                                 </tr>
 
@@ -205,6 +187,8 @@
                                 </tr>
                                 <!-- /ko -->
                                 <!-- TIG PostNL modification end -->
+                                <!-- /ko -->
+                                <!-- /ko -->
                                 <!-- /ko -->
                                 <!-- /ko -->
                                 </tbody>

@@ -40,7 +40,7 @@ define([
         },
 
         /**
-         * Check if selected shipping method is splig checkout
+         * Check if selected shipping method is split checkout
          * @returns {false|*}
          */
         isSplitCheckout: function () {
