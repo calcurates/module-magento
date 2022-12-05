@@ -23,8 +23,8 @@ class DeliveryDateDisplayTypeSource implements \Magento\Framework\Data\OptionSou
     {
         return [
             ['label' => __('Qty of days in transit'), 'value' => self::DAYS_QTY],
-            ['label' => __('Estimated delivery dates'), 'value' => self::DATES],
-            ['label' => __('Estimated delivery dates (Magento format)'), 'value' => self::DATES_MAGENTO_FORMAT],
+            ['label' => __('Delivery dates - Magento format'), 'value' => self::DATES_MAGENTO_FORMAT],
+            ['label' => __('Custom Date Format'), 'value' => self::DATES],
         ];
     }
 }
