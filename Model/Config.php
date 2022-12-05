@@ -36,6 +36,7 @@ class Config implements ConfigProviderInterface
     public const SHIPPING_METHODS_FOR_FALLBACK = 'shipping_methods_for_fallback';
     public const DELIVERY_DATE_DISPLAY = 'delivery_date_display';
     public const DELIVERY_DATE_DISPLAY_TYPE = 'delivery_date_display_type';
+    public const DELIVERY_DATE_DISPLAY_FORMAT = 'date_format';
     public const INFO_MESSAGE_DISPLAY_POSITION = 'info_message_display_position';
     public const DISPLAY_IMAGES = 'display_shipping_options_images';
     public const DISPLAY_PACKAGE_NAME_FOR_CARRIER = 'display_package_name_for_carrier';
@@ -280,6 +281,19 @@ class Config implements ConfigProviderInterface
     {
         return $this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::DELIVERY_DATE_DISPLAY_TYPE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
+     * @return string
+     */
+    public function  getDeliveryDateDisplayFormat($storeId = null)
+    {
+        return $this->scopeConfig->getValue(
+            self::CONFIG_GROUP . self::DELIVERY_DATE_DISPLAY_FORMAT,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );

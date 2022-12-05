@@ -17,8 +17,6 @@ use Magento\Store\Model\ScopeInterface;
 
 class DeliveryDateFormatter
 {
-    public const DATE_FORMAT = 'l (d/m/Y)';
-
     /**
      * @var Config
      */
@@ -179,7 +177,14 @@ class DeliveryDateFormatter
      */
     private function formatDate(\DateTime $dateTime): string
     {
-        return $dateTime->format(static::DATE_FORMAT);
+        return $this->timezone->formatDateTime(
+            $dateTime,
+            \IntlDateFormatter::FULL,
+            \IntlDateFormatter::FULL,
+            null,
+            null,
+            $this->configProvider->getDeliveryDateDisplayFormat()
+        );
     }
 
     /**

@@ -163,11 +163,15 @@ class DeliveryDateFormatterTest extends \PHPUnit\Framework\TestCase
             ->method('getDeliveryDateDisplayType')
             ->willReturn(DeliveryDateDisplayTypeSource::DATES);
 
+        $this->configProviderMock
+            ->method('getDeliveryDateDisplayFormat')
+            ->willReturn('EEEE (dd/MM/Y)');
+
         $dateTime = new \DateTime('2021-02-20');
 
         $result = $this->model->formatSingleDate($dateTime);
 
-        $this->assertSame($dateTime->format(DeliveryDateFormatter::DATE_FORMAT), $result);
+        $this->assertSame($dateTime->format('l (d/m/Y)'), $result);
     }
 
     /**
