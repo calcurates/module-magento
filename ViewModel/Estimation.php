@@ -159,13 +159,13 @@ class Estimation implements ArgumentInterface
     }
 
     /**
-     * @param $template
-     * @return mixed
+     * @param string $template
+     * @return string
      */
-    private function processCustomTemplate($template)
+    private function processCustomTemplate(string $template = ''): string
     {
         foreach ($this->variableToTemplateMap as $magentoVariable => $templateString) {
-            $template = str_replace($magentoVariable, $templateString,$template);
+            $template = str_replace($magentoVariable, $templateString, $template);
         }
         return $template;
     }
