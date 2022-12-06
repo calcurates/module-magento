@@ -50,6 +50,7 @@ class Config implements ConfigProviderInterface
     public const GOOGLE_PLACES_INPUT_TITLE = 'google_places_input_title';
     public const SHIPPING_ON_PRODUCT_ATTRIBUTE_CODE = 'shipping_on_product_attribute_code';
     public const SHIPPING_ON_PRODUCT_ATTRIBUTE_VALUE = 'shipping_on_product_attribute_value';
+    public const SHIPPING_ON_PRODUCT_COUNTDOWN_TIMER_FORMAT = 'shipping_on_product_timer_format';
 
     public const ACTIVE = 'active';
     public const DEBUG = 'debug';
@@ -450,6 +451,19 @@ class Config implements ConfigProviderInterface
     {
         return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::SHIPPING_ON_PRODUCT_ATTRIBUTE_CODE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
+     * @return string
+     */
+    public function getCountDownTimerFormat($storeId = null): string
+    {
+        return (string)$this->scopeConfig->getValue(
+            self::CONFIG_GROUP . self::SHIPPING_ON_PRODUCT_COUNTDOWN_TIMER_FORMAT,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );

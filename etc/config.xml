@@ -27,6 +27,7 @@
                 <date_format>EEEE (dd/MM/Y)</date_format>
                 <display_package_name_for_carrier>1</display_package_name_for_carrier>
                 <shipping_on_product_fallback_message>Shipping info will be displayed at checkout</shipping_on_product_fallback_message>
+                <shipping_on_product_timer_format>{{hours}}h {{minutes}}m {{seconds}}s</shipping_on_product_timer_format>
                 <store_pickup_display>shipping_methods</store_pickup_display>
                 <split_checkout>0</split_checkout>
                 <split_checkout_title>Aggregated Shipping</split_checkout_title>
