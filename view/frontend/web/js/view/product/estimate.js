@@ -42,7 +42,7 @@ define([
                 table_rates: 'Calcurates_ModuleMagento/product/rate/default',
                 in_store_pickup: 'Calcurates_ModuleMagento/product/rate/default',
             },
-            timeTmplString: '<%= hours %>h <%= minutes %>m <%= seconds %>s',
+            timeTmplString: '',
             countDowns: []
         },
 

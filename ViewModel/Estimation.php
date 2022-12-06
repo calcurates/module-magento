@@ -60,6 +60,15 @@ class Estimation implements ArgumentInterface
     private $productRepository;
 
     /**
+     * @var array
+     */
+    private $variableToTemplateMap = [
+        '{{hours}}' => '<%= hours %>',
+        '{{minutes}}' => '<%= minutes %>',
+        '{{seconds}}' => '<%= seconds %>',
+    ];
+
+    /**
      * @param Config $configProvider
      * @param HttpContext $httpContext
      * @param StoreManagerInterface $storeManager
@@ -110,6 +119,8 @@ class Estimation implements ArgumentInterface
             $this->configProvider->isGoogleAddressAutocompleteEnabled();
         $jsLayout['components']['calcurates_rates']['googlePlacesInputTitle'] =
             $this->configProvider->getGooglePlacesInputTitle();
+        $jsLayout['components']['calcurates_rates']['timeTmplString'] =
+            $this->processCustomTemplate($this->configProvider->getCountDownTimerFormat());
 
         return $this->serializer->serialize($jsLayout);
     }
@@ -145,5 +156,17 @@ class Estimation implements ArgumentInterface
         } else {
             return (string)$product->getAttributeText($attributeCode) === $attributeValue;
         }
+    }
+
+    /**
+     * @param $template
+     * @return mixed
+     */
+    private function processCustomTemplate($template)
+    {
+        foreach ($this->variableToTemplateMap as $magentoVariable => $templateString) {
+            $template = str_replace($magentoVariable, $templateString,$template);
+        }
+        return $template;
     }
 }

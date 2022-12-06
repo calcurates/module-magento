@@ -184,6 +184,23 @@
                             <field id="shipping_on_product_enabled" separator=",">1,2</field>
                         </depends>
                     </field>
+                    <field id="shipping_on_product_timer_format" translate="label comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Countdown Timer Format</label>
+                        <comment>
+                            <![CDATA[
+                                Use the following variables for countdown timer:<br>
+                                {{hours}} - displays hours<br>
+                                {{minutes}} - displays minutes<br>
+                                {{seconds}} - displays seconds<br>
+                            ]]>
+                        </comment>
+                        <validate>required-entry</validate>
+                        <frontend_model>Calcurates\ModuleMagento\Block\Adminhtml\System\Config\Form\Field\CustomCountdownTimerFormat</frontend_model>
+                        <config_path>carriers/calcurates/shipping_on_product_timer_format</config_path>
+                        <depends>
+                            <field id="shipping_on_product_enabled" separator=",">1,2</field>
+                        </depends>
+                    </field>
                 </group>
                 <group id="in_store_pickup" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>In-Store Pickup</label>
