@@ -13,6 +13,8 @@ namespace Calcurates\ModuleMagento\ViewModel;
 use Calcurates\ModuleMagento\Api\Data\OrderDataInterface;
 use Calcurates\ModuleMagento\Api\SalesData\OrderData\GetOrderDataInterface;
 use Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter;
+use Calcurates\ModuleMagento\Model\Config;
+use Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplayTypeSource as DisplayType;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 
 class OrderDeliveryDate implements ArgumentInterface
@@ -27,12 +29,24 @@ class OrderDeliveryDate implements ArgumentInterface
      */
     private $getOrderData;
 
+    /**
+     * @var Config
+     */
+    private $config;
+
+    /**
+     * @param DeliveryDateFormatter $deliveryDateFormatter
+     * @param GetOrderDataInterface $getOrderData
+     * @param Config $config
+     */
     public function __construct(
         DeliveryDateFormatter $deliveryDateFormatter,
-        GetOrderDataInterface $getOrderData
+        GetOrderDataInterface $getOrderData,
+        Config $config
     ) {
         $this->deliveryDateFormatter = $deliveryDateFormatter;
         $this->getOrderData = $getOrderData;
+        $this->config = $config;
     }
 
     /**
@@ -43,7 +57,10 @@ class OrderDeliveryDate implements ArgumentInterface
     {
         return $this->deliveryDateFormatter->formatDeliveryDate(
             $deliveryDates['from'] ?? null,
-            $deliveryDates['to'] ?? null
+            $deliveryDates['to'] ?? null,
+            $this->config->getDeliveryDateDisplayType() === DisplayType::DAYS_QTY
+                ? DisplayType::DATES_MAGENTO_FORMAT
+                : $this->config->getDeliveryDateDisplayType()
         );
     }
 
@@ -64,7 +81,12 @@ class OrderDeliveryDate implements ArgumentInterface
     {
         [$dateObject] = $this->deliveryDateFormatter->prepareDates($date, null);
 
-        return $this->deliveryDateFormatter->formatSingleDate($dateObject);
+        return $this->deliveryDateFormatter->formatSingleDate(
+            $dateObject,
+            $this->config->getDeliveryDateDisplayType() === DisplayType::DAYS_QTY
+                ? DisplayType::DATES_MAGENTO_FORMAT
+                : $this->config->getDeliveryDateDisplayType()
+        );
     }
 
     /**
