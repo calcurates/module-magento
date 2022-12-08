@@ -14,8 +14,8 @@ define([
     'mage/storage',
     'Magento_Checkout/js/model/totals',
     'Magento_Checkout/js/model/error-processor',
-    'Magento_Checkout/js/model/shipping-save-processor/payload-extender'
-], function ($, wrapper, _, resourceUrlManager, quote, storage, totalsService, errorProcessor, payloadExtender) {
+    'Magento_Checkout/js/checkout-data'
+], function ($, wrapper, _, resourceUrlManager, quote, storage, totalsService, errorProcessor, checkoutData) {
     'use strict';
 
     return function (callbacks, deferred) {
@@ -23,7 +23,8 @@ define([
             payload,
             requiredFields = ['countryId', 'region', 'regionId', 'postcode'],
             address = quote.isVirtual() ? quote.billingAddress() : quote.shippingAddress(),
-            deferredObject = deferred || $.Deferred();
+            deferredObject = deferred || $.Deferred(),
+            selectedShipments = [];
 
         address = _.pick(address, requiredFields);
 
@@ -33,11 +34,21 @@ define([
             }
         };
 
-        payloadExtender(payload)
-
         if (quote.shippingMethod() && quote.shippingMethod()['method_code']) {
             payload.addressInformation['shipping_method_code'] = quote.shippingMethod()['method_code'];
             payload.addressInformation['shipping_carrier_code'] = quote.shippingMethod()['carrier_code'];
+        }
+
+        _.each(checkoutData.getSelectedSplitCheckoutShipments(), function (code, origin) {
+            if (!code) return
+            selectedShipments.push({
+                origin: origin,
+                method: code
+            })
+        })
+
+        payload.addressInformation.extension_attributes = {
+            'calcurates_split_shipments' : selectedShipments
         }
 
         totalsService.isLoading(true);
