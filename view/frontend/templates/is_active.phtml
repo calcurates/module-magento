@@ -1,3 +1,11 @@
+<?php
+/**
+ * @var $block Magento\Framework\View\Element\Template
+ */
+?>
 <script>
     window.calcurates_module_enabled = true;
+    <?php if ($block->getAmOscEnabled()): ?>
+    window.am_osc_enabled = true;
+    <?php endif; ?>
 </script>

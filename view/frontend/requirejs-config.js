@@ -1,4 +1,5 @@
-var isEnabled = !!window.calcurates_module_enabled;
+var isEnabled = !!window.calcurates_module_enabled,
+    isAmOscEnabled = !!window.am_osc_enabled;
 /**
  * @author Calcurates Team
  * @copyright Copyright © 2021 Calcurates (https://www.calcurates.com)
@@ -43,7 +44,7 @@ var config = {
         },
     }
 };
-if (isEnabled) {
+if (isEnabled && isAmOscEnabled) {
     config.map['*'] = {
         'Amasty_CheckoutCore/template/onepage/shipping/methods.html': 'Calcurates_ModuleMagento/template/am_osc/shipping/methods.html',
         'Magento_Checkout/js/action/get-totals': 'Calcurates_ModuleMagento/js/am_osc/action/get-totals',
