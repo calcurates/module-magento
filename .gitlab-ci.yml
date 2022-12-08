@@ -4,15 +4,7 @@ before_script:
     - apk add openssh-client
 
 stages:
-    - test
     - deploy
-
-test:
-    tags:
-        - calcurates
-    stage: test
-    script:
-        - echo "No tests"
 
 deploy_staging:
     tags:
