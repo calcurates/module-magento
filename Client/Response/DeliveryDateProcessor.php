@@ -15,6 +15,8 @@ use Calcurates\ModuleMagento\Api\Data\DeliveryDate\DateInterfaceFactory;
 use Calcurates\ModuleMagento\Api\Data\DeliveryDate\TimeIntervalInterface;
 use Calcurates\ModuleMagento\Api\Data\DeliveryDate\TimeIntervalInterfaceFactory;
 use Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter;
+use Calcurates\ModuleMagento\Model\Config;
+use Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplayTypeSource as DisplayType;
 use Magento\Framework\Encryption\Encryptor;
 use Magento\Framework\Encryption\EncryptorInterface;
 
@@ -42,16 +44,30 @@ class DeliveryDateProcessor
      */
     private $encryptor;
 
+    /**
+     * @var Config
+     */
+    private $config;
+
+    /**
+     * @param DateInterfaceFactory $dateFactory
+     * @param TimeIntervalInterfaceFactory $timeIntervalFactory
+     * @param DeliveryDateFormatter $deliveryDateFormatter
+     * @param EncryptorInterface $encryptor
+     * @param Config $config
+     */
     public function __construct(
         DateInterfaceFactory $dateFactory,
         TimeIntervalInterfaceFactory $timeIntervalFactory,
         DeliveryDateFormatter $deliveryDateFormatter,
-        EncryptorInterface $encryptor
+        EncryptorInterface $encryptor,
+        Config $config
     ) {
         $this->dateFactory = $dateFactory;
         $this->timeIntervalFactory = $timeIntervalFactory;
         $this->deliveryDateFormatter = $deliveryDateFormatter;
         $this->encryptor = $encryptor;
+        $this->config = $config;
     }
 
     /**
@@ -66,7 +82,12 @@ class DeliveryDateProcessor
             /** @var DateInterface $deliveryDate */
             $deliveryDate = $this->dateFactory->create();
             [$dateFrom] = $this->deliveryDateFormatter->prepareDates($timeSlot['date'], null);
-            $dateFrom = $this->deliveryDateFormatter->formatSingleDate($dateFrom);
+            $dateFrom = $this->deliveryDateFormatter->formatSingleDate(
+                $dateFrom,
+                $this->config->getDeliveryDateDisplayType() === DisplayType::DAYS_QTY
+                    ? DisplayType::DATES_MAGENTO_FORMAT
+                    : $this->config->getDeliveryDateDisplayType()
+            );
             $deliveryDate->setDate($timeSlot['date']);
             $deliveryDate->setDateFormatted($dateFrom);
             $deliveryDate->setFeeAmount((float)$timeSlot['extraFee']);

@@ -75,11 +75,12 @@ class DeliveryDateFormatter
 
     /**
      * @param \DateTime $dateTime
+     * @param string|null $datesDisplayType
      * @return string
      */
-    public function formatSingleDate(\DateTime $dateTime): string
+    public function formatSingleDate(\DateTime $dateTime, ?string $datesDisplayType = null): string
     {
-        $datesDisplayType = $this->configProvider->getDeliveryDateDisplayType();
+        $datesDisplayType = $datesDisplayType ?? $this->configProvider->getDeliveryDateDisplayType();
 
         switch ($datesDisplayType) {
             case DeliveryDateDisplayTypeSource::DAYS_QTY:
@@ -100,9 +101,10 @@ class DeliveryDateFormatter
     /**
      * @param string|null $fromString
      * @param string|null $toString
+     * @param string|null $datesDisplayType
      * @return string
      */
-    public function formatDeliveryDate(?string $fromString, ?string $toString): string
+    public function formatDeliveryDate(?string $fromString, ?string $toString, ?string $datesDisplayType = null): string
     {
         if (!$fromString && !$toString) {
             return '';
@@ -110,7 +112,7 @@ class DeliveryDateFormatter
 
         [$from, $to] = $this->prepareDates($fromString, $toString);
 
-        $datesDisplayType = $this->configProvider->getDeliveryDateDisplayType();
+        $datesDisplayType = $datesDisplayType ?? $this->configProvider->getDeliveryDateDisplayType();
 
         switch ($datesDisplayType) {
             case DeliveryDateDisplayTypeSource::DAYS_QTY:
