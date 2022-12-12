@@ -11,7 +11,7 @@ RUN set -xe \
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
 
     # Xdebug
-    && pecl install xdebug \
+    && pecl install xdebug-3.1.6 \
     && docker-php-ext-enable xdebug \
 
     # Sodium

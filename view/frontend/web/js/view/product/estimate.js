@@ -42,7 +42,7 @@ define([
                 table_rates: 'Calcurates_ModuleMagento/product/rate/default',
                 in_store_pickup: 'Calcurates_ModuleMagento/product/rate/default',
             },
-            timeTmplString: '<%= hours %>h <%= minutes %>m <%= seconds %>s',
+            timeTmplString: '',
             countDowns: []
         },
 
@@ -179,11 +179,14 @@ define([
          */
         countdown: function (cutoff, element, initialTmpl) {
             let now = new Date(),
-                interval = new Date(cutoff - now),
+                interval = cutoff.getTime() - now.getTime(),
+                hours = Math.floor(interval / 3600000),
+                minutes = Math.floor(interval / 60000) - hours * 60,
+                seconds = Math.floor(interval / 1000) - hours * 3600 - minutes * 60,
                 tmpl = mageTemplate(this.timeTmplString, {
-                    hours: interval.getHours(),
-                    minutes: interval.getMinutes(),
-                    seconds: interval.getSeconds()
+                    hours: hours,
+                    minutes: minutes,
+                    seconds: seconds
                 })
             if (interval <= 0) {
                 return

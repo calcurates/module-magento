@@ -17,8 +17,6 @@ use Magento\Store\Model\ScopeInterface;
 
 class DeliveryDateFormatter
 {
-    public const DATE_FORMAT = 'l (d/m/Y)';
-
     /**
      * @var Config
      */
@@ -77,11 +75,12 @@ class DeliveryDateFormatter
 
     /**
      * @param \DateTime $dateTime
+     * @param string|null $datesDisplayType
      * @return string
      */
-    public function formatSingleDate(\DateTime $dateTime): string
+    public function formatSingleDate(\DateTime $dateTime, ?string $datesDisplayType = null): string
     {
-        $datesDisplayType = $this->configProvider->getDeliveryDateDisplayType();
+        $datesDisplayType = $datesDisplayType ?? $this->configProvider->getDeliveryDateDisplayType();
 
         switch ($datesDisplayType) {
             case DeliveryDateDisplayTypeSource::DAYS_QTY:
@@ -102,9 +101,10 @@ class DeliveryDateFormatter
     /**
      * @param string|null $fromString
      * @param string|null $toString
+     * @param string|null $datesDisplayType
      * @return string
      */
-    public function formatDeliveryDate(?string $fromString, ?string $toString): string
+    public function formatDeliveryDate(?string $fromString, ?string $toString, ?string $datesDisplayType = null): string
     {
         if (!$fromString && !$toString) {
             return '';
@@ -112,7 +112,7 @@ class DeliveryDateFormatter
 
         [$from, $to] = $this->prepareDates($fromString, $toString);
 
-        $datesDisplayType = $this->configProvider->getDeliveryDateDisplayType();
+        $datesDisplayType = $datesDisplayType ?? $this->configProvider->getDeliveryDateDisplayType();
 
         switch ($datesDisplayType) {
             case DeliveryDateDisplayTypeSource::DAYS_QTY:
@@ -179,7 +179,14 @@ class DeliveryDateFormatter
      */
     private function formatDate(\DateTime $dateTime): string
     {
-        return $dateTime->format(static::DATE_FORMAT);
+        return $this->timezone->formatDateTime(
+            $dateTime,
+            \IntlDateFormatter::FULL,
+            \IntlDateFormatter::FULL,
+            null,
+            null,
+            $this->configProvider->getDeliveryDateDisplayFormat()
+        );
     }
 
     /**

@@ -106,10 +106,28 @@
                     <field id="delivery_date_display_type" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                         <label>Delivery dates display format</label>
                         <source_model>Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplayTypeSource</source_model>
-                        <comment><![CDATA[Qty of days in transit example: “3 days“ or “3-4 days“.<br>
-                    Estimated delivery dates: specific date or range of dates will be displayed.<br>
-                    Estimated delivery dates (Magento format): Date format from Magento settings will be applied.]]></comment>
+                        <comment>
+                            <![CDATA[
+                                Qty of days in transit example: “3 days“ or “3-4 days“.<br>
+                                Delivery dates - Magento format: Date Fields order and format from Magento settings will be applied.<br>
+                                Delivery dates - custom format: specify your own date format using <a target="_blank" href="https://unicode-org.github.io/icu/userguide/format_parse/datetime/#date-field-symbol-table">ICU rules.</a>
+                            ]]>
+                        </comment>
                         <config_path>carriers/calcurates/delivery_date_display_type</config_path>
+                    </field>
+                    <field id="date_format" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <frontend_model>Calcurates\ModuleMagento\Block\Adminhtml\System\Config\Form\Field\CustomDateFormat</frontend_model>
+                        <label>Custom Date Format</label>
+                        <config_path>carriers/calcurates/date_format</config_path>
+                        <validate>required-entry</validate>
+                        <comment>
+                            <![CDATA[
+                                Enter date format following <a target="_blank" href="https://unicode-org.github.io/icu/userguide/format_parse/datetime/#date-field-symbol-table">ICU rules.</a>
+                            ]]>
+                        </comment>
+                        <depends>
+                            <field id="delivery_date_display_type">dates</field>
+                        </depends>
                     </field>
                 </group>
                 <group id="shipping_on_product_pages" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -162,6 +180,23 @@
                     <field id="shipping_on_product_fallback_message" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Fallback Message if No Methods Available</label>
                         <config_path>carriers/calcurates/shipping_on_product_fallback_message</config_path>
+                        <depends>
+                            <field id="shipping_on_product_enabled" separator=",">1,2</field>
+                        </depends>
+                    </field>
+                    <field id="shipping_on_product_timer_format" translate="label comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Countdown Timer Format</label>
+                        <comment>
+                            <![CDATA[
+                                Use the following variables for countdown timer:<br>
+                                {{hours}} - displays hours<br>
+                                {{minutes}} - displays minutes<br>
+                                {{seconds}} - displays seconds<br>
+                            ]]>
+                        </comment>
+                        <validate>required-entry</validate>
+                        <frontend_model>Calcurates\ModuleMagento\Block\Adminhtml\System\Config\Form\Field\CustomCountdownTimerFormat</frontend_model>
+                        <config_path>carriers/calcurates/shipping_on_product_timer_format</config_path>
                         <depends>
                             <field id="shipping_on_product_enabled" separator=",">1,2</field>
                         </depends>

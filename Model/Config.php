@@ -36,6 +36,7 @@ class Config implements ConfigProviderInterface
     public const SHIPPING_METHODS_FOR_FALLBACK = 'shipping_methods_for_fallback';
     public const DELIVERY_DATE_DISPLAY = 'delivery_date_display';
     public const DELIVERY_DATE_DISPLAY_TYPE = 'delivery_date_display_type';
+    public const DELIVERY_DATE_DISPLAY_FORMAT = 'date_format';
     public const INFO_MESSAGE_DISPLAY_POSITION = 'info_message_display_position';
     public const DISPLAY_IMAGES = 'display_shipping_options_images';
     public const DISPLAY_PACKAGE_NAME_FOR_CARRIER = 'display_package_name_for_carrier';
@@ -49,6 +50,7 @@ class Config implements ConfigProviderInterface
     public const GOOGLE_PLACES_INPUT_TITLE = 'google_places_input_title';
     public const SHIPPING_ON_PRODUCT_ATTRIBUTE_CODE = 'shipping_on_product_attribute_code';
     public const SHIPPING_ON_PRODUCT_ATTRIBUTE_VALUE = 'shipping_on_product_attribute_value';
+    public const SHIPPING_ON_PRODUCT_COUNTDOWN_TIMER_FORMAT = 'shipping_on_product_timer_format';
 
     public const ACTIVE = 'active';
     public const DEBUG = 'debug';
@@ -286,6 +288,19 @@ class Config implements ConfigProviderInterface
     }
 
     /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
+     * @return string
+     */
+    public function getDeliveryDateDisplayFormat($storeId = null)
+    {
+        return $this->scopeConfig->getValue(
+            self::CONFIG_GROUP . self::DELIVERY_DATE_DISPLAY_FORMAT,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return bool
      */
@@ -436,6 +451,19 @@ class Config implements ConfigProviderInterface
     {
         return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::SHIPPING_ON_PRODUCT_ATTRIBUTE_CODE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
+     * @return string
+     */
+    public function getCountDownTimerFormat($storeId = null): string
+    {
+        return (string)$this->scopeConfig->getValue(
+            self::CONFIG_GROUP . self::SHIPPING_ON_PRODUCT_COUNTDOWN_TIMER_FORMAT,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );
