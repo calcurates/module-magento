@@ -291,7 +291,7 @@ class Config implements ConfigProviderInterface
      * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
      * @return string
      */
-    public function  getDeliveryDateDisplayFormat($storeId = null)
+    public function getDeliveryDateDisplayFormat($storeId = null)
     {
         return $this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::DELIVERY_DATE_DISPLAY_FORMAT,
