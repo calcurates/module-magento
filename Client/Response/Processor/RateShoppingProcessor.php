@@ -154,7 +154,7 @@ class RateShoppingProcessor implements ResponseProcessorInterface
 
                     $rate['priority'] = $rateShopping['priority'] + $servicesPriority;
                     $rate['imageUri'] = $rateShopping['imageUri'];
-                    $rate['message'] = implode(' ', $messages);
+                    $rate['message'] = $rate['message'] ?? implode(' ', \array_unique($messages));
 
                     $rates = $this->rateBuilder->build(
                         $methodId,

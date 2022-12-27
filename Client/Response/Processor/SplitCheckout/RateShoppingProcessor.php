@@ -134,25 +134,8 @@ class RateShoppingProcessor implements ResponseProcessorInterface
                         continue;
                     }
 
-                    $servicesPriority = 0;
-                    $serviceIds = $messages = [];
-                    foreach ($rate['services'] ?? [] as $service) {
-                        if (!empty($service['message'])) {
-                            $messages[] = $service['message'];
-                        }
-
-                        $serviceIds[] = $service['id'];
-                        if (!empty($service['priority'])) {
-                            $servicesPriority += $service['priority'] * 0.001;
-                        }
-                    }
-
-                    if (isset($rate['service']['id'])) {
-                        $serviceIds[] = $rate['service']['id'];
-                        $rate = array_merge($rate, $rate['service']);
-                    }
-
-                    $serviceIdsString = implode(',', $serviceIds);
+                    $rate = array_merge($rate, $rate['service']); // wtf
+                    $serviceIdsString = $rate['service']['id'];
 
                     $services['services'][] = $rate['service'];
                     $rate['name'] = $this->carrierRateNameBuilder->buildName(
@@ -170,7 +153,7 @@ class RateShoppingProcessor implements ResponseProcessorInterface
 
                     $rate['priority'] = $rateShopping['priority'] + $rate['service']['priority'] * 0.001;
                     $rate['imageUri'] = $rateShopping['imageUri'];
-                    $rate['message'] = implode(' ', $messages);
+                    $rate['message'] = $rate['message'] ?? $rate['service']['message'];
 
                     unset($rate['displayName'], $rate['additionalText']);
                     $rates = $this->rateBuilder->build(
