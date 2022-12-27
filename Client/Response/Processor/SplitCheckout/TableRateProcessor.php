@@ -68,10 +68,11 @@ class TableRateProcessor implements ResponseProcessorInterface
     public function process(Result $result, array &$response, CartInterface $quote): void
     {
         foreach ($response['shippingOptions']['tableRates'] as $tableRate) {
-            if (!$tableRate['success']) {
+            if (!$tableRate['success'] && empty($tableRate['methods'])) {
                 if ($tableRate['message']) {
                     $failedRate = $this->failedRateBuilder->build(
-                        $tableRate['name'],
+                        $tableRate['displayName'] ?? $tableRate['name'],
+                        '',
                         $tableRate['message'],
                         $tableRate['priority']
                     );
@@ -89,6 +90,7 @@ class TableRateProcessor implements ResponseProcessorInterface
                             $this->configProvider->isDisplayPackageNameForCarrier()
                         );
                         $failedRate = $this->failedRateBuilder->build(
+                            $tableRate['displayName'] ?? $tableRate['name'],
                             $rateName,
                             $responseRateMethod['message'],
                             $tableRate['priority']

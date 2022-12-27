@@ -64,6 +64,7 @@ class MergedShippingProcessor implements ResponseProcessorInterface
                 if ($responseRate['message']) {
                     $failedRate = $this->failedRateBuilder->build(
                         $responseRate['name'],
+                        '',
                         $responseRate['message'],
                         $responseRate['priority']
                     );

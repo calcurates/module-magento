@@ -101,7 +101,8 @@ class CarrierProcessor implements ResponseProcessorInterface
             if (!$this->childChecker->isHaveRates($carrier, 'rates')) {
                 if ($carrier['message']) {
                     $failedRate = $this->failedRateBuilder->build(
-                        $carrier['name'],
+                        $carrier['displayName'] ?? $carrier['name'],
+                        '',
                         $carrier['message'],
                         $carrier['priority']
                     );
@@ -122,6 +123,7 @@ class CarrierProcessor implements ResponseProcessorInterface
                         );
 
                         $failedRate = $this->failedRateBuilder->build(
+                            $carrier['displayName'] ?? $carrier['name'],
                             $rateName,
                             $responseCarrierRate['message'],
                             $carrier['priority']

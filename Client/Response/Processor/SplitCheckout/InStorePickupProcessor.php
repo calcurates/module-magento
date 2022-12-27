@@ -108,10 +108,11 @@ class InStorePickupProcessor implements ResponseProcessorInterface
     {
         $origin = $response['origin'];
         foreach ($response['shippingOptions']['inStorePickups'] as $shippingOption) {
-            if (!$shippingOption['success']) {
+            if (!$shippingOption['success'] && empty($shippingOption['stores'])) {
                 if ($shippingOption['message']) {
                     $failedRate = $this->failedRateBuilder->build(
-                        $shippingOption['name'],
+                        $shippingOption['displayName'] ?? $shippingOption['name'],
+                        '',
                         $shippingOption['message'],
                         $shippingOption['priority']
                     );
@@ -122,10 +123,19 @@ class InStorePickupProcessor implements ResponseProcessorInterface
             }
 
             foreach ($shippingOption['stores'] as $store) {
+                $store['priority'] = $shippingOption['priority'] + $store['priority'] * 0.001;
+                $store['imageUri'] = $store['imageUri'] ?: $shippingOption['imageUri'];
+                if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
+                    $store['displayName'] = $store['name']
+                        . (!empty($store['displayName']) ? " ({$store['displayName']})" : '');
+                } else {
+                    $store['displayName'] = $store['displayName'] ?? $store['name'];
+                }
                 if (!$store['success']) {
                     if ($store['message']) {
                         $failedRate = $this->failedRateBuilder->build(
-                            $store['name'],
+                            $shippingOption['displayName'] ?? $shippingOption['name'],
+                            $store['displayName'],
                             $store['message'],
                             $shippingOption['priority']
                         );
@@ -135,14 +145,6 @@ class InStorePickupProcessor implements ResponseProcessorInterface
                     continue;
                 }
 
-                $store['priority'] = $shippingOption['priority'] + $store['priority'] * 0.001;
-                $store['imageUri'] = $store['imageUri'] ?: $shippingOption['imageUri'];
-                if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
-                    $store['displayName'] = $store['name']
-                        . (!empty($store['displayName']) ? " ({$store['displayName']})" : '');
-                } else {
-                    $store['displayName'] = $store['displayName'] ?? $store['name'];
-                }
                 $rates = $this->rateBuilder->build(
                     ShippingMethodManager::IN_STORE_PICKUP . '_' . $shippingOption['id'] . '_' . $store['id'],
                     $store,
