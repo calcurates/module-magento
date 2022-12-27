@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Client\Response;
 
 use Calcurates\ModuleMagento\Model\Carrier;
+use Magento\Quote\Model\Quote\Address\RateResult\Error;
 use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
 
 class FailedRateBuilder
@@ -31,15 +32,17 @@ class FailedRateBuilder
 
     /**
      * @param string $rateName
+     * @param string $methodTitle
      * @param string $message
      * @param int|null $priority
-     * @return \Magento\Quote\Model\Quote\Address\RateResult\Error
+     * @return Error
      */
-    public function build(string $rateName, string $message = '', ?int $priority = null)
+    public function build(string $rateName, string $methodTitle = '', string $message = '', ?int $priority = null)
     {
         $failedRate = $this->rateErrorFactory->create();
         $failedRate->setCarrier(Carrier::CODE);
         $failedRate->setCarrierTitle($rateName);
+        $failedRate->setMethodTitle($methodTitle);
         $failedRate->setErrorMessage($message);
         $failedRate->setPriority($priority);
 

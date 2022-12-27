@@ -80,7 +80,8 @@ class RateShoppingProcessor implements ResponseProcessorInterface
             if (!$this->childChecker->isHaveRates($rateShopping, 'carriers')) {
                 if ($rateShopping['message']) {
                     $failedRate = $this->failedRateBuilder->build(
-                        $rateShopping['name'],
+                        $rateShopping['displayName'] ?? $rateShopping['name'],
+                        '',
                         $rateShopping['message'],
                         $rateShopping['priority']
                     );
@@ -95,6 +96,7 @@ class RateShoppingProcessor implements ResponseProcessorInterface
                     if ($carrier['message']) {
                         $failedRate = $this->failedRateBuilder->build(
                             $carrier['name'],
+                            '',
                             $carrier['message'],
                             $rateShopping['priority']
                         );
@@ -115,6 +117,7 @@ class RateShoppingProcessor implements ResponseProcessorInterface
 
                             $failedRate = $this->failedRateBuilder->build(
                                 $rateName,
+                                '',
                                 $rate['message'],
                                 $rateShopping['priority']
                             );

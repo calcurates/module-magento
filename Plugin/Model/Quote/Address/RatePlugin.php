@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Plugin\Model\Quote\Address;
 
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
+use Magento\Quote\Api\Data\ShippingMethodInterface;
 use Magento\Quote\Model\Quote\Address\Rate;
 
 class RatePlugin
@@ -30,7 +31,8 @@ class RatePlugin
             RatesResponseProcessor::CALCURATES_TOOLTIP_MESSAGE,
             RatesResponseProcessor::CALCURATES_DELIVERY_DATES,
             RatesResponseProcessor::CALCURATES_MAP_LINK,
-            RatesResponseProcessor::CALCURATES_IMAGE_URL
+            RatesResponseProcessor::CALCURATES_IMAGE_URL,
+            ShippingMethodInterface::KEY_METHOD_TITLE
         ];
         foreach ($arrayToImport as $key) {
             $value = $rate->getData($key);

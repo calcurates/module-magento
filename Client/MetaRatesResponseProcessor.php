@@ -111,6 +111,7 @@ class MetaRatesResponseProcessor
         ) {
             $failedRate = $this->failedRateBuilder->build(
                 $this->calcuratesConfig->getTitle($quote->getStoreId()),
+                '',
                 $this->calcuratesConfig->getErrorMessage($quote->getStoreId())
             );
             $result->append($failedRate);

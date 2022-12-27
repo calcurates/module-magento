@@ -60,10 +60,18 @@ class FreeShippingProcessor implements ResponseProcessorInterface
     public function process(Result $result, array &$response, CartInterface $quote): void
     {
         foreach ($response['shippingOptions']['freeShipping'] as $responseRate) {
+            if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
+                $responseRate['displayName'] = $responseRate['name']
+                    . (!empty($responseRate['displayName']) ? " ({$responseRate['displayName']})" : '');
+            } else {
+                $responseRate['displayName'] = $responseRate['displayName'] ?? $responseRate['name'];
+            }
+
             if (!$responseRate['success']) {
                 if ($responseRate['message']) {
                     $failedRate = $this->failedRateBuilder->build(
-                        $responseRate['name'],
+                        '',
+                        $responseRate['displayName'],
                         $responseRate['message'],
                         $responseRate['priority']
                     );
@@ -75,12 +83,6 @@ class FreeShippingProcessor implements ResponseProcessorInterface
             $responseRate['rate']['cost'] = 0;
             $responseRate['rate']['currency'] = null;
 
-            if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
-                $responseRate['displayName'] = $responseRate['name']
-                    . (!empty($responseRate['displayName']) ? " ({$responseRate['displayName']})" : '');
-            } else {
-                $responseRate['displayName'] = $responseRate['displayName'] ?? $responseRate['name'];
-            }
 
             $rates = $this->rateBuilder->build(
                 ShippingMethodManager::FREE_SHIPPING . '_' . $responseRate['id'],
