@@ -17,6 +17,7 @@
                 <model>Calcurates\ModuleMagento\Model\Carrier</model>
                 <calcurates_token backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
                 <specificerrmsg>This shipping method is not available. To use this shipping method, please contact us.</specificerrmsg>
+                <missing_address_message>Please fill in the required delivery address fields to get shipping quotes</missing_address_message>
                 <info_message_display_position>in_tooltip</info_message_display_position>
                 <debug>0</debug>
                 <other_shipping_methods_action>2</other_shipping_methods_action>
