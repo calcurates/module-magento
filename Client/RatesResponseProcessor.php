@@ -115,6 +115,7 @@ class RatesResponseProcessor
         }
         $failedRate = $this->failedRateBuilder->build(
             $this->calcuratesConfig->getTitle($quote->getStoreId()),
+            '',
             $this->calcuratesConfig->getErrorMessage($quote->getStoreId())
         );
         if (!$response
@@ -167,7 +168,7 @@ class RatesResponseProcessor
      */
     public function processFailedRate(string $rateName, Result $result, string $message = '')
     {
-        $failedRate = $this->failedRateBuilder->build($rateName, $message);
+        $failedRate = $this->failedRateBuilder->build($rateName, '', $message);
         $result->append($failedRate);
     }
 }

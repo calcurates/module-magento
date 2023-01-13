@@ -39,16 +39,16 @@ class TableRateNameBuilder
     public function buildName(array $rateMethod, bool $includePackageNames): string
     {
         $uniqueMethodNames = [];
-        foreach ($rateMethod['rates'] ?? [] as $rate) {
-            if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
-                $name = $rateMethod['name']
-                    . (!empty($rateMethod['displayName']) ? " ({$rateMethod['displayName']})" : '');
-            } else {
-                $name = $rateMethod['displayName'] ?? $rateMethod['name'];
-            }
-            $name .= ' - ';
-            $name = $uniqueMethodNames[$rateMethod['name']] ?? $name;
+        if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
+            $name = $rateMethod['name']
+                . (!empty($rateMethod['displayName']) ? " ({$rateMethod['displayName']})" : '');
+        } else {
+            $name = $rateMethod['displayName'] ?? $rateMethod['name'];
+        }
+        $name .= ' - ';
+        $name = $uniqueMethodNames[$rateMethod['name']] ?? $name;
 
+        foreach ($rateMethod['rates'] ?? [] as $rate) {
             if ($includePackageNames) {
                 $packageNames = [];
                 foreach ($rate['packages'] ?? [] as $package) {
@@ -56,13 +56,13 @@ class TableRateNameBuilder
                 }
                 $name .= implode(';', $packageNames);
             }
-
-            if (!empty($rateMethod['additionalText'])) {
-                $name .= ' (' . implode(' ', $rateMethod['additionalText']) . ')';
-            }
-
-            $uniqueMethodNames[$rateMethod['name']] = $name;
         }
+
+        if (!empty($rateMethod['additionalText'])) {
+            $name .= ' (' . implode(' ', $rateMethod['additionalText']) . ')';
+        }
+
+        $uniqueMethodNames[$rateMethod['name']] = $name;
 
         return implode(', ', array_map(static function ($serviceName): string {
             return rtrim($serviceName, ' - ');

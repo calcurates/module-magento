@@ -23,7 +23,7 @@ class ChildChecker
             return true;
         }
 
-        if ($parent[$childKey]) {
+        if (isset($parent[$childKey]) && \is_array($parent[$childKey])) {
             foreach ($parent[$childKey] as $child) {
                 if ($child['message']) {
                     return true;

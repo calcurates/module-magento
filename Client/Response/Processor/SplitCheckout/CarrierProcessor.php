@@ -102,6 +102,7 @@ class CarrierProcessor implements ResponseProcessorInterface
                 if ($carrier['message']) {
                     $failedRate = $this->failedRateBuilder->build(
                         $carrier['name'],
+                        '',
                         $carrier['message'],
                         $carrier['priority']
                     );
@@ -124,6 +125,7 @@ class CarrierProcessor implements ResponseProcessorInterface
                         );
 
                         $failedRate = $this->failedRateBuilder->build(
+                            $carrier['displayName'] ?? $carrier['name'],
                             $rateName,
                             $responseCarrierRate['message'],
                             $carrier['priority']
@@ -136,16 +138,11 @@ class CarrierProcessor implements ResponseProcessorInterface
 
                 $serviceIds = [];
                 $sourceToServiceId = [];
-                $message = [];
                 $packages = [];
 
                 foreach ($responseCarrierRate['service']['packages'] ?? [] as $package) {
                     $package['origin_id'] = $response['origin']['id'];
                     $packages[] = $package;
-                }
-
-                if (!empty($responseCarrierRate['service']['message'])) {
-                    $message[] = $responseCarrierRate['service']['message'];
                 }
 
                 $serviceIds[] = $responseCarrierRate['service']['id'];
@@ -182,7 +179,7 @@ class CarrierProcessor implements ResponseProcessorInterface
                 $responseCarrierRate['priority'] =
                     $carrier['priority'] + $responseCarrierRate['service']['priority'] * 0.001;
                 $responseCarrierRate['imageUri'] = $carrier['imageUri'];
-                $responseCarrierRate['message'] = implode(' ', $message);
+                $responseCarrierRate['message'] = $responseCarrierRate['message'] ?? $responseCarrierRate['service']['message'];
                 $responseCarrierRate['rate'] = $responseCarrierRate['service']['rate'];
                 $rates = $this->rateBuilder->build(
                     $methodId,

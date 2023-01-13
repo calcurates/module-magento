@@ -60,23 +60,24 @@ class FlatRateProcessor implements ResponseProcessorInterface
     public function process(Result $result, array &$response, CartInterface $quote): void
     {
         foreach ($response['shippingOptions']['flatRates'] as $responseRate) {
+            if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
+                $responseRate['displayName'] = $responseRate['name']
+                    . (!empty($responseRate['displayName']) ? " ({$responseRate['displayName']})" : '');
+            } else {
+                $responseRate['displayName'] = $responseRate['displayName'] ?? $responseRate['name'];
+            }
+
             if (!$responseRate['success']) {
                 if ($responseRate['message']) {
                     $failedRate = $this->failedRateBuilder->build(
-                        $responseRate['name'],
+                        '',
+                        $responseRate['displayName'],
                         $responseRate['message'],
                         $responseRate['priority']
                     );
                     $result->append($failedRate);
                 }
                 continue;
-            }
-
-            if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
-                $responseRate['displayName'] = $responseRate['name']
-                    . (!empty($responseRate['displayName']) ? " ({$responseRate['displayName']})" : '');
-            } else {
-                $responseRate['displayName'] = $responseRate['displayName'] ?? $responseRate['name'];
             }
 
             $rates = $this->rateBuilder->build(

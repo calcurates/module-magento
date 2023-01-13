@@ -219,9 +219,9 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         } else {
             $result = $this->_rateFactory->create();
             $this->ratesResponseProcessor->processFailedRate(
-                (string)$this->getConfigData('title'),
+                (string)$this->getConfigData(Config::CONFIG_TITLE),
                 $result,
-                (string)__('Please fill in the required delivery address fields to get shipping quotes')
+                (string)$this->getConfigData(Config::MISSING_ADDRESS_MESSAGE)
             );
             $this->result = $result;
         }
