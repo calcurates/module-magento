@@ -14,6 +14,7 @@ interface TimeIntervalInterface
 {
     public const ID = 'identifier';
     public const FEE_AMOUNT = 'fee_amount';
+    public const FEE_AMOUNT_INCL_TAX = 'fee_amount_incl_tax';
     public const FROM = 'from';
     public const TO = 'to';
     public const INTERVAL_FORMATTED = 'interval_formatted';
@@ -39,6 +40,17 @@ interface TimeIntervalInterface
      * @return void
      */
     public function setFeeAmount(float $feeAmount): void;
+
+    /**
+     * @return float
+     */
+    public function getFeeAmountInclTax(): float;
+
+    /**
+     * @param float $feeAmount
+     * @return void
+     */
+    public function setFeeAmountInclTax(float $feeAmount): void;
 
     /**
      * @return string

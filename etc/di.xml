@@ -323,4 +323,9 @@
     </type>
     <preference for="Calcurates\ModuleMagento\Api\Data\TaxIdentifierInterface"
                 type="Calcurates\ModuleMagento\Model\TaxIdentifier"/>
+    <type name="Calcurates\ModuleMagento\Client\Response\DeliveryDateProcessor">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
 </config>

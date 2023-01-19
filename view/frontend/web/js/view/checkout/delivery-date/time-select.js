@@ -84,11 +84,22 @@ define([
             var optionLabel = timeInterval.interval_formatted,
                 formattedPrice = '';
 
-            if (timeInterval.fee_amount) {
+            if (!timeInterval.fee_amount) {
+                return optionLabel;
+            }
+            if (window.checkoutConfig.isDisplayShippingPriceExclTax) {
                 formattedPrice = priceUtils.formatPrice(timeInterval.fee_amount, quote.getPriceFormat());
-                optionLabel += ' (+' + formattedPrice + ')';
+            } else if (window.checkoutConfig.isDisplayShippingBothPrices
+                && timeInterval.fee_amount_incl_tax !== timeInterval.fee_amount
+            ) {
+                formattedPrice = priceUtils.formatPrice(timeInterval.fee_amount_incl_tax, quote.getPriceFormat())
+                    + ' ' + $t('Excl. Tax') + ': +'
+                    + priceUtils.formatPrice(timeInterval.fee_amount, quote.getPriceFormat());
+            } else {
+                formattedPrice = priceUtils.formatPrice(timeInterval.fee_amount_incl_tax, quote.getPriceFormat());
             }
 
+            optionLabel += ' (+' + formattedPrice + ')';
             return optionLabel;
         },
 
