@@ -16,6 +16,7 @@ interface DateInterface
     public const DATE = 'date';
     public const DATE_FORMATTED = 'date_formatted';
     public const FEE_AMOUNT = 'fee_amount';
+    public const FEE_AMOUNT_INCL_TAX = 'fee_amount_incl_tax';
     public const TIME_INTERVALS = 'time_intervals';
 
     /**
@@ -61,6 +62,17 @@ interface DateInterface
      * @return void
      */
     public function setFeeAmount(float $feeAmount): void;
+
+    /**
+     * @return float
+     */
+    public function getFeeAmountInclTax(): float;
+
+    /**
+     * @param float $feeAmount
+     * @return void
+     */
+    public function setFeeAmountInclTax(float $feeAmount): void;
 
     /**
      * @return \Calcurates\ModuleMagento\Api\Data\DeliveryDate\TimeIntervalInterface[]

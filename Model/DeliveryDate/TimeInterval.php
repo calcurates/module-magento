@@ -35,6 +35,16 @@ class TimeInterval extends AbstractSimpleObject implements TimeIntervalInterface
         $this->setData(self::FEE_AMOUNT, $feeAmount);
     }
 
+    public function getFeeAmountInclTax(): float
+    {
+        return (float)$this->_get(self::FEE_AMOUNT_INCL_TAX);
+    }
+
+    public function setFeeAmountInclTax(float $feeAmount): void
+    {
+        $this->setData(self::FEE_AMOUNT_INCL_TAX, $feeAmount);
+    }
+
     public function getFrom(): string
     {
         return (string)$this->_get(self::FROM);
