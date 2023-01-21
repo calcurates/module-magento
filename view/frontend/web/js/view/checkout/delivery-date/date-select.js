@@ -12,7 +12,8 @@ define([
     'mage/translate',
     'Calcurates_ModuleMagento/js/model/delivery-date/delivery-date-list',
     'Magento_Catalog/js/price-utils',
-    'Magento_Checkout/js/model/quote'
+    'Magento_Checkout/js/model/quote',
+    'Magento_Checkout/js/action/set-shipping-information'
 ], function (
     $,
     ko,
@@ -20,7 +21,8 @@ define([
     $t,
     deliveryDateList,
     priceUtils,
-    quote
+    quote,
+    setShippingInformationAction
 ) {
     'use strict';
 
@@ -78,6 +80,12 @@ define([
                 && deliveryDateList.currentDeliveryDatesList().length > 0
             ) {
                 this.validateSelect();
+                /**
+                 * Amasty Checkout compatibility
+                 */
+                if (window.am_osc_enabled) {
+                    setShippingInformationAction();
+                }
             }
         },
 
