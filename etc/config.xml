@@ -33,6 +33,7 @@
                 <split_checkout>0</split_checkout>
                 <split_checkout_title>Aggregated Shipping</split_checkout_title>
                 <google_places_input_title>Estimate Your Delivery Cost</google_places_input_title>
+                <google_places_input_placeholder>Enter an address...</google_places_input_placeholder>
             </calcurates>
         </carriers>
     </default>

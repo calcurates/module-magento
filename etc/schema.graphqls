@@ -37,6 +37,7 @@ type CalcuratesConfig {
     is_google_autocomplete_enabled: Boolean @doc(description: "Is google address autocomplete enabled")
     google_places_api_key: String @doc(description: "Api Key For Google Places")
     google_places_input_title: String @doc(description: "Google Places Input Title")
+    google_places_input_placeholder: String @doc(description: "Google Places Input Placeholder")
 }
 
 type StoreConfig {
