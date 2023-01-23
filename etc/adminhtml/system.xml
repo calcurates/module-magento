@@ -181,6 +181,13 @@
                             <field id="enable_google_address_autocomplete">1</field>
                         </depends>
                     </field>
+                    <field id="google_places_input_placeholder" translate="label comment" type="text" sortOrder="37" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Placeholder Title</label>
+                        <config_path>carriers/calcurates/google_places_input_placeholder</config_path>
+                        <depends>
+                            <field id="enable_google_address_autocomplete">1</field>
+                        </depends>
+                    </field>
                     <field id="shipping_on_product_fallback_message" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Fallback Message if No Methods Available</label>
                         <config_path>carriers/calcurates/shipping_on_product_fallback_message</config_path>
