@@ -109,7 +109,14 @@ class DeliveryDateProcessor
             $quote = $this->checkoutSession->getQuote();
             $deliveryDate->setDate($timeSlot['date']);
             $deliveryDate->setDateFormatted($dateFrom);
-            $deliveryDate->setFeeAmount((float)$timeSlot['extraFee']);
+            $deliveryDate->setFeeAmount(
+                $this->taxHelper->getShippingPrice(
+                    (float)$timeSlot['extraFee'],
+                    false,
+                    $quote->getShippingAddress(),
+                    $quote->getCustomerTaxClassId()
+                )
+            );
             $deliveryDate->setFeeAmountInclTax(
                 $this->taxHelper->getShippingPrice(
                     (float)$timeSlot['extraFee'],
@@ -129,7 +136,14 @@ class DeliveryDateProcessor
 
                 /** @var TimeIntervalInterface $timeInterval */
                 $timeInterval = $this->timeIntervalFactory->create();
-                $timeInterval->setFeeAmount((float)$time['extraFee']);
+                $timeInterval->setFeeAmount(
+                    $this->taxHelper->getShippingPrice(
+                        (float)$time['extraFee'],
+                        false,
+                        $quote->getShippingAddress(),
+                        $quote->getCustomerTaxClassId()
+                    )
+                );
                 $timeInterval->setFeeAmountInclTax(
                     $this->taxHelper->getShippingPrice(
                         (float)$time['extraFee'],
