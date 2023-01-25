@@ -26,11 +26,15 @@ class EmailEditFormAddVariables
                 'label' => __('Calcurates Variables'),
                 'value' => [
                     [
-                        'value' => '{{var selected_delivery_date}}',
+                        'value' => '{{block class="Calcurates\ModuleMagento\Block\Order\DeliveryDateTime" type="date"'
+                            . ' area="frontend" order=$order order_id=$order_id'
+                            . ' template="Calcurates_ModuleMagento::order/delivery_date_time.phtml"}}',
                         'label' => __('Delivery Date')
                     ],
                     [
-                        'value' => '{{var selected_delivery_time}}',
+                        'value' => '{{block class="Calcurates\ModuleMagento\Block\Order\DeliveryDateTime" type="time"'
+                            . ' area="frontend" order=$order order_id=$order_id'
+                            . ' template="Calcurates_ModuleMagento::order/delivery_date_time.phtml"}}',
                         'label' => __('Delivery Time Slot')
                     ]
                 ]

@@ -18,8 +18,4 @@
         <observer name="calcurates_save_shipment_after"
                   instance="Calcurates\ModuleMagento\Observer\ShipmentSaveAfterObserver" />
     </event>
-    <event name="email_order_set_template_vars_before">
-        <observer name="calcurates_email_order_set_template_vars"
-                  instance="Calcurates\ModuleMagento\Observer\EmailOrderTemplateVars"/>
-    </event>
 </config>
