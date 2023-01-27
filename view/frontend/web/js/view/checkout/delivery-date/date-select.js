@@ -34,6 +34,7 @@ define([
             additionalCss: '',
             validationError: '',
             timeSlotDateRequired: null,
+            defaultValueType: 'earliest',
         },
 
         initObservable: function () {
@@ -54,15 +55,35 @@ define([
                     this.caption(null);
                 }
                 this.setOptions(options);
+                this.setDefaultOption(data);
                 if (this.timeSlotDateRequired()
                     && 'undefined' !== typeof options[0]
                 ) {
-                    this.value(options[0].value);
+                    this.value(this.default);
                 }
                 this.onChangeDate();
             }, this);
 
             return this;
+        },
+
+        setDefaultOption: function (data) {
+            var matchedOption
+            if (!data.length) {
+                return;
+            }
+            if (this.defaultValueType === 'earliest_cheapest') {
+                data.sort(function (a, b) {
+                    return Date.parse(a.date) - Date.parse(b.date);
+                })
+                matchedOption = data.reduce(function (prev, curr) {
+                    return (prev.fee_amount > curr.fee_amount) ? curr : prev;
+                })
+                matchedOption = matchedOption.id;
+            } else {
+                matchedOption = this.options()[0].value
+            }
+            this.default = matchedOption;
         },
 
         onChangeDate: function () {

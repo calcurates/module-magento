@@ -103,6 +103,9 @@ class CheckoutLayoutProcessor implements LayoutProcessorInterface
                                     'provider' => 'checkoutProvider',
                                     'validation' => [
                                         'required-entry' => true
+                                    ],
+                                    'config' => [
+                                        'defaultValueType' => $this->configProvider->getDeliveryDateDefaultValueType(),
                                     ]
                                 ],
                                 'calcurates-delivery-date-time' => [
@@ -112,6 +115,9 @@ class CheckoutLayoutProcessor implements LayoutProcessorInterface
                                     'provider' => 'checkoutProvider',
                                     'validation' => [
                                         'required-entry' => true
+                                    ],
+                                    'config' => [
+                                        'defaultValueType' => $this->configProvider->getDeliveryDateDefaultValueType(),
                                     ]
                                 ]
                             ]
