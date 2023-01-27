@@ -35,6 +35,7 @@ class Config implements ConfigProviderInterface
     public const CONFIG_TITLE = 'title';
     public const API_GET_RATES_TIMEOUT = 'api_get_rates_timeout';
     public const SHIPPING_METHODS_FOR_FALLBACK = 'shipping_methods_for_fallback';
+    public const DELIVERY_DATE_DEFAULT_VALUE_TYPE = 'delivery_date_default_value_type';
     public const DELIVERY_DATE_DISPLAY = 'delivery_date_display';
     public const DELIVERY_DATE_DISPLAY_TYPE = 'delivery_date_display_type';
     public const DELIVERY_DATE_DISPLAY_FORMAT = 'date_format';
@@ -271,6 +272,19 @@ class Config implements ConfigProviderInterface
     {
         return $this->scopeConfig->isSetFlag(
             self::CONFIG_GROUP . self::DEBUG,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
+     * @return string
+     */
+    public function getDeliveryDateDefaultValueType($storeId = null)
+    {
+        return $this->scopeConfig->getValue(
+            self::CONFIG_GROUP . self::DELIVERY_DATE_DEFAULT_VALUE_TYPE,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );

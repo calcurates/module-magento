@@ -58,10 +58,11 @@ define([
                     }
 
                     this.setOptions(options);
+                    this.setDefaultOption(data.time_intervals);
                     if (this.timeSlotTimeRequired()
                         && 'undefined' !== typeof options[0]
                     ) {
-                        this.value(options[0].value);
+                        this.value(this.default);
                         this.validateSelect();
                     }
                     this.enable();
@@ -74,6 +75,22 @@ define([
             }, this);
 
             return this;
+        },
+
+        setDefaultOption: function (data) {
+            var matchedOption
+            if (!data || !data.length) {
+                return;
+            }
+            if (this.defaultValueType === 'earliest_cheapest') {
+                matchedOption = data.reduce(function (prev, curr) {
+                    return (prev.fee_amount > curr.fee_amount) ? curr : prev;
+                })
+                matchedOption = matchedOption.id;
+            } else {
+                matchedOption = this.options()[0].value
+            }
+            this.default = matchedOption;
         },
 
         onChangeTime: function () {
