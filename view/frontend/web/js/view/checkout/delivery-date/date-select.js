@@ -114,17 +114,17 @@ define([
             var optionLabel = deliveryDate.date_formatted,
                 formattedPrice = '';
 
-            if (!deliveryDate.fee_amount) {
+            if (!deliveryDate.fee_amount_excl_tax) {
                 return optionLabel;
             }
             if (window.checkoutConfig.isDisplayShippingPriceExclTax) {
-                formattedPrice = priceUtils.formatPrice(deliveryDate.fee_amount, quote.getPriceFormat());
+                formattedPrice = priceUtils.formatPrice(deliveryDate.fee_amount_excl_tax, quote.getPriceFormat());
             } else if (window.checkoutConfig.isDisplayShippingBothPrices
-                && deliveryDate.fee_amount_incl_tax !== deliveryDate.fee_amount
+                && deliveryDate.fee_amount_incl_tax !== deliveryDate.fee_amount_excl_tax
             ) {
                 formattedPrice = priceUtils.formatPrice(deliveryDate.fee_amount_incl_tax, quote.getPriceFormat())
                     + ' ' + $t('Excl. Tax') + ': +'
-                    + priceUtils.formatPrice(deliveryDate.fee_amount, quote.getPriceFormat());
+                    + priceUtils.formatPrice(deliveryDate.fee_amount_excl_tax, quote.getPriceFormat());
             } else {
                 formattedPrice = priceUtils.formatPrice(deliveryDate.fee_amount_incl_tax, quote.getPriceFormat());
             }
