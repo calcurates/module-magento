@@ -12,7 +12,8 @@ define([
     'mage/translate',
     'Calcurates_ModuleMagento/js/model/delivery-date/delivery-date-list',
     'Magento_Catalog/js/price-utils',
-    'Magento_Checkout/js/model/quote'
+    'Magento_Checkout/js/model/quote',
+    'Magento_Checkout/js/action/set-shipping-information'
 ], function (
     $,
     ko,
@@ -20,7 +21,8 @@ define([
     $t,
     deliveryDateList,
     priceUtils,
-    quote
+    quote,
+    setShippingInformationAction
 ) {
     'use strict';
 
@@ -56,10 +58,11 @@ define([
                     }
 
                     this.setOptions(options);
+                    this.setDefaultOption(data.time_intervals);
                     if (this.timeSlotTimeRequired()
                         && 'undefined' !== typeof options[0]
                     ) {
-                        this.value(options[0].value);
+                        this.value(this.default);
                         this.validateSelect();
                     }
                     this.enable();
@@ -74,9 +77,31 @@ define([
             return this;
         },
 
+        setDefaultOption: function (data) {
+            var matchedOption
+            if (!data || !data.length) {
+                return;
+            }
+            if (this.defaultValueType === 'earliest_cheapest') {
+                matchedOption = data.reduce(function (prev, curr) {
+                    return (prev.fee_amount > curr.fee_amount) ? curr : prev;
+                })
+                matchedOption = matchedOption.id;
+            } else {
+                matchedOption = this.options()[0].value
+            }
+            this.default = matchedOption;
+        },
+
         onChangeTime: function () {
             if (this.options().length > 0) {
                 this.validateSelect();
+                /**
+                 * Amasty Checkout compatibility
+                 */
+                if (window.am_osc_enabled) {
+                    setShippingInformationAction();
+                }
             }
         },
 
@@ -84,11 +109,22 @@ define([
             var optionLabel = timeInterval.interval_formatted,
                 formattedPrice = '';
 
-            if (timeInterval.fee_amount) {
-                formattedPrice = priceUtils.formatPrice(timeInterval.fee_amount, quote.getPriceFormat());
-                optionLabel += ' (+' + formattedPrice + ')';
+            if (!timeInterval.fee_amount_excl_tax) {
+                return optionLabel;
+            }
+            if (window.checkoutConfig.isDisplayShippingPriceExclTax) {
+                formattedPrice = priceUtils.formatPrice(timeInterval.fee_amount_excl_tax, quote.getPriceFormat());
+            } else if (window.checkoutConfig.isDisplayShippingBothPrices
+                && timeInterval.fee_amount_incl_tax !== timeInterval.fee_amount_excl_tax
+            ) {
+                formattedPrice = priceUtils.formatPrice(timeInterval.fee_amount_incl_tax, quote.getPriceFormat())
+                    + ' ' + $t('Excl. Tax') + ': +'
+                    + priceUtils.formatPrice(timeInterval.fee_amount_excl_tax, quote.getPriceFormat());
+            } else {
+                formattedPrice = priceUtils.formatPrice(timeInterval.fee_amount_incl_tax, quote.getPriceFormat());
             }
 
+            optionLabel += ' (+' + formattedPrice + ')';
             return optionLabel;
         },
 

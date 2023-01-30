@@ -17,8 +17,10 @@ use Calcurates\ModuleMagento\Api\Data\DeliveryDate\TimeIntervalInterfaceFactory;
 use Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter;
 use Calcurates\ModuleMagento\Model\Config;
 use Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplayTypeSource as DisplayType;
+use Magento\Checkout\Model\Session;
 use Magento\Framework\Encryption\Encryptor;
 use Magento\Framework\Encryption\EncryptorInterface;
+use Magento\Tax\Helper\Data;
 
 class DeliveryDateProcessor
 {
@@ -50,24 +52,40 @@ class DeliveryDateProcessor
     private $config;
 
     /**
+     * @var Data
+     */
+    private $taxHelper;
+
+    /**
+     * @var Session
+     */
+    private $checkoutSession;
+
+    /**
      * @param DateInterfaceFactory $dateFactory
      * @param TimeIntervalInterfaceFactory $timeIntervalFactory
      * @param DeliveryDateFormatter $deliveryDateFormatter
      * @param EncryptorInterface $encryptor
      * @param Config $config
+     * @param Data $taxHelper
+     * @param Session $checkoutSession
      */
     public function __construct(
         DateInterfaceFactory $dateFactory,
         TimeIntervalInterfaceFactory $timeIntervalFactory,
         DeliveryDateFormatter $deliveryDateFormatter,
         EncryptorInterface $encryptor,
-        Config $config
+        Config $config,
+        Data $taxHelper,
+        Session $checkoutSession
     ) {
         $this->dateFactory = $dateFactory;
         $this->timeIntervalFactory = $timeIntervalFactory;
         $this->deliveryDateFormatter = $deliveryDateFormatter;
         $this->encryptor = $encryptor;
         $this->config = $config;
+        $this->taxHelper = $taxHelper;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -88,9 +106,26 @@ class DeliveryDateProcessor
                     ? DisplayType::DATES_MAGENTO_FORMAT
                     : $this->config->getDeliveryDateDisplayType()
             );
+            $quote = $this->checkoutSession->getQuote();
             $deliveryDate->setDate($timeSlot['date']);
             $deliveryDate->setDateFormatted($dateFrom);
             $deliveryDate->setFeeAmount((float)$timeSlot['extraFee']);
+            $deliveryDate->setFeeAmountExclTax(
+                $this->taxHelper->getShippingPrice(
+                    (float)$timeSlot['extraFee'],
+                    false,
+                    $quote->getShippingAddress(),
+                    $quote->getCustomerTaxClassId()
+                )
+            );
+            $deliveryDate->setFeeAmountInclTax(
+                $this->taxHelper->getShippingPrice(
+                    (float)$timeSlot['extraFee'],
+                    true,
+                    $quote->getShippingAddress(),
+                    $quote->getCustomerTaxClassId()
+                )
+            );
             $deliveryDate->setId($this->generateDateId($timeSlot));
 
             $timeIntervals = [];
@@ -103,6 +138,22 @@ class DeliveryDateProcessor
                 /** @var TimeIntervalInterface $timeInterval */
                 $timeInterval = $this->timeIntervalFactory->create();
                 $timeInterval->setFeeAmount((float)$time['extraFee']);
+                $timeInterval->setFeeAmountExclTax(
+                    $this->taxHelper->getShippingPrice(
+                        (float)$time['extraFee'],
+                        false,
+                        $quote->getShippingAddress(),
+                        $quote->getCustomerTaxClassId()
+                    )
+                );
+                $timeInterval->setFeeAmountInclTax(
+                    $this->taxHelper->getShippingPrice(
+                        (float)$time['extraFee'],
+                        true,
+                        $quote->getShippingAddress(),
+                        $quote->getCustomerTaxClassId()
+                    )
+                );
                 $timeInterval->setFrom($time['from']);
                 $timeInterval->setTo($time['to']);
                 $timeInterval->setId($this->generateTimeIntervalId($time));

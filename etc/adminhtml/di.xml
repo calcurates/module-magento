@@ -49,4 +49,9 @@
         <plugin name="Calcurates\ModuleMagento\Plugin\Block\Adminhtml\Order\View\InfoPlugin"
                 type="Calcurates\ModuleMagento\Plugin\Block\Adminhtml\Order\View\InfoPlugin"/>
     </type>
+    <type name="Magento\Email\Block\Adminhtml\Template\Edit\Form">
+        <plugin name="calcurates_email_edit_form_add_variables"
+                type="Calcurates\ModuleMagento\Plugin\EmailEditFormAddVariables"
+                sortOrder="10"/>
+    </type>
 </config>

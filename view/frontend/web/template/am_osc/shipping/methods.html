@@ -114,28 +114,54 @@
                                         <!-- /ko -->
                                     </td>
                                     <td class="col col-method"
-                                        data-bind="text: method.method_title, attr: {'id': 'label_method_' + method.method_code + '_' + method.carrier_code}"></td>
+                                        data-bind="attr: {'id': 'label_method_' + method.method_code + '_' + method.carrier_code}">
+                                        <span text="method.method_title"></span>
+                                        <span if="method.extension_attributes && method.extension_attributes.calcurates_data.map_link" text="' - '"></span>
+                                        <a if="method.extension_attributes && method.extension_attributes.calcurates_data.map_link"
+                                           attr="'href': method.extension_attributes.calcurates_data.map_link"
+                                           target="_blank"
+                                           translate="'see on the map'"></a>
+                                        <div class="info-message"
+                                             if="method.extension_attributes && method.extension_attributes.calcurates_data.info_message && element.getInfoMessagePosition() == 'below_method'">
+                                            <span translate="method.extension_attributes.calcurates_data.info_message"></span>
+                                        </div>
+                                    </td>
 
                                     <td class="col col-carrier"
                                         data-bind="text: method.carrier_title, attr: {'id': 'label_carrier_' + method.method_code + '_' + method.carrier_code, 'colspan': $parent.getColspanCarrier(method)}"></td>
 
-                                    <!-- ko if: $parent.isShippingMethodTooltip(method) -->
-                                    <td class="col col-comment">
-                                        <div class="control">
-                                            <div data-bind="attr: {'class': 'field-tooltip toggle ' + $parent.getAdditionalClassForIcons(method)}">
-                                                <span class="field-tooltip-action"
-                                                      tabindex="0"
-                                                      data-toggle="dropdown"
-                                                      data-bind="mageInit: {'dropdown':{'activeClass': '_active'}}">
-                                                </span>
-                                                <div class="field-tooltip-content"
-                                                     data-target="dropdown"
-                                                     data-bind="html: $parent.getMethodTooltipText(method)">
-                                                </div>
+                                    <td class="col col-tooltip">
+                                        <div class="field-tooltip toggle"
+                                             style="position: relative"
+                                             if="method.extension_attributes && method.extension_attributes.calcurates_data.tooltip_message">
+                                            <span id="calendar-label" class="label"><!-- ko i18n: 'Tooltip' --><!-- /ko --></span>
+                                            <span
+                                                    id="calendar"
+                                                    class="field-tooltip-action action-calendar"
+                                                    tabindex="0"
+                                                    data-toggle="dropdown"
+                                                    data-bind="mageInit: {'dropdown':{'activeClass': '_active', 'parent': '.field-tooltip.toggle'}}"
+                                                    aria-labelledby="tooltip-label"
+                                            ></span>
+                                            <div class="field-tooltip-content"
+                                                 data-target="dropdown" translate="method.extension_attributes.calcurates_data.tooltip_message">
+                                            </div>
+                                        </div>
+                                        <div class="field-tooltip toggle"
+                                             style="position: relative"
+                                             if="method.extension_attributes && method.extension_attributes.calcurates_data.info_message && element.getInfoMessagePosition() == 'in_tooltip'">
+                                            <span id="tooltip-label" class="label"><!-- ko i18n: 'Tooltip' --><!-- /ko --></span>
+                                            <span
+                                                    id="tooltip"
+                                                    class="field-tooltip-action action-help"
+                                                    tabindex="0"
+                                                    aria-labelledby="tooltip-label"
+                                                    data-bind="mageInit: {'dropdown':{'activeClass': '_active', 'parent': '.field-tooltip.toggle'}}"
+                                            ></span>
+                                            <div class="field-tooltip-content" translate="method.extension_attributes.calcurates_data.info_message">
                                             </div>
                                         </div>
                                     </td>
-                                    <!-- /ko -->
 
                                     <!-- TIG PostNL modification start -->
                                     <!-- ko if: $parent.isPostNlEnable() && $parent.isModernDesign() -->
@@ -149,6 +175,15 @@
                                     </td>
                                     <!-- /ko -->
                                 </tr>
+                                <!-- ko if:  method.error_message -->
+                                <tr class="row row-error">
+                                    <td class="col col-error">
+                                        <div class="message error">
+                                            <div data-bind="text: method.error_message"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- /ko -->
 
                                 <!-- ko ifnot: $parent.isModernDesign() -->
                                 <!-- ko if: $parent.getCommentShippingMethod(method) -->

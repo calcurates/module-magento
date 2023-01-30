@@ -102,6 +102,16 @@
                     <field id="delivery_dates_hint" type="note" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                         <frontend_model>Calcurates\ModuleMagento\Block\Adminhtml\System\Config\Form\Field\DeliveryDatesNote</frontend_model>
                     </field>
+                    <field id="delivery_date_default_value_type" translate="label comment" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                        <label>Delivery Date and Time Slots Default Value</label>
+                        <source_model>\Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDefaultValueType</source_model>
+                        <config_path>carriers/calcurates/delivery_date_default_value_type</config_path>
+                        <comment>
+                            <![CDATA[
+                                Default date and time slot option, selected on a shipping step during checkout.
+                            ]]>
+                        </comment>
+                    </field>
                     <field id="delivery_date_display" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                         <label>Delivery dates display settings</label>
                         <source_model>Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplaySource</source_model>
@@ -177,6 +187,13 @@
                     <field id="google_places_input_title" translate="label comment" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Block Title</label>
                         <config_path>carriers/calcurates/google_places_input_title</config_path>
+                        <depends>
+                            <field id="enable_google_address_autocomplete">1</field>
+                        </depends>
+                    </field>
+                    <field id="google_places_input_placeholder" translate="label comment" type="text" sortOrder="37" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Placeholder Title</label>
+                        <config_path>carriers/calcurates/google_places_input_placeholder</config_path>
                         <depends>
                             <field id="enable_google_address_autocomplete">1</field>
                         </depends>

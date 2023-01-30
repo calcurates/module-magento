@@ -35,6 +35,7 @@ class Config implements ConfigProviderInterface
     public const CONFIG_TITLE = 'title';
     public const API_GET_RATES_TIMEOUT = 'api_get_rates_timeout';
     public const SHIPPING_METHODS_FOR_FALLBACK = 'shipping_methods_for_fallback';
+    public const DELIVERY_DATE_DEFAULT_VALUE_TYPE = 'delivery_date_default_value_type';
     public const DELIVERY_DATE_DISPLAY = 'delivery_date_display';
     public const DELIVERY_DATE_DISPLAY_TYPE = 'delivery_date_display_type';
     public const DELIVERY_DATE_DISPLAY_FORMAT = 'date_format';
@@ -49,6 +50,7 @@ class Config implements ConfigProviderInterface
     public const ENABLE_GOOGLE_ADDRESS_AUTOCOMPLETE = 'enable_google_address_autocomplete';
     public const GOOGLE_PLACES_API_KEY = 'google_places_api_key';
     public const GOOGLE_PLACES_INPUT_TITLE = 'google_places_input_title';
+    public const GOOGLE_PLACES_INPUT_PLACEHOLDER = 'google_places_input_placeholder';
     public const SHIPPING_ON_PRODUCT_ATTRIBUTE_CODE = 'shipping_on_product_attribute_code';
     public const SHIPPING_ON_PRODUCT_ATTRIBUTE_VALUE = 'shipping_on_product_attribute_value';
     public const SHIPPING_ON_PRODUCT_COUNTDOWN_TIMER_FORMAT = 'shipping_on_product_timer_format';
@@ -279,6 +281,19 @@ class Config implements ConfigProviderInterface
      * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
      * @return string
      */
+    public function getDeliveryDateDefaultValueType($storeId = null)
+    {
+        return $this->scopeConfig->getValue(
+            self::CONFIG_GROUP . self::DELIVERY_DATE_DEFAULT_VALUE_TYPE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
+     * @return string
+     */
     public function getDeliveryDateDisplay($storeId = null)
     {
         return $this->scopeConfig->getValue(
@@ -452,6 +467,19 @@ class Config implements ConfigProviderInterface
     {
         return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::GOOGLE_PLACES_INPUT_TITLE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
+     * @return string
+     */
+    public function getGooglePlacesInputPlaceholder($storeId = null): string
+    {
+        return (string)$this->scopeConfig->getValue(
+            self::CONFIG_GROUP . self::GOOGLE_PLACES_INPUT_PLACEHOLDER,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );

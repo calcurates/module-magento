@@ -119,6 +119,8 @@ class Estimation implements ArgumentInterface
             $this->configProvider->isGoogleAddressAutocompleteEnabled();
         $jsLayout['components']['calcurates_rates']['googlePlacesInputTitle'] =
             $this->configProvider->getGooglePlacesInputTitle();
+        $jsLayout['components']['calcurates_rates']['googlePlacesInputPlaceholder'] =
+            $this->configProvider->getGooglePlacesInputPlaceholder();
         $jsLayout['components']['calcurates_rates']['timeTmplString'] =
             $this->processCustomTemplate($this->configProvider->getCountDownTimerFormat());
 

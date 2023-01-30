@@ -12,7 +12,8 @@ define([
     'mage/translate',
     'Calcurates_ModuleMagento/js/model/delivery-date/delivery-date-list',
     'Magento_Catalog/js/price-utils',
-    'Magento_Checkout/js/model/quote'
+    'Magento_Checkout/js/model/quote',
+    'Magento_Checkout/js/action/set-shipping-information'
 ], function (
     $,
     ko,
@@ -20,7 +21,8 @@ define([
     $t,
     deliveryDateList,
     priceUtils,
-    quote
+    quote,
+    setShippingInformationAction
 ) {
     'use strict';
 
@@ -32,6 +34,7 @@ define([
             additionalCss: '',
             validationError: '',
             timeSlotDateRequired: null,
+            defaultValueType: 'earliest',
         },
 
         initObservable: function () {
@@ -52,15 +55,35 @@ define([
                     this.caption(null);
                 }
                 this.setOptions(options);
+                this.setDefaultOption(data);
                 if (this.timeSlotDateRequired()
                     && 'undefined' !== typeof options[0]
                 ) {
-                    this.value(options[0].value);
+                    this.value(this.default);
                 }
                 this.onChangeDate();
             }, this);
 
             return this;
+        },
+
+        setDefaultOption: function (data) {
+            var matchedOption
+            if (!data.length) {
+                return;
+            }
+            if (this.defaultValueType === 'earliest_cheapest') {
+                data.sort(function (a, b) {
+                    return Date.parse(a.date) - Date.parse(b.date);
+                })
+                matchedOption = data.reduce(function (prev, curr) {
+                    return (prev.fee_amount > curr.fee_amount) ? curr : prev;
+                })
+                matchedOption = matchedOption.id;
+            } else {
+                matchedOption = this.options()[0].value
+            }
+            this.default = matchedOption;
         },
 
         onChangeDate: function () {
@@ -78,6 +101,12 @@ define([
                 && deliveryDateList.currentDeliveryDatesList().length > 0
             ) {
                 this.validateSelect();
+                /**
+                 * Amasty Checkout compatibility
+                 */
+                if (window.am_osc_enabled) {
+                    setShippingInformationAction();
+                }
             }
         },
 
@@ -85,10 +114,22 @@ define([
             var optionLabel = deliveryDate.date_formatted,
                 formattedPrice = '';
 
-            if (deliveryDate.fee_amount) {
-                formattedPrice = priceUtils.formatPrice(deliveryDate.fee_amount, quote.getPriceFormat());
-                optionLabel += ' (+' + formattedPrice + ')';
+            if (!deliveryDate.fee_amount_excl_tax) {
+                return optionLabel;
             }
+            if (window.checkoutConfig.isDisplayShippingPriceExclTax) {
+                formattedPrice = priceUtils.formatPrice(deliveryDate.fee_amount_excl_tax, quote.getPriceFormat());
+            } else if (window.checkoutConfig.isDisplayShippingBothPrices
+                && deliveryDate.fee_amount_incl_tax !== deliveryDate.fee_amount_excl_tax
+            ) {
+                formattedPrice = priceUtils.formatPrice(deliveryDate.fee_amount_incl_tax, quote.getPriceFormat())
+                    + ' ' + $t('Excl. Tax') + ': +'
+                    + priceUtils.formatPrice(deliveryDate.fee_amount_excl_tax, quote.getPriceFormat());
+            } else {
+                formattedPrice = priceUtils.formatPrice(deliveryDate.fee_amount_incl_tax, quote.getPriceFormat());
+            }
+
+            optionLabel += ' (+' + formattedPrice + ')';
 
             return optionLabel;
         },

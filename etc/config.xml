@@ -23,6 +23,7 @@
                 <other_shipping_methods_action>2</other_shipping_methods_action>
                 <api_get_rates_timeout>10</api_get_rates_timeout>
                 <ignore_virtual>1</ignore_virtual>
+                <delivery_date_default_value_type>earliest</delivery_date_default_value_type>
                 <delivery_date_display>do_not_show</delivery_date_display>
                 <delivery_date_display_type>days_qty</delivery_date_display_type>
                 <date_format>EEEE (dd/MM/Y)</date_format>
@@ -33,6 +34,7 @@
                 <split_checkout>0</split_checkout>
                 <split_checkout_title>Aggregated Shipping</split_checkout_title>
                 <google_places_input_title>Estimate Your Delivery Cost</google_places_input_title>
+                <google_places_input_placeholder>Enter an address...</google_places_input_placeholder>
             </calcurates>
         </carriers>
     </default>
