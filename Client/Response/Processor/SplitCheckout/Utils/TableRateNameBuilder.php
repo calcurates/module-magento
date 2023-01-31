@@ -39,7 +39,6 @@ class TableRateNameBuilder
     public function buildName(array $rateMethod, bool $includePackageNames): string
     {
         $uniqueMethodNames = [];
-
         if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
             $name = $rateMethod['name'] . (!empty($rateMethod['displayName']) ? " ({$rateMethod['displayName']})" : '');
         } else {
@@ -61,8 +60,8 @@ class TableRateNameBuilder
 
         $uniqueMethodNames[$rateMethod['name']] = $name;
 
-        return implode(', ', array_map(static function ($serviceName): string {
-            return rtrim($serviceName, ' - ');
+        return implode(', ', array_map(static function (string $serviceName): string {
+            return rtrim($serviceName, ' -');
         }, $uniqueMethodNames));
     }
 }

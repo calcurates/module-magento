@@ -14,6 +14,7 @@ use Calcurates\ModuleMagento\Api\SalesData\QuoteData\SaveQuoteDataInterface;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Calcurates\ModuleMagento\Model\Config as CalcuratesConfig;
+use Magento\Quote\Model\Quote;
 use Magento\Shipping\Model\Rate\Result;
 use Magento\Shipping\Model\Rate\ResultFactory;
 
@@ -91,7 +92,7 @@ class RatesResponseProcessor
      * Prepare shipping rate result based on response
      *
      * @param array $response
-     * @param \Magento\Quote\Model\Quote $quote
+     * @param Quote $quote
      *
      * @return Result
      *
@@ -99,7 +100,7 @@ class RatesResponseProcessor
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.ElseExpression)
      */
-    public function processResponse($response, $quote)
+    public function processResponse(array $response, Quote $quote): Result
     {
         $result = $this->resultFactory->create();
 

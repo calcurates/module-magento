@@ -46,17 +46,21 @@ class PackageInfoCache
 
     /**
      * @param string $package
-     * @return array|bool
+     * @return array|null
      */
-    public function getCachedData($package)
+    public function getCachedData(string $package): ?array
     {
         $cacheKey = $this->getCacheKey($package);
         $data = $this->cache->load($cacheKey);
         if ($data) {
             $data = $this->serializer->unserialize($data);
+            if (!is_array($data)) {
+                return null;
+            }
+            return $data;
         }
 
-        return $data;
+        return null;
     }
 
     /**

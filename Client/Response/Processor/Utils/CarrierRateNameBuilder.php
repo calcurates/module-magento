@@ -63,8 +63,8 @@ class CarrierRateNameBuilder
             $uniqueServiceNames[$service['name']] = $name;
         }
 
-        return implode(', ', array_map(static function ($serviceName) {
-            return rtrim($serviceName, ' - ');
+        return implode(', ', array_map(static function (string $serviceName): string {
+            return rtrim($serviceName, ' -');
         }, $uniqueServiceNames));
     }
 }

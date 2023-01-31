@@ -24,7 +24,7 @@ use Magento\Tax\Helper\Data;
 
 class DeliveryDateProcessor
 {
-    private const ID_HASH_DELIMITTER = '____';
+    private const ID_HASH_DELIMITER = '____';
 
     /**
      * @var DateInterfaceFactory
@@ -180,7 +180,7 @@ class DeliveryDateProcessor
         $dateString = $dateObject->format('Y-m-d');
 
         return $this->encryptor->hash(
-            $dateString . self::ID_HASH_DELIMITTER . (float)$date['extraFee'],
+            $dateString . self::ID_HASH_DELIMITER . (float)$date['extraFee'],
             Encryptor::HASH_VERSION_MD5
         );
     }
@@ -192,7 +192,7 @@ class DeliveryDateProcessor
     private function generateTimeIntervalId(array $timeInterval): string
     {
         $string = implode(
-            self::ID_HASH_DELIMITTER,
+            self::ID_HASH_DELIMITER,
             [
                 $timeInterval['from'],
                 $timeInterval['to'],

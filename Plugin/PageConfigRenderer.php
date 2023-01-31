@@ -27,11 +27,6 @@ class PageConfigRenderer
     private $layout;
 
     /**
-     * @var Manager
-     */
-    private $moduleManager;
-
-    /**
      * @var ObjectManagerInterface
      */
     private $objectManager;
@@ -55,9 +50,7 @@ class PageConfigRenderer
     ) {
         $this->config = $config;
         $this->layout = $layout;
-        $this->moduleManager = $moduleManager;
-        $this->objectManager = $objectManager;
-        if ($this->moduleManager->isEnabled('Amasty_CheckoutCore')) {
+        if ($moduleManager->isEnabled('Amasty_CheckoutCore')) {
             $this->amastyCheckoutConfig = $objectManager->get(\Amasty\CheckoutCore\Model\Config::class);
         }
     }

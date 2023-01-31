@@ -8,6 +8,8 @@
 
 namespace Calcurates\ModuleMagento\Api;
 
+use Calcurates\ModuleMagento\Api\Data\ConfigDataInterface;
+
 /**
  * @api
  */
@@ -18,8 +20,8 @@ interface ConfigProviderInterface
      *
      * @param string|bool|int|null|\Magento\Store\Api\Data\WebsiteInterface $websiteId
      *
-     * @return \Calcurates\ModuleMagento\Api\Data\ConfigDataInterface
+     * @return ConfigDataInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException If ID is not found
      */
-    public function getSettings($websiteId = null);
+    public function getSettings($websiteId = null): ConfigDataInterface;
 }

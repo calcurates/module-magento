@@ -46,7 +46,6 @@ class TableRateNameBuilder
             $name = $rateMethod['displayName'] ?? $rateMethod['name'];
         }
         $name .= ' - ';
-        $name = $uniqueMethodNames[$rateMethod['name']] ?? $name;
 
         foreach ($rateMethod['rates'] ?? [] as $rate) {
             if ($includePackageNames) {
@@ -64,8 +63,8 @@ class TableRateNameBuilder
 
         $uniqueMethodNames[$rateMethod['name']] = $name;
 
-        return implode(', ', array_map(static function ($serviceName): string {
-            return rtrim($serviceName, ' - ');
+        return implode(', ', array_map(static function (string $serviceName): string {
+            return rtrim($serviceName, ' -');
         }, $uniqueMethodNames));
     }
 }

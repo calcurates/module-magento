@@ -21,7 +21,7 @@ class HydratorPool
     private $hydrators;
 
     /**
-     * @param array $hydrators
+     * @param HydratorInterface[] $hydrators
      */
     public function __construct(
         array $hydrators = []

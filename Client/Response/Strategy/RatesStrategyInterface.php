@@ -10,21 +10,22 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Client\Response\Strategy;
 
+use Magento\Quote\Model\Quote;
 use Magento\Shipping\Model\Rate\Result;
 
 interface RatesStrategyInterface
 {
     /**
-     * @param $apiRequestBody
-     * @param $storeId
+     * @param array $apiRequestBody
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return array
      */
-    public function getResponse($apiRequestBody, $storeId): array;
+    public function getResponse(array $apiRequestBody, $storeId): array;
 
     /**
-     * @param $response
-     * @param $quote
+     * @param array $response
+     * @param Quote $quote
      * @return mixed
      */
-    public function processResponse($response, $quote): Result;
+    public function processResponse(array $response, Quote $quote): Result;
 }

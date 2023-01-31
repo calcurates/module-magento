@@ -26,7 +26,7 @@ interface CalcuratesClientInterface
     /**
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return array
-     * @deprecated  since 1.28.0
+     * @deprecated since 1.28.0
      * @see \Calcurates\ModuleMagento\Gateway\CarriersServicesOptionSource
      */
     public function getShippingCarriersWithServices($storeId);
@@ -46,7 +46,7 @@ interface CalcuratesClientInterface
      * @return array
      * @throws LocalizedException
      */
-    public function getTrackingInfo($serviceId, $tracking, $storeId);
+    public function getTrackingInfo(string $serviceId, string $tracking, $storeId): array;
 
     /**
      * @param array $request
@@ -54,7 +54,7 @@ interface CalcuratesClientInterface
      * @return array
      * @throws LocalizedException
      */
-    public function createShippingLabel($request, $storeId);
+    public function createShippingLabel(array $request, $storeId): array;
 
     /**
      * @param array $request
@@ -63,7 +63,7 @@ interface CalcuratesClientInterface
      * @throws LocalizedException
      * @throws ApiException
      */
-    public function getRates(array $request, $storeId);
+    public function getRates(array $request, $storeId): array;
 
     /**
      * @param array $request

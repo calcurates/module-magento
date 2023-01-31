@@ -33,30 +33,26 @@ class MetaRateBuilder
 
     /**
      * @param string $methodId
-     * @param array $responseRate
      * @param string $methodTitle
      * @param string $carrierTitle
      * @return Method
      */
     public function build(
         string $methodId,
-        array $responseRate,
         string $methodTitle = '',
         string $carrierTitle = ''
     ): Method {
-        return $this->createRate($methodId, $responseRate, $methodTitle, $carrierTitle);
+        return $this->createRate($methodId, $methodTitle, $carrierTitle);
     }
 
     /**
      * @param string $methodId
-     * @param array $responseRate
      * @param string $methodTitle
      * @param string $carrierTitle
      * @return Method
      */
     private function createRate(
         string $methodId,
-        array $responseRate,
         string $methodTitle = '',
         string $carrierTitle = ''
     ): Method {

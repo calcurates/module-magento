@@ -80,7 +80,7 @@ class MetarateTotal
         $quoteData = $this->getQuoteData->get($quote->getId());
         $splitShipmentData = $quoteData->getSplitShipments();
         $productData = $this->metarateData->getProductData();
-        if (!$this->metarateData->getRatesData() || !$splitShipmentData) {
+        if (!$splitShipmentData || !$this->metarateData->getRatesData()) {
             $shippingAddress = $quote->getShippingAddress();
             $total->addTotalAmount($subject->getCode(), $shippingAddress->getShippingAmount());
             $total->addBaseTotalAmount($subject->getCode(), $shippingAddress->getBaseShippingAmount());

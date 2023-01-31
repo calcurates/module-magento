@@ -20,26 +20,25 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
      * @param Result $result
      * @param array $response
      * @param CartInterface $quote
+     * @return void
      */
     public function process(Result $result, array &$response, CartInterface $quote): void
     {
-        $resultShippingOptions = $response['shippingOptions'];
-        $this->prioritySortByType($resultShippingOptions, 'flatRates');
-        $this->prioritySortByType($resultShippingOptions, 'freeShipping');
-        $this->sortTableRates($resultShippingOptions);
-        $this->sortInStorePickups($resultShippingOptions);
-        $this->sortCarriers($resultShippingOptions);
-        $this->sortRateShopping($resultShippingOptions);
-        $this->sortMergedShippingOptions($resultShippingOptions);
-        $response['shippingOptions'] = $resultShippingOptions;
+        $this->prioritySortByType($response['shippingOptions'], 'flatRates');
+        $this->prioritySortByType($response['shippingOptions'], 'freeShipping');
+        $this->sortTableRates($response['shippingOptions']);
+        $this->sortInStorePickups($response['shippingOptions']);
+        $this->sortCarriers($response['shippingOptions']);
+        $this->sortRateShopping($response['shippingOptions']);
+        $this->sortMergedShippingOptions($response['shippingOptions']);
     }
 
 
     /**
      * @param array $resultShippingOptions
-     * @param string $type
+     * @param string $type flatRates or freeShipping
      */
-    private function prioritySortByType(array &$resultShippingOptions, $type): void
+    private function prioritySortByType(array &$resultShippingOptions, string $type): void
     {
         if (!$resultShippingOptions[$type]) {
             return;

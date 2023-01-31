@@ -114,7 +114,7 @@ class ShippingMethodConverterPlugin
         }
 
         $calcuratesMetaRateData = $result->getExtensionAttributes()->getCalcuratesMetaRateData();
-        if (!$calcuratesMetaRateData && $result->getMethodCode() == 'metarate') {
+        if (!$calcuratesMetaRateData && $result->getMethodCode() === Carrier\ShippingMethodManager::META_RATE) {
             $ratesOrigin = $this->metaRateData->getRatesData() ?? [];
             $address = $rateModel->getAddress();
             $metarates = [];
