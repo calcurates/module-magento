@@ -14,6 +14,8 @@ use Calcurates\ModuleMagento\Client\RateBuilder;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
+use Magento\Framework\App\Area;
+use Magento\Framework\App\State;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Shipping\Model\Rate\Result;
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
@@ -37,19 +39,27 @@ class MergedShippingProcessor implements ResponseProcessorInterface
     private $serializer;
 
     /**
+     * @var State
+     */
+    private $appState;
+
+    /**
      * MergedShippingProcessor constructor.
      * @param FailedRateBuilder $failedRateBuilder
      * @param RateBuilder $rateBuilder
      * @param SerializerInterface $serializer
+     * @param State $appState
      */
     public function __construct(
         FailedRateBuilder $failedRateBuilder,
         RateBuilder $rateBuilder,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        State $appState
     ) {
         $this->serializer = $serializer;
         $this->failedRateBuilder = $failedRateBuilder;
         $this->rateBuilder = $rateBuilder;
+        $this->appState = $appState;
     }
 
     /**
@@ -111,12 +121,19 @@ class MergedShippingProcessor implements ResponseProcessorInterface
     public function process(Result $result, array &$response, CartInterface $quote): void
     {
         foreach ($response['shippingOptions']['mergedShippingOptions'] as $responseRate) {
+            if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
+                $responseRate['displayName'] = $responseRate['name']
+                                               . (!empty($responseRate['displayName']) ? " ({$responseRate['displayName']})" : '');
+            } else {
+                $responseRate['displayName'] = $responseRate['displayName'] ?? $responseRate['name'];
+            }
+
             if (!$responseRate['success']) {
                 $messages = $this->makeErrorMessages($responseRate);
                 if ($messages) {
                     $failedRate = $this->failedRateBuilder->build(
-                        $responseRate['name'],
                         '',
+                        $responseRate['displayName'],
                         implode("\n", \array_unique($messages)),
                         $responseRate['priority']
                     );
@@ -124,6 +141,7 @@ class MergedShippingProcessor implements ResponseProcessorInterface
                 }
                 continue;
             }
+
             $carriePrefix = '';
             if ($responseRate['carriers']) {
                 $carriePrefix = 'carrier_';
