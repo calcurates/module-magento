@@ -15,6 +15,7 @@ define([
         deliveryDateList: ko.observable({}),
         currentDeliveryDatesList: ko.observable([]),
         currentDate: ko.observable({}),
+        currentTimeSlot: ko.observable({}),
         deliveryDatesMetadata: null,
 
         /**
