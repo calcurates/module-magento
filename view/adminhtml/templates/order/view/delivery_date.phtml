@@ -29,7 +29,7 @@ if ($orderData) {
 
                     <table class="admin__table-secondary order-information-table">
                         <tbody>
-                        <?php if ($deliveryDatesFormatted): ?>
+                        <?php if ($deliveryDatesFormatted && !$hasDeliveryDateAndTime): ?>
                             <tr>
                                 <th><?= $block->escapeHtml(__('Estimated Delivery Dates')) ?></th>
                                 <td><?= $block->escapeHtml($deliveryDatesFormatted) ?></td>
