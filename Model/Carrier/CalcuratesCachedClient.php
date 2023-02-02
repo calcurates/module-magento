@@ -145,4 +145,14 @@ class CalcuratesCachedClient implements CalcuratesClientInterface
     {
         return $this->calcuratesClient->getShippingOptions($type, $storeId);
     }
+
+    /**
+     * @param array $request
+     * @param int $storeId
+     * @return array
+     */
+    public function populateOrderInfo(array $request, $storeId): array
+    {
+        return $this->calcuratesClient->populateOrderInfo($request, $storeId);
+    }
 }
