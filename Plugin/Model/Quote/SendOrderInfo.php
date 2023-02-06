@@ -8,26 +8,16 @@
 
 namespace Calcurates\ModuleMagento\Plugin\Model\Quote;
 
-use Calcurates\ModuleMagento\Client\Request\OrderInfoRequestBuilder;
-use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
 use Magento\Quote\Api\CartManagementInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
+use Calcurates\ModuleMagento\Client\Command\SendOrderInformationCommand;
 
-/**
- * Class SendOrderInfo
- * @package Calcurates\ModuleMagento\Plugin\Model\Quote
- */
 class SendOrderInfo
 {
     /**
-     * @var CalcuratesClientInterface
+     * @var SendOrderInformationCommand
      */
-    private $calcuratesClient;
-
-    /**
-     * @var OrderInfoRequestBuilder
-     */
-    private $orderInfoRequestBuilder;
+    private $sendOrderInformationCommand;
 
     /**
      * @var OrderRepositoryInterface
@@ -36,18 +26,15 @@ class SendOrderInfo
 
     /**
      * SendOrderInfo constructor.
-     * @param CalcuratesClientInterface $calcuratesClient
-     * @param OrderInfoRequestBuilder $orderInfoRequestBuilder
+     * @param SendOrderInformationCommand $sendOrderInformationCommand
      * @param OrderRepositoryInterface $orderRepository
      */
     public function __construct(
-        CalcuratesClientInterface $calcuratesClient,
-        OrderInfoRequestBuilder $orderInfoRequestBuilder,
+        SendOrderInformationCommand $sendOrderInformationCommand,
         OrderRepositoryInterface $orderRepository
     ) {
         $this->orderRepository = $orderRepository;
-        $this->calcuratesClient = $calcuratesClient;
-        $this->orderInfoRequestBuilder = $orderInfoRequestBuilder;
+        $this->sendOrderInformationCommand = $sendOrderInformationCommand;
     }
 
     /**
@@ -63,10 +50,7 @@ class SendOrderInfo
             } catch (\Exception $e) {
                 return $result;
             }
-            $orderData = $this->orderInfoRequestBuilder->build($order);
-            if (is_array($orderData) && $orderData) {
-                $this->calcuratesClient->populateOrderInfo($orderData, $order->getStoreId());
-            }
+            $this->sendOrderInformationCommand->execute($order);
         }
         return $result;
     }
