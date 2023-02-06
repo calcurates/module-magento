@@ -57,7 +57,6 @@ class SendOrderInfo
      */
     public function afterPlaceOrder(CartManagementInterface $subject, $result)
     {
-
         if ($result) {
             try {
                 $order = $this->orderRepository->get($result);

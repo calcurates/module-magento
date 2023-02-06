@@ -111,7 +111,7 @@ class HttpClient
             throw new ApiException($client->getBody(), $client->getStatus());
         }
         foreach ($client->getHeaders() as $headerName => $value) {
-            if ($headerName == 'X-Request-Ulid') {
+            if ($headerName && strtolower($headerName) == 'x-request-ulid') {
                 $this->dataPersistor->set('ulid', $value);
                 break;
             }
