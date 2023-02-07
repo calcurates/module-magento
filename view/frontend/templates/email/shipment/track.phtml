@@ -16,10 +16,10 @@
 <?php
 /* @var \Magento\Sales\Model\Order $_order */
 $_order = $block->getOrder();
-$viewModel = $block->getViewModel();
-$viewModel->setOrder($_order);
 ?>
 <?php if ($_shipment && $_order) : ?>
+    <?php $viewModel = $block->getViewModel(); ?>
+    <?php $viewModel->setOrder($_order); ?>
     <?php $trackCollection = $_order->getTracksCollection($_shipment->getId()) ?>
     <?php if ($trackCollection) : ?>
         <br />
