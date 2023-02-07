@@ -30,7 +30,6 @@ use Magento\Shipping\Model\Carrier\AbstractCarrierOnline;
 use Magento\Shipping\Model\Carrier\CarrierInterface;
 use Magento\Shipping\Model\Rate\Result;
 use Psr\Log\LoggerInterface;
-use Magento\Framework\App\Request\DataPersistorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -112,11 +111,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private $configProvider;
 
     /**
-     * @var DataPersistorInterface
-     */
-    private $dataPersistor;
-
-    /**
      * Carrier constructor.
      * @param ScopeConfigInterface $scopeConfig
      * @param ErrorFactory $rateErrorFactory
@@ -143,7 +137,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param CreateShippingLabelCommand $createShippingLabelCommand
      * @param GetAllShippingOptionsCommand $getAllShippingOptionsCommand
      * @param \Calcurates\ModuleMagento\Model\Config $configProvider
-     * @param DataPersistorInterface $dataPersistor
      * @param array $data
      */
     public function __construct(
@@ -172,7 +165,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         CreateShippingLabelCommand $createShippingLabelCommand,
         GetAllShippingOptionsCommand $getAllShippingOptionsCommand,
         Config $configProvider,
-        DataPersistorInterface $dataPersistor,
         array $data = []
     ) {
         parent::__construct(
@@ -203,7 +195,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->createShippingLabelCommand = $createShippingLabelCommand;
         $this->getAllShippingOptionsCommand = $getAllShippingOptionsCommand;
         $this->configProvider = $configProvider;
-        $this->dataPersistor = $dataPersistor;
     }
 
     /**
@@ -233,10 +224,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
                 (string)$this->getConfigData(Config::MISSING_ADDRESS_MESSAGE)
             );
             $this->result = $result;
-        }
-        if ($this->result->getAllRates() && $this->dataPersistor->get('ulid')) {
-            $this->dataPersistor->set('last_ulid', $this->dataPersistor->get('ulid'));
-            $this->dataPersistor->clear('ulid');
         }
         $this->_updateFreeMethodQuote($request);
 

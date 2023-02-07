@@ -9,7 +9,6 @@
 namespace Calcurates\ModuleMagento\Client\Http;
 
 use Magento\Framework\HTTP\ClientFactory;
-use Magento\Framework\App\Request\DataPersistorInterface;
 
 // @TODO: service class can't contain setters and logic together! Refactor that
 class HttpClient
@@ -33,20 +32,11 @@ class HttpClient
     private $timeout;
 
     /**
-     * @var DataPersistorInterface
-     */
-    private $dataPersistor;
-
-    /**
      * HttpClient constructor.
      * @param ClientFactory $httpClientFactory
-     * @param DataPersistorInterface $dataPersistor
      */
-    public function __construct(
-        ClientFactory $httpClientFactory,
-        DataPersistorInterface $dataPersistor
-    ) {
-        $this->dataPersistor = $dataPersistor;
+    public function __construct(ClientFactory $httpClientFactory)
+    {
         $this->httpClientFactory = $httpClientFactory;
     }
 
@@ -110,12 +100,7 @@ class HttpClient
         if ($client->getStatus() >= 400) {
             throw new ApiException($client->getBody(), $client->getStatus());
         }
-        foreach ($client->getHeaders() as $headerName => $value) {
-            if ($headerName && strtolower($headerName) == 'x-request-ulid') {
-                $this->dataPersistor->set('ulid', $value);
-                break;
-            }
-        }
+
         return $client->getBody();
     }
 

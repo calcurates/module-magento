@@ -26,22 +26,6 @@
             <argument name="session" xsi:type="object">Magento\Backend\Model\Session</argument>
         </arguments>
     </virtualType>
-    <type name="Calcurates\ModuleMagento\Client\Request\OrderInfoRequestBuilder">
-        <arguments>
-            <argument name="dataPersistor" xsi:type="object">calcurates_backend_data_persistor</argument>
-        </arguments>
-    </type>
-
-    <type name="Calcurates\ModuleMagento\Client\Http\HttpClient">
-        <arguments>
-            <argument name="dataPersistor" xsi:type="object">calcurates_backend_data_persistor</argument>
-        </arguments>
-    </type>
-    <type name="Calcurates\ModuleMagento\Model\Carrier">
-        <arguments>
-            <argument name="dataPersistor" xsi:type="object">calcurates_backend_data_persistor</argument>
-        </arguments>
-    </type>
     <type name="Calcurates\ModuleMagento\Model\Shipment\CarriersSettingsProvider">
         <arguments>
             <argument name="dataPersistor" xsi:type="object">calcurates_backend_data_persistor</argument>
@@ -68,11 +52,6 @@
     <type name="Magento\Email\Block\Adminhtml\Template\Edit\Form">
         <plugin name="calcurates_email_edit_form_add_variables"
                 type="Calcurates\ModuleMagento\Plugin\EmailEditFormAddVariables"
-                sortOrder="10"/>
-    </type>
-    <type name="Magento\Sales\Model\AdminOrder\Create">
-        <plugin name="calcurates_send_order_information"
-                type="Calcurates\ModuleMagento\Plugin\Model\AdminOrder\SendOrderInfo"
                 sortOrder="10"/>
     </type>
 </config>

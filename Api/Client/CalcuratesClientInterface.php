@@ -98,11 +98,4 @@ interface CalcuratesClientInterface
      * @see \Calcurates\ModuleMagento\Client\Command\GetShippingOptionsCommand
      */
     public function getShippingOptions(string $type, $storeId): array;
-
-    /**
-     * @param array $request
-     * @param int $storeId
-     * @return array
-     */
-    public function populateOrderInfo(array $request, $storeId): array;
 }

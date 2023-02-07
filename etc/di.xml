@@ -280,23 +280,6 @@
         </arguments>
     </type>
 
-    <type name="Calcurates\ModuleMagento\Client\Request\OrderInfoRequestBuilder">
-        <arguments>
-            <argument name="dataPersistor" xsi:type="object">Calcurates\ModuleMagento\Model\Request\DataPersistor</argument>
-        </arguments>
-    </type>
-
-    <type name="Calcurates\ModuleMagento\Client\Http\HttpClient">
-        <arguments>
-            <argument name="dataPersistor" xsi:type="object">Calcurates\ModuleMagento\Model\Request\DataPersistor</argument>
-        </arguments>
-    </type>
-    <type name="Calcurates\ModuleMagento\Model\Carrier">
-        <arguments>
-            <argument name="dataPersistor" xsi:type="object">Calcurates\ModuleMagento\Model\Request\DataPersistor</argument>
-        </arguments>
-    </type>
-
     <type name="Magento\Checkout\Api\ShippingInformationManagementInterface">
         <plugin name="Calcurates_ModuleMagento::SaveDeliveryDatesPlugin"
                 type="Calcurates\ModuleMagento\Plugin\QuoteDataSave\Checkout\Model\SaveDeliveryDateFromShippingInfoPlugin"
@@ -344,10 +327,5 @@
         <arguments>
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
         </arguments>
-    </type>
-    <type name="Magento\Quote\Model\QuoteManagement">
-        <plugin name="calcurates_calculate_totals_information"
-                type="Calcurates\ModuleMagento\Plugin\Model\Quote\SendOrderInfo"
-                sortOrder="10"/>
     </type>
 </config>

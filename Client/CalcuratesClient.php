@@ -277,26 +277,4 @@ class CalcuratesClient implements CalcuratesClientInterface
 
         return $response;
     }
-
-    /**
-     * @param array $request
-     * @param int $storeId
-     * @return array
-     */
-    public function populateOrderInfo(array $request, $storeId): array
-    {
-        try {
-            $httpClient = $this->apiClientProvider->getClient($storeId);
-            $apiUrl = $this->apiClientProvider->getApiUrl();
-            $response = $httpClient->post(
-                $apiUrl . '/orders',
-                \Zend_Json::encode($request)
-            );
-            $response = \Zend_Json::decode($response);
-        } catch (\Throwable $e) {
-           return [];
-        }
-
-        return $response;
-    }
 }
