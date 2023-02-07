@@ -14,6 +14,8 @@ use Calcurates\ModuleMagento\Client\RateBuilder;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
+use Magento\Framework\App\Area;
+use Magento\Framework\App\State;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Shipping\Model\Rate\Result;
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
@@ -37,43 +39,111 @@ class MergedShippingProcessor implements ResponseProcessorInterface
     private $serializer;
 
     /**
+     * @var State
+     */
+    private $appState;
+
+    /**
      * MergedShippingProcessor constructor.
      * @param FailedRateBuilder $failedRateBuilder
      * @param RateBuilder $rateBuilder
      * @param SerializerInterface $serializer
+     * @param State $appState
      */
     public function __construct(
         FailedRateBuilder $failedRateBuilder,
         RateBuilder $rateBuilder,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        State $appState
     ) {
         $this->serializer = $serializer;
         $this->failedRateBuilder = $failedRateBuilder;
         $this->rateBuilder = $rateBuilder;
+        $this->appState = $appState;
+    }
+
+    /**
+     * @return string[]
+     */
+    private function makeErrorMessages(array $responseRate): array
+    {
+        $messages = [];
+        foreach ($responseRate['flatRates'] as $flatRate) {
+            if ($flatRate['message']) {
+                $messages[] = $flatRate['message'];
+            }
+        }
+        foreach ($responseRate['freeShipping'] as $freeShipping) {
+            if ($freeShipping['message']) {
+                $messages[] = $freeShipping['message'];
+            }
+        }
+        foreach ($responseRate['tableRates'] as $tableRate) {
+            foreach ($tableRate['methods'] as $method) {
+                if ($method['message']) {
+                    $messages[] = $method['message'];
+                }
+            }
+        }
+        foreach ($responseRate['inStorePickups'] as $inStorePickup) {
+            foreach ($inStorePickup['stores'] as $store) {
+                if ($store['message']) {
+                    $messages[] = $store['message'];
+                }
+            }
+        }
+        foreach ($responseRate['carriers'] as $carrier) {
+            foreach ($carrier['rates'] ?? [] as $carrierRate) {
+                if ($carrierRate['message']) {
+                    $messages[] = $carrierRate['message'];
+                }
+            }
+        }
+        foreach ($responseRate['rateShopping'] as $rateShopping) {
+            foreach ($rateShopping['carriers'] ?? [] as $rateShoppingCarrier) {
+                foreach ($rateShoppingCarrier['rates'] ?? [] as $rateShoppingCarrierRate) {
+                    if ($rateShoppingCarrierRate['message']) {
+                        $messages[] = $rateShoppingCarrierRate['message'];
+                    }
+                }
+            }
+        }
+
+        return $messages;
     }
 
     /**
      * @param Result $result
      * @param array $response
      * @param CartInterface $quote
+     * @return void
      */
     public function process(Result $result, array &$response, CartInterface $quote): void
     {
         foreach ($response['shippingOptions']['mergedShippingOptions'] as $responseRate) {
+            if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
+                $responseRate['displayName'] = $responseRate['name']
+                                               . (!empty($responseRate['displayName']) ? " ({$responseRate['displayName']})" : '');
+            } else {
+                $responseRate['displayName'] = $responseRate['displayName'] ?? $responseRate['name'];
+            }
+
             if (!$responseRate['success']) {
-                if ($responseRate['message']) {
+                $messages = $this->makeErrorMessages($responseRate);
+                if ($messages) {
                     $failedRate = $this->failedRateBuilder->build(
-                        $responseRate['name'],
                         '',
-                        $responseRate['message'],
+                        $responseRate['displayName'],
+                        implode("\n", \array_unique($messages)),
                         $responseRate['priority']
                     );
                     $result->append($failedRate);
                 }
                 continue;
             }
+
             $carriePrefix = '';
-            if (array_key_exists('carriers', $responseRate) && $responseRate['carriers']) {
+            if ($responseRate['carriers']) {
                 $carriePrefix = 'carrier_';
                 $carrierIds = [];
                 foreach ($responseRate['carriers'] as $carrier) {
@@ -82,7 +152,7 @@ class MergedShippingProcessor implements ResponseProcessorInterface
                 $carriePrefix .= implode(',', $carrierIds);
             }
             $rates = $this->rateBuilder->build(
-                ShippingMethodManager::MERGRED_SHIPPING . '_' . $carriePrefix . '_' . $responseRate['id'],
+                ShippingMethodManager::MERGED_SHIPPING . '_' . $carriePrefix . '_' . $responseRate['id'],
                 $responseRate,
                 ''
             );
@@ -95,21 +165,15 @@ class MergedShippingProcessor implements ResponseProcessorInterface
                 foreach ($carrier['rates'] ?? [] as $responseCarrierRate) {
                     $serviceIds = [];
                     $sourceToServiceId = [];
-                    $message = [];
                     $packages = [];
                     foreach ($responseCarrierRate['services'] as $service) {
+                        $serviceIds[] = $service['id'];
+
                         foreach ($service['packages'] ?? [] as $package) {
                             $packages[] = $package;
                         }
 
-                        if (!empty($service['message'])) {
-                            $message[] = $service['message'];
-                        }
-
-                        $serviceIds[] = $service['id'];
-
                         $sourceCode = $service['origin']['syncedTargetOriginCode'] ?? null;
-
                         if ($sourceCode) {
                             $sourceToServiceId[$sourceCode] = $service['id'];
                         }
@@ -139,6 +203,7 @@ class MergedShippingProcessor implements ResponseProcessorInterface
                 CustomSalesAttributesInterface::CARRIER_SOURCE_CODE_TO_SERVICE,
                 $this->serializer->serialize($carrierServicesToOrigins)
             );
+
             $existingCarrierRatesToPackages = $quote->getData(
                 CustomSalesAttributesInterface::CARRIER_PACKAGES
             ) ?: [];

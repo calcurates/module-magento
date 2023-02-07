@@ -19,13 +19,13 @@ use Magento\Framework\Serialize\SerializerInterface;
 class ShippingMethodManager
 {
     public const FLAT_RATES = 'flatRate';
-    public const MERGRED_SHIPPING = 'mergedRate';
+    public const MERGED_SHIPPING = 'mergedRate';
     public const FREE_SHIPPING = 'freeShipping';
     public const TABLE_RATE = 'tableRate';
     public const CARRIER = 'carrier';
     public const IN_STORE_PICKUP = 'inStorePickup';
     public const RATE_SHOPPING = 'rateShopping';
-    public const META_RATE = 'metaRate';
+    public const META_RATE = 'metarate';
 
     /**
      * @var CarrierDataFactory
@@ -37,6 +37,9 @@ class ShippingMethodManager
      */
     private $inStorePickupDataFactory;
 
+    /**
+     * @var SerializerInterface
+     */
     private $serializer;
 
     /**
@@ -134,7 +137,7 @@ class ShippingMethodManager
             return null;
         }
 
-        if ($method !== self::MERGRED_SHIPPING) {
+        if ($method !== self::MERGED_SHIPPING) {
             return null;
         }
         list($method, $additional) = explode('_', $additional, 2);

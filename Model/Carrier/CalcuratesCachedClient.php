@@ -61,7 +61,7 @@ class CalcuratesCachedClient implements CalcuratesClientInterface
      * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
      * @return array
      */
-    public function getTrackingInfo($serviceId, $tracking, $storeId)
+    public function getTrackingInfo(string $serviceId, string $tracking, $storeId): array
     {
         return $this->calcuratesClient->getTrackingInfo($serviceId, $tracking, $storeId);
     }
@@ -71,7 +71,7 @@ class CalcuratesCachedClient implements CalcuratesClientInterface
      * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
      * @return array
      */
-    public function createShippingLabel($request, $storeId)
+    public function createShippingLabel(array $request, $storeId): array
     {
         return $this->calcuratesClient->createShippingLabel($request, $storeId);
     }
@@ -79,13 +79,17 @@ class CalcuratesCachedClient implements CalcuratesClientInterface
     /**
      * @param array $request
      * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
-     * @return array|bool
+     * @return array
      */
-    public function getRates(array $request, $storeId)
+    public function getRates(array $request, $storeId): array
     {
         $rates = $this->cache->getCachedData($request, $storeId);
-        if ($rates === false) {
-            $rates = $this->calcuratesClient->getRates($request, $storeId);
+        if (null === $rates) {
+            try {
+                $rates = $this->calcuratesClient->getRates($request, $storeId);
+            } catch (LocalizedException|ApiException $e) {
+                $rates = [];
+            }
             $this->cache->saveCachedData($request, $storeId, $rates);
         }
 
@@ -110,7 +114,7 @@ class CalcuratesCachedClient implements CalcuratesClientInterface
     public function getRatesSplitCheckout(array $request, $storeId): array
     {
         $rates = $this->cache->getCachedData($request, $storeId);
-        if ($rates === false) {
+        if (null === $rates) {
             try {
                 $rates = $this->calcuratesClient->getRatesSplitCheckout($request, $storeId);
             } catch (LocalizedException|ApiException $e) {
@@ -126,7 +130,7 @@ class CalcuratesCachedClient implements CalcuratesClientInterface
      * @param int|\Magento\Framework\App\ScopeInterface|string $storeId
      * @return array
      */
-    public function getCustomPackages($storeId)
+    public function getCustomPackages($storeId): array
     {
         return $this->calcuratesClient->getCustomPackages($storeId);
     }

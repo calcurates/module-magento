@@ -20,6 +20,9 @@ class CompositeProcessor implements ResponseProcessorInterface
      */
     private $processors;
 
+    /**
+     * @param ResponseProcessorInterface[] $processors
+     */
     public function __construct(array $processors)
     {
         $this->processors = $processors;

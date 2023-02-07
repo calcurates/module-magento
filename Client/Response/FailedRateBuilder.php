@@ -37,7 +37,7 @@ class FailedRateBuilder
      * @param int|null $priority
      * @return Error
      */
-    public function build(string $rateName, string $methodTitle = '', string $message = '', ?int $priority = null)
+    public function build(string $rateName, string $methodTitle = '', string $message = '', ?int $priority = null): Error
     {
         $failedRate = $this->rateErrorFactory->create();
         $failedRate->setCarrier(Carrier::CODE);

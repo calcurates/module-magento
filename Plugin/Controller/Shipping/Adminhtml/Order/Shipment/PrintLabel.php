@@ -153,7 +153,6 @@ class PrintLabel
             );
             $labelContent = $shippingLabel->getLabelContent();
             if ($labelContent) {
-                $pdfContent = null;
                 if (stripos($labelContent, '%PDF-') !== false) {
                     $pdfContent = $labelContent;
                 } else {

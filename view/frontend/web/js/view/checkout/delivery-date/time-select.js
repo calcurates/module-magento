@@ -56,15 +56,11 @@ define([
                     if (this.timeSlotTimeRequired()) {
                         this.caption(null);
                     }
-
+                    this.updateCurrentTimeSlot(data.time_intervals);
                     this.setOptions(options);
                     this.setDefaultOption(data.time_intervals);
-                    if (this.timeSlotTimeRequired()
-                        && 'undefined' !== typeof options[0]
-                    ) {
-                        this.value(this.default);
-                        this.validateSelect();
-                    }
+                    this.updateValue();
+
                     this.enable();
                 } else {
                     this.options([]);
@@ -75,6 +71,34 @@ define([
             }, this);
 
             return this;
+        },
+
+        updateValue: function () {
+            if (deliveryDateList.currentTimeSlot() && deliveryDateList.currentTimeSlot().id) {
+                this.value(deliveryDateList.currentTimeSlot().id);
+                return;
+            }
+            if (this.timeSlotTimeRequired() && this.options().length) {
+                this.value(this.default);
+                this.validateSelect();
+            }
+        },
+
+        updateCurrentTimeSlot: function (data) {
+            var currTimeSlot = deliveryDateList.currentTimeSlot, newTimeSlot;
+
+            if (data.length && currTimeSlot() && currTimeSlot().id) {
+                data.forEach(function (timeSlot) {
+                    if (timeSlot.interval_formatted === currTimeSlot().interval_formatted) {
+                        newTimeSlot = timeSlot;
+                    }
+                })
+                if (newTimeSlot && currTimeSlot().id !== newTimeSlot.id) {
+                    currTimeSlot(newTimeSlot);
+                } else if (!newTimeSlot) {
+                    currTimeSlot({});
+                }
+            }
         },
 
         setDefaultOption: function (data) {
@@ -94,7 +118,17 @@ define([
         },
 
         onChangeTime: function () {
+            var self = this, currInterval;
+
             if (this.options().length > 0) {
+                deliveryDateList.currentDate().time_intervals.forEach(function (timeSlot) {
+                    if (self.value() === timeSlot.id) {
+                        currInterval = timeSlot;
+                    }
+                })
+                if (currInterval) {
+                    deliveryDateList.currentTimeSlot(currInterval);
+                }
                 this.validateSelect();
                 /**
                  * Amasty Checkout compatibility

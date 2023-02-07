@@ -54,17 +54,41 @@ define([
                 if (this.timeSlotDateRequired()) {
                     this.caption(null);
                 }
+                this.updateCurrentDate(data);
                 this.setOptions(options);
                 this.setDefaultOption(data);
-                if (this.timeSlotDateRequired()
-                    && 'undefined' !== typeof options[0]
-                ) {
-                    this.value(this.default);
-                }
+                this.updateValue();
                 this.onChangeDate();
             }, this);
 
             return this;
+        },
+
+        updateValue: function () {
+            if (deliveryDateList.currentDate() && deliveryDateList.currentDate().id) {
+                this.value(deliveryDateList.currentDate().id);
+                return;
+            }
+            if (this.timeSlotDateRequired() && this.options().length) {
+                this.value(this.default);
+            }
+        },
+
+        updateCurrentDate: function (data) {
+            var currDate = deliveryDateList.currentDate, newDateItem
+
+            if (data.length && currDate() && currDate().date) {
+                data.forEach(function (dateSlot) {
+                    if (dateSlot.date.slice(0,10) === currDate().date.slice(0,10)) {
+                        newDateItem = dateSlot;
+                    }
+                })
+            }
+            if (newDateItem && currDate().id !== newDateItem.id) {
+                currDate(newDateItem);
+            } else if (!newDateItem) {
+                currDate({});
+            }
         },
 
         setDefaultOption: function (data) {

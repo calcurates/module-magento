@@ -101,7 +101,7 @@ class Config implements ConfigProviderInterface
      * {@inheritdoc}
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function getSettings($websiteId = null)
+    public function getSettings($websiteId = null): ConfigDataInterface
     {
         /** @var Website $website */
         $website = $this->storeManager->getWebsite($websiteId);
@@ -164,7 +164,7 @@ class Config implements ConfigProviderInterface
     /**
      * @return array{name: string, version: string}
      */
-    public function getComposerData()
+    public function getComposerData(): array
     {
         static $data = [];
 
@@ -187,7 +187,7 @@ class Config implements ConfigProviderInterface
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return string
      */
-    public function getTitle($storeId)
+    public function getTitle($storeId): string
     {
         return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::CONFIG_TITLE,
@@ -200,7 +200,7 @@ class Config implements ConfigProviderInterface
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return string
      */
-    public function getErrorMessage($storeId)
+    public function getErrorMessage($storeId): string
     {
         return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::CONFIG_ERROR_MESSAGE,
@@ -213,7 +213,7 @@ class Config implements ConfigProviderInterface
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return string
      */
-    public function getMissingAddressMessage($storeId)
+    public function getMissingAddressMessage($storeId): string
     {
         return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::MISSING_ADDRESS_MESSAGE,
@@ -226,7 +226,7 @@ class Config implements ConfigProviderInterface
      * @param int|string $storeId
      * @return int
      */
-    public function getApiGetRatesTimeout($storeId)
+    public function getApiGetRatesTimeout($storeId): int
     {
         return (int)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::API_GET_RATES_TIMEOUT,
@@ -239,7 +239,7 @@ class Config implements ConfigProviderInterface
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return array
      */
-    public function getShippingMethodsForFallback($storeId)
+    public function getShippingMethodsForFallback($storeId): array
     {
         $list = $this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::SHIPPING_METHODS_FOR_FALLBACK,
@@ -255,9 +255,9 @@ class Config implements ConfigProviderInterface
      * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
      * @return bool
      */
-    public function isActive($storeId = null)
+    public function isActive($storeId = null): bool
     {
-        return $this->scopeConfig->isSetFlag(
+        return (bool)$this->scopeConfig->isSetFlag(
             self::CONFIG_GROUP . self::ACTIVE,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
@@ -268,9 +268,9 @@ class Config implements ConfigProviderInterface
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return bool
      */
-    public function isDebug($storeId)
+    public function isDebug($storeId): bool
     {
-        return $this->scopeConfig->isSetFlag(
+        return (bool)$this->scopeConfig->isSetFlag(
             self::CONFIG_GROUP . self::DEBUG,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
@@ -281,9 +281,9 @@ class Config implements ConfigProviderInterface
      * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
      * @return string
      */
-    public function getDeliveryDateDefaultValueType($storeId = null)
+    public function getDeliveryDateDefaultValueType($storeId = null): string
     {
-        return $this->scopeConfig->getValue(
+        return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::DELIVERY_DATE_DEFAULT_VALUE_TYPE,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
@@ -294,9 +294,9 @@ class Config implements ConfigProviderInterface
      * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
      * @return string
      */
-    public function getDeliveryDateDisplay($storeId = null)
+    public function getDeliveryDateDisplay($storeId = null): string
     {
-        return $this->scopeConfig->getValue(
+        return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::DELIVERY_DATE_DISPLAY,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
@@ -307,9 +307,9 @@ class Config implements ConfigProviderInterface
      * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
      * @return string
      */
-    public function getDeliveryDateDisplayType($storeId = null)
+    public function getDeliveryDateDisplayType($storeId = null): string
     {
-        return $this->scopeConfig->getValue(
+        return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::DELIVERY_DATE_DISPLAY_TYPE,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
@@ -320,9 +320,9 @@ class Config implements ConfigProviderInterface
      * @param \Magento\Framework\App\ScopeInterface|int|string|null $storeId
      * @return string
      */
-    public function getDeliveryDateDisplayFormat($storeId = null)
+    public function getDeliveryDateDisplayFormat($storeId = null): string
     {
-        return $this->scopeConfig->getValue(
+        return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::DELIVERY_DATE_DISPLAY_FORMAT,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
@@ -333,9 +333,9 @@ class Config implements ConfigProviderInterface
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return bool
      */
-    public function isDisplayImages($storeId = null)
+    public function isDisplayImages($storeId = null): bool
     {
-        return $this->scopeConfig->isSetFlag(
+        return (bool)$this->scopeConfig->isSetFlag(
             self::CONFIG_GROUP . self::DISPLAY_IMAGES,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
@@ -348,7 +348,7 @@ class Config implements ConfigProviderInterface
      */
     public function isDisplayPackageNameForCarrier($storeId = null): bool
     {
-        return $this->scopeConfig->isSetFlag(
+        return (bool)$this->scopeConfig->isSetFlag(
             self::CONFIG_GROUP . self::DISPLAY_PACKAGE_NAME_FOR_CARRIER,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
@@ -400,7 +400,7 @@ class Config implements ConfigProviderInterface
      */
     public function isSplitCheckoutEnabled(int $storeId = null): bool
     {
-        return $this->scopeConfig->isSetFlag(
+        return (bool)$this->scopeConfig->isSetFlag(
             self::CONFIG_GROUP . self::SPLIT_CHECKOUT_ENABLED,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
@@ -439,7 +439,7 @@ class Config implements ConfigProviderInterface
      */
     public function isGoogleAddressAutocompleteEnabled($storeId = null): bool
     {
-        return $this->scopeConfig->isSetFlag(
+        return (bool)$this->scopeConfig->isSetFlag(
             self::CONFIG_GROUP . self::ENABLE_GOOGLE_ADDRESS_AUTOCOMPLETE,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId

@@ -52,7 +52,7 @@ class PackageInfoLoader
      * @param string $package
      * @return array|null
      */
-    public function getPackageData($package)
+    public function getPackageData(string $package): ?array
     {
         $packageData = $this->packageInfoCache->getCachedData($package);
         if (!$packageData) {

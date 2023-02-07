@@ -14,6 +14,7 @@ use Calcurates\ModuleMagento\Model\Carrier;
 use Calcurates\ModuleMagento\Model\Config;
 use Calcurates\ModuleMagento\Model\Config\Source\RateTaxDisplaySource;
 use Calcurates\ModuleMagento\Model\CurrencyConverter;
+use Magento\Quote\Model\Quote\Address\RateResult\Method;
 use Magento\Quote\Model\Quote\Address\RateResult\MethodFactory;
 
 class RateBuilder
@@ -55,9 +56,9 @@ class RateBuilder
      * @param string $methodId
      * @param array $responseRate
      * @param string $carrierTitle
-     * @return \Magento\Quote\Model\Quote\Address\RateResult\Method[]
+     * @return Method[]
      */
-    public function build(string $methodId, array $responseRate, $carrierTitle = ''): array
+    public function build(string $methodId, array $responseRate, string $carrierTitle = ''): array
     {
         $displayRatesType = $this->calcuratesConfig->getRatesTaxDisplayType();
         $tax = $responseRate['rate']['tax'] ?? null;
@@ -89,9 +90,9 @@ class RateBuilder
      * @param string $methodId
      * @param array $responseRate
      * @param string $carrierTitle
-     * @return \Magento\Quote\Model\Quote\Address\RateResult\Method
+     * @return Method
      */
-    private function createRate(string $methodId, array $responseRate, $carrierTitle = '')
+    private function createRate(string $methodId, array $responseRate, string $carrierTitle = ''): Method
     {
         $rate = $this->rateMethodFactory->create();
         $baseAmount = $this->currencyConverter->convertToBase(

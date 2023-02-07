@@ -78,7 +78,7 @@ class VersionManager
     /**
      * @return bool
      */
-    public function isVersionLatest()
+    public function isVersionLatest(): bool
     {
         $currentVersion = $this->getCurrentVersion();
         $latestVersion = $this->getLatestVersion();

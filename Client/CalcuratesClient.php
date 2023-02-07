@@ -94,7 +94,7 @@ class CalcuratesClient implements CalcuratesClientInterface
      * @return array
      * @throws LocalizedException
      */
-    public function getTrackingInfo($serviceId, $tracking, $storeId)
+    public function getTrackingInfo(string $serviceId, string $tracking, $storeId): array
     {
         try {
             $query = http_build_query([
@@ -118,7 +118,7 @@ class CalcuratesClient implements CalcuratesClientInterface
      * @return array
      * @throws LocalizedException
      */
-    public function createShippingLabel($request, $storeId)
+    public function createShippingLabel(array $request, $storeId): array
     {
         try {
             $httpClient = $this->apiClientProvider->getClient($storeId);
@@ -142,7 +142,7 @@ class CalcuratesClient implements CalcuratesClientInterface
      * @throws LocalizedException
      * @throws ApiException
      */
-    public function getRates(array $request, $storeId)
+    public function getRates(array $request, $storeId): array
     {
         $timeout = $this->calcuratesConfig->getApiGetRatesTimeout($storeId);
         try {
@@ -195,7 +195,7 @@ class CalcuratesClient implements CalcuratesClientInterface
 
     /**
      * @param array $request
-     * @param int $storeId
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return array
      * @throws LocalizedException
      * @throws ApiException

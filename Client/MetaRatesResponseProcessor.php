@@ -9,6 +9,7 @@
 namespace Calcurates\ModuleMagento\Client;
 
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
+use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Calcurates\ModuleMagento\Model\Config as CalcuratesConfig;
 use Calcurates\ModuleMagento\Model\Data\MetaRateData;
 use Magento\Quote\Model\Quote;
@@ -120,8 +121,7 @@ class MetaRatesResponseProcessor
         }
 
         $metarate = $this->rateBuilder->build(
-            'metarate',
-            [],
+            ShippingMethodManager::META_RATE,
             $this->calcuratesConfig->getSplitCheckoutTitle($quote->getStoreId()),
             $this->calcuratesConfig->getCarrierTitle($quote->getStoreId())
         );
