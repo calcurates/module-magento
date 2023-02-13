@@ -81,6 +81,10 @@ class OrderDeliveryDate implements ArgumentInterface
     {
         [$dateObject] = $this->deliveryDateFormatter->prepareDates($date, null);
 
+        if (null === $dateObject) {
+            return '';
+        }
+
         return $this->deliveryDateFormatter->formatSingleDate(
             $dateObject,
             $this->config->getDeliveryDateDisplayType() === DisplayType::DAYS_QTY
