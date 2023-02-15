@@ -94,6 +94,9 @@ class RateBuilder
      */
     private function createRate(string $methodId, array $responseRate, string $carrierTitle = ''): Method
     {
+        if (!$this->calcuratesConfig->isDisplayShippingOptionName()) {
+            $carrierTitle = '';
+        }
         $rate = $this->rateMethodFactory->create();
         $baseAmount = $this->currencyConverter->convertToBase(
             $responseRate['rate']['cost'],
