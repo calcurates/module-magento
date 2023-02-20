@@ -17,6 +17,8 @@ $_order = $block->getOrder();
 $viewModel = $block->getViewModel();
 $viewModel->setOrder($_order);
 $_invoice = $block->getInvoice();
+$deliveryDate = $block->getChildBlock('delivery_date')->setOrderId($_order->getId())->setType('date')->toHtml();
+$deliveryTime = $block->getChildBlock('delivery_time')->setOrderId($_order->getId())->setType('time')->toHtml();
 ?>
 <?php if ($_invoice): ?>
     <?php $_invoices = [$_invoice]; ?>
@@ -87,7 +89,11 @@ $_invoice = $block->getInvoice();
                         <?php endforeach; ?>
                     <?php else: ?>
                         <?php if ($_order->getShippingDescription()): ?>
-                            <?= $block->escapeHtml($_order->getShippingDescription()) ?>
+                            <?= $block->escapeHtml($_order->getShippingDescription()) ?><br/><br/>
+                            <?php if ($deliveryDate || $deliveryTime): ?>
+                                <i><?= $block->escapeHtml(__('Delivery Date:')) ?></i><br/>
+                                <?= /* @noEscape */ $deliveryDate ?><br/><?= /* @noEscape */ $deliveryTime ?>
+                            <?php endif; ?>
                         <?php else: ?>
                             <?= $block->escapeHtml(__('No shipping information available')) ?>
                         <?php endif; ?>
