@@ -13,6 +13,10 @@
                     Calcurates\ModuleMagento\ViewModel\OrderShippingAdditionalInfo
                 </argument>
             </arguments>
+            <block name="delivery_date" as="delivery_date" class="Calcurates\ModuleMagento\Block\Order\DeliveryDateTime"
+                   template="Calcurates_ModuleMagento::order/delivery_date_time.phtml"/>
+            <block name="delivery_time" as="delivery_time" class="Calcurates\ModuleMagento\Block\Order\DeliveryDateTime"
+                   template="Calcurates_ModuleMagento::order/delivery_date_time.phtml"/>
         </referenceBlock>
     </body>
 </page>

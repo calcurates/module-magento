@@ -7,6 +7,7 @@
  */
 
 /**
+ * @var $block \Magento\Sales\Block\Order\PrintOrder\Creditmemo
  * @var $viewModel \Calcurates\ModuleMagento\ViewModel\OrderShippingAdditionalInfo
  * @var $escaper \Magento\Framework\Escaper
  */
@@ -16,6 +17,8 @@ $_order = $block->getOrder();
 $viewModel = $block->getViewModel();
 $viewModel->setOrder($_order);
 $_creditmemo = $block->getCreditmemo();
+$deliveryDate = $block->getChildBlock('delivery_date')->setOrderId($_order->getId())->setType('date')->toHtml();
+$deliveryTime = $block->getChildBlock('delivery_time')->setOrderId($_order->getId())->setType('time')->toHtml();
 ?>
 <?php if ($_creditmemo): ?>
     <?php $_creditmemos = [$_creditmemo]; ?>
@@ -86,7 +89,11 @@ $_creditmemo = $block->getCreditmemo();
                             </span><br>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <?= $block->escapeHtml($_order->getShippingDescription()) ?>
+                        <?= $block->escapeHtml($_order->getShippingDescription()) ?><br/><br/>
+                        <?php if ($deliveryDate || $deliveryTime): ?>
+                            <i><?= $block->escapeHtml(__('Delivery Date:')) ?></i><br/>
+                            <?= /* @noEscape */ $deliveryDate ?><br/><?= /* @noEscape */ $deliveryTime ?>
+                        <?php endif; ?>
                     <?php endif; ?>
                 </div>
             </div>
