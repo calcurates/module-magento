@@ -10,9 +10,8 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Model\InStorePickup\Extractor;
 
-use Magento\Directory\Model\RegionFactory;
-use Magento\Framework\DataObject\Copy;
 use Calcurates\ModuleMagento\Api\Data\InStorePickup\PickupLocationInterface;
+use Magento\Framework\DataObject\Copy;
 
 class PickupLocationShippingAddressDataExtractor
 {

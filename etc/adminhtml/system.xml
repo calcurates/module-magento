@@ -81,6 +81,12 @@
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <config_path>carriers/calcurates/display_package_name_for_carrier</config_path>
                     </field>
+                    <field id="display_shipping_option_name" translate="label comment" type="select" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                        <label>Display Shipping Option Name</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>carriers/calcurates/display_shipping_option_name</config_path>
+                        <comment><![CDATA[Relates to Shipping Options with multiple methods inside (Carriers, Table Rates, in-Store Pickup, Rate Shopping)]]></comment>
+                    </field>
                     <field id="sort_order" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Sort Order</label>
                         <validate>validate-number validate-zero-or-greater</validate>

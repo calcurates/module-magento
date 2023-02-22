@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Model\ResourceModel\QuoteAddressData;
 
-use Calcurates\ModuleMagento\Model\SalesData\QuoteData\QuoteAddress;
 use Calcurates\ModuleMagento\Model\ResourceModel\QuoteAddressData as Resource;
+use Calcurates\ModuleMagento\Model\SalesData\QuoteData\QuoteAddress;
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
 class Collection extends AbstractCollection

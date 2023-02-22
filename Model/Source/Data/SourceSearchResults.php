@@ -8,8 +8,8 @@
 
 namespace Calcurates\ModuleMagento\Model\Source\Data;
 
-use Magento\Framework\Api\SearchResults;
 use Calcurates\ModuleMagento\Api\Source\Data\SourceSearchResultsInterface;
+use Magento\Framework\Api\SearchResults;
 
 class SourceSearchResults extends SearchResults implements SourceSearchResultsInterface
 {

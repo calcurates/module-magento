@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Model\Shipment\Manifest;
 
-use Calcurates\ModuleMagento\Api\Data\ManifestInterface;
 use Calcurates\ModuleMagento\Api\Data\ManifestInterfaceFactory;
 use Calcurates\ModuleMagento\Api\ManifestSaveInterface;
 use Calcurates\ModuleMagento\Api\ShippingLabelRepositoryInterface;

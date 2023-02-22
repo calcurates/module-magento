@@ -8,9 +8,9 @@
 
 namespace Calcurates\ModuleMagento\Plugin\Model\Order\ResourceModel\Shipment\Grid;
 
-use Zend_Db_Select_Exception;
-use Psr\Log\LoggerInterface;
 use Magento\Sales\Model\ResourceModel\Order\Shipment\Grid\Collection as ShipmentCollection;
+use Psr\Log\LoggerInterface;
+use Zend_Db_Select_Exception;
 
 /**
  * Class Collection - Shipping Grid Collection Plugin

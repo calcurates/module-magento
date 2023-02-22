@@ -10,9 +10,9 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Model\SalesData\QuoteData;
 
-use Magento\Framework\Model\AbstractModel;
 use Calcurates\ModuleMagento\Api\SalesData\QuoteData\QuoteAddressExtensionAttributesInterface;
 use Calcurates\ModuleMagento\Model\ResourceModel\QuoteAddressData as Resource;
+use Magento\Framework\Model\AbstractModel;
 
 class QuoteAddress extends AbstractModel implements QuoteAddressExtensionAttributesInterface
 {

@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Model\ResourceModel\OrderAddressData;
 
-use Calcurates\ModuleMagento\Model\SalesData\OrderData\OrderAddress;
 use Calcurates\ModuleMagento\Model\ResourceModel\OrderAddressData as Resource;
+use Calcurates\ModuleMagento\Model\SalesData\OrderData\OrderAddress;
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
 class Collection extends AbstractCollection

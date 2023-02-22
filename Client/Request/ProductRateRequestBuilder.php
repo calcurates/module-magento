@@ -14,10 +14,10 @@ use Calcurates\ModuleMagento\Model\Source\GetSourceCodesPerSkus;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Customer\Api\Data\CustomerInterface;
+use Magento\Customer\Model\CustomerFactory;
 use Magento\Customer\Model\Group;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Customer\Model\CustomerFactory;
-use Magento\Customer\Api\Data\CustomerInterface;
 
 class ProductRateRequestBuilder
 {

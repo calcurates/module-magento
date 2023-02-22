@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Model;
 
 use Calcurates\ModuleMagento\Model\Archive\Zip;
-use Calcurates\ModuleMagento\Model\ArchiveDataHandlerInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;

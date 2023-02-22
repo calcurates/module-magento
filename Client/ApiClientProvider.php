@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Client;
 
-use Calcurates\ModuleMagento\Client\Http\HttpClientFactory;
 use Calcurates\ModuleMagento\Client\Http\HttpClient;
+use Calcurates\ModuleMagento\Client\Http\HttpClientFactory;
 use Calcurates\ModuleMagento\Model\Config;
 use Magento\Framework\App\ProductMetadataInterface;
 

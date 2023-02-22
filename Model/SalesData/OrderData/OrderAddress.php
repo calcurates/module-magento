@@ -10,9 +10,9 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Model\SalesData\OrderData;
 
-use Magento\Framework\Model\AbstractModel;
 use Calcurates\ModuleMagento\Api\SalesData\OrderData\OrderAddressExtensionAttributesInterface;
 use Calcurates\ModuleMagento\Model\ResourceModel\OrderAddressData as Resource;
+use Magento\Framework\Model\AbstractModel;
 
 class OrderAddress extends AbstractModel implements OrderAddressExtensionAttributesInterface
 {

@@ -8,8 +8,8 @@
 
 namespace Calcurates\ModuleMagento\Model\Update;
 
-use Calcurates\ModuleMagento\Client\Http\HttpClientFactory;
 use Calcurates\ModuleMagento\Client\Http\HttpClient;
+use Calcurates\ModuleMagento\Client\Http\HttpClientFactory;
 use Magento\Framework\Serialize\Serializer\Json;
 
 class PackageInfoLoader

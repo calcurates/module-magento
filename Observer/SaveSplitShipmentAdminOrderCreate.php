@@ -10,10 +10,10 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Observer;
 
-use Magento\Framework\Event\Observer;
-use Magento\Framework\Event\ObserverInterface;
 use Calcurates\ModuleMagento\Api\SalesData\QuoteData\GetQuoteDataInterface;
 use Calcurates\ModuleMagento\Api\SalesData\QuoteData\SaveQuoteDataInterface;
+use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
 
 class SaveSplitShipmentAdminOrderCreate implements ObserverInterface
 {

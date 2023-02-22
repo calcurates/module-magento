@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Plugin\Model\Cart;
 
 use Calcurates\ModuleMagento\Api\Data\MetadataInterfaceFactory;
+use Calcurates\ModuleMagento\Api\Data\MetaRateInterfaceFactory;
 use Calcurates\ModuleMagento\Api\Data\RateDataInterface;
 use Calcurates\ModuleMagento\Api\Data\RateDataInterfaceFactory;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
@@ -20,10 +21,9 @@ use Calcurates\ModuleMagento\Model\Carrier;
 use Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter;
 use Calcurates\ModuleMagento\Model\Config;
 use Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplaySource;
+use Calcurates\ModuleMagento\Model\Data\MetaRateData;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Cart\ShippingMethodConverter;
-use Calcurates\ModuleMagento\Model\Data\MetaRateData;
-use Calcurates\ModuleMagento\Api\Data\MetaRateInterfaceFactory;
 
 class ShippingMethodConverterPlugin
 {

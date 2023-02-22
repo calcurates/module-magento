@@ -15,11 +15,13 @@ $orderData = $deliveryDateModel->getOrderDataByOrderId((int)$orderId);
 $hasDeliveryDateAndTime = $orderData && $orderData->getDeliveryDate();
 $type = $block->getType();
 ?>
-<?php if ($type == 'date'): ?>
-    <?= /* @noEscape */ $deliveryDateModel->formatDate($orderData->getDeliveryDate()) ?>
-<?php elseif ($type == 'time' && ($orderData->getDeliveryDateTimeFrom() || $orderData->getDeliveryDateTimeTo())): ?>
-    <?= /* @noEscape */ $deliveryDateModel->formatTimeInterval(
-        $orderData->getDeliveryDateTimeFrom(),
-        $orderData->getDeliveryDateTimeTo()
-    ) ?>
+<?php if ($hasDeliveryDateAndTime): ?>
+    <?php if ($type == 'date'): ?>
+        <?= /* @noEscape */ $deliveryDateModel->formatDate($orderData->getDeliveryDate()) ?>
+    <?php elseif ($type == 'time' && ($orderData->getDeliveryDateTimeFrom() || $orderData->getDeliveryDateTimeTo())): ?>
+        <?= /* @noEscape */ $deliveryDateModel->formatTimeInterval(
+            $orderData->getDeliveryDateTimeFrom(),
+            $orderData->getDeliveryDateTimeTo()
+        ) ?>
+    <?php endif; ?>
 <?php endif; ?>

@@ -11,9 +11,9 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Client\Response\Processor\SplitCheckout;
 
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
+use Calcurates\ModuleMagento\Model\Data\MetaRateData;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Shipping\Model\Rate\Result;
-use Calcurates\ModuleMagento\Model\Data\MetaRateData;
 
 class OriginProcessor implements ResponseProcessorInterface
 {

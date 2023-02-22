@@ -10,10 +10,10 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Client\Response\Processor;
 
+use Calcurates\ModuleMagento\Api\SalesData\QuoteData\QuoteAddressExtensionAttributesInterfaceFactory;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Shipping\Model\Rate\Result;
-use Calcurates\ModuleMagento\Api\SalesData\QuoteData\QuoteAddressExtensionAttributesInterfaceFactory;
 
 class ResidentialShippingProcessor implements ResponseProcessorInterface
 {

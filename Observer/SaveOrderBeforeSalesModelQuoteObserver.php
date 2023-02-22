@@ -9,9 +9,9 @@
 namespace Calcurates\ModuleMagento\Observer;
 
 use Calcurates\ModuleMagento\Model\CheckoutConverter\QuoteToOrderConverter;
+use Magento\Framework\EntityManager\EntityManager;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Framework\EntityManager\EntityManager;
 
 class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
 {

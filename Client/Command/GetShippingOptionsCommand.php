@@ -12,9 +12,9 @@ namespace Calcurates\ModuleMagento\Client\Command;
 
 use Calcurates\ModuleMagento\Client\ApiClientProvider;
 use Calcurates\ModuleMagento\Client\Http\ApiException;
-use Psr\Log\LoggerInterface;
 use Calcurates\ModuleMagento\Model\Config;
 use Magento\Framework\Exception\LocalizedException;
+use Psr\Log\LoggerInterface;
 
 class GetShippingOptionsCommand
 {

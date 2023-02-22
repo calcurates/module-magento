@@ -7,6 +7,17 @@
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
+        <referenceBlock name="sales.order.info" template="Calcurates_ModuleMagento::order/info.phtml">
+            <arguments>
+                <argument name="view_model" xsi:type="object">
+                    Calcurates\ModuleMagento\ViewModel\OrderShippingAdditionalInfo
+                </argument>
+            </arguments>
+            <block name="delivery_date" as="delivery_date" class="Calcurates\ModuleMagento\Block\Order\DeliveryDateTime"
+                   template="Calcurates_ModuleMagento::order/delivery_date_time.phtml"/>
+            <block name="delivery_time" as="delivery_time" class="Calcurates\ModuleMagento\Block\Order\DeliveryDateTime"
+                   template="Calcurates_ModuleMagento::order/delivery_date_time.phtml"/>
+        </referenceBlock>
         <referenceBlock name="shipment_items" template="Calcurates_ModuleMagento::items.phtml">
             <arguments>
                 <argument name="view_model" xsi:type="object">

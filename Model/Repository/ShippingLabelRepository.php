@@ -12,9 +12,9 @@ use Calcurates\ModuleMagento\Api\Data\ShippingLabelInterface;
 use Calcurates\ModuleMagento\Api\Data\ShippingLabelInterfaceFactory;
 use Calcurates\ModuleMagento\Api\ShippingLabelRepositoryInterface;
 use Calcurates\ModuleMagento\Model\ResourceModel\ShippingLabel as ShippingLabelResource;
+use Calcurates\ModuleMagento\Model\ResourceModel\ShippingLabel\Collection;
 use Calcurates\ModuleMagento\Model\ResourceModel\ShippingLabel\Collection as LabelCollection;
 use Calcurates\ModuleMagento\Model\ResourceModel\ShippingLabel\CollectionFactory;
-use Calcurates\ModuleMagento\Model\ResourceModel\ShippingLabel\Collection;
 use Calcurates\ModuleMagento\Model\ShippingLabel;
 use Magento\Framework\Exception\NoSuchEntityException;
 
