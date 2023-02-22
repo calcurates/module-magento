@@ -10,16 +10,16 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Client\Response\Processor;
 
+use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Client\RateBuilder;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
+use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Shipping\Model\Rate\Result;
-use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
-use Magento\Framework\Serialize\SerializerInterface;
 
 class MergedShippingProcessor implements ResponseProcessorInterface
 {

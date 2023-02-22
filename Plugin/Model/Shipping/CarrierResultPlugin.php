@@ -8,8 +8,8 @@
 
 namespace Calcurates\ModuleMagento\Plugin\Model\Shipping;
 
-use Magento\Shipping\Model\Rate\CarrierResult;
 use Calcurates\ModuleMagento\Api\Data\MetaRateDataInterface;
+use Magento\Shipping\Model\Rate\CarrierResult;
 
 class CarrierResultPlugin
 {

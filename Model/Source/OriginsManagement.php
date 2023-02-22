@@ -10,12 +10,12 @@ namespace Calcurates\ModuleMagento\Model\Source;
 
 use Calcurates\ModuleMagento\Api\Source\OriginsManagementInterface;
 use Calcurates\ModuleMagento\Api\Source\SourceRepositoryInterface;
-use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\Module\Manager as ModuleManager;
-use Magento\Framework\Api\SortOrder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Store\Api\WebsiteRepositoryInterface;
+use Magento\Framework\Api\SortOrder;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Module\Manager as ModuleManager;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Store\Api\WebsiteRepositoryInterface;
 
 class OriginsManagement implements OriginsManagementInterface
 {

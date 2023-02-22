@@ -2,6 +2,8 @@
 
 namespace Calcurates\ModuleMagento\Plugin\Paypal\Controller\Express;
 
+use Calcurates\ModuleMagento\Api\SalesData\QuoteData\GetQuoteDataInterface;
+use Calcurates\ModuleMagento\Api\SalesData\QuoteData\SaveQuoteDataInterface;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -9,8 +11,6 @@ use Magento\Framework\Session\Generic;
 use Magento\Paypal\Controller\Express\AbstractExpress\SaveShippingMethod;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Model\Quote;
-use Calcurates\ModuleMagento\Api\SalesData\QuoteData\GetQuoteDataInterface;
-use Calcurates\ModuleMagento\Api\SalesData\QuoteData\SaveQuoteDataInterface;
 use Psr\Log\LoggerInterface;
 
 class SaveShippingMethodPlugin

@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Model\Data;
 
-use Calcurates\ModuleMagento\Api\Data\MetadataInterface;
 use Calcurates\ModuleMagento\Api\Data\RateDataInterface;
 use Magento\Framework\Api\AbstractSimpleObject;
 

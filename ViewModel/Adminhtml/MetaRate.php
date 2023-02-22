@@ -11,8 +11,6 @@ namespace Calcurates\ModuleMagento\ViewModel\Adminhtml;
 use Calcurates\ModuleMagento\Api\Data\MetaRateDataInterface;
 use Calcurates\ModuleMagento\Api\SalesData\QuoteData\GetQuoteDataInterface;
 use Magento\Backend\Model\Session\Quote;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Quote\Model\Quote\Address\RateResult\Method;

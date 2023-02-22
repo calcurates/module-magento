@@ -13,7 +13,6 @@ namespace Calcurates\ModuleMagento\Client\Response\Strategy;
 use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
 use Calcurates\ModuleMagento\Client\Http\ApiException;
 use Calcurates\ModuleMagento\Client\MetaRatesResponseProcessor;
-use Calcurates\ModuleMagento\Client\Response\Strategy\RatesStrategyInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Quote;
 use Magento\Shipping\Model\Rate\Result;

@@ -9,11 +9,11 @@
 namespace Calcurates\ModuleMagento\Model\Source;
 
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
+use Calcurates\ModuleMagento\Model\Carrier\Method\CarrierData;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
+use Calcurates\ModuleMagento\Model\SalesData\OrderData\GetOrderData;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Sales\Model\Order;
-use Calcurates\ModuleMagento\Model\Carrier\Method\CarrierData;
-use Calcurates\ModuleMagento\Model\SalesData\OrderData\GetOrderData;
 
 class ShipmentServiceRetriever
 {

@@ -11,8 +11,8 @@ namespace Calcurates\ModuleMagento\UI\Component\Listing\Order\Shipment\Column\Ca
 use Calcurates\ModuleMagento\Api\Data\ShippingLabelInterface;
 use Calcurates\ModuleMagento\Model\ResourceModel\ShippingLabel\Collection as LabelCollection;
 use Calcurates\ModuleMagento\Model\ResourceModel\ShippingLabel\CollectionFactory;
-use Magento\Framework\Escaper;
 use Magento\Framework\Data\OptionSourceInterface;
+use Magento\Framework\Escaper;
 
 /**
  * Class Options - Ui carriers options

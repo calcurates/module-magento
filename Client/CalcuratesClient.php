@@ -12,7 +12,6 @@ use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
 use Calcurates\ModuleMagento\Client\Http\ApiException;
 use Calcurates\ModuleMagento\Model\Config;
 use Magento\Framework\Exception\LocalizedException;
-use Calcurates\ModuleMagento\Client\ApiClientProvider;
 
 class CalcuratesClient implements CalcuratesClientInterface
 {

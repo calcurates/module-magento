@@ -12,9 +12,9 @@ namespace Calcurates\ModuleMagento\Client\Response\Processor\SplitCheckout;
 
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
+use Calcurates\ModuleMagento\Model\Data\MetaRateData;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Shipping\Model\Rate\Result;
-use Calcurates\ModuleMagento\Model\Data\MetaRateData;
 
 class ProductProcessor implements ResponseProcessorInterface
 {

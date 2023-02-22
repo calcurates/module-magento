@@ -9,9 +9,9 @@
 namespace Calcurates\ModuleMagento\Model\Carrier;
 
 use Calcurates\ModuleMagento\Api\CalcuratesCacheInterface;
+use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Serialize\SerializerInterface;
-use Magento\Framework\App\CacheInterface;
 
 class RatesRequestCache
 {

@@ -8,10 +8,10 @@
 
 namespace Calcurates\ModuleMagento\Plugin\Model\Order;
 
-use Magento\Sales\Api\Data\OrderInterface;
-use Magento\Sales\Api\Data\OrderAddressSearchResultInterface;
-use Calcurates\ModuleMagento\Model\ResourceModel\OrderAddressData\CollectionFactory;
 use Calcurates\ModuleMagento\Api\SalesData\OrderData\OrderAddressExtensionAttributesInterface;
+use Calcurates\ModuleMagento\Model\ResourceModel\OrderAddressData\CollectionFactory;
+use Magento\Sales\Api\Data\OrderAddressSearchResultInterface;
+use Magento\Sales\Api\Data\OrderInterface;
 
 class AddResidentialExtensionAttribute
 {

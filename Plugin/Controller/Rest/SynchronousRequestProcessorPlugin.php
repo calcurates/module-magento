@@ -10,11 +10,11 @@ declare(strict_types=1);
 
 namespace Calcurates\ModuleMagento\Plugin\Controller\Rest;
 
+use Calcurates\ModuleMagento\Model\Config;
+use Magento\Framework\App\ProductMetadataInterface;
+use Magento\Framework\Webapi\Rest\Request;
 use Magento\Framework\Webapi\Rest\Response as RestResponse;
 use Magento\Webapi\Controller\Rest\SynchronousRequestProcessor;
-use Magento\Framework\Webapi\Rest\Request;
-use Magento\Framework\App\ProductMetadataInterface;
-use Calcurates\ModuleMagento\Model\Config;
 
 class SynchronousRequestProcessorPlugin
 {

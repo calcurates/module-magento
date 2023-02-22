@@ -9,11 +9,10 @@
 namespace Calcurates\ModuleMagento\Model\Carrier;
 
 use Calcurates\ModuleMagento\Model\Carrier;
-use Calcurates\ModuleMagento\Model\Carrier\Method\CarrierDataFactory;
 use Calcurates\ModuleMagento\Model\Carrier\Method\CarrierData;
-use Calcurates\ModuleMagento\Model\Carrier\Method\InStorePickupDataFactory;
+use Calcurates\ModuleMagento\Model\Carrier\Method\CarrierDataFactory;
 use Calcurates\ModuleMagento\Model\Carrier\Method\InStorePickupData;
-use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
+use Calcurates\ModuleMagento\Model\Carrier\Method\InStorePickupDataFactory;
 use Magento\Framework\Serialize\SerializerInterface;
 
 class ShippingMethodManager

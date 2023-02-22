@@ -2,13 +2,13 @@
 
 namespace Calcurates\ModuleMagento\Plugin\SplitCheckout\Quote\Address\Total;
 
+use Calcurates\ModuleMagento\Api\Data\MetaRateDataInterface;
+use Calcurates\ModuleMagento\Api\SalesData\QuoteData\GetQuoteDataInterface;
+use Calcurates\ModuleMagento\Api\SalesData\QuoteData\SaveQuoteDataInterface;
 use Magento\Quote\Api\Data\ShippingAssignmentInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address\Total;
 use Magento\Quote\Model\Quote\Address\Total\Shipping;
-use Calcurates\ModuleMagento\Api\Data\MetaRateDataInterface;
-use Calcurates\ModuleMagento\Api\SalesData\QuoteData\GetQuoteDataInterface;
-use Calcurates\ModuleMagento\Api\SalesData\QuoteData\SaveQuoteDataInterface;
 
 class MetarateTotal
 {

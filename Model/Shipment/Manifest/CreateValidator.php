@@ -11,9 +11,9 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Model\Shipment\Manifest;
 
 use Calcurates\ModuleMagento\Api\ShippingLabelRepositoryInterface;
+use Magento\Framework\Validator\Exception as ValidatorException;
 use Magento\Sales\Model\Order\Shipment;
 use Magento\Sales\Model\ResourceModel\Order\Shipment\Collection;
-use Magento\Framework\Validator\Exception as ValidatorException;
 
 class CreateValidator
 {
