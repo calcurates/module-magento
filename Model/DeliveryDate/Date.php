@@ -35,6 +35,16 @@ class Date extends AbstractSimpleObject implements DateInterface
         $this->setData(self::DATE, $date);
     }
 
+    public function getLabel(): string
+    {
+        return (string)$this->_get(self::LABEL);
+    }
+
+    public function setLabel(string $label): void
+    {
+        $this->setData(self::LABEL, $label);
+    }
+
     public function getDateFormatted(): string
     {
         return (string)$this->_get(self::DATE_FORMATTED);

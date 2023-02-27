@@ -143,6 +143,7 @@ define([
             var optionLabel = timeInterval.interval_formatted,
                 formattedPrice = '';
 
+            optionLabel += ' ' + timeInterval.label;
             if (!timeInterval.fee_amount_excl_tax) {
                 return optionLabel;
             }
