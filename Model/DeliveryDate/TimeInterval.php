@@ -25,6 +25,16 @@ class TimeInterval extends AbstractSimpleObject implements TimeIntervalInterface
         $this->setData(self::ID, $id);
     }
 
+    public function getLabel(): string
+    {
+        return (string)$this->_get(self::LABEL);
+    }
+
+    public function setLabel(string $label): void
+    {
+        $this->setData(self::LABEL, $label);
+    }
+
     public function getFeeAmount(): float
     {
         return (float)$this->_get(self::FEE_AMOUNT);

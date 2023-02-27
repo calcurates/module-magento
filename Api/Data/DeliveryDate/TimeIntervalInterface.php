@@ -13,6 +13,7 @@ namespace Calcurates\ModuleMagento\Api\Data\DeliveryDate;
 interface TimeIntervalInterface
 {
     public const ID = 'identifier';
+    public const LABEL = 'label';
     public const FEE_AMOUNT = 'fee_amount';
     public const FEE_AMOUNT_INCL_TAX = 'fee_amount_incl_tax';
     public const FEE_AMOUNT_EXCL_TAX = 'fee_amount_excl_tax';
@@ -30,6 +31,17 @@ interface TimeIntervalInterface
      * @return void
      */
     public function setId(string $id): void;
+
+    /**
+     * @return string
+     */
+    public function getLabel(): string;
+
+    /**
+     * @param string $label
+     * @return void
+     */
+    public function setLabel(string $label): void;
 
     /**
      * @return float
