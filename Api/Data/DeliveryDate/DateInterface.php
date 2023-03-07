@@ -14,6 +14,7 @@ interface DateInterface
 {
     public const ID = 'id';
     public const DATE = 'date';
+    public const LABEL = 'label';
     public const DATE_FORMATTED = 'date_formatted';
     public const FEE_AMOUNT = 'fee_amount';
     public const FEE_AMOUNT_INCL_TAX = 'fee_amount_incl_tax';
@@ -41,6 +42,17 @@ interface DateInterface
      * @return void
      */
     public function setDate(string $date): void;
+
+    /**
+     * @return string
+     */
+    public function getLabel(): string;
+
+    /**
+     * @param string $label
+     * @return void
+     */
+    public function setLabel(string $label): void;
 
     /**
      * @return string

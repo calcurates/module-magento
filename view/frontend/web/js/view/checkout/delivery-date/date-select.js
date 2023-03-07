@@ -138,6 +138,7 @@ define([
             var optionLabel = deliveryDate.date_formatted,
                 formattedPrice = '';
 
+            optionLabel += ' ' + deliveryDate.label;
             if (!deliveryDate.fee_amount_excl_tax) {
                 return optionLabel;
             }
