@@ -5,16 +5,22 @@
  * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @package Calcurates_ModuleMagento
  */
-/** @var $block \Calcurates\ModuleMagento\Block\Order\DeliveryDateTime */
-/** @var $deliveryDateModel \Calcurates\ModuleMagento\ViewModel\OrderDeliveryDate */
-/** @var \Magento\Framework\Escaper $escaper */
+/**
+ * @var $block \Calcurates\ModuleMagento\Block\Order\DeliveryDateTime
+ * @var $deliveryDateModel \Calcurates\ModuleMagento\ViewModel\OrderDeliveryDate
+ * @var $escaper \Magento\Framework\Escaper
+ */
 $deliveryDateModel = $block->getOrderDeliveryDate();
 
 $orderId = $block->getOrder() ? $block->getOrder()->getId() : $block->getOrderId();
 $orderData = $deliveryDateModel->getOrderDataByOrderId((int)$orderId);
 $hasDeliveryDateAndTime = $orderData && $orderData->getDeliveryDate();
+$deliveryDatesFormatted = $orderData ? $deliveryDateModel->formatDeliveryDates($orderData->getDeliveryDates()) : '';
 $type = $block->getType();
 ?>
+<?php if ($deliveryDatesFormatted && !$hasDeliveryDateAndTime && $type === 'date'): ?>
+    <?= /* @noEscape */ $deliveryDatesFormatted ?>
+<?php endif; ?>
 <?php if ($hasDeliveryDateAndTime): ?>
     <?php if ($type == 'date'): ?>
         <?= /* @noEscape */ $deliveryDateModel->formatDate($orderData->getDeliveryDate()) ?>
