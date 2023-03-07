@@ -57,7 +57,7 @@ class ReviewPlugin
     ): array {
         $deliveryDatesString = $this->getDeliveryDates($rate);
 
-        if ($this->configProvider->getDeliveryDateDisplay() === DeliveryDateDisplaySource::AFTER_METHOD_NAME &&
+        if ($this->configProvider->getDeliveryDateDisplay() !== DeliveryDateDisplaySource::DO_NOT_SHOW &&
             $deliveryDatesString
         ) {
             $rate->setMethodTitle(

@@ -8,11 +8,18 @@
  * @var $block \Magento\Sales\Block\Adminhtml\Order\Create\Shipping\Method\Form
  * @var $secureRenderer \Magento\Framework\View\Helper\SecureHtmlRenderer
  * @var $escaper \Magento\Framework\Escaper
+ * @var $orderDeliveryDates \Calcurates\ModuleMagento\ViewModel\OrderDeliveryDate
+ * @var $quoteDeliveryDates \Calcurates\ModuleMagento\ViewModel\QuoteDeliveryDate
  */
+
+use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
+
 ?>
 <?php
 /** @var \Magento\Tax\Helper\Data $taxHelper */
 $taxHelper = $block->getData('taxHelper');
+$orderDeliveryDates = $block->getData('order_delivery_dates');
+$quoteDeliveryDates = $block->getData('quote_delivery_dates');
 ?>
 <?php $_shippingRateGroups = $block->getShippingRates(); ?>
 <?php if ($_shippingRateGroups): ?>
@@ -46,6 +53,9 @@ $taxHelper = $block->getData('taxHelper');
                                 <?= $block->escapeHtml($_rate->getMethodTitle() ?
                                     $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?>
                                 <?php if ($_code !== 'calcurates_metarate'): ?>
+                                    <?= /* @noEscape */ $orderDeliveryDates->formatDeliveryDates(
+                                        $quoteDeliveryDates->getDeliveryDates($_rate, $block->getQuote())
+                                    ); ?>
                                 &nbsp;-&nbsp;
                                 <strong>
                                     <?php $_excl = $block->getShippingPrice(
@@ -99,7 +109,11 @@ script;
                             $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?>
                     <?php else: ?>
                         <?= $block->escapeHtml($_rate->getMethodTitle() ?
-                            $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?> -
+                            $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?>
+                        <?= /* @noEscape */ $orderDeliveryDates->formatDeliveryDates(
+                            $quoteDeliveryDates->getDeliveryDates($_rate, $block->getQuote())
+                        ); ?>
+                        &nbsp;-&nbsp;
                     <strong>
                         <?php $_excl = $block->getShippingPrice(
                             $_rate->getPrice(),
