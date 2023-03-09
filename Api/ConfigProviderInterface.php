@@ -20,7 +20,7 @@ interface ConfigProviderInterface
      *
      * @param string|bool|int|null|\Magento\Store\Api\Data\WebsiteInterface $websiteId
      *
-     * @return ConfigDataInterface
+     * @return \Calcurates\ModuleMagento\Api\Data\ConfigDataInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException If ID is not found
      */
     public function getSettings($websiteId = null): ConfigDataInterface;
