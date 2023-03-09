@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\ViewModel;
 
 use Calcurates\ModuleMagento\Model\Config;
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Customer\Model\Context;
 use Magento\Framework\App\Http\Context as HttpContext;
@@ -136,18 +137,26 @@ class Estimation implements ArgumentInterface
     }
 
     /**
+     * @return ProductInterface|null
+     */
+    public function getProduct()
+    {
+        try {
+            return $this->productRepository->getById($this->getProductId());
+        } catch (NoSuchEntityException $e) {
+            return null;
+        }
+    }
+
+    /**
      * @return bool
      */
     public function isAttrMatch(): bool
     {
-        try {
-            $product = $this->productRepository->getById($this->getProductId());
-        } catch (NoSuchEntityException $e) {
-            return false;
-        }
+        $product = $this->getProduct();
 
         $attributeCode = $this->configProvider->getProductShippingAttributeCode();
-        if (!$attributeCode) {
+        if (!$attributeCode || !$product) {
             return false;
         }
 

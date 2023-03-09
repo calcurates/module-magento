@@ -15,11 +15,12 @@ define([
     'mage/template',
     'loader'
 ], function (ko, $, _, Element, ratesModel, $t, mageTemplate) {
-    'use strict';
+    'use strict'
 
     return Element.extend({
         defaults: {
             rates: [],
+            currentAddress: {},
             storeCode: '',
             productId: 0,
             fallbackMessage: '',
@@ -43,73 +44,87 @@ define([
                 in_store_pickup: 'Calcurates_ModuleMagento/product/rate/default',
             },
             timeTmplString: '',
-            countDowns: []
+            countDowns: [],
+            tracks: {
+                currentAddress: true,
+                productId: true
+            },
+            listens: {
+                currentAddress: 'loadLocations',
+                productId: 'loadLocations'
+            }
         },
 
         initialize: function () {
-            this._super();
+            this._super()
             window.initAutocomplete = this.initPlacesAutocompleteFields.bind(this)
-            this._initNodes();
-            return this;
+            this._initNodes()
+            $('.calcurates-estimate-block').on('calcurates.estimate', function (event, productId) {
+                this.productId = productId
+            }.bind(this))
+            if (!this.usePlacesAutocomplete()) {
+                this.loadLocations()
+            }
+            return this
         },
 
         initObservable: function () {
-            this._super();
+            this._super()
 
-            this.rates = ratesModel.rates;
+            this.rates = ratesModel.rates
             ratesModel.rates.subscribe(function () {
                 this.countDowns.map(clearInterval)
             }.bind(this))
 
-            return this;
+            return this
         },
 
         getRateTemplate: function (rate) {
-            return this.rateTemplatesMap[rate.type];
+            return this.rateTemplatesMap[rate.type]
         },
 
         _initNodes: function () {
-            this.nodes.ratesContainer = $(this.selectors.ratesContainer);
-            this.nodes.addToCartForm = $(this.selectors.ratesContainer);
-
-            if (!this.usePlacesAutocomplete()) {
-                ratesModel.loadLocations(this.storeCode, [this.productId], this.isLoggedIn);
-            }
+            this.nodes.ratesContainer = $(this.selectors.ratesContainer)
+            this.nodes.addToCartForm = $(this.selectors.ratesContainer)
         },
 
         usePlacesAutocomplete: function () {
-            return this.googlePlacesEnabled && this.googlePlacesApiKey;
+            return this.googlePlacesEnabled && this.googlePlacesApiKey
         },
 
         initPlacesAutocomplete: function () {
             if (this.usePlacesAutocomplete()) {
-                require([this.placesAutocompleteUrl.replace('API_KEY', this.googlePlacesApiKey)]);
+                require([this.placesAutocompleteUrl.replace('API_KEY', this.googlePlacesApiKey)])
             }
         },
 
         initPlacesAutocompleteFields: function () {
-            const input = document.getElementById("placesAutocomplete");
+            const input = document.getElementById("placesAutocomplete")
             const options = {
                 fields: ["address_components", "formatted_address", "geometry", "name"],
                 types: ["address"],
-            };
-            this.googlePlacesAutocompleteInstance = new google.maps.places.Autocomplete(input, options);
+            }
+            this.googlePlacesAutocompleteInstance = new google.maps.places.Autocomplete(input, options)
             this.googlePlacesAutocompleteInstance.addListener('place_changed', this.onPlaceChanged.bind(this))
         },
 
         onPlaceChanged: function () {
-            const place = this.googlePlacesAutocompleteInstance.getPlace();
+            const place = this.googlePlacesAutocompleteInstance.getPlace()
             if (!place.geometry) {
-                document.getElementById("placesAutocomplete").value = '';
+                document.getElementById("placesAutocomplete").value = ''
             } else {
-                document.getElementById("placesAutocomplete").value = place.formatted_address;
-                ratesModel.loadLocations(
-                    this.storeCode,
-                    [this.productId],
-                    this.isLoggedIn,
-                    this.convertPlaceToAddress(place)
-                );
+                document.getElementById("placesAutocomplete").value = place.formatted_address
+                this.currentAddress = this.convertPlaceToAddress(place)
             }
+        },
+
+        loadLocations: function () {
+            ratesModel.loadLocations(
+                this.storeCode,
+                [this.productId],
+                this.isLoggedIn,
+                !_.isEmpty(this.currentAddress) ? this.currentAddress : null
+            )
         },
 
         convertPlaceToAddress: function (place) {
@@ -193,5 +208,5 @@ define([
             }
             $(element).html(initialTmpl.replace('{countdown}', tmpl))
         }
-    });
-});
+    })
+})
