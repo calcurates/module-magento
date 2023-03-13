@@ -24,10 +24,12 @@ $type = $block->getType();
 <?php if ($hasDeliveryDateAndTime): ?>
     <?php if ($type == 'date'): ?>
         <?= /* @noEscape */ $deliveryDateModel->formatDate($orderData->getDeliveryDate()) ?>
+        <?= $block->escapeHtml($orderData->getDeliveryDateLabel()); ?>
     <?php elseif ($type == 'time' && ($orderData->getDeliveryDateTimeFrom() || $orderData->getDeliveryDateTimeTo())): ?>
         <?= /* @noEscape */ $deliveryDateModel->formatTimeInterval(
             $orderData->getDeliveryDateTimeFrom(),
             $orderData->getDeliveryDateTimeTo()
         ) ?>
+        <?= $block->escapeHtml($orderData->getDeliveryDateTimeLabel()); ?>
     <?php endif; ?>
 <?php endif; ?>

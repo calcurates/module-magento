@@ -65,8 +65,10 @@ class ConvertQuoteData
             $orderData = $this->orderDataFactory->create();
             $orderData->setOrderId((int)$order->getId());
             $orderData->setDeliveryDate($quoteData->getDeliveryDate());
+            $orderData->setDeliveryDateLabel($quoteData->getDeliveryDateLabel());
             $orderData->setDeliveryDateTimeFrom($quoteData->getDeliveryDateTimeFrom());
             $orderData->setDeliveryDateTimeTo($quoteData->getDeliveryDateTimeTo());
+            $orderData->setDeliveryDateTimeLabel($quoteData->getDeliveryDateTimeLabel());
 
             $baseFeeAmount = $quoteData->getDeliveryDateFee() + $quoteData->getDeliveryDateTimeFee();
             $feeAmount = $this->priceCurrency->convertAndRound($baseFeeAmount);

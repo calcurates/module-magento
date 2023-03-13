@@ -42,6 +42,16 @@ class QuoteData extends \Magento\Framework\Model\AbstractModel implements QuoteD
         $this->setData(self::DELIVERY_DATE, $deliveryDate);
     }
 
+    public function getDeliveryDateLabel(): string
+    {
+        return (string)$this->getData(self::DELIVERY_DATE_LABEL);
+    }
+
+    public function setDeliveryDateLabel(string $deliveryDateLabel): void
+    {
+        $this->setData(self::DELIVERY_DATE_LABEL, $deliveryDateLabel);
+    }
+
     public function getDeliveryDateFee(): float
     {
         return (float)$this->getData(self::DELIVERY_DATE_FEE);
@@ -70,6 +80,16 @@ class QuoteData extends \Magento\Framework\Model\AbstractModel implements QuoteD
     public function setDeliveryDateTimeTo(string $timeTo): void
     {
         $this->setData(self::DELIVERY_DATE_TIME_TO, $timeTo);
+    }
+
+    public function getDeliveryDateTimeLabel(): string
+    {
+        return (string)$this->getData(self::DELIVERY_DATE_TIME_LABEL);
+    }
+
+    public function setDeliveryDateTimeLabel(string $timeLabel): void
+    {
+        $this->setData(self::DELIVERY_DATE_TIME_LABEL, $timeLabel);
     }
 
     public function getDeliveryDateTimeFee(): float

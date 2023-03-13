@@ -41,6 +41,7 @@ if ($orderData) {
                                 <th><?= $block->escapeHtml(__('Selected Delivery Date')) ?></th>
                                 <td>
                                     <?= /** @noEscape  */ $viewModel->formatDate($orderData->getDeliveryDate()) ?>
+                                    <?= $block->escapeHtml($orderData->getDeliveryDateLabel()) ?>
                                 </td>
                             </tr>
 
@@ -52,6 +53,7 @@ if ($orderData) {
                                             $orderData->getDeliveryDateTimeFrom(),
                                             $orderData->getDeliveryDateTimeTo()
                                         ) ?>
+                                        <?= $block->escapeHtml($orderData->getDeliveryDateTimeLabel()) ?>
                                     </td>
                                 </tr>
                             <?php endif; ?>
