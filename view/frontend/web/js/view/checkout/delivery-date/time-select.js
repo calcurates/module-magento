@@ -60,13 +60,14 @@ define([
                     this.setOptions(options);
                     this.setDefaultOption(data.time_intervals);
                     this.updateValue();
-
                     this.enable();
+                    this.show();
                 } else {
                     this.options([]);
                     this.setOptions([]);
                     this.value();
                     this.disable();
+                    this.hide();
                 }
             }, this);
 
