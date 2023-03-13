@@ -151,7 +151,7 @@
                     </field>
                 </group>
                 <group id="shipping_on_product_pages" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Shipping on Product Pages</label>
+                    <label>Product Page Widget</label>
                     <field id="shipping_on_product_pages_hint" type="note" translate="label" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                         <frontend_model>Calcurates\ModuleMagento\Block\Adminhtml\System\Config\Form\Field\ShippingOnProductPagesNote</frontend_model>
                     </field>
