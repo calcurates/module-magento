@@ -15,8 +15,10 @@ interface OrderDataInterface
     public const ID = 'id';
     public const ORDER_ID = 'order_id';
     public const DELIVERY_DATE = 'delivery_date_date';
+    public const DELIVERY_DATE_LABEL = 'delivery_date_date_label';
     public const DELIVERY_DATE_TIME_FROM = 'delivery_date_time_from';
     public const DELIVERY_DATE_TIME_TO = 'delivery_date_time_to';
+    public const DELIVERY_DATE_TIME_LABEL = 'delivery_date_time_label';
     public const BASE_DD_FEE_AMOUNT = 'base_dd_fee_amount';
     public const DD_FEE_AMOUNT = 'dd_fee_amount';
     public const DELIVERY_DATES = 'delivery_dates';
@@ -58,6 +60,17 @@ interface OrderDataInterface
     /**
      * @return string
      */
+    public function getDeliveryDateLabel(): string;
+
+    /**
+     * @param string $deliveryDateLabel
+     * @return void
+     */
+    public function setDeliveryDateLabel(string $deliveryDateLabel): void;
+
+    /**
+     * @return string
+     */
     public function getDeliveryDateTimeFrom(): string;
 
     /**
@@ -76,6 +89,17 @@ interface OrderDataInterface
      * @return void
      */
     public function setDeliveryDateTimeTo(string $timeTo): void;
+
+    /**
+     * @return string
+     */
+    public function getDeliveryDateTimeLabel(): string;
+
+    /**
+     * @param string $timeLabel
+     * @return void
+     */
+    public function setDeliveryDateTimeLabel(string $timeLabel): void;
 
     /**
      * @return float

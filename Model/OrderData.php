@@ -42,6 +42,16 @@ class OrderData extends \Magento\Framework\Model\AbstractModel implements OrderD
         $this->setData(self::DELIVERY_DATE, $deliveryDate);
     }
 
+    public function getDeliveryDateLabel(): string
+    {
+        return (string)$this->getData(self::DELIVERY_DATE_LABEL);
+    }
+
+    public function setDeliveryDateLabel(string $deliveryDateLabel): void
+    {
+        $this->setData(self::DELIVERY_DATE_LABEL, $deliveryDateLabel);
+    }
+
     public function getDeliveryDateTimeFrom(): string
     {
         return (string)$this->getData(self::DELIVERY_DATE_TIME_FROM);
@@ -60,6 +70,16 @@ class OrderData extends \Magento\Framework\Model\AbstractModel implements OrderD
     public function setDeliveryDateTimeTo(string $timeTo): void
     {
         $this->setData(self::DELIVERY_DATE_TIME_TO, $timeTo);
+    }
+
+    public function getDeliveryDateTimeLabel(): string
+    {
+        return (string)$this->getData(self::DELIVERY_DATE_TIME_LABEL);
+    }
+
+    public function setDeliveryDateTimeLabel(string $timeLabel): void
+    {
+        $this->setData(self::DELIVERY_DATE_TIME_LABEL, $timeLabel);
     }
 
     public function getBaseDeliveryDateFeeAmount(): float

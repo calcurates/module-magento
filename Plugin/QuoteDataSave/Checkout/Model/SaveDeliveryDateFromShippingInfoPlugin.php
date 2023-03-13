@@ -81,9 +81,11 @@ class SaveDeliveryDateFromShippingInfoPlugin
 
         $quoteData->setQuoteId((int)$cartId);
         $quoteData->setDeliveryDate('');
+        $quoteData->setDeliveryDateLabel('');
         $quoteData->setDeliveryDateFee(0.0);
         $quoteData->setDeliveryDateTimeTo('');
         $quoteData->setDeliveryDateTimeFrom('');
+        $quoteData->setDeliveryDateTimeLabel('');
         $quoteData->setDeliveryDateTimeFee(0.0);
 
         try {
@@ -102,11 +104,13 @@ class SaveDeliveryDateFromShippingInfoPlugin
             foreach ($deliveryDates as $deliveryDate) {
                 if ($deliveryDateId === $deliveryDate->getId()) {
                     $quoteData->setDeliveryDate($deliveryDate->getDate());
+                    $quoteData->setDeliveryDateLabel($deliveryDate->getLabel());
                     $quoteData->setDeliveryDateFee($deliveryDate->getFeeAmount());
                     foreach ($deliveryDate->getTimeIntervals() as $timeInterval) {
                         if ($timeInterval->getId() === $timeId) {
                             $quoteData->setDeliveryDateTimeFrom($timeInterval->getFrom());
                             $quoteData->setDeliveryDateTimeTo($timeInterval->getTo());
+                            $quoteData->setDeliveryDateTimeLabel($timeInterval->getLabel());
                             $quoteData->setDeliveryDateTimeFee($timeInterval->getFeeAmount());
                             break;
                         }
