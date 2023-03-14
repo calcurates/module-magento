@@ -64,7 +64,7 @@ class Information extends \Magento\Config\Block\System\Config\Form\Fieldset
             '\', \'' .
             $this->getUrl(
                 '*/*/state'
-            ) . '\'); return false;">' . __('Calcurates by Amasty') . ' ';
+            ) . '\'); return false;">' . __('Calcurates') . ' ';
 
         $html .= '<span class="calcurates-info-block">';
         $html .= '<span class="module-version ' . $className . '" >' . $moduleVersion . '</span>';
