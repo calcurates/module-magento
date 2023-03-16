@@ -38,6 +38,12 @@ var config = {
             'Magento_Checkout/js/action/select-shipping-method': {
                 'Calcurates_ModuleMagento/js/action/select-shipping-method-mixin': isEnabled
             },
+            'Magento_Swatches/js/swatch-renderer': {
+                'Calcurates_ModuleMagento/js/swatch-renderer-mixin': isEnabled
+            },
+            'Magento_ConfigurableProduct/js/configurable': {
+                'Calcurates_ModuleMagento/js/configurable-mixin': isEnabled
+            },
             'Amasty_CheckoutCore/js/model/shipping-registry': {
                 'Calcurates_ModuleMagento/js/am_osc/model/shipping-registry-mixin' : isEnabled
             }
