@@ -10,6 +10,7 @@ namespace Calcurates\ModuleMagento\Model\Carrier\Validator;
 
 use Magento\Directory\Helper\Data;
 use Magento\Quote\Model\Quote\Address\RateRequest;
+use Calcurates\ModuleMagento\Plugin\Model\Shipping\ShippingAddEstimateFlagToRequestPlugin;
 
 class RateRequestValidator
 {
@@ -72,12 +73,16 @@ class RateRequestValidator
     private function validateRequest(RateRequest $request)
     {
         $isRegionRequired = $this->isRegionRequired($request->getDestCountryId());
-        return (!$isRegionRequired || !empty($request->getDestRegionCode()))
+        $valid = (!$isRegionRequired || !empty($request->getDestRegionCode()))
             && (
                 $this->helper->isZipCodeOptional($request->getDestCountryId())
                 || !empty($request->getDestPostcode())
             )
             && !empty($request->getDestCountryId());
+        if ($valid && !$request->getData(ShippingAddEstimateFlagToRequestPlugin::IS_ESTIMATE_ONLY_FLAG)) {
+            return $valid && $request->getDestStreet() && $request->getDestCity();
+        }
+        return $valid;
     }
 
     /**
