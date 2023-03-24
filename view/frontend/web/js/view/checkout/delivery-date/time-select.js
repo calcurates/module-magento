@@ -39,44 +39,47 @@ define([
         initObservable: function () {
             this._super().observe(['options', 'timeSlotTimeRequired', 'additionalCss', 'validationError']);
 
-            deliveryDateList.currentDate.subscribe(function (data) {
-                var options = [];
-                this.timeSlotTimeRequired(this.getTimeSlotTimeRequired(deliveryDateList));
-                this.additionalCss(this.getAdditionalCss());
-
-                if (data && data.time_intervals) {
-                    data.time_intervals.forEach(function (timeInterval){
-                        options.push({
-                            value: timeInterval.id,
-                            label: this.timeOptionsText(timeInterval)
-                        })
-                    }.bind(this));
-                }
-                if (options.length > 0) {
-                    if (this.timeSlotTimeRequired()) {
-                        this.caption(null);
-                    }
-                    this.updateCurrentTimeSlot(data.time_intervals);
-                    this.setOptions(options);
-                    this.setDefaultOption(data.time_intervals);
-                    this.updateValue();
-                    this.enable();
-                    this.show();
-                } else {
-                    this.options([]);
-                    this.setOptions([]);
-                    this.value();
-                    this.disable();
-                    this.hide();
-                }
-            }, this);
-
+            deliveryDateList.currentDate.subscribe(this.onCurrentDateChange, this);
+            this.onCurrentDateChange(deliveryDateList.currentDate());
             return this;
+        },
+
+        onCurrentDateChange: function (data) {
+            var options = [];
+            this.timeSlotTimeRequired(this.getTimeSlotTimeRequired(deliveryDateList));
+            this.additionalCss(this.getAdditionalCss());
+
+            if (data && data.time_intervals) {
+                data.time_intervals.forEach(function (timeInterval){
+                    options.push({
+                        value: timeInterval.id,
+                        label: this.timeOptionsText(timeInterval)
+                    })
+                }.bind(this));
+            }
+            if (options.length > 0) {
+                if (this.timeSlotTimeRequired()) {
+                    this.caption(null);
+                }
+                this.updateCurrentTimeSlot(data.time_intervals);
+                this.setOptions(options);
+                this.setDefaultOption(data.time_intervals);
+                this.updateValue();
+                this.enable();
+                this.show();
+            } else {
+                this.options([]);
+                this.setOptions([]);
+                this.value();
+                this.disable();
+                this.hide();
+            }
         },
 
         updateValue: function () {
             if (deliveryDateList.currentTimeSlot() && deliveryDateList.currentTimeSlot().id) {
                 this.value(deliveryDateList.currentTimeSlot().id);
+                this.value.valueHasMutated();
                 return;
             }
             if (this.timeSlotTimeRequired() && this.options().length) {
