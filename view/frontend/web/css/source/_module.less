@@ -143,6 +143,9 @@
         padding-bottom: 0;
       }
     }
+    .field-tooltip {
+      display: inline-block;
+    }
     tr.shipment-products-row {
       td {
         border-top-width: 0;
@@ -219,11 +222,5 @@
 //  _____________________________________________
 
 .media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
-  .table-checkout-shipping-method {
-    &:not(.amcheckout-shipping-methods) {
-      .col-method {
-        min-width: 245px;
-      }
-    }
-  }
+
 }

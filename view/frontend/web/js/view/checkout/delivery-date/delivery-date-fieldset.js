@@ -34,9 +34,11 @@ define([
                 deliveryDateList.updateStoresSettingsFromRates,
                 deliveryDateList
             );
+            deliveryDateList.updateStoresSettingsFromRates(shippingService.getShippingRates()());
             quote.shippingMethod.subscribe(deliveryDateList.updateShippingMethod, deliveryDateList);
 
             deliveryDateList.currentDeliveryDatesList.subscribe(this.onDeliveryDatesChanged, this);
+            this.onDeliveryDatesChanged(deliveryDateList.currentDeliveryDatesList());
 
             return this;
         },
