@@ -103,7 +103,7 @@ class CalcuratesClient implements CalcuratesClientInterface
             $httpClient = $this->apiClientProvider->getClient($storeId);
             $apiUrl = $this->apiClientProvider->getApiUrl();
             $response = $httpClient->get($apiUrl . '/tracking?' . $query);
-            $response = \Zend_Json::decode($response);
+            $response = \Laminas\Json\Json::decode($response, 1);
         } catch (\Throwable $e) {
             throw new LocalizedException(__('Cannot getting tracking from API Calcurates %1', $e->getMessage()));
         }
@@ -124,9 +124,9 @@ class CalcuratesClient implements CalcuratesClientInterface
             $apiUrl = $this->apiClientProvider->getApiUrl();
             $response = $httpClient->post(
                 $apiUrl . '/labels',
-                \Zend_Json::encode($request)
+                \Laminas\Json\Json::encode($request)
             );
-            $response = \Zend_Json::decode($response);
+            $response = \Laminas\Json\Json::decode($response, 1);
         } catch (\Throwable $e) {
             throw new LocalizedException(__('Cannot create label with API Calcurates %1', $e->getMessage()));
         }
@@ -150,10 +150,10 @@ class CalcuratesClient implements CalcuratesClientInterface
             $httpClient->setTimeout($timeout);
             $response = $httpClient->post(
                 $apiUrl . '/rates',
-                \Zend_Json::encode($request)
+                \Laminas\Json\Json::encode($request)
             );
             $httpClient->setTimeout(null);
-            $response = \Zend_Json::decode($response);
+            $response = \Laminas\Json\Json::decode($response, 1);
         } catch (ApiException $e) {
             throw $e;
         } catch (\Throwable $e) {
@@ -179,10 +179,10 @@ class CalcuratesClient implements CalcuratesClientInterface
             $httpClient->setTimeout($timeout);
             $response = $httpClient->post(
                 $apiUrl . '/rates-simple',
-                \Zend_Json::encode($request)
+                \Laminas\Json\Json::encode($request)
             );
             $httpClient->setTimeout(null);
-            $response = \Zend_Json::decode($response);
+            $response = \Laminas\Json\Json::decode($response, 1);
         } catch (ApiException $e) {
             throw $e;
         } catch (\Throwable $e) {
@@ -208,10 +208,10 @@ class CalcuratesClient implements CalcuratesClientInterface
             $httpClient->setTimeout($timeout);
             $response = $httpClient->post(
                 $apiUrl . '/rates-split-checkout',
-                \Zend_Json::encode($request)
+                \Laminas\Json\Json::encode($request)
             );
             $httpClient->setTimeout(null);
-            $response = \Zend_Json::decode($response);
+            $response = \Laminas\Json\Json::decode($response, 1);
         } catch (ApiException $e) {
             throw $e;
         } catch (\Throwable $e) {
@@ -233,7 +233,7 @@ class CalcuratesClient implements CalcuratesClientInterface
             $response = $httpClient->get(
                 $apiUrl . '/custom-packages'
             );
-            $response = \Zend_Json::decode($response);
+            $response = \Laminas\Json\Json::decode($response, 1);
         } catch (\Throwable $e) {
             $response = [];
         }
@@ -269,7 +269,7 @@ class CalcuratesClient implements CalcuratesClientInterface
             $response = $httpClient->get(
                 $apiUrl . '/shipping-options/' . $type
             );
-            $response = \Zend_Json::decode($response);
+            $response = \Laminas\Json\Json::decode($response, 1);
         } catch (\Throwable $e) {
             $response = [];
         }

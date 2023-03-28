@@ -10,7 +10,6 @@ namespace Calcurates\ModuleMagento\Plugin\Model\Order\ResourceModel\Shipment\Gri
 
 use Magento\Sales\Model\ResourceModel\Order\Shipment\Grid\Collection as ShipmentCollection;
 use Psr\Log\LoggerInterface;
-use Zend_Db_Select_Exception;
 
 /**
  * Class Collection - Shipping Grid Collection Plugin
@@ -58,7 +57,7 @@ class Collection
                     ['carrier_code']
                 )
                 ->group('main_table.entity_id');
-        } catch (Zend_Db_Select_Exception $exception) {
+        } catch (\Exception $exception) {
             $this->logger->error($exception->getMessage());
         }
     }

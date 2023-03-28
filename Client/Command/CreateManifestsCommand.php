@@ -37,7 +37,7 @@ class CreateManifestsCommand
         $httpClient = $this->apiClientProvider->getClient($storeId);
         $apiUrl = $this->apiClientProvider->getApiUrl();
 
-        $query = \Zend_Json::encode([
+        $query = \Laminas\Json\Json::encode([
             'carrierCode' => $carrierCode,
             'providerCode' => $providerCode,
             'labelsId' => $labelIds
@@ -45,6 +45,6 @@ class CreateManifestsCommand
 
         $response = $httpClient->post($apiUrl . '/manifests', $query);
 
-        return \Zend_Json::decode($response);
+        return \Laminas\Json\Json::decode($response, 1);
     }
 }

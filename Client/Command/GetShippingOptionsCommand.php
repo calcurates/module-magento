@@ -61,7 +61,7 @@ class GetShippingOptionsCommand
      * @param string|null $type
      * @return array
      * @throws LocalizedException
-     * @throws \Zend_Json_Exception
+     * @throws \Laminas\Json\Json_Exception
      */
     public function get(int $storeId, ?string $type = null): array
     {
@@ -97,6 +97,6 @@ class GetShippingOptionsCommand
                 __('Cannot get Shipping Options with API Calcurates %1', $exception->getMessage())
             );
         }
-        return \Zend_Json::decode($response);
+        return \Laminas\Json\Json::decode($response, 1);
     }
 }

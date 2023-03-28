@@ -172,7 +172,7 @@ class Config implements ConfigProviderInterface
         if (!$data) {
             try {
                 $json = $this->filesystem->getDirectoryReadByPath(__DIR__ . '/..')->readFile('composer.json');
-                $data = \Zend_Json::decode($json);
+                $data = \Laminas\Json\Json::decode($json, 1);
             } catch (\Throwable $e) {
                 $data = [
                     'name' => 'calcurates/module-magento',
