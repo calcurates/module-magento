@@ -101,10 +101,10 @@
                         <td>
                             <select name="container_girth_dimension_units"
                                     class="options-units-dimensions measures admin__control-select">
-                                <option value="<?= /* @noEscape */ Magento\Framework\Measure\Length::INCH ?>" selected="selected" >
+                                <option value="<?= /* @noEscape */ Calcurates\ModuleMagento\Model\Measure::inch() ?>" selected="selected" >
                                     <?= $block->escapeHtml(__('in')) ?>
                                 </option>
-                                <option value="<?= /* @noEscape */ Magento\Framework\Measure\Length::CENTIMETER ?>" >
+                                <option value="<?= /* @noEscape */ Calcurates\ModuleMagento\Model\Measure::centimeter() ?>" >
                                     <?= $block->escapeHtml(__('cm')) ?>
                                 </option>
                             </select>
@@ -142,13 +142,13 @@
                                    name="container_weight" />
                                     <select name="container_weight_units"
                                             class="options-units-weight measures admin__control-select">
-                                        <option value="<?= /* @noEscape */ Magento\Framework\Measure\Weight::POUND ?>"
+                                        <option value="<?= /* @noEscape */ Calcurates\ModuleMagento\Model\Measure::pound() ?>"
                                                 selected="selected"  ><?= $block->escapeHtml(__('lb')) ?>
                                         </option>
-                                        <option value="<?= /* @noEscape */ Magento\Framework\Measure\Weight::KILOGRAM ?>" >
+                                        <option value="<?= /* @noEscape */ Calcurates\ModuleMagento\Model\Measure::kilogram()?>" >
                                             <?= $block->escapeHtml(__('kg')) ?>
                                         </option>
-                                        <option value="<?= /* @noEscape */ Magento\Framework\Measure\Weight::GRAM ?>" >
+                                        <option value="<?= /* @noEscape */ Calcurates\ModuleMagento\Model\Measure::gram() ?>" >
                                             <?= $block->escapeHtml(__('g')) ?>
                                         </option>
                                     </select>
@@ -176,10 +176,10 @@
                                 <option value hidden>
                                     ---
                                 </option>
-                                <option value="<?= /* @noEscape */ Magento\Framework\Measure\Length::INCH ?>" selected="selected">
+                                <option value="<?= /* @noEscape */ Calcurates\ModuleMagento\Model\Measure::inch() ?>" selected="selected">
                                     <?= $block->escapeHtml(__('in')) ?>
                                 </option>
-                                <option value="<?= /* @noEscape */ Magento\Framework\Measure\Length::CENTIMETER ?>" >
+                                <option value="<?= /* @noEscape */ Calcurates\ModuleMagento\Model\Measure::centimeter() ?>" >
                                     <?= $block->escapeHtml(__('cm')) ?>
                                 </option>
                             </select>

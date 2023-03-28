@@ -12,8 +12,7 @@ use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
 use InvalidArgumentException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\Order\Shipment;
-use Magento\Framework\Measure\Length;
-use Magento\Framework\Measure\Weight;
+use Calcurates\ModuleMagento\Model\Measure;
 
 class CustomPackagesProvider
 {
@@ -87,13 +86,13 @@ class CustomPackagesProvider
     {
         switch ($weightUnit) {
             case 'lb':
-                $weightUnit = Weight::POUND;
+                $weightUnit = Measure::pound();
                 break;
             case 'g':
-                $weightUnit = Weight::GRAM;
+                $weightUnit = Measure::gram();
                 break;
             case 'kg':
-                $weightUnit = Weight::KILOGRAM;
+                $weightUnit = Measure::kilogram();
                 break;
             default:
                 throw new InvalidArgumentException('Invalid weight units');
@@ -106,10 +105,10 @@ class CustomPackagesProvider
     {
         switch ($dimensionsUnit) {
             case 'in':
-                $dimensionsUnit = Length::INCH;
+                $dimensionsUnit = Measure::inch();
                 break;
             case 'cm':
-                $dimensionsUnit = Length::CENTIMETER;
+                $dimensionsUnit = Measure::centimeter();
                 break;
             default:
                 throw new InvalidArgumentException('Invalid dimensions units');

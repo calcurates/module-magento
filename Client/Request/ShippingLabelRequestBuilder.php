@@ -19,8 +19,7 @@ use Magento\Framework\DataObject;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Api\Data\ShipmentItemInterface;
 use Magento\Sales\Model\Order\Address;
-use Magento\Framework\Measure\Weight;
-use Magento\Framework\Measure\Length;
+use Calcurates\ModuleMagento\Model\Measure;
 
 class ShippingLabelRequestBuilder
 {
@@ -165,16 +164,16 @@ class ShippingLabelRequestBuilder
     private function getWeightUnits($weightUnits)
     {
         switch ($weightUnits) {
-            case Weight::POUND:
+            case Measure::pound():
                 $weightUnits = 'lb';
                 break;
-            case Weight::KILOGRAM:
+            case Measure::kilogram():
                 $weightUnits = 'kg';
                 break;
-            case Weight::OUNCE:
+            case Measure::ounce():
                 $weightUnits = 'oz';
                 break;
-            case Weight::GRAM:
+            case Measure::gram():
                 $weightUnits = 'g';
                 break;
             default:
@@ -191,10 +190,10 @@ class ShippingLabelRequestBuilder
     private function getDimensionUnits($dimensionUnits)
     {
         switch ($dimensionUnits) {
-            case Length::INCH:
+            case Measure::inch():
                 $dimensionUnits = 'in';
                 break;
-            case Length::CENTIMETER:
+            case Measure::centimeter():
                 $dimensionUnits = 'cm';
                 break;
             default:
