@@ -12,8 +12,8 @@ namespace Calcurates\ModuleMagento\Client\Command;
 
 use Calcurates\ModuleMagento\Client\ApiClientProvider;
 use Calcurates\ModuleMagento\Client\Http\ApiException;
-use Zend_Json;
-use Zend_Json_Exception;
+use Laminas\Json\Json;
+use Laminas\Json\Exception\RuntimeException;
 
 class GetTrackingInfoCommand
 {
@@ -34,7 +34,7 @@ class GetTrackingInfoCommand
      * @param int $storeId
      * @return array
      * @throws ApiException
-     * @throws Zend_Json_Exception
+     * @throws RuntimeException
      */
     public function get(string $carrierCode, string $providerCode, string $trackingNumber, int $storeId): array
     {
@@ -48,6 +48,6 @@ class GetTrackingInfoCommand
         ]);
         $response = $httpClient->get($apiUrl . '/tracking?' . $query);
 
-        return Zend_Json::decode($response);
+        return Json::decode($response, 1);
     }
 }
