@@ -15,7 +15,7 @@ use Calcurates\ModuleMagento\Client\Command\GetTrackingInfoCommand;
 use Calcurates\ModuleMagento\Client\Http\ApiException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Shipping\Model\Order\Track;
-use Zend_Json_Exception;
+use Laminas\Json\Exception\RuntimeException;
 
 class TrackingInfoProvider
 {
@@ -54,7 +54,7 @@ class TrackingInfoProvider
     /**
      * @param Track $track
      * @return \Magento\Framework\Phrase|\Magento\Shipping\Model\Tracking\Result\Error|\Magento\Shipping\Model\Tracking\Result\Status
-     * @throws Zend_Json_Exception
+     * @throws RuntimeException
      */
     public function getTrackingInfo(Track $track)
     {

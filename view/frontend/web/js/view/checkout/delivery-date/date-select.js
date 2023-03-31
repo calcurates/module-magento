@@ -40,33 +40,36 @@ define([
         initObservable: function () {
             this._super().observe(['options', 'timeSlotDateRequired', 'additionalCss', 'validationError']);
 
-            deliveryDateList.currentDeliveryDatesList.subscribe(function (data) {
-                var options = [];
-                this.timeSlotDateRequired(this.getTimeSlotDateRequired(deliveryDateList));
-                this.additionalCss(this.getAdditionalCss());
-
-                data.forEach(function (deliveryDate) {
-                    options.push({
-                        value: deliveryDate.id,
-                        label: this.dateText(deliveryDate)
-                    })
-                }.bind(this));
-                if (this.timeSlotDateRequired()) {
-                    this.caption(null);
-                }
-                this.updateCurrentDate(data);
-                this.setOptions(options);
-                this.setDefaultOption(data);
-                this.updateValue();
-                this.onChangeDate();
-            }, this);
-
+            deliveryDateList.currentDeliveryDatesList.subscribe(this.onCurrentDeliveryDatesListChange, this);
+            this.onCurrentDeliveryDatesListChange(deliveryDateList.currentDeliveryDatesList());
             return this;
+        },
+
+        onCurrentDeliveryDatesListChange: function (data) {
+            var options = [];
+            this.timeSlotDateRequired(this.getTimeSlotDateRequired(deliveryDateList));
+            this.additionalCss(this.getAdditionalCss());
+
+            data.forEach(function (deliveryDate) {
+                options.push({
+                    value: deliveryDate.id,
+                    label: this.dateText(deliveryDate)
+                })
+            }.bind(this));
+            if (this.timeSlotDateRequired()) {
+                this.caption(null);
+            }
+            this.updateCurrentDate(data);
+            this.setOptions(options);
+            this.setDefaultOption(data);
+            this.updateValue();
+            this.onChangeDate();
         },
 
         updateValue: function () {
             if (deliveryDateList.currentDate() && deliveryDateList.currentDate().id) {
                 this.value(deliveryDateList.currentDate().id);
+                this.value.valueHasMutated();
                 return;
             }
             if (this.timeSlotDateRequired() && this.options().length) {

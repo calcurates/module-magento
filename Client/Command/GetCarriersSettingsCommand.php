@@ -15,7 +15,7 @@ use Calcurates\ModuleMagento\Model\Config;
 use Exception;
 use Magento\Framework\Exception\LocalizedException;
 use Psr\Log\LoggerInterface;
-use Zend_Json;
+use Laminas\Json\Json;
 
 class GetCarriersSettingsCommand
 {
@@ -61,7 +61,7 @@ class GetCarriersSettingsCommand
 
         try {
             $response = $httpClient->get($apiUrl . '/carriers-settings');
-            $response = Zend_Json::decode($response);
+            $response = Json::decode($response, 1);
         } catch (Exception $exception) {
             if ($this->config->isDebug($storeId)) {
                 $this->logger->debug(

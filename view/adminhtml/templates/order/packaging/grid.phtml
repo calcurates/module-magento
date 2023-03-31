@@ -30,7 +30,7 @@ $hsCodeFieldRenderer->setShipment($block->getShipment());
                                 <?php endif; ?>
                                class="checkbox admin__control-checkbox"
                                title="<?= $block->escapeHtmlAttr(__('Select All')) ?>">
-                        <?php if (!isset($secureRenderer)): ?>
+                        <?php if (isset($secureRenderer)): ?>
                             <?= /* @noEscape */ $secureRenderer->renderEventListenerAsTag(
                                 'onchange',
                                 'packaging.checkAllItems(this);',

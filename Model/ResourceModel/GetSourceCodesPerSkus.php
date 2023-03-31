@@ -115,7 +115,7 @@ class GetSourceCodesPerSkus
             \Magento\CatalogInventory\Model\Configuration::XML_PATH_MANAGE_STOCK,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
-        $manageStockExpr = new \Zend_Db_Expr(
+        $manageStockExpr = new \Magento\Framework\DB\Sql\Expression(
             'IF(si.use_config_manage_stock = 1, ' . $manageStock . ', si.manage_stock)'
         );
         $productsStocksQuery = $connection->select()
