@@ -108,7 +108,7 @@ class RatesRequestCache
      * @param array $requestData
      * @return array
      */
-    private function removeEmptyFieldsFromRequest(array $requestData)
+    private function removeEmptyFieldsFromRequest(array $requestData): array
     {
         $result = [];
         foreach ($requestData as $fieldName => $data) {
