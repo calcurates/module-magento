@@ -95,12 +95,33 @@ class RatesRequestCache
     private function getCacheKey(array $request, $storeId): string
     {
         $storeId = $this->getScalarStoreId($storeId);
-
-        $request['__store_id__'] = $storeId;
-        $serializedRequest = $this->serializer->serialize($request);
+        $cacheableRequest = $this->removeEmptyFieldsFromRequest($request);
+        $cacheableRequest['__store_id__'] = $storeId;
+        $serializedRequest = $this->serializer->serialize($cacheableRequest);
         $cacheKey = $this->encryptor->hash($serializedRequest);
 
         return static::TYPE_IDENTIFIER . '_' . static::RATES_IDENTIFIER . '_' . $cacheKey;
+    }
+
+    /**
+     * Removes empty fields from cache key request
+     * @param array $requestData
+     * @return array
+     */
+    private function removeEmptyFieldsFromRequest(array $requestData): array
+    {
+        $result = [];
+        foreach ($requestData as $fieldName => $data) {
+            if ($fieldName == 'estimate') {
+                continue;
+            }
+            if (is_array($data)) {
+                $result[$fieldName] = $this->removeEmptyFieldsFromRequest($data);
+            } elseif((bool) $data) {
+                $result[$fieldName] = $data;
+            }
+        }
+        return $result;
     }
 
     /**
