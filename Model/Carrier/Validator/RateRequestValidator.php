@@ -76,7 +76,7 @@ class RateRequestValidator
         $valid = (!$isRegionRequired || !empty($request->getDestRegionCode()))
             && (
                 $this->helper->isZipCodeOptional($request->getDestCountryId())
-                || !empty($request->getDestPostcode())
+                || (!empty($request->getDestPostcode()) &&  preg_match('~[0-9]+~',$request->getDestPostcode()))
             )
             && !empty($request->getDestCountryId());
         if ($valid && !$request->getData(ShippingAddEstimateFlagToRequestPlugin::IS_ESTIMATE_ONLY_FLAG)) {
