@@ -135,9 +135,9 @@ define([
                 }
                 this.validateSelect();
                 /**
-                 * Amasty Checkout compatibility
+                 * Amasty Checkout | Onestepcheckout_Iosc compatibility
                  */
-                if (window.am_osc_enabled) {
+                if (quote.shippingAddress() && (window.am_osc_enabled || $('#iosc-summary').length)) {
                     setShippingInformationAction();
                 }
             }
