@@ -328,4 +328,8 @@
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
         </arguments>
     </type>
+    <type name="Magento\Framework\Event\Config">
+        <plugin name="calcurates_quote_submit_observers_sort"
+                type="Calcurates\ModuleMagento\Plugin\Framework\Event\Config\QuoteSubmitObserversSort"/>
+    </type>
 </config>
