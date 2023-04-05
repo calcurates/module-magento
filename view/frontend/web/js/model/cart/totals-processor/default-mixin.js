@@ -86,7 +86,9 @@ define([
                     }
 
                     quote.setTotals(result)
-                    cartCache.set('cart-data', data)
+                    if (data.cartVersion !== undefined) {
+                        cartCache.set('cart-data', data)
+                    }
                 }).fail(function (response) {
                     errorProcessor.process(response)
                 }).always(function () {
