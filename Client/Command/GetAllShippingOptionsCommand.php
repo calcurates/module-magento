@@ -12,6 +12,8 @@ namespace Calcurates\ModuleMagento\Client\Command;
 
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\App\Request\DataPersistorInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 class GetAllShippingOptionsCommand
 {
@@ -21,12 +23,29 @@ class GetAllShippingOptionsCommand
     private $getShippingOptionsCommand;
 
     /**
+     * @var DataPersistorInterface
+     */
+    private $dataPersistor;
+
+    /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * GetAllShippingOptionsCommand constructor.
      * @param GetShippingOptionsCommand $getShippingOptionsCommand
+     * @param StoreManagerInterface $storeManager
+     * @param DataPersistorInterface|null $dataPersistor
      */
-    public function __construct(GetShippingOptionsCommand $getShippingOptionsCommand)
-    {
+    public function __construct(
+        GetShippingOptionsCommand $getShippingOptionsCommand,
+        StoreManagerInterface $storeManager,
+        DataPersistorInterface $dataPersistor = null
+    ) {
+        $this->storeManager = $storeManager;
         $this->getShippingOptionsCommand = $getShippingOptionsCommand;
+        $this->dataPersistor = $dataPersistor;
     }
 
     /**
@@ -35,14 +54,22 @@ class GetAllShippingOptionsCommand
      */
     public function getShippingOptions($storeId)
     {
-        try {
-            $allShippingOptions = $this->getShippingOptionsCommand->get(
-                (int) $storeId
-            );
-        } catch (LocalizedException $exception) {
-            return [];
+        if ($this->dataPersistor && $this->dataPersistor->get('all_methods_shipping_rule') && !$storeId) {
+            $allShippingOptions = [];
+            $storeIds = array_keys($this->storeManager->getStores());
+            foreach ($storeIds as $storeId) {
+                $allShippingOptions = array_merge_recursive(
+                    $allShippingOptions,
+                    $this->getAllShippingOptions($storeId)
+                );
+            }
+        } else {
+            $allShippingOptions = $this->getAllShippingOptions($storeId);
         }
 
+        if (!$allShippingOptions) {
+            return [];
+        }
         $shippingOptions = [];
 
         foreach ($allShippingOptions['tableRates'] as $shippingOption) {
@@ -97,5 +124,21 @@ class GetAllShippingOptionsCommand
         }
 
         return $shippingOptions;
+    }
+
+    /**
+     * @param $storeId
+     * @return array
+     */
+    private function getAllShippingOptions($storeId): array
+    {
+        try {
+            return $this->getShippingOptionsCommand->get(
+                (int) $storeId
+            );
+        } catch (LocalizedException $exception) {
+            return [];
+        }
+
     }
 }
