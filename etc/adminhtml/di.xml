@@ -54,4 +54,19 @@
                 type="Calcurates\ModuleMagento\Plugin\EmailEditFormAddVariables"
                 sortOrder="10"/>
     </type>
+    <type name="Calcurates\ModuleMagento\Plugin\Model\Rule\Condition\AddressShippingOptionsPlugin">
+        <arguments>
+            <argument name="dataPersistor" xsi:type="object">calcurates_backend_data_persistor</argument>
+        </arguments>
+    </type>
+    <type name="Calcurates\ModuleMagento\Client\Command\GetAllShippingOptionsCommand">
+        <arguments>
+            <argument name="dataPersistor" xsi:type="object">calcurates_backend_data_persistor</argument>
+        </arguments>
+    </type>
+    <type name="Magento\SalesRule\Model\Rule\Condition\Address">
+        <plugin name="calcurates_all_shipping_methods_for_store"
+                type="Calcurates\ModuleMagento\Plugin\Model\Rule\Condition\AddressShippingOptionsPlugin"
+                sortOrder="10"/>
+    </type>
 </config>
