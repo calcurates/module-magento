@@ -117,7 +117,7 @@ class RatesRequestCache
             }
             if (is_array($data)) {
                 $result[$fieldName] = $this->removeEmptyFieldsFromRequest($data);
-            } elseif((bool) $data) {
+            } elseif ((bool) $data) {
                 $result[$fieldName] = $data;
             }
         }
