@@ -117,7 +117,6 @@ class AddShippingFeeToShippingTotal
      */
     private function handlePossibleFeeChanges(?QuoteDataInterface $quoteData, string $method)
     {
-
         $savedDate = $quoteData->getDeliveryDate();
         if (!$savedDate || empty($quoteData->getDeliveryDates()[$method]['timeSlots'])) {
             return;
@@ -142,9 +141,9 @@ class AddShippingFeeToShippingTotal
                 }
             );
             $matchedTimeSlot = reset($matchedTimeSlot);
-            $quoteData->setDeliveryDateTimeFrom($matchedTimeSlot ? $matchedTimeSlot['from']: '');
-            $quoteData->setDeliveryDateTimeTo($matchedTimeSlot ? $matchedTimeSlot['to']: '');
-            $quoteData->setDeliveryDateTimeFee($matchedTimeSlot ? (float)$matchedTimeSlot['extraFee']: 0);
+            $quoteData->setDeliveryDateTimeFrom($matchedTimeSlot ? $matchedTimeSlot['from'] : '');
+            $quoteData->setDeliveryDateTimeTo($matchedTimeSlot ? $matchedTimeSlot['to'] : '');
+            $quoteData->setDeliveryDateTimeFee($matchedTimeSlot ? (float)$matchedTimeSlot['extraFee'] : 0);
         }
 
         $this->saveQuoteData->save($quoteData);

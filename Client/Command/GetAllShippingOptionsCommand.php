@@ -139,6 +139,5 @@ class GetAllShippingOptionsCommand
         } catch (LocalizedException $exception) {
             return [];
         }
-
     }
 }
