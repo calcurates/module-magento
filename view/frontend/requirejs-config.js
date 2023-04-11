@@ -46,7 +46,13 @@ var config = {
             },
             'Amasty_CheckoutCore/js/model/shipping-registry': {
                 'Calcurates_ModuleMagento/js/am_osc/model/shipping-registry-mixin' : isEnabled
-            }
+            },
+            'Bss_OneStepCheckout/js/view/shipping': {
+                'Calcurates_ModuleMagento/js/view/shipping/shipping-mixin': isEnabled
+            },
+            'Bss_OneStepCheckout/js/model/shipping-save-processor/payload-extender': {
+                'Calcurates_ModuleMagento/js/model/shipping-save-processor/payload-extender-mixin': isEnabled
+            },
         },
     }
 };
