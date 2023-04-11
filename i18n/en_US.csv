@@ -4,7 +4,7 @@
 "Enabled","Enabled"
 "Calcurates API Token","Calcurates API Token"
 "Enter Calcurates API Token below to enable module","Enter Calcurates API Token below to enable module"
-"Token can be found in Calcurates account (Website settings)","Token can be found in Calcurates account (Website settings)"
+"Token can be found in Calcurates account (Website > Edit > Integration)","Token can be found in Calcurates account (Website > Edit > Integration)"
 "API URL","API URL"
 "Enable Debug","Enable Debug"
 "Default Error Message","Default Error Message"

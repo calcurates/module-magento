@@ -26,7 +26,7 @@
                     </field>
                     <field id="calcurates_token" translate="label comment" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Calcurates API Token</label>
-                        <comment><![CDATA[Token can be found in Calcurates account (Website settings)]]></comment>
+                        <comment><![CDATA[Token can be found in Calcurates account (Website > Edit > Integration)]]></comment>
                         <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                         <config_path>carriers/calcurates/calcurates_token</config_path>
                     </field>
@@ -152,6 +152,9 @@
                 </group>
                 <group id="shipping_on_product_pages" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Product Page Widget</label>
+                    <field id="product_page_widget_hint" type="note" translate="label" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <frontend_model>Calcurates\ModuleMagento\Block\Adminhtml\System\Config\Form\Field\ProductPageWidgetNote</frontend_model>
+                    </field>
                     <field id="shipping_on_product_enabled" translate="label comment" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Display Product Page Widget</label>
                         <source_model>Calcurates\ModuleMagento\Model\Config\Source\ShippingOnProductPages</source_model>
