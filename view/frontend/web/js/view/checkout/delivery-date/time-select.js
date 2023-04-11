@@ -137,7 +137,9 @@ define([
                 /**
                  * Amasty Checkout | Onestepcheckout_Iosc compatibility
                  */
-                if (quote.shippingAddress() && (window.am_osc_enabled || $('#iosc-summary').length)) {
+                if (quote.shippingAddress()
+                    && (window.am_osc_enabled || $('#iosc-summary').length || $('.bss-onestepcheckout').length)
+                ) {
                     setShippingInformationAction();
                 }
             }
