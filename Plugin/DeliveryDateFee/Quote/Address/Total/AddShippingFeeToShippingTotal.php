@@ -117,6 +117,9 @@ class AddShippingFeeToShippingTotal
      */
     private function handlePossibleFeeChanges(?QuoteDataInterface $quoteData, string $method)
     {
+        if (!$quoteData) {
+            return;
+        }
         $savedDate = $quoteData->getDeliveryDate();
         if (!$savedDate || empty($quoteData->getDeliveryDates()[$method]['timeSlots'])) {
             return;
