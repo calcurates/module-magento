@@ -328,7 +328,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     /**
      * @param $request
      * @return bool|Result|mixed
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     protected function getCachedDataByRequest($request)
     {
@@ -337,10 +336,16 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             return false;
         }
         $quote = current($items)->getQuote();
-        $apiRequestBody = $this->rateRequestBuilder->build(
-            $request,
-            $items
-        );
+
+        try {
+            $apiRequestBody = $this->rateRequestBuilder->build(
+                $request,
+                $items
+            );
+        } catch (\Exception $e) {
+            return false;
+        }
+
         $ratesStrategy = $this->ratesStrategyFactory->create(
             $this->configProvider->isSplitCheckoutEnabled($this->getStore())
         );
