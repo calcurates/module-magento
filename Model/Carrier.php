@@ -29,6 +29,7 @@ use Magento\Shipping\Model\Carrier\AbstractCarrierOnline;
 use Magento\Shipping\Model\Carrier\CarrierInterface;
 use Magento\Shipping\Model\Rate\Result;
 use Psr\Log\LoggerInterface;
+use Calcurates\ModuleMagento\Model\Carrier\RatesRequestCache;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -110,6 +111,11 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private $configProvider;
 
     /**
+     * @var RatesRequestCache
+     */
+    private $requestCache;
+
+    /**
      * Carrier constructor.
      * @param ScopeConfigInterface $scopeConfig
      * @param ErrorFactory $rateErrorFactory
@@ -135,7 +141,8 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param CustomPackagesProvider $customPackagesProvider
      * @param CreateShippingLabelCommand $createShippingLabelCommand
      * @param GetAllShippingOptionsCommand $getAllShippingOptionsCommand
-     * @param \Calcurates\ModuleMagento\Model\Config $configProvider
+     * @param Config $configProvider
+     * @param RatesRequestCache $requestCache
      * @param array $data
      */
     public function __construct(
@@ -164,6 +171,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         CreateShippingLabelCommand $createShippingLabelCommand,
         GetAllShippingOptionsCommand $getAllShippingOptionsCommand,
         Config $configProvider,
+        RatesRequestCache $requestCache,
         array $data = []
     ) {
         parent::__construct(
@@ -184,6 +192,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             $stockRegistry,
             $data
         );
+        $this->requestCache = $requestCache;
         $this->registry = $registry;
         $this->calcuratesClient = $calcuratesClient;
         $this->ratesResponseProcessor = $ratesResponseProcessor;
@@ -216,13 +225,17 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             }
             $this->result = $result;
         } else {
-            $result = $this->_rateFactory->create();
-            $this->ratesResponseProcessor->processFailedRate(
-                (string)$this->getConfigData(Config::CONFIG_TITLE),
-                $result,
-                (string)$this->getConfigData(Config::MISSING_ADDRESS_MESSAGE)
-            );
+            $result = $this->getCachedDataByRequest($request);
+            if ($result === false) {
+                $result = $this->_rateFactory->create();
+                $this->ratesResponseProcessor->processFailedRate(
+                    (string)$this->getConfigData(Config::CONFIG_TITLE),
+                    $result,
+                    (string)$this->getConfigData(Config::MISSING_ADDRESS_MESSAGE)
+                );
+            }
             $this->result = $result;
+
         }
         $this->_updateFreeMethodQuote($request);
 
@@ -309,6 +322,37 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             $this->_debug($debugData);
         }
 
+        return $ratesStrategy->processResponse($response, $quote);
+    }
+
+    /**
+     * @param RateRequest $request
+     * @return bool|Result|mixed
+     */
+    protected function getCachedDataByRequest(RateRequest $request)
+    {
+        $items = $this->getAllItems($request);
+        if (!count($items)) {
+            return false;
+        }
+        $quote = current($items)->getQuote();
+
+        try {
+            $apiRequestBody = $this->rateRequestBuilder->build(
+                $request,
+                $items
+            );
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        $ratesStrategy = $this->ratesStrategyFactory->create(
+            $this->configProvider->isSplitCheckoutEnabled($this->getStore())
+        );
+        $response = $this->requestCache->getCachedData($apiRequestBody, $this->getStore());
+        if (null === $response) {
+            $response = [];
+        }
         return $ratesStrategy->processResponse($response, $quote);
     }
 
