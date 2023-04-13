@@ -326,10 +326,10 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     }
 
     /**
-     * @param $request
+     * @param RateRequest $request
      * @return bool|Result|mixed
      */
-    protected function getCachedDataByRequest($request)
+    protected function getCachedDataByRequest(RateRequest $request)
     {
         $items = $this->getAllItems($request);
         if (!count($items)) {
