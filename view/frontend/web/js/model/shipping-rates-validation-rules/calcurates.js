@@ -30,7 +30,7 @@ define([], function () {
                     'required': true
                 },
                 'street': {
-                    'required': false
+                    'required': true
                 }
             };
         }
