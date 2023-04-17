@@ -29,6 +29,9 @@ var config = {
             'Magento_Checkout/js/view/cart/shipping-rates': {
                 'Calcurates_ModuleMagento/js/view/cart/shipping-rates-mixin': isEnabled
             },
+            'Magento_Checkout/js/model/shipping-rates-validator': {
+                'Calcurates_ModuleMagento/js/model/shipping-rates-validator-mixin': isEnabled
+            },
             'Magento_Checkout/js/model/cart/totals-processor/default': {
                 'Calcurates_ModuleMagento/js/model/cart/totals-processor/default-mixin': isEnabled
             },
