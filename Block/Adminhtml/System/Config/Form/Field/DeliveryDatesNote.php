@@ -13,7 +13,7 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
 
 class DeliveryDatesNote extends Field
 {
-    public const LINK_URL = 'https://my.calcurates.com/cabinet/marketplace';
+    public const LINK_URL = 'https://my.calcurates.com/cabinet/delivery-dates?utm_source=admin&utm_medium=magento';
 
     /**
      * @param AbstractElement $element
@@ -21,11 +21,11 @@ class DeliveryDatesNote extends Field
      */
     public function render(AbstractElement $element): string
     {
-        $urlText = __('"Delivery Dates" feature');
+        $urlText = __('Calcurates account');
         $urlTag = '<p style="display:inline"><a href="' . self::LINK_URL . '" target="_blank">' . $urlText . '</a></span>';
 
         return __(
-            'Ignore this setting if you don\'t have %1 activated for your Calcurates account.',
+            'Deliver Dates calculation settings are available in your %1',
             $urlTag
         );
     }

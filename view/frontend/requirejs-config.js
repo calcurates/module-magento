@@ -29,6 +29,9 @@ var config = {
             'Magento_Checkout/js/view/cart/shipping-rates': {
                 'Calcurates_ModuleMagento/js/view/cart/shipping-rates-mixin': isEnabled
             },
+            'Magento_Checkout/js/model/shipping-rates-validator': {
+                'Calcurates_ModuleMagento/js/model/shipping-rates-validator-mixin': isEnabled
+            },
             'Magento_Checkout/js/model/cart/totals-processor/default': {
                 'Calcurates_ModuleMagento/js/model/cart/totals-processor/default-mixin': isEnabled
             },
@@ -46,7 +49,13 @@ var config = {
             },
             'Amasty_CheckoutCore/js/model/shipping-registry': {
                 'Calcurates_ModuleMagento/js/am_osc/model/shipping-registry-mixin' : isEnabled
-            }
+            },
+            'Bss_OneStepCheckout/js/view/shipping': {
+                'Calcurates_ModuleMagento/js/view/shipping/shipping-mixin': isEnabled
+            },
+            'Bss_OneStepCheckout/js/model/shipping-save-processor/payload-extender': {
+                'Calcurates_ModuleMagento/js/model/shipping-save-processor/payload-extender-mixin': isEnabled
+            },
         },
     }
 };

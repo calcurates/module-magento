@@ -15,7 +15,7 @@ use Magento\Framework\View\Helper\Js;
 
 class Information extends \Magento\Config\Block\System\Config\Form\Fieldset
 {
-    public const CALCURATES_URL = 'https://my.calcurates.com/';
+    public const CALCURATES_URL = 'https://calcurates.com/configuration-service?utm_source=admin&utm_medium=magento';
 
     public const GITHUB_URL = 'https://github.com/calcurates/module-magento/releases';
 
@@ -84,8 +84,9 @@ class Information extends \Magento\Config\Block\System\Config\Form\Fieldset
 
         $html .= '<div class="calcurates-info-block"><span class="message success">'
             . __(
-                'Confused with configuration? No worries, feel free to contact our support'
-                . ' <a target="_blank" href="%1">using on-site chat widget</a>.',
+                'Confused with configuration? Feel free to request'
+                . ' <a target="_blank" href="%1">configuration service</a>'
+                . ' and save your time.',
                 self::CALCURATES_URL
             )
             . '</span></div><br/>';

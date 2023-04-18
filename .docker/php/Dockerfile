@@ -1,10 +1,10 @@
-FROM php:8.1-fpm-alpine
+FROM php:8.2-fpm-alpine
 
 # Update repo and install some utilites
 RUN set -xe \
     && apk update \
     && apk upgrade \
-    && apk --no-cache add htop unzip gzip tar curl
+    && apk --no-cache add htop unzip gzip tar curl linux-headers
 
 # PHP
 RUN set -xe \

@@ -11,9 +11,9 @@ namespace Calcurates\ModuleMagento\Block\Adminhtml\System\Config\Form\Field;
 use Magento\Config\Block\System\Config\Form\Field;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 
-class InStorePickupNote extends Field
+class ProductPageWidgetNote extends Field
 {
-    public const LINK_URL = 'https://my.calcurates.com/cabinet/shipping-options?utm_source=admin&utm_medium=magento';
+    public const LINK_URL = 'https://my.calcurates.com/cabinet/product-page-widget?utm_source=admin&utm_medium=magento';
 
     /**
      * @param AbstractElement $element
@@ -25,7 +25,7 @@ class InStorePickupNote extends Field
         $urlTag = '<p style="display:inline"><a href="' . self::LINK_URL . '" target="_blank">' . $urlText . '</a></span>';
 
         return __(
-            'In-Store Pickup shipping option is set up in your %1',
+            'Shipping methods and delivery dates for product pages are set in your %1',
             $urlTag
         );
     }
