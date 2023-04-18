@@ -50,6 +50,7 @@ if [[ -f "/mg24.tar.gz" || "${isSourced}" -eq "0" ]]; then
     # bin/magento sampledata:deploy # not working. idk
     bin/magento setup:upgrade
     # disable TwoFactorAuth
+    bin/magento module:disable Magento_AdminAdobeImsTwoFactorAuth
     bin/magento module:disable Magento_TwoFactorAuth
     # https://devdocs.magento.com/guides/v2.4/get-started/authentication/gs-authentication-token.html#integration-tokens
     bin/magento config:set oauth/consumer/enable_integration_as_bearer 1

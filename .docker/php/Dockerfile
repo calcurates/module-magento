@@ -4,7 +4,7 @@ FROM php:8.2-fpm-alpine
 RUN set -xe \
     && apk update \
     && apk upgrade \
-    && apk --no-cache add htop unzip gzip tar curl
+    && apk --no-cache add htop unzip gzip tar curl linux-headers
 
 # PHP
 RUN set -xe \
