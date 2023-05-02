@@ -6,198 +6,204 @@
  */
 
 define([
-    'jquery',
-    'ko',
-    'Calcurates_ModuleMagento/js/component/form/element/select',
-    'mage/translate',
-    'Calcurates_ModuleMagento/js/model/delivery-date/delivery-date-list',
-    'Magento_Catalog/js/price-utils',
-    'Magento_Checkout/js/model/quote',
-    'Magento_Checkout/js/action/set-shipping-information'
-], function (
-    $,
-    ko,
-    Select,
-    $t,
-    deliveryDateList,
-    priceUtils,
-    quote,
-    setShippingInformationAction
-) {
-    'use strict';
+    "jquery",
+    "ko",
+    "Calcurates_ModuleMagento/js/component/form/element/select",
+    "mage/translate",
+    "Calcurates_ModuleMagento/js/model/delivery-date/delivery-date-list",
+    "Magento_Catalog/js/price-utils",
+    "Magento_Checkout/js/model/quote",
+    "Magento_Checkout/js/action/set-shipping-information",
+], function ($, ko, Select, $t, deliveryDateList, priceUtils, quote, setShippingInformationAction) {
+    "use strict"
 
     return Select.extend({
         defaults: {
-            caption: $t('Choose a Delivery Time...'),
-            template: 'Calcurates_ModuleMagento/delivery-date/time-select',
-            label: $t('Delivery Time Slot'),
-            additionalCss: '',
-            validationError: '',
+            caption: $t("Choose a Delivery Time..."),
+            template: "Calcurates_ModuleMagento/delivery-date/time-select",
+            label: $t("Delivery Time Slot"),
+            additionalCss: "",
+            validationError: "",
             timeSlotTimeRequired: null,
         },
 
         initObservable: function () {
-            this._super().observe(['options', 'timeSlotTimeRequired', 'additionalCss', 'validationError']);
+            this._super().observe(["options", "timeSlotTimeRequired", "additionalCss", "validationError"])
 
-            deliveryDateList.currentDate.subscribe(this.onCurrentDateChange, this);
-            this.onCurrentDateChange(deliveryDateList.currentDate());
-            return this;
+            deliveryDateList.currentDate.subscribe(this.onCurrentDateChange, this)
+            this.onCurrentDateChange(deliveryDateList.currentDate())
+            return this
         },
 
         onCurrentDateChange: function (data) {
-            var options = [];
-            this.timeSlotTimeRequired(this.getTimeSlotTimeRequired(deliveryDateList));
-            this.additionalCss(this.getAdditionalCss());
+            var options = []
+            this.timeSlotTimeRequired(this.getTimeSlotTimeRequired(deliveryDateList))
+            this.additionalCss(this.getAdditionalCss())
 
             if (data && data.time_intervals) {
-                data.time_intervals.forEach(function (timeInterval){
-                    options.push({
-                        value: timeInterval.id,
-                        label: this.timeOptionsText(timeInterval)
-                    })
-                }.bind(this));
+                data.time_intervals.forEach(
+                    function (timeInterval) {
+                        options.push({
+                            value: timeInterval.id,
+                            label: this.timeOptionsText(timeInterval),
+                        })
+                    }.bind(this)
+                )
             }
             if (options.length > 0) {
                 if (this.timeSlotTimeRequired()) {
-                    this.caption(null);
+                    this.caption(null)
                 }
-                this.updateCurrentTimeSlot(data.time_intervals);
-                this.setOptions(options);
-                this.setDefaultOption(data.time_intervals);
-                this.updateValue();
-                this.enable();
-                this.show();
+                this.updateCurrentTimeSlot(data.time_intervals)
+                this.setOptions(options)
+                this.setDefaultOption(data.time_intervals)
+                this.updateValue()
+                this.enable()
+                this.show()
             } else {
-                this.options([]);
-                this.setOptions([]);
-                this.value();
-                this.disable();
-                this.hide();
+                this.options([])
+                this.setOptions([])
+                this.value()
+                this.disable()
+                this.hide()
             }
         },
 
         updateValue: function () {
             if (deliveryDateList.currentTimeSlot() && deliveryDateList.currentTimeSlot().id) {
-                this.value(deliveryDateList.currentTimeSlot().id);
-                this.value.valueHasMutated();
-                return;
+                this.value(deliveryDateList.currentTimeSlot().id)
+                this.value.valueHasMutated()
+                return
             }
             if (this.timeSlotTimeRequired() && this.options().length) {
-                this.value(this.default);
-                this.validateSelect();
+                this.value(this.default)
+                this.validateSelect()
             }
         },
 
         updateCurrentTimeSlot: function (data) {
-            var currTimeSlot = deliveryDateList.currentTimeSlot, newTimeSlot;
+            var currTimeSlot = deliveryDateList.currentTimeSlot,
+                newTimeSlot
 
             if (data.length && currTimeSlot() && currTimeSlot().id) {
                 data.forEach(function (timeSlot) {
                     if (timeSlot.interval_formatted === currTimeSlot().interval_formatted) {
-                        newTimeSlot = timeSlot;
+                        newTimeSlot = timeSlot
                     }
                 })
                 if (newTimeSlot && currTimeSlot().id !== newTimeSlot.id) {
-                    currTimeSlot(newTimeSlot);
+                    currTimeSlot(newTimeSlot)
                 } else if (!newTimeSlot) {
-                    currTimeSlot({});
+                    currTimeSlot({})
                 }
             }
         },
 
         setDefaultOption: function (data) {
-            var matchedOption
+            var matchedOption, savedOptionId
             if (!data || !data.length) {
-                return;
+                return
             }
-            if (this.defaultValueType === 'earliest_cheapest') {
-                matchedOption = data.reduce(function (prev, curr) {
-                    return (prev.fee_amount > curr.fee_amount) ? curr : prev;
+            if (localStorage.getItem("calcurates_delivery_time")) {
+                savedOptionId = localStorage.getItem("calcurates_delivery_time")
+                matchedOption = data.find(function (option) {
+                    return option.id === savedOptionId
                 })
-                matchedOption = matchedOption.id;
+                matchedOption = matchedOption ? matchedOption.id : this.options()[0].value
+            } else if (this.defaultValueType === "earliest_cheapest") {
+                matchedOption = data.reduce(function (prev, curr) {
+                    return prev.fee_amount > curr.fee_amount ? curr : prev
+                })
+                matchedOption = matchedOption.id
             } else {
                 matchedOption = this.options()[0].value
             }
-            this.default = matchedOption;
+            this.default = matchedOption
         },
 
         onChangeTime: function () {
-            var self = this, currInterval;
+            var self = this,
+                currInterval
 
             if (this.options().length > 0) {
                 deliveryDateList.currentDate().time_intervals.forEach(function (timeSlot) {
                     if (self.value() === timeSlot.id) {
-                        currInterval = timeSlot;
+                        currInterval = timeSlot
                     }
                 })
                 if (currInterval) {
-                    deliveryDateList.currentTimeSlot(currInterval);
+                    localStorage.setItem("calcurates_delivery_time", currInterval.id)
+                    deliveryDateList.currentTimeSlot(currInterval)
                 }
-                this.validateSelect();
+                this.validateSelect()
                 /**
                  * Amasty Checkout | Onestepcheckout_Iosc compatibility
                  */
-                if (quote.shippingAddress()
-                    && (window.am_osc_enabled || $('#iosc-summary').length || $('.bss-onestepcheckout').length)
+                if (
+                    quote.shippingAddress() &&
+                    (window.am_osc_enabled ||
+                        "iosc_subscribe" in window.checkoutConfig.quoteData ||
+                        $(".bss-onestepcheckout").length)
                 ) {
-                    setShippingInformationAction();
+                    setShippingInformationAction()
                 }
             }
         },
 
         timeOptionsText: function (timeInterval) {
             var optionLabel = timeInterval.interval_formatted,
-                formattedPrice = '';
+                formattedPrice = ""
 
-            optionLabel += ' ' + timeInterval.label;
+            optionLabel += " " + timeInterval.label
             if (!timeInterval.fee_amount_excl_tax) {
-                return optionLabel;
+                return optionLabel
             }
             if (window.checkoutConfig.isDisplayShippingPriceExclTax) {
-                formattedPrice = priceUtils.formatPrice(timeInterval.fee_amount_excl_tax, quote.getPriceFormat());
-            } else if (window.checkoutConfig.isDisplayShippingBothPrices
-                && timeInterval.fee_amount_incl_tax !== timeInterval.fee_amount_excl_tax
+                formattedPrice = priceUtils.formatPrice(timeInterval.fee_amount_excl_tax, quote.getPriceFormat())
+            } else if (
+                window.checkoutConfig.isDisplayShippingBothPrices &&
+                timeInterval.fee_amount_incl_tax !== timeInterval.fee_amount_excl_tax
             ) {
-                formattedPrice = priceUtils.formatPrice(timeInterval.fee_amount_incl_tax, quote.getPriceFormat())
-                    + ' ' + $t('Excl. Tax') + ': +'
-                    + priceUtils.formatPrice(timeInterval.fee_amount_excl_tax, quote.getPriceFormat());
+                formattedPrice =
+                    priceUtils.formatPrice(timeInterval.fee_amount_incl_tax, quote.getPriceFormat()) +
+                    " " +
+                    $t("Excl. Tax") +
+                    ": +" +
+                    priceUtils.formatPrice(timeInterval.fee_amount_excl_tax, quote.getPriceFormat())
             } else {
-                formattedPrice = priceUtils.formatPrice(timeInterval.fee_amount_incl_tax, quote.getPriceFormat());
+                formattedPrice = priceUtils.formatPrice(timeInterval.fee_amount_incl_tax, quote.getPriceFormat())
             }
 
-            optionLabel += ' (+' + formattedPrice + ')';
-            return optionLabel;
+            optionLabel += " (+" + formattedPrice + ")"
+            return optionLabel
         },
 
         getTimeSlotTimeRequired: function () {
-            var deliveryDatesMetadata = deliveryDateList.getDeliveryDatesMetadata();
+            var deliveryDatesMetadata = deliveryDateList.getDeliveryDatesMetadata()
 
-            return !!(deliveryDatesMetadata
-                && deliveryDatesMetadata.time_slot_time_required === true);
+            return !!(deliveryDatesMetadata && deliveryDatesMetadata.time_slot_time_required === true)
         },
 
         getAdditionalCss: function () {
-            var initialClasses = '';
+            var initialClasses = ""
             if (this.timeSlotTimeRequired()) {
-                initialClasses += ' _required';
+                initialClasses += " _required"
             }
             if (this.validationError()) {
-                initialClasses += ' _error';
+                initialClasses += " _error"
             }
-            return initialClasses;
+            return initialClasses
         },
 
         validateSelect: function () {
-            if (this.getTimeSlotTimeRequired() === true
-                && 'undefined' === typeof this.value()
-            ) {
-                this.validationError($t('This is a required field.'));
-                this.additionalCss(this.getAdditionalCss());
-                return false;
+            if (this.getTimeSlotTimeRequired() === true && "undefined" === typeof this.value()) {
+                this.validationError($t("This is a required field."))
+                this.additionalCss(this.getAdditionalCss())
+                return false
             }
-            this.validationError('');
-            this.additionalCss(this.getAdditionalCss());
-            return true;
-        }
-    });
-});
+            this.validationError("")
+            this.additionalCss(this.getAdditionalCss())
+            return true
+        },
+    })
+})
