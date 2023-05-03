@@ -6,33 +6,22 @@
  */
 
 define([
-    'ko',
-    'uiRegistry',
-    'Calcurates_ModuleMagento/js/model/delivery-date/delivery-date-list',
-    'Magento_Checkout/js/model/quote',
-    'Calcurates_ModuleMagento/js/model/shipping-save-processor/split-checkout-shipments',
-    'Magento_Checkout/js/model/shipping-service',
-    'Magento_Checkout/js/checkout-data',
-    'mage/translate',
-    'underscore'
-], function (
-    ko,
-    registry,
-    deliveryDateList,
-    quote,
-    splitCheckoutShipments,
-    shippingService,
-    checkoutData,
-    $t,
-    _
-) {
-    'use strict';
+    "ko",
+    "uiRegistry",
+    "Calcurates_ModuleMagento/js/model/delivery-date/delivery-date-list",
+    "Magento_Checkout/js/model/quote",
+    "Calcurates_ModuleMagento/js/model/shipping-save-processor/split-checkout-shipments",
+    "Magento_Checkout/js/model/shipping-service",
+    "Magento_Checkout/js/checkout-data",
+    "mage/translate",
+    "underscore",
+], function (ko, registry, deliveryDateList, quote, splitCheckoutShipments, shippingService, checkoutData, $t, _) {
+    "use strict"
 
     return function (Component) {
         return Component.extend({
-
             defaults: {
-                splitCheckoutShipments: {}
+                splitCheckoutShipments: {},
             },
             errorValidationMessage: ko.observable(false),
 
@@ -40,13 +29,27 @@ define([
              * @returns {*}
              */
             initialize: function () {
-                var self = this;
-                shippingService.getShippingRates().subscribe(this.initSplitCheckoutShipments.bind(this));
-                this._super();
+                var self = this
+                shippingService.getShippingRates().subscribe(this.initSplitCheckoutShipments.bind(this))
+                this._super()
                 quote.shippingMethod.subscribe(function () {
-                    self.errorValidationMessage(false);
-                });
-                return this;
+                    self.errorValidationMessage(false)
+                })
+
+                registry.async("checkoutProvider")(function (checkoutProvider) {
+                    checkoutProvider.on("shippingAddress", function (shippingAddrsData) {
+                        /**
+                         * Save shipping address to localStorage if no street
+                         */
+                        if (
+                            (!shippingAddrsData.street || _.isEmpty(shippingAddrsData.street[0])) &&
+                            shippingAddrsData.postcode
+                        ) {
+                            checkoutData.setShippingAddressFromData(shippingAddrsData)
+                        }
+                    })
+                })
+                return this
             },
 
             /**
@@ -59,17 +62,17 @@ define([
                         return self.isSplitCheckout(method)
                     }),
                     selectedSplitCheckoutShipments = checkoutData.getSelectedSplitCheckoutShipments(),
-                    isSavedMetarate = checkoutData.getSelectedShippingRate() === 'calcurates_metarate'
+                    isSavedMetarate = checkoutData.getSelectedShippingRate() === "calcurates_metarate"
 
                 if (metaMethod.length) {
                     metaMethod[0].extension_attributes.calcurates_metarate_data.forEach(function (item) {
-                        if (typeof self.splitCheckoutShipments[item.origin_id] === 'function') {
+                        if (typeof self.splitCheckoutShipments[item.origin_id] === "function") {
                             return
                         }
                         self.splitCheckoutShipments[item.origin_id] = ko.observable(
-                            selectedSplitCheckoutShipments
-                            && selectedSplitCheckoutShipments[item.origin_id]
-                            && isSavedMetarate
+                            selectedSplitCheckoutShipments &&
+                                selectedSplitCheckoutShipments[item.origin_id] &&
+                                isSavedMetarate
                                 ? selectedSplitCheckoutShipments[item.origin_id]
                                 : null
                         )
@@ -93,34 +96,35 @@ define([
              */
             validateShippingInformation: function () {
                 var self = this,
-                    superResult = this._super();
+                    superResult = this._super()
 
                 if (superResult) {
-                    if ('undefined' !== typeof deliveryDateList.currentDeliveryDatesList()
-                        && deliveryDateList.currentDeliveryDatesList().length > 0
+                    if (
+                        "undefined" !== typeof deliveryDateList.currentDeliveryDatesList() &&
+                        deliveryDateList.currentDeliveryDatesList().length > 0
                     ) {
-                        var dateSelect = registry.get('index = calcurates-delivery-date-date'),
-                            timeSelect = registry.get('index = calcurates-delivery-date-time');
+                        var dateSelect = registry.get("index = calcurates-delivery-date-date"),
+                            timeSelect = registry.get("index = calcurates-delivery-date-time")
 
                         var dateSelectValidationResult = dateSelect.validateSelect(),
-                            timeSelectValidationResult = timeSelect.validateSelect();
+                            timeSelectValidationResult = timeSelect.validateSelect()
 
                         if (!dateSelectValidationResult || !timeSelectValidationResult) {
-                            return false;
+                            return false
                         }
                     }
-                    if (quote.shippingMethod() && quote.shippingMethod()['method_code'] === 'metarate') {
+                    if (quote.shippingMethod() && quote.shippingMethod()["method_code"] === "metarate") {
                         _.each(this.splitCheckoutShipments, function (observable) {
                             if (observable() === null) {
                                 self.errorValidationMessage(
-                                    $t('The shipping method is missing. Select the shipping method and try again.')
-                                );
-                                superResult = false;
+                                    $t("The shipping method is missing. Select the shipping method and try again.")
+                                )
+                                superResult = false
                             }
-                        });
+                        })
                     }
                 }
-                return superResult;
+                return superResult
             },
 
             /**
@@ -129,9 +133,11 @@ define([
              * @returns {boolean|*|boolean}
              */
             isSplitCheckout: function (method) {
-                return method.carrier_code === 'calcurates'
-                    && method.extension_attributes
-                    && method.extension_attributes.calcurates_metarate_data
+                return (
+                    method.carrier_code === "calcurates" &&
+                    method.extension_attributes &&
+                    method.extension_attributes.calcurates_metarate_data
+                )
             },
 
             /**
@@ -142,7 +148,7 @@ define([
             getShipmentQuoteItems: function (shipment) {
                 return quote.totals().items.filter(function (item) {
                     return shipment.products.includes(parseInt(item.item_id))
-                });
+                })
             },
 
             /**
@@ -171,7 +177,7 @@ define([
                     this.resetSplitCheckoutShipments()
                     this.selectShippingMethod(method)
                 }
-                return true;
+                return true
             },
 
             /**
@@ -179,10 +185,11 @@ define([
              * @returns {*|string}
              */
             getInfoMessagePosition: function () {
-                return window.checkoutConfig.calcurates && window.checkoutConfig.calcurates.info_message_display_position
+                return window.checkoutConfig.calcurates &&
+                    window.checkoutConfig.calcurates.info_message_display_position
                     ? window.checkoutConfig.calcurates.info_message_display_position
-                    : 'in_tooltip';
-            }
-        });
-    };
-});
+                    : "in_tooltip"
+            },
+        })
+    }
+})
