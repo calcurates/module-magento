@@ -8,14 +8,16 @@
 
 namespace Calcurates\ModuleMagento\Model\Carrier\Validator;
 
+use Calcurates\ModuleMagento\Model\Config;
 use Magento\Directory\Helper\Data;
+use Magento\Framework\App\RequestInterface;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Calcurates\ModuleMagento\Plugin\Model\Shipping\ShippingAddEstimateFlagToRequestPlugin;
 
 class RateRequestValidator
 {
     /**
-     * @var \Magento\Framework\App\RequestInterface
+     * @var RequestInterface
      */
     private $request;
 
@@ -25,14 +27,24 @@ class RateRequestValidator
     private $helper;
 
     /**
-     * RequestRatesValidator constructor.
-     * @param \Magento\Framework\App\RequestInterface $request
-     * @param Data $helper
+     * @var Config
      */
-    public function __construct(\Magento\Framework\App\RequestInterface $request, Data $helper)
-    {
+    private $config;
+
+    /**
+     * RequestRatesValidator constructor.
+     * @param RequestInterface $request
+     * @param Data $helper
+     * @param Config $config
+     */
+    public function __construct(
+        RequestInterface $request,
+        Data $helper,
+        Config $config
+    ) {
         $this->request = $request;
         $this->helper = $helper;
+        $this->config = $config;
     }
 
     /**
@@ -79,8 +91,11 @@ class RateRequestValidator
                 || (!empty($request->getDestPostcode()) && preg_match('~[0-9]+~', $request->getDestPostcode()))
             )
             && !empty($request->getDestCountryId());
+        if ($this->config->isAllowPartialAddressRequests($request->getStoreId())) {
+            return $valid;
+        }
         if ($valid && !$request->getData(ShippingAddEstimateFlagToRequestPlugin::IS_ESTIMATE_ONLY_FLAG)) {
-            return $valid && $request->getDestStreet() && $request->getDestCity();
+            return $request->getDestStreet() && $request->getDestCity();
         }
         return $valid;
     }

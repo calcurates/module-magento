@@ -254,6 +254,17 @@
                         <config_path>carriers/calcurates/shipping_methods_for_fallback</config_path>
                         <can_be_empty>1</can_be_empty>
                     </field>
+                    <field id="allow_partial_address_requests" translate="label comment" type="select" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                        <label><![CDATA[Allow checkout to request rates<br/> with missing required address fields]]></label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>carriers/calcurates/allow_partial_address_requests</config_path>
+                        <comment>
+                            <![CDATA[
+                                <b>No (recommended):</b> Checkout will not send rates requests until all required address fields are filled in (country, state/province, city, postcode, address line).<br/>
+                                <b>Yes:</b> Checkout will send rates requests regardless the required fields — this will increase the number of requests but might solve compatibility issues with some OSC modules.
+                            ]]>
+                        </comment>
+                    </field>
                     <field id="debug" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                         <label>Enable Debug</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
