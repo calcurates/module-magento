@@ -55,7 +55,7 @@ class Config implements ConfigProviderInterface
     public const SHIPPING_ON_PRODUCT_ATTRIBUTE_CODE = 'shipping_on_product_attribute_code';
     public const SHIPPING_ON_PRODUCT_ATTRIBUTE_VALUE = 'shipping_on_product_attribute_value';
     public const SHIPPING_ON_PRODUCT_COUNTDOWN_TIMER_FORMAT = 'shipping_on_product_timer_format';
-
+    public const ALLOW_PARTIAL_ADDRESS_REQUESTS = 'allow_partial_address_requests';
     public const ACTIVE = 'active';
     public const DEBUG = 'debug';
 
@@ -273,6 +273,19 @@ class Config implements ConfigProviderInterface
     {
         return (bool)$this->scopeConfig->isSetFlag(
             self::CONFIG_GROUP . self::DEBUG,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @return bool
+     */
+    public function isAllowPartialAddressRequests($storeId): bool
+    {
+        return (bool)$this->scopeConfig->isSetFlag(
+            self::CONFIG_GROUP . self::ALLOW_PARTIAL_ADDRESS_REQUESTS,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );
