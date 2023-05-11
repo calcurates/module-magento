@@ -1,33 +1,297 @@
+"{{hours}}h {{minutes}}m {{seconds}}s","{{hours}}h {{minutes}}m {{seconds}}s"
+"e.g. EEE, MMM d, y","e.g. EEE, MMM d, y"
+"Calcurates account","Calcurates account"
+"Deliver Dates calculation settings are available in your %1","Deliver Dates calculation settings are available in your %1"
+"In-Store Pickup shipping option is set up in your %1","In-Store Pickup shipping option is set up in your %1"
+"Shipping methods and delivery dates for product pages are set in your %1","Shipping methods and delivery dates for product pages are set in your %1"
+Calcurates,Calcurates
+"Extension requires update. Newer version is available <a target=""_blank"" href=""%1"">here</a>.","Extension requires update. Newer version is available <a target=""_blank"" href=""%1"">here</a>."
+"Confused with configuration? Feel free to request <a target=""_blank"" href=""%1"">configuration service</a> and save your time.","Confused with configuration? Feel free to request <a target=""_blank"" href=""%1"">configuration service</a> and save your time."
+"Cannot getting label from API Calcurates %1","Cannot getting label from API Calcurates %1"
+"Cannot getting tracking from API Calcurates %1","Cannot getting tracking from API Calcurates %1"
+"Cannot create label with API Calcurates %1","Cannot create label with API Calcurates %1"
+"Cannot getting rates with API Calcurates %1","Cannot getting rates with API Calcurates %1"
+"Incorrect shipping service","Incorrect shipping service"
+"Cannot get Carriers settings with API Calcurates %1","Cannot get Carriers settings with API Calcurates %1"
+"Cannot get Shipping Options with API Calcurates %1","Cannot get Shipping Options with API Calcurates %1"
+" - duties & tax included"," - duties & tax included"
+" - without duties & tax"," - without duties & tax"
+"Unknown entity type: %s requested","Unknown entity type: %s requested"
+"We don't recognize or support the file extension in this shipping label: %1.","We don't recognize or support the file extension in this shipping label: %1."
+"An error occurred while creating shipping label.","An error occurred while creating shipping label."
+"'%1' destination source could not been opened","'%1' destination source could not been opened"
+"No packages for request","No packages for request"
+"Custom Package","Custom Package"
+"%1 day","%1 day"
+"%1 days","%1 days"
+"%1-%2 days","%1-%2 days"
+"Tracking getting error","Tracking getting error"
+Earliest,Earliest
+"Earliest Cheapest","Earliest Cheapest"
+"Do not show","Do not show"
+"Show in the tooltip","Show in the tooltip"
+"Show next to the method name","Show next to the method name"
+"Qty of days in transit","Qty of days in transit"
+"Delivery dates - Magento format","Delivery dates - Magento format"
+"Custom Date Format","Custom Date Format"
+"Shipping Methods","Shipping Methods"
+"Stores Selector","Stores Selector"
+"Show below shipping method","Show below shipping method"
+None,None
+"with tax and duties included (landed cost)","with tax and duties included (landed cost)"
+"without tax and duties","without tax and duties"
+"both options - with and without tax & duties","both options - with and without tax & duties"
+Always,Always
+"Only for Specific Products","Only for Specific Products"
+No,No
+"Something went wrong with Calcurates API","Something went wrong with Calcurates API"
+Store,Store
+"No such location with shipping_option_id: %1","No such location with shipping_option_id: %1"
+"No such location with code: %1","No such location with code: %1"
+"Order # ","Order # "
+"Order Date: ","Order Date: "
+"Sold to:","Sold to:"
+"Ship to:","Ship to:"
+"Payment Method:","Payment Method:"
+"Shipping Method:","Shipping Method:"
+"Shipment %1 of %2:","Shipment %1 of %2:"
+"Included SKUs: %1","Included SKUs: %1"
+"Total Shipping Charges","Total Shipping Charges"
+Title,Title
+Number,Number
+"No such shipping label with id %1","No such shipping label with id %1"
+"No such shipping label with tracking number %1","No such shipping label with tracking number %1"
+"No such shipping label for shipment id %1","No such shipping label for shipment id %1"
+"""skus"" of Products should be specified","""skus"" of Products should be specified"
+"Tracking Number","Tracking Number"
+"Ship Date","Ship Date"
+Trackable,Trackable
+"Shipment Cost","Shipment Cost"
+Yes,Yes
+"Unable to create manifest: all of selected shipments must have shipping labels. The following shipments do not have shipping labels: %1","Unable to create manifest: all of selected shipments must have shipping labels. The following shipments do not have shipping labels: %1"
+"Unable to create manifest for selected shipments. The manifest is already created for the last shipping label of the following shipments: %1","Unable to create manifest for selected shipments. The manifest is already created for the last shipping label of the following shipments: %1"
+"Something went wrong with saving manifest","Something went wrong with saving manifest"
+"Unable to print manifests for selected shipments. The following shipments are missing created manifest for the last shipping label: %1","Unable to print manifests for selected shipments. The following shipments are missing created manifest for the last shipping label: %1"
+"Target WebsiteId is not specified","Target WebsiteId is not specified"
+"Cant't find current website","Cant't find current website"
+Residential,Residential
+Commercial,Commercial
+"Calcurates Variables","Calcurates Variables"
+"Delivery Date","Delivery Date"
+"Delivery Time Slot","Delivery Time Slot"
+"Invalid Shipping Method","Invalid Shipping Method"
+"Invalid Shipping Date","Invalid Shipping Date"
+"No Carrier Info","No Carrier Info"
+"Incl. Tax","Incl. Tax"
+"Shipment object should be set for HS Code field rendering","Shipment object should be set for HS Code field rendering"
+"Click to change shipping method","Click to change shipping method"
+"Sorry, no quotes are available for this order.","Sorry, no quotes are available for this order."
+"Get shipping methods and rates","Get shipping methods and rates"
+"You don't need to select a shipping method.","You don't need to select a shipping method."
+"Shipment %1 of %2","Shipment %1 of %2"
+"Please select a shipping method...","Please select a shipping method..."
+Method:,Method:
+"Payment &amp; Shipping Method","Payment &amp; Shipping Method"
+"Payment Information","Payment Information"
+"The order was placed using %1.","The order was placed using %1."
+"Shipping Information","Shipping Information"
+"Items Refunded","Items Refunded"
+"No Items","No Items"
+"Memo Total","Memo Total"
+"Credit Memo History","Credit Memo History"
+"Credit Memo Totals","Credit Memo Totals"
+"Create Shipment","Create Shipment"
+"Invoice and shipment types do not match for some items on this order. You can create a shipment only after creating the invoice.","Invoice and shipment types do not match for some items on this order. You can create a shipment only after creating the invoice."
+"Items Invoiced","Items Invoiced"
+"Order Total","Order Total"
+"Invoice History","Invoice History"
+"Invoice Totals","Invoice Totals"
+"Select All","Select All"
+"Product Name","Product Name"
+Weight,Weight
+"Customs Value","Customs Value"
+"HS Code","HS Code"
+"Qty Ordered","Qty Ordered"
+Qty,Qty
+Delete,Delete
+Cancel,Cancel
+Save,Save
+"Back To Packages","Back To Packages"
+Next,Next
+"Add Package","Add Package"
+"Create Packages","Create Packages"
+"Select Method and Confirm","Select Method and Confirm"
+"Shipping Method","Shipping Method"
+"Shipping Date","Shipping Date"
+"Tax Identifiers","Tax Identifiers"
+"Specify tax identifiers for international shipment (optional)","Specify tax identifiers for international shipment (optional)"
+Use,Use
+"Tax ID Type","Tax ID Type"
+Value,Value
+"Issuing Authority","Issuing Authority"
+"Entity Type","Entity Type"
+Action,Action
+"Origin Address","Origin Address"
+"Make sure this address match Origin address that is specified in Calcurates as shipping label will be requested using the one from Calcurates.","Make sure this address match Origin address that is specified in Calcurates as shipping label will be requested using the one from Calcurates."
+"Shipping Address","Shipping Address"
+Package,Package
+"Add Selected Product(s) to Package","Add Selected Product(s) to Package"
+"Add Products to Package","Add Products to Package"
+Type,Type
+Size,Size
+Girth,Girth
+"Total Weight","Total Weight"
+Length,Length
+Width,Width
+Height,Height
+"Signature Confirmation","Signature Confirmation"
+"USPS domestic shipments don't use package types.","USPS domestic shipments don't use package types."
+in,in
+cm,cm
+lb,lb
+kg,kg
+g,g
+"Delete Package","Delete Package"
+Contents,Contents
+Explanation,Explanation
+Carrier,Carrier
+"Are you sure?","Are you sure?"
+"Delivery Dates","Delivery Dates"
+"Estimated Delivery Dates","Estimated Delivery Dates"
+"Selected Delivery Date","Selected Delivery Date"
+"Selected Delivery Time","Selected Delivery Time"
+"Shipping &amp; Handling Information","Shipping &amp; Handling Information"
+"Track Order","Track Order"
+Packages,Packages
+"%1 x %2","%1 x %2"
+"No shipping information available","No shipping information available"
+"Shipping and Tracking Information","Shipping and Tracking Information"
+"Track this shipment","Track this shipment"
+"Items Shipped","Items Shipped"
+"Shipment History","Shipment History"
+"Download label and custom form","Download label and custom form"
+"Download label","Download label"
+"Label Info","Label Info"
+"Create Shipping Label with Calcurates","Create Shipping Label with Calcurates"
+"Items in the Package","Items in the Package"
+Product,Product
+"All Shipping Labels","All Shipping Labels"
+Date,Date
+"Carrier & Service","Carrier & Service"
+Actions,Actions
+"Print Shipping Label","Print Shipping Label"
+"Show Packages","Show Packages"
+"Split Shipments","Split Shipments"
+Items,Items
+Subtotal,Subtotal
+Price,Price
+"Gift Message for this Order","Gift Message for this Order"
+From:,From:
+To:,To:
+Message:,Message:
+"Shipped By","Shipped By"
+"Update Shipping Method","Update Shipping Method"
+"Sorry, no quotes are available for this order right now.","Sorry, no quotes are available for this order right now."
+Edit,Edit
+"Payment Method","Payment Method"
+"Buy now with PayPal","Buy now with PayPal"
+"Edit Payment Information","Edit Payment Information"
+"Items in Your Shopping Cart","Items in Your Shopping Cart"
+"Edit Shopping Cart","Edit Shopping Cart"
+"Place Order","Place Order"
+"Submitting order information...","Submitting order information..."
+"Print All Shipments","Print All Shipments"
+"Shipment #","Shipment #"
+"Print Shipment","Print Shipment"
+"Tracking Number(s):","Tracking Number(s):"
+SKU,SKU
+"Qty Shipped","Qty Shipped"
+"Order Information","Order Information"
+"Delivery Date:","Delivery Date:"
+"Billing Address","Billing Address"
+"Refund #%1","Refund #%1"
+"Discount Amount","Discount Amount"
+"Row Total","Row Total"
+"Invoice #","Invoice #"
+"Qty Invoiced","Qty Invoiced"
+"Select Method","Select Method"
+"Method Title","Method Title"
+"Carrier Title","Carrier Title"
+Tooltip,Tooltip
+"Sorry, no quotes are available for this order at this time","Sorry, no quotes are available for this order at this time"
+"see on the map","see on the map"
+"Delivery Time","Delivery Time"
+"Estimated Delivery","Estimated Delivery"
+"Ship To:","Ship To:"
+edit,edit
+"Products have been added to packages according to Calcurates Smart Packaging algorithm","Products have been added to packages according to Calcurates Smart Packaging algorithm"
 "Field ","Field "
 " is required."," is required."
-"Calcurates","Calcurates"
-"Enabled","Enabled"
+"Choose a Delivery Date...","Choose a Delivery Date..."
+"Excl. Tax","Excl. Tax"
+"This is a required field.","This is a required field."
+"Choose a Delivery Time...","Choose a Delivery Time..."
+Shipping,Shipping
+"In-Store Pickup","In-Store Pickup"
+"Choose a store...","Choose a store..."
+"The shipping method is missing. Select the shipping method and try again.","The shipping method is missing. Select the shipping method and try again."
+General,General
+Enabled,Enabled
 "Calcurates API Token","Calcurates API Token"
-"Enter Calcurates API Token below to enable module","Enter Calcurates API Token below to enable module"
 "Token can be found in Calcurates account (Website > Edit > Integration)","Token can be found in Calcurates account (Website > Edit > Integration)"
 "API URL","API URL"
-"Enable Debug","Enable Debug"
-"Default Error Message","Default Error Message"
-"Display rates with tax and duties","Display rates with tax and duties"
-"Print Manifests","Print Manifests"
-"No Carrier Info","No Carrier Info"
-"Cannot get Carriers settings with API Calcurates %1","Cannot get Carriers settings with API Calcurates %1"
-"Shipment object should be set for HS Code field rendering","Shipment object should be set for HS Code field rendering"
-"Unknown entity type: %s requested","Unknown entity type: %s requested"
-"Download label","Download label"
-"Download label and custom form","Download label and custom form"
-"No such location with code: %1","No such location with code: %1"
-"No such location with shipping_option_id: %1","No such location with shipping_option_id: %1"
-"Make sure this address match Origin address that is specified in Calcurates as shipping label will be requested using the one from Calcurates.","Make sure this address match Origin address that is specified in Calcurates as shipping label will be requested using the one from Calcurates."
-"General","General"
+"Ignore Virtual Products","Ignore Virtual Products"
+"Split Checkout by Origins","Split Checkout by Origins"
+"Split Checkout by Origins Title","Split Checkout by Origins Title"
 "Design and Layout","Design and Layout"
+"Default Error Message","Default Error Message"
+"Message When Address is Missing","Message When Address is Missing"
+"Info Message Display Settings","Info Message Display Settings"
+"Display Images for Shipping Options","Display Images for Shipping Options"
+"Display package name next to method name","Display package name next to method name"
+"Display Shipping Option Name","Display Shipping Option Name"
+"Relates to Shipping Options with multiple methods inside (Carriers, Table Rates, in-Store Pickup, Rate Shopping)","Relates to Shipping Options with multiple methods inside (Carriers, Table Rates, in-Store Pickup, Rate Shopping)"
+"Sort Order","Sort Order"
 "International Shipping","International Shipping"
-"Delivery Dates","Delivery Dates"
+"Display rates with tax and duties","Display rates with tax and duties"
+"Affects international shipping rates from carriers","Affects international shipping rates from carriers"
+"Delivery Date and Time Slots Default Value","Delivery Date and Time Slots Default Value"
+"Default date and time slot option, selected on a shipping step during checkout.","Default date and time slot option, selected on a shipping step during checkout."
+"Delivery dates display settings","Delivery dates display settings"
+"Delivery dates display format","Delivery dates display format"
+"Qty of days in transit example: “3 days“ or “3-4 days“.<br>
+                                Delivery dates - Magento format: Date Fields order and format from Magento settings will be applied.<br>
+                                Delivery dates - custom format: specify your own date format using <a target=""_blank"" href=""https://unicode-org.github.io/icu/userguide/format_parse/datetime/#date-field-symbol-table"">ICU rules.</a>","Qty of days in transit example: “3 days“ or “3-4 days“.<br>
+                                Delivery dates - Magento format: Date Fields order and format from Magento settings will be applied.<br>
+                                Delivery dates - custom format: specify your own date format using <a target=""_blank"" href=""https://unicode-org.github.io/icu/userguide/format_parse/datetime/#date-field-symbol-table"">ICU rules.</a>"
 "Product Page Widget","Product Page Widget"
 "Display Product Page Widget","Display Product Page Widget"
-"In-Store Pickup","In-Store Pickup"
-"Advanced","Advanced"
-""Delivery Dates" feature",""Delivery Dates" feature"
-""In-Store Pickup" feature",""In-Store Pickup" feature"
-"Relates to Shipping Options with multiple methods inside (Carriers, Table Rates, in-Store Pickup, Rate Shopping)","Relates to Shipping Options with multiple methods inside (Carriers, Table Rates, in-Store Pickup, Rate Shopping)"
-"Display Shipping Option Name","Display Shipping Option Name"
+Attribute,Attribute
+"Attribute Value","Attribute Value"
+"Enable Google Address Autocomplete","Enable Google Address Autocomplete"
+"Google Places API Key","Google Places API Key"
+"Block Title","Block Title"
+"Placeholder Title","Placeholder Title"
+"Fallback Message if No Methods Available","Fallback Message if No Methods Available"
+"Countdown Timer Format","Countdown Timer Format"
+"Use the following variables for countdown timer:<br>
+                                {{hours}} - displays hours<br>
+                                {{minutes}} - displays minutes<br>
+                                {{seconds}} - displays seconds<br>","Use the following variables for countdown timer:<br>
+                                {{hours}} - displays hours<br>
+                                {{minutes}} - displays minutes<br>
+                                {{seconds}} - displays seconds<br>"
+"Display In-Store Pickup as","Display In-Store Pickup as"
+Advanced,Advanced
+"API Timeout (seconds)","API Timeout (seconds)"
+"Show only if error or API timeout exceeded","Show only if error or API timeout exceeded"
+"Selected methods must be enabled. Leave empty to show all active methods","Selected methods must be enabled. Leave empty to show all active methods"
+"Allow checkout to request rates<br/> with missing required address fields","Allow checkout to request rates<br/> with missing required address fields"
+"<b>No (recommended):</b> Checkout will not send rates requests until all required address fields are filled in (country, state/province, city, postcode, address line).<br/>
+                                <b>Yes:</b> Checkout will send rates requests regardless the required fields — this will increase the number of requests but might solve compatibility issues with some OSC modules.","<b>No (recommended):</b> Checkout will not send rates requests until all required address fields are filled in (country, state/province, city, postcode, address line).<br/>
+                                <b>Yes:</b> Checkout will send rates requests regardless the required fields — this will increase the number of requests but might solve compatibility issues with some OSC modules."
+"Enable Debug","Enable Debug"
+"Calcurates Algorithm","Calcurates Algorithm"
+"Algorithm which provides Source Selections based on Calcurates service","Algorithm which provides Source Selections based on Calcurates service"
+"Print Manifests","Print Manifests"
+"Track All Shipments","Track All Shipments"
