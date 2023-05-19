@@ -18,7 +18,7 @@ class Measure
         if (class_exists('Magento\Framework\Measure\Length')) {
             return \Magento\Framework\Measure\Length::CENTIMETER;
         }
-        return \Zend_Measure_Length::CENTIMETER;
+        return 'CENTIMETER';
     }
 
     /**
@@ -29,7 +29,7 @@ class Measure
         if (class_exists('Magento\Framework\Measure\Length')) {
             return \Magento\Framework\Measure\Length::INCH;
         }
-        return \Zend_Measure_Length::INCH;
+        return 'INCH';
     }
 
     /**
@@ -40,7 +40,7 @@ class Measure
         if (class_exists('Magento\Framework\Measure\Weight')) {
             return \Magento\Framework\Measure\Weight::POUND;
         }
-        return \Zend_Measure_Weight::POUND;
+        return 'POUND';
     }
 
     /**
@@ -51,7 +51,7 @@ class Measure
         if (class_exists('Magento\Framework\Measure\Weight')) {
             return \Magento\Framework\Measure\Weight::KILOGRAM;
         }
-        return \Zend_Measure_Weight::KILOGRAM;
+        return 'KILOGRAM';
     }
 
     /**
@@ -62,7 +62,7 @@ class Measure
         if (class_exists('Magento\Framework\Measure\Weight')) {
             return \Magento\Framework\Measure\Weight::GRAM;
         }
-        return \Zend_Measure_Weight::GRAM;
+        return 'GRAM';
     }
 
     /**
@@ -73,6 +73,6 @@ class Measure
         if (class_exists('Magento\Framework\Measure\Weight')) {
             return \Magento\Framework\Measure\Weight::OUNCE;
         }
-        return \Zend_Measure_Weight::OUNCE;
+        return 'OUNCE';
     }
 }
