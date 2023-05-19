@@ -63,4 +63,12 @@
             <resource ref="anonymous" />
         </resources>
     </route>
+
+    <!-- Extra Fee Service -->
+    <route url="/V1/calcurates/extra-fees/:websiteId" method="GET">
+        <service class="Calcurates\ModuleMagento\Api\SalesData\ExtraFeeManagementInterface" method="getFees" />
+        <resources>
+            <resource ref="Calcurates_ModuleMagento::api" />
+        </resources>
+    </route>
 </routes>
