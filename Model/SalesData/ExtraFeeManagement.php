@@ -62,7 +62,7 @@ class ExtraFeeManagement implements ExtraFeeManagementInterface
             $extraFeeResourceModel = $this->objectManager
                 ->get(\Amasty\Extrafee\Model\ResourceModel\Fee::class);
             $fees = $extraFeeCollection->getItems();
-            $storeIds = $this->storeWebsiteRelation->getStoreByWebsiteId($websiteId);
+            $storeIds = array_merge($this->storeWebsiteRelation->getStoreByWebsiteId($websiteId), [0]);
             foreach ($fees as $fee) {
                 $stores = $extraFeeResourceModel->lookupStoreIds($fee->getId());
                 if (!empty(array_intersect($stores, $storeIds))) {
