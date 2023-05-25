@@ -59,6 +59,9 @@ var config = {
             "Onestepcheckout_Iosc/js/shipping": {
                 "Calcurates_ModuleMagento/js/iosc/shipping-mixin": isEnabled,
             },
+            "Amasty_Extrafee/js/action/select-fee": {
+                "Calcurates_ModuleMagento/js/am_extrafee/action/select-fee-mixin": isEnabled,
+            },
         },
     },
 }
