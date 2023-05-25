@@ -69,6 +69,17 @@ class RateRequestBuilder
      */
     private $moduleManager;
 
+    /**
+     * RateRequestBuilder constructor.
+     * @param RegionFactory $regionFactory
+     * @param RegionResource $regionResource
+     * @param StoreManagerInterface $storeManager
+     * @param ProductRepositoryInterface $productRepository
+     * @param GetSourceCodesPerSkus $getSourceCodesPerSkus
+     * @param ProductAttributesService $productAttributesService
+     * @param ObjectManagerInterface $objectManager
+     * @param ModuleManager $moduleManager
+     */
     public function __construct(
         RegionFactory $regionFactory,
         RegionResource $regionResource,
