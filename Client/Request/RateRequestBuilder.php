@@ -19,6 +19,8 @@ use Magento\Directory\Model\ResourceModel\Region as RegionResource;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\Module\Manager as ModuleManager;
+use Magento\Framework\ObjectManagerInterface;
 
 class RateRequestBuilder
 {
@@ -58,21 +60,24 @@ class RateRequestBuilder
     private $productAttributesService;
 
     /**
-     * RateRequestBuilder constructor.
-     * @param RegionFactory $regionFactory
-     * @param RegionResource $regionResource
-     * @param StoreManagerInterface $storeManager
-     * @param ProductRepositoryInterface $productRepository
-     * @param GetSourceCodesPerSkus $getSourceCodesPerSkus
-     * @param ProductAttributesService $productAttributesService
+     * @var ObjectManagerInterface
      */
+    private $objectManager;
+
+    /**
+     * @var ModuleManager
+     */
+    private $moduleManager;
+
     public function __construct(
         RegionFactory $regionFactory,
         RegionResource $regionResource,
         StoreManagerInterface $storeManager,
         ProductRepositoryInterface $productRepository,
         GetSourceCodesPerSkus $getSourceCodesPerSkus,
-        ProductAttributesService $productAttributesService
+        ProductAttributesService $productAttributesService,
+        ObjectManagerInterface $objectManager,
+        ModuleManager $moduleManager
     ) {
         $this->regionFactory = $regionFactory;
         $this->regionResource = $regionResource;
@@ -80,6 +85,8 @@ class RateRequestBuilder
         $this->productRepository = $productRepository;
         $this->getSourceCodesPerSkus = $getSourceCodesPerSkus;
         $this->productAttributesService = $productAttributesService;
+        $this->moduleManager = $moduleManager;
+        $this->objectManager = $objectManager;
     }
 
     /**
@@ -134,6 +141,20 @@ class RateRequestBuilder
 
         $itemsSkus = array_values($itemsSkus);
         $itemsSourceCodes = $this->getSourceCodesPerSkus->execute($itemsSkus, $websiteCode);
+
+        if ($this->moduleManager->isEnabled('Amasty_Extrafee')) {
+            $feeQuoteCollectionFactory = $this->objectManager
+                ->get(\Amasty\Extrafee\Model\ResourceModel\ExtrafeeQuote\CollectionFactory::class);
+            $feesQuoteCollection = $feeQuoteCollectionFactory->create()
+                ->addFieldToFilter('option_id', ['neq' => '0'])
+                ->addFieldToFilter('quote_id', $quote->getId());
+            foreach ($feesQuoteCollection->getItems() as $key => $feeOption) {
+                $apiRequestBody['extraFee'][] = [
+                    'id' => $feeOption->getOptionId(),
+                    'amount' => $feeOption->getBaseFeeAmount()
+                ];
+            }
+        }
 
         foreach ($items as $item) {
             $attributedProductId = $item->getProductId();
