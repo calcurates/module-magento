@@ -66,10 +66,14 @@ class ExtraFeeManagement implements ExtraFeeManagementInterface
             foreach ($fees as $fee) {
                 $stores = $extraFeeResourceModel->lookupStoreIds($fee->getId());
                 if (!empty(array_intersect($stores, $storeIds))) {
-                    $result[] = [
-                        'id' => $fee->getId(),
-                        'name' => $fee->getName()
-                    ];
+                    $extraFeeResourceModel->loadOptions($fee);
+                    foreach ($fee->getOptions() as $option) {
+                        $result[] = [
+                            'id' => $option['entity_id'],
+                            'group' => $fee->getName(),
+                            'label' => $option['admin']
+                        ];
+                    }
                 }
             }
         }

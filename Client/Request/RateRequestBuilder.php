@@ -115,6 +115,7 @@ class RateRequestBuilder
                 'companyName' => $customerData['companyName'],
                 'contactPhone' => $customerData['contactPhone'],
             ],
+            'extraFee' => [],
             'customerGroup' => $customer->getGroupId() ?: 0,
             'promo' => null,
             'products' => [],
