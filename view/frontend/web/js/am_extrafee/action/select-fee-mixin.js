@@ -38,6 +38,10 @@ define([
             }
             let address = quote.shippingAddress()
             rateRegistry.set(address.getCacheKey(), false)
+            if (_.isFunction(rateRegistry.clearStorage)) {
+                // Amasty OneStepCheckout compatibility
+                rateRegistry.clearStorage()
+            }
             address.getType() === "customer-address"
                 ? customerProcessor.getRates(address)
                 : defaultProcessor.getRates(address)
