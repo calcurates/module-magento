@@ -19,6 +19,8 @@
 
     <preference for="Calcurates\ModuleMagento\Api\Data\ShippingDataInterface" type="Calcurates\ModuleMagento\Model\Data\ShippingData"/>
 
+    <preference for="Calcurates\ModuleMagento\Api\SalesData\ExtraFeeManagementInterface" type="Calcurates\ModuleMagento\Model\SalesData\ExtraFeeManagement"/>
+
     <preference for="Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface"
                 type="Calcurates\ModuleMagento\Model\Carrier\CalcuratesCachedClient"/>
 
