@@ -95,7 +95,7 @@ class SaveShippingMethodPlugin
             $splitShipment = [];
             $shippingAddress = $quote->getShippingAddress();
             $savedMethod = $shippingAddress->getShippingMethod();
-            if (strtolower($newShippingMethod) === 'calcurates_metarate') {
+            if (strtolower($newShippingMethod ?? '') === 'calcurates_metarate') {
                 foreach ($origins as $id => $method) {
                     $splitShipment[] = [
                         'origin' => $id,
@@ -106,7 +106,7 @@ class SaveShippingMethodPlugin
             $quoteData->setSplitShipments($splitShipment);
             $this->saveQuoteData->save($quoteData);
 
-            if (strtolower($savedMethod) === 'calcurates_metarate') {
+            if (strtolower($savedMethod ?? '') === 'calcurates_metarate') {
                 $shippingAddress->setShippingMethod('');
                 $this->quoteRepository->save($quote);
             }
