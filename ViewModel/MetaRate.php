@@ -111,10 +111,10 @@ class MetaRate implements ArgumentInterface
 
     /**
      * @param int $originId
-     * @param array $method
+     * @param string $method
      * @return bool
      */
-    public function isSavedMethod(int $originId, array $method): bool
+    public function isSavedMethod(int $originId, string $method): bool
     {
         if (!$this->savedMethods) {
             $quoteData = $this->getQuoteData->get(

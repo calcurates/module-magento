@@ -7,12 +7,13 @@
 
 define([
     "underscore",
+    "mageUtils",
     "mage/utils/wrapper",
     "Magento_Checkout/js/model/quote",
     "Magento_Checkout/js/model/shipping-rate-processor/new-address",
     "Magento_Checkout/js/model/shipping-rate-processor/customer-address",
     "Magento_Checkout/js/model/shipping-rate-registry",
-], function (_, wrapper, quote, defaultProcessor, customerProcessor, rateRegistry) {
+], function (_, utils, wrapper, quote, defaultProcessor, customerProcessor, rateRegistry) {
     return function (target) {
         target.extraFeeTotalString = false
 
@@ -21,7 +22,10 @@ define([
                 feeSegment = totalSegments.find(function (segment) {
                     return segment.code === "amasty_extrafee"
                 })
-            return feeSegment.extension_attributes.tax_amasty_extrafee_details.items
+            return !_.isEmpty(feeSegment) &&
+                utils.nested(feeSegment, "extension_attributes.tax_amasty_extrafee_details.items")
+                ? feeSegment.extension_attributes.tax_amasty_extrafee_details.items
+                : ""
         }
 
         target.isFirstLoad = true
