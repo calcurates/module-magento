@@ -69,6 +69,11 @@ define([
                         if (typeof self.splitCheckoutShipments[item.origin_id] === "function") {
                             return
                         }
+                        if (!isSavedMetarate && item.rates && item.rates.length === 1) {
+                            checkoutData.setSelectedShippingRate("calcurates_metarate")
+                            selectedSplitCheckoutShipments[item.origin_id] = item.rates[0].method_code
+                            isSavedMetarate = true
+                        }
                         self.splitCheckoutShipments[item.origin_id] = ko.observable(
                             selectedSplitCheckoutShipments &&
                                 selectedSplitCheckoutShipments[item.origin_id] &&
@@ -76,6 +81,7 @@ define([
                                 ? selectedSplitCheckoutShipments[item.origin_id]
                                 : null
                         )
+                        checkoutData.setSelectedSplitCheckoutShipments(selectedSplitCheckoutShipments)
                     })
                     splitCheckoutShipments(this.splitCheckoutShipments)
                 }
