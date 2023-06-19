@@ -5,13 +5,13 @@
  * @package Calcurates_ModuleMagento
  */
 
-define([
-    'ko',
-    'mage/storage',
-    'underscore',
-    'Calcurates_ModuleMagento/js/action/estimation-loader'
-], function (ko, storage, _, estimationLoaderAction) {
-    'use strict';
+define(["ko", "mage/storage", "underscore", "Calcurates_ModuleMagento/js/action/estimation-loader"], function (
+    ko,
+    storage,
+    _,
+    estimationLoaderAction
+) {
+    "use strict"
 
     return {
         rates: ko.observableArray(),
@@ -24,45 +24,51 @@ define([
          * @return {void}
          */
         loadLocations: function (storeCode, productIds, isLoggedIn, shipTo = null) {
-            var estimateUrl = 'rest/' + storeCode + '/V1/calcurates/estimate?',
-                estimateGuestUrl = 'rest/' + storeCode + '/V1/calcurates/estimate-guest?',
-                url;
+            var estimateUrl = "rest/" + storeCode + "/V1/calcurates/estimate?",
+                estimateGuestUrl = "rest/" + storeCode + "/V1/calcurates/estimate-guest?",
+                url
 
             if (isLoggedIn) {
-                url = estimateUrl;
+                url = estimateUrl
             } else {
-                url = estimateGuestUrl;
+                url = estimateGuestUrl
             }
 
-            url += productIds.map(function (productId) {
-                return 'productIds[]=' + productId;
-            }).join('&');
+            url += productIds
+                .map(function (productId) {
+                    return "productIds[]=" + productId
+                })
+                .join("&")
 
             if (_.isObject(shipTo) && !_.isEmpty(shipTo)) {
-                url += '&' + Object.keys(shipTo).map(function(key) {
-                    return 'shipTo[' + key + ']' + '=' + shipTo[key];
-                }).join('&');
+                url +=
+                    "&" +
+                    Object.keys(shipTo)
+                        .map(function (key) {
+                            return "shipTo[" + key + "]" + "=" + shipTo[key]
+                        })
+                        .join("&")
             }
 
-            estimationLoaderAction.show();
+            estimationLoaderAction.show()
 
             storage
                 .get(url)
-                .success(function (response) {
-                    if (!response) {
-                        return;
-                    }
+                .done(
+                    function (response) {
+                        if (!response) {
+                            return
+                        }
 
-                    this.setRates(response);
-                }.bind(this))
+                        this.setRates(response)
+                    }.bind(this)
+                )
                 .fail(function (response) {
-                    console.log(response);
+                    console.log(response)
                 })
                 .always(function () {
-                    estimationLoaderAction.hide();
-                });
-
-
+                    estimationLoaderAction.hide()
+                })
         },
 
         /**
@@ -70,8 +76,7 @@ define([
          * @return {void}
          */
         setRates: function (rates) {
-            this.rates(rates);
-        }
+            this.rates(rates)
+        },
     }
-
-});
+})
