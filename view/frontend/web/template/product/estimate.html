@@ -14,7 +14,7 @@
         </div>
     </if>
 
-    <if args="!rates().length && !usePlacesAutocomplete()">
+    <if args="!rates().length && (!usePlacesAutocomplete() || !_.isEmpty(currentAddress))">
         <div class="calcurates-rates-container">
             <span text="fallbackMessage"></span>
         </div>
