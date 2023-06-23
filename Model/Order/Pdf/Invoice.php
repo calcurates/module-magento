@@ -70,7 +70,9 @@ class Invoice extends MagentoInvoice
         if (version_compare($magentoMetadata->getVersion(), '2.4.0', '>=')) {
             $this->rtlTextHandler = ObjectManager::getInstance()->get('\Magento\Sales\Model\RtlTextHandler');
         }
-        if (version_compare($magentoMetadata->getVersion(), '2.3.7', '>=')) {
+        if (version_compare($magentoMetadata->getVersion(), '2.4.0', '=')) {
+            $appEmulation = ObjectManager::getInstance()->get('\Magento\Framework\Locale\ResolverInterface');
+        } elseif (version_compare($magentoMetadata->getVersion(), '2.3.7', '>=')) {
             $appEmulation = ObjectManager::getInstance()->get('\Magento\Store\Model\App\Emulation');
         } else {
             $appEmulation = ObjectManager::getInstance()->get('\Magento\Framework\Locale\ResolverInterface');
