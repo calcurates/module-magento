@@ -5,26 +5,25 @@
  * @package Calcurates_ModuleMagento
  */
 
-define([
-    'Magento_Customer/js/customer-data',
-    'underscore'
-], function (storage, _) {
-    'use strict';
+define(["Magento_Customer/js/customer-data", "underscore"], function (storage, _) {
+    "use strict"
 
     return function (CheckoutData) {
         CheckoutData.getSelectedSplitCheckoutShipments = function () {
-            return storage.get('checkout-data')().selectedSplitCheckoutShipments
+            return storage.get("checkout-data")().selectedSplitCheckoutShipments
+                ? storage.get("checkout-data")().selectedSplitCheckoutShipments
+                : {}
         }
 
         CheckoutData.setSelectedSplitCheckoutShipments = function (data) {
             let storageData = {},
-                obj = storage.get('checkout-data')()
+                obj = storage.get("checkout-data")()
 
             _.each(data, function (value, originId) {
-                storageData[originId] = typeof value === 'function' ? value() : value
+                storageData[originId] = typeof value === "function" ? value() : value
             })
             obj.selectedSplitCheckoutShipments = storageData
-            storage.set('checkout-data', obj);
+            storage.set("checkout-data", obj)
         }
         return CheckoutData
     }

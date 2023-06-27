@@ -58,6 +58,7 @@ define([
              */
             initSplitCheckoutShipments: function (methods) {
                 var self = this,
+                    hasPreSelected = false,
                     metaMethod = methods.filter(function (method) {
                         return self.isSplitCheckout(method)
                     }),
@@ -69,14 +70,20 @@ define([
                         if (typeof self.splitCheckoutShipments[item.origin_id] === "function") {
                             return
                         }
+                        if (!isSavedMetarate && item.rates && item.rates.length === 1) {
+                            selectedSplitCheckoutShipments[item.origin_id] = item.rates[0].method_code
+                            hasPreSelected = true
+                        }
                         self.splitCheckoutShipments[item.origin_id] = ko.observable(
                             selectedSplitCheckoutShipments &&
                                 selectedSplitCheckoutShipments[item.origin_id] &&
-                                isSavedMetarate
+                                (isSavedMetarate || hasPreSelected)
                                 ? selectedSplitCheckoutShipments[item.origin_id]
                                 : null
                         )
+                        checkoutData.setSelectedSplitCheckoutShipments(selectedSplitCheckoutShipments)
                     })
+                    checkoutData.setSelectedShippingRate("calcurates_metarate")
                     splitCheckoutShipments(this.splitCheckoutShipments)
                 }
             },
