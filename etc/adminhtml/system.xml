@@ -39,18 +39,6 @@
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <config_path>carriers/calcurates/ignore_virtual</config_path>
                     </field>
-                    <field id="split_checkout" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
-                        <label>Split Checkout by Origins</label>
-                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                        <config_path>carriers/calcurates/split_checkout</config_path>
-                    </field>
-                    <field id="split_checkout_title" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
-                        <label>Split Checkout by Origins Title</label>
-                        <config_path>carriers/calcurates/split_checkout_title</config_path>
-                        <depends>
-                            <field id="split_checkout">1</field>
-                        </depends>
-                    </field>
                 </group>
                 <group id="design_layout" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Design and Layout</label>
@@ -238,6 +226,33 @@
                         <label>Display In-Store Pickup as</label>
                         <source_model>Calcurates\ModuleMagento\Model\Config\Source\DisplayInStorePickupAsSource</source_model>
                         <config_path>carriers/calcurates/store_pickup_display</config_path>
+                    </field>
+                </group>
+                <group id="multi_origin_shipping" translate="label" type="text" sortOrder="65" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Multi-Origin Shipping</label>
+                    <field id="split_checkout" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                        <label>Split Checkout by Origins</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>carriers/calcurates/split_checkout</config_path>
+                    </field>
+                    <field id="split_checkout_title" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                        <label>Split Checkout by Origins Title</label>
+                        <config_path>carriers/calcurates/split_checkout_title</config_path>
+                        <depends>
+                            <field id="split_checkout">1</field>
+                        </depends>
+                    </field>
+                    <field id="source_selection_algorithm" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                        <label>Default Source Selection Algorithm</label>
+                        <comment>Calcurates Algorithm“ is set up in your Calcurates account > Multi-Origin > Settings. It works if you map Calcurates Origins with Magento sources. All other algorithms are provided by Magento MSI or other extensions</comment>
+                        <source_model>Calcurates\ModuleMagento\Model\Config\Source\DefaultSourceSelectionAlgorithm</source_model>
+                        <config_path>carriers/calcurates/source_selection_algorithm</config_path>
+                    </field>
+                    <field id="automatic_source_selection" translate="label comment" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                        <label>Enable Automatic Source Selection</label>
+                        <comment>If set to “Yes“, then based on selected sources Shipments for an order will be created immediately after click on the “Ship“ button on the order details page in the admin area. If set to “No“, you will need to confirm selected sources first before creating Shipments.</comment>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>carriers/calcurates/automatic_source_selection</config_path>
                     </field>
                 </group>
                 <group id="advanced" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">

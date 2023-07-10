@@ -51,7 +51,7 @@
     </type>
     <type name="Magento\Email\Block\Adminhtml\Template\Edit\Form">
         <plugin name="calcurates_email_edit_form_add_variables"
-                type="Calcurates\ModuleMagento\Plugin\EmailEditFormAddVariables"
+                type="Calcurates\ModuleMagento\Plugin\NewShipmentLoadBeforePlugin"
                 sortOrder="10"/>
     </type>
     <type name="Calcurates\ModuleMagento\Plugin\Model\Rule\Condition\AddressShippingOptionsPlugin">
