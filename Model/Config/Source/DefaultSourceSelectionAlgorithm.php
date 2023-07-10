@@ -30,7 +30,9 @@ class DefaultSourceSelectionAlgorithm implements \Magento\Framework\Data\OptionS
         ObjectManagerInterface $objectManager,
         SourceServiceContext $sourceServiceContext
     ) {
-        if ($sourceServiceContext->isInventoryEnabled() && $sourceServiceContext->isSourceSelectionEnabled()) {
+        if ($sourceServiceContext->isInventoryEnabled()
+            && $sourceServiceContext->isSourceSelectionEnabled()
+        ) {
             $this->sourceSelectionAlgorithmList = $objectManager
                 ->get(GetSourceSelectionAlgorithmListInterface::class);
         }
@@ -41,7 +43,6 @@ class DefaultSourceSelectionAlgorithm implements \Magento\Framework\Data\OptionS
      */
     public function toOptionArray(): array
     {
-
         $algorithms = [];
         if ($this->sourceSelectionAlgorithmList) {
             $algorithms = $this->sourceSelectionAlgorithmList->execute();
@@ -60,7 +61,6 @@ class DefaultSourceSelectionAlgorithm implements \Magento\Framework\Data\OptionS
                 'value' => $algorithm->getCode()
             ];
         }
-
         return $result;
     }
 }
