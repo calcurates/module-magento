@@ -145,7 +145,7 @@ class NewShipmentLoadBeforePlugin
         $order = $this->orderRepository->get($orderId);
         $websiteId = $order->getStore()->getWebsiteId();
         $stockId = (int) $this->stockByWebsiteIdResolver->execute((int)$websiteId)->getStockId();
-
+        $sources = [];
         foreach ($order->getAllItems() as $orderItem) {
             if ($orderItem->getIsVirtual()
                 || $orderItem->getLockedDoShip()
@@ -156,16 +156,37 @@ class NewShipmentLoadBeforePlugin
             $qty = $item->getSimpleQtyToShip();
             $qty = $this->castQty($item, $qty);
             $sku = $this->getSkuFromOrderItem->execute($item);
+            $itemSources = $this->getSources($orderId, $sku, $qty);
             $data['items'][] = [
                 'orderItemId' => $item->getId(),
                 'sku' => $sku,
                 'qtyToShip' => $qty,
-                'sources' => $this->getSources($orderId, $sku, $qty),
+                'sources' => $itemSources,
                 'isManageStock' => $this->isManageStock($sku, $stockId)
             ];
+            if ($qty) {
+                $sources[] = $itemSources;
+            }
         }
         if (is_array($this->sources) && $this->sources) {
-            $request->setParam('sourceCode', array_key_first($this->sources));
+            $sourceCode = '';
+            foreach ($this->sources as $algorithmSourceCode => $algorithmSource) {
+                foreach ($sources as $itemsSources) {
+                    foreach ($itemsSources as $itemSource) {
+                        if (!$sourceCode
+                            && array_key_exists('sourceCode', $itemSource)
+                            && $itemSource['sourceCode'] == $algorithmSourceCode
+                        ) {
+                            $sourceCode = $algorithmSourceCode;
+                        }
+                    }
+                }
+            }
+            if ($sourceCode) {
+                $request->setParam('sourceCode', $sourceCode);
+            } else {
+                $request->setParam('sourceCode', array_key_first($this->sources));
+            }
         }
 
         $request->setParam('items', $data['items']);
