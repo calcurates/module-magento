@@ -112,9 +112,17 @@
     <preference for="Calcurates\ModuleMagento\Api\ManifestSaveInterface"
                 type="Calcurates\ModuleMagento\Model\Shipment\Manifest\ManifestSave" />
 
+    <preference for="Magento\InventoryShippingAdminUi\Block\Adminhtml\Order\View\ShipButton"
+                type="Calcurates\ModuleMagento\Block\Adminhtml\Order\View\ShipButton"/>
+
     <type name="Magento\SalesRule\Model\Rule\Condition\Address">
         <plugin name="Calcurates_ModuleMagento::FixShippingAddressValidation"
                 type="Calcurates\ModuleMagento\Plugin\Model\Rule\Condition\AddressPlugin" />
+    </type>
+
+    <type name="Magento\InventoryShippingAdminUi\Observer\NewShipmentLoadBefore">
+        <plugin name="Calcurates_ModuleMagento::SelectDefaultShippingSource"
+                type="Calcurates\ModuleMagento\Plugin\Observer\InventoryShippingAdminUi\NewShipmentLoadBeforePlugin" />
     </type>
 
     <type name="Magento\Quote\Model\Cart\ShippingMethodConverter">

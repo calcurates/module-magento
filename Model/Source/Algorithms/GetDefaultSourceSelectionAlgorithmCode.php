@@ -9,6 +9,8 @@
 namespace Calcurates\ModuleMagento\Model\Source\Algorithms;
 
 use Magento\InventorySourceSelectionApi\Api\GetDefaultSourceSelectionAlgorithmCodeInterface;
+use Calcurates\ModuleMagento\Model\Config;
+use Calcurates\ModuleMagento\Model\Config\Source\DefaultSourceSelectionAlgorithm;
 
 // fix for correct working of \Magento\Setup\Module\Di\Code\Reader\FileClassScanner
 if (true) {
@@ -22,11 +24,21 @@ if (true) {
 
 class GetDefaultSourceSelectionAlgorithmCode implements GetDefaultSourceSelectionAlgorithmCodeInterface
 {
+    protected $config;
+
+    public function __construct(Config $config)
+    {
+        $this->config = $config;
+    }
+
     /**
      * @inheritDoc
      */
     public function execute(): string
     {
-        return 'calcurates';
+        $selectedAlgorithm = $this->config->getSourceSelectionAlgorithm();
+        return $selectedAlgorithm == DefaultSourceSelectionAlgorithm::NOT_AVAILABLE_SOURCE_SELECTION
+            ? 'calcurates'
+            : $selectedAlgorithm;
     }
 }

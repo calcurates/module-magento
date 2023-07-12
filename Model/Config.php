@@ -48,6 +48,8 @@ class Config implements ConfigProviderInterface
     public const STORE_PICKUP_DISPLAY = 'store_pickup_display';
     public const SPLIT_CHECKOUT_ENABLED = 'split_checkout';
     public const SPLIT_CHECKOUT_TITLE = 'split_checkout_title';
+    public const SOURCE_SELECTION_ALGORITHM = 'source_selection_algorithm';
+    public const AUTOMATIC_SOURCE_SELECTION = 'automatic_source_selection';
     public const ENABLE_GOOGLE_ADDRESS_AUTOCOMPLETE = 'enable_google_address_autocomplete';
     public const GOOGLE_PLACES_API_KEY = 'google_places_api_key';
     public const GOOGLE_PLACES_INPUT_TITLE = 'google_places_input_title';
@@ -397,6 +399,19 @@ class Config implements ConfigProviderInterface
 
     /**
      * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @return bool
+     */
+    public function isAutomaticSourceSelectionEnabled($storeId = null): bool
+    {
+        return (bool) $this->scopeConfig->getValue(
+            self::CONFIG_GROUP . self::AUTOMATIC_SOURCE_SELECTION,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
      * @return string|null
      */
     public function getShippingOnProductFallbackMessage($storeId = null): ?string
@@ -442,6 +457,19 @@ class Config implements ConfigProviderInterface
     {
         return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::SPLIT_CHECKOUT_TITLE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param int|null $storeId
+     * @return string
+     */
+    public function getSourceSelectionAlgorithm(int $storeId = null): string
+    {
+        return (string) $this->scopeConfig->getValue(
+            self::CONFIG_GROUP . self::SOURCE_SELECTION_ALGORITHM,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );

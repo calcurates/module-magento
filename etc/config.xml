@@ -37,6 +37,8 @@
                 <google_places_input_title>Estimate Your Delivery Cost</google_places_input_title>
                 <google_places_input_placeholder>Enter an address...</google_places_input_placeholder>
                 <allow_partial_address_requests>0</allow_partial_address_requests>
+                <automatic_source_selection>0</automatic_source_selection>
+                <source_selection_algorithm>calcurates</source_selection_algorithm>
             </calcurates>
         </carriers>
     </default>
