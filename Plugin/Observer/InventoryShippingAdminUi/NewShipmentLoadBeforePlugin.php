@@ -7,20 +7,15 @@
  */
 namespace Calcurates\ModuleMagento\Plugin\Observer\InventoryShippingAdminUi;
 
-use Magento\InventoryShippingAdminUi\Observer\NewShipmentLoadBefore;
 use Magento\Framework\Event\Observer as EventObserver;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\InventoryShippingAdminUi\Model\IsWebsiteInMultiSourceMode;
 use Magento\Sales\Api\OrderRepositoryInterface;
-use Magento\InventoryShippingAdminUi\Model\IsOrderSourceManageable;
 use Calcurates\ModuleMagento\Model\Config;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\InventoryConfigurationApi\Api\GetStockItemConfigurationInterface;
-use Magento\InventorySalesApi\Model\GetSkuFromOrderItemInterface;
-use Magento\InventorySalesApi\Model\StockByWebsiteIdResolverInterface;
 use Magento\Sales\Model\Order\Item;
-use Magento\InventoryShippingAdminUi\Ui\DataProvider\GetSourcesByOrderIdSkuAndQty;
+use Magento\Framework\Module\Manager as ModuleManager;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\Event\ObserverInterface;
 
 class NewShipmentLoadBeforePlugin
 {
@@ -30,12 +25,12 @@ class NewShipmentLoadBeforePlugin
     private $orderRepository;
 
     /**
-     * @var IsWebsiteInMultiSourceMode
+     * @var mixed
      */
     private $isWebsiteInMultiSourceMode;
 
     /**
-     * @var IsOrderSourceManageable
+     * @var mixed
      */
     private $orderSourceManageable;
 
@@ -45,12 +40,12 @@ class NewShipmentLoadBeforePlugin
     private $config;
 
     /**
-     * @var GetStockItemConfigurationInterface
+     * @var mixed
      */
     private $getStockItemConfiguration;
 
     /**
-     * @var GetSkuFromOrderItemInterface
+     * @var mixed
      */
     private $getSkuFromOrderItem;
 
@@ -60,54 +55,54 @@ class NewShipmentLoadBeforePlugin
     private $sources = [];
 
     /**
-     * @var GetSourcesByOrderIdSkuAndQty
+     * @var mixed
      */
     private $getSourcesByOrderIdSkuAndQty;
 
     /**
-     * @var StockByWebsiteIdResolverInterface
+     * @var mixed
      */
     private $stockByWebsiteIdResolver;
 
     /**
      * NewShipmentLoadBeforePlugin constructor.
      * @param OrderRepositoryInterface $orderRepository
-     * @param IsWebsiteInMultiSourceMode $isWebsiteInMultiSourceMode
      * @param Config $config
-     * @param StockByWebsiteIdResolverInterface $stockByWebsiteIdResolver
-     * @param GetStockItemConfigurationInterface $getStockItemConfiguration
-     * @param GetSkuFromOrderItemInterface $getSkuFromOrderItem
-     * @param GetSourcesByOrderIdSkuAndQty|null $getSourcesByOrderIdSkuAndQty
-     * @param IsOrderSourceManageable|null $isOrderSourceManageable
+     * @param ModuleManager $moduleManager
+     * @param ObjectManagerInterface $objectManager
      */
     public function __construct(
         OrderRepositoryInterface $orderRepository,
-        IsWebsiteInMultiSourceMode $isWebsiteInMultiSourceMode,
         Config $config,
-        StockByWebsiteIdResolverInterface $stockByWebsiteIdResolver,
-        GetStockItemConfigurationInterface $getStockItemConfiguration,
-        GetSkuFromOrderItemInterface $getSkuFromOrderItem,
-        GetSourcesByOrderIdSkuAndQty $getSourcesByOrderIdSkuAndQty = null,
-        IsOrderSourceManageable $isOrderSourceManageable = null
+        ModuleManager $moduleManager,
+        ObjectManagerInterface $objectManager
     ) {
         $this->orderRepository = $orderRepository;
-        $this->isWebsiteInMultiSourceMode = $isWebsiteInMultiSourceMode;
         $this->config = $config;
-        $this->stockByWebsiteIdResolver = $stockByWebsiteIdResolver;
-        $this->getStockItemConfiguration = $getStockItemConfiguration;
-        $this->getSkuFromOrderItem = $getSkuFromOrderItem;
-        $this->getSourcesByOrderIdSkuAndQty = $getSourcesByOrderIdSkuAndQty ?:
-            ObjectManager::getInstance()->get(GetSourcesByOrderIdSkuAndQty::class);
-        $this->orderSourceManageable = $isOrderSourceManageable ??
-            ObjectManager::getInstance()->get(IsOrderSourceManageable::class);
+        if ($moduleManager->isEnabled('Magento_InventoryShippingAdminUi')
+            && $moduleManager->isEnabled('Magento_InventorySalesApi')
+        ) {
+            $this->isWebsiteInMultiSourceMode = $objectManager
+                ->get(\Magento\InventoryShippingAdminUi\Model\IsWebsiteInMultiSourceMode::class);
+            $this->stockByWebsiteIdResolver = $objectManager
+                ->get(\Magento\InventorySalesApi\Model\StockByWebsiteIdResolverInterface::class);
+            $this->getStockItemConfiguration = $objectManager
+                ->get(\Magento\InventoryConfigurationApi\Api\GetStockItemConfigurationInterface::class);
+            $this->getSkuFromOrderItem = $objectManager
+                ->get(\Magento\InventorySalesApi\Model\GetSkuFromOrderItemInterface::class);
+            $this->getSourcesByOrderIdSkuAndQty = $objectManager
+                ->get(\Magento\InventoryShippingAdminUi\Ui\DataProvider\GetSourcesByOrderIdSkuAndQty::class);
+            $this->orderSourceManageable = $objectManager
+                ->get(\Magento\InventoryShippingAdminUi\Model\IsOrderSourceManageable::class);
+        }
     }
 
     /**
-     * @param NewShipmentLoadBefore $subject
+     * @param ObserverInterface $subject
      * @param EventObserver $observer
      * @return array
      */
-    public function beforeExecute(NewShipmentLoadBefore $subject, EventObserver $observer): array
+    public function beforeExecute(ObserverInterface $subject, EventObserver $observer): array
     {
         $request = $observer->getEvent()->getRequest();
         if (!empty($request->getParam('items'))
