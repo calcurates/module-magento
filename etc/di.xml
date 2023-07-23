@@ -112,8 +112,15 @@
     <preference for="Calcurates\ModuleMagento\Api\ManifestSaveInterface"
                 type="Calcurates\ModuleMagento\Model\Shipment\Manifest\ManifestSave" />
 
-    <preference for="Magento\InventoryShippingAdminUi\Block\Adminhtml\Order\View\ShipButton"
-                type="Calcurates\ModuleMagento\Block\Adminhtml\Order\View\ShipButton"/>
+    <type name="Magento\InventoryShippingAdminUi\Block\Adminhtml\Order\View\ShipButton">
+        <plugin name="Calcurates_ModuleMagento::EnableSourceAutoSelect"
+                type="Calcurates\ModuleMagento\Plugin\Block\Adminhtml\InventoryShippingAdminUi\Order\View\ShipButtonPlugin" />
+    </type>
+
+    <type name="Magento\InventoryShippingAdminUi\Model\IsOrderSourceManageable">
+        <plugin name="Calcurates_ModuleMagento::EnableSourceAutoSelect"
+                type="Calcurates\ModuleMagento\Plugin\Model\InventoryShippingAdminUi\IsOrderSourceManageablePlugin" />
+    </type>
 
     <type name="Magento\SalesRule\Model\Rule\Condition\Address">
         <plugin name="Calcurates_ModuleMagento::FixShippingAddressValidation"
