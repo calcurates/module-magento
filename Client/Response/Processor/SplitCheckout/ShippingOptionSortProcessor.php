@@ -283,7 +283,19 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                 $carrierA = $firstCarrier['rates'][0];
                 $carrierB = $secondCarrier['rates'][0];
 
-                if ($carrierA['priority'] === $carrierB['priority']) {
+                $firstRatePriority = null;
+                $secondRatePriority = null;
+                if (array_key_exists('service', $carrierA)
+                    && array_key_exists('priority', $carrierA['service'])
+                ) {
+                    $firstRatePriority = $carrierA['service']['priority'];
+                }
+                if (array_key_exists('service', $carrierB)
+                    && array_key_exists('priority', $carrierB['service'])
+                ) {
+                    $secondRatePriority = $carrierB['service']['priority'];
+                }
+                if ($firstRatePriority === $secondRatePriority) {
                     $cheapestCostA = $carrierA['service']['rate'] ? $carrierA['service']['rate']['cost'] : null;
                     $cheapestCostB = $carrierB['service']['rate'] ? $carrierB['service']['rate']['cost'] : null;
 
@@ -302,7 +314,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
                     return $result;
                 }
 
-                return $carrierA['priority'] <=> $carrierB['priority'];
+                return $firstRatePriority <=> $secondRatePriority;
             }
             if (null === $firstCarrier['priority']) {
                 return 1;
