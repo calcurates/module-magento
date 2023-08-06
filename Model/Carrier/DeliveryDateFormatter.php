@@ -74,6 +74,22 @@ class DeliveryDateFormatter
     }
 
     /**
+     * @param string|null $date
+     * @return \DateTimeZone|null
+     */
+    public function prepareDate(?string $date): ?\DateTime
+    {
+        if (!$date) {
+            return null;
+        }
+        $date = new \DateTime($date);
+        $timezoneString = $this->timezone->getConfigTimezone(ScopeInterface::SCOPE_STORES);
+        $timezone = new \DateTimeZone($timezoneString);
+        $date->setTimezone($timezone);
+        return $date;
+    }
+
+    /**
      * @param \DateTime $dateTime
      * @param string|null $datesDisplayType
      * @return string

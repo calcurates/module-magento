@@ -136,6 +136,14 @@
         <plugin name="Calcurates_ModuleMagento::AddCalcuratesTooltip"
                 type="Calcurates\ModuleMagento\Plugin\Model\Cart\ShippingMethodConverterPlugin" />
     </type>
+    <type name="Calcurates\ModuleMagento\Plugin\Model\Cart\ShippingMethodConverterPlugin">
+        <arguments>
+            <argument name="infoMessageProcessors" xsi:type="array">
+                <item name="tax_amount" xsi:type="object">Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage\TaxAmount</item>
+                <item name="delivery_from" xsi:type="object">Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage\DeliveryDates</item>
+            </argument>
+        </arguments>
+    </type>
     <type name="Magento\Quote\Model\Quote\Address\Rate">
         <plugin name="Calcurates_ModuleMagento::AddCalcuratesTooltipToImport"
                 type="Calcurates\ModuleMagento\Plugin\Model\Quote\Address\RatePlugin" />
