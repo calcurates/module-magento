@@ -68,8 +68,23 @@ class ShippingMethodConverterPlugin
      */
     private $metaRateFactory;
 
+    /**
+     * @var array
+     */
     private $infoMessageProcessors;
 
+    /**
+     * ShippingMethodConverterPlugin constructor.
+     * @param Config $configProvider
+     * @param DeliveryDateFormatter $deliveryDateFormatter
+     * @param RateDataInterfaceFactory $rateDataFactory
+     * @param DeliveryDateProcessor $deliveryDateProcessor
+     * @param MetadataPoolInterface $metadataPool
+     * @param MetadataInterfaceFactory $metadataInterfaceFactory
+     * @param MetaRateData $metaRateData
+     * @param MetaRateInterfaceFactory $metaRateInterfaceFactory
+     * @param array $infoMessageProcessors
+     */
     public function __construct(
         Config $configProvider,
         DeliveryDateFormatter $deliveryDateFormatter,
