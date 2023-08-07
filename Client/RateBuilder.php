@@ -73,6 +73,7 @@ class RateBuilder
             );
             $responseRateWithoutTax = $responseRate;
             $responseRateWithoutTax['name'] .= __(' - without duties & tax');
+            $responseRateWithTax['tax'] = $tax;
             $rateWithoutTax = $this->createRate($methodId, $responseRateWithoutTax, $carrierTitle);
 
             return [$rateWithTax, $rateWithoutTax];
@@ -80,6 +81,7 @@ class RateBuilder
 
         if ($displayRatesType === RateTaxDisplaySource::TAX_INCLUDED && $tax) {
             $responseRate['rate']['cost'] += $tax;
+            $responseRate['rate']['tax'] = $tax;
             $responseRate['name'] .= __(' - duties & tax included');
         }
 
@@ -132,6 +134,10 @@ class RateBuilder
                 RatesResponseProcessor::CALCURATES_DELIVERY_DATES,
                 $responseRate['rate']['estimatedDeliveryDate']
             );
+        }
+        $rate->setCurrency($responseRate['rate']['currency']);
+        if (!empty($responseRate['rate']['tax'])) {
+            $rate->setTaxAmount($responseRate['rate']['tax']);
         }
 
         return $rate;
