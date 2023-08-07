@@ -28,6 +28,9 @@ define([
             validationError: "",
             timeSlotDateRequired: null,
             defaultValueType: "earliest",
+            imports: {
+                visible: "${$.parentName}:visible",
+            },
         },
 
         initObservable: function () {
