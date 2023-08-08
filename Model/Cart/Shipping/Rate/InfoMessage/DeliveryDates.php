@@ -10,6 +10,7 @@ namespace Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage;
 
 use Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\OutputProcessorInterface;
 use Magento\Quote\Model\Quote\Address\RateResult\Method;
+use Magento\Quote\Model\Quote\Address\Rate;
 use Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter;
 
 class DeliveryDates implements OutputProcessorInterface
@@ -45,7 +46,7 @@ class DeliveryDates implements OutputProcessorInterface
     {
         foreach ($this->variables as $dateKey => $dateVariable) {
             if (substr_count($stringToProcess, $dateVariable) && array_key_exists('rate_model', $data)) {
-                if ($data['rate_model'] instanceof Method
+                if (($data['rate_model'] instanceof Method || $data['rate_model'] instanceof Rate)
                     && $data['rate_model']->getData('calcurates_delivery_dates')
                 ) {
                     $deliveryDates = $data['rate_model']->getData('calcurates_delivery_dates');

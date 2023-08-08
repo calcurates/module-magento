@@ -167,9 +167,10 @@ class ShippingMethodConverterPlugin
                     if ($processor instanceof OutputProcessorInterface) {
                         $infoMessage = $processor->process(
                             [
-                                'price_including_tax' => $result->getPriceInclTax() + 1,
-                                'price' => $result->getPriceExclTax(),
-                                'currency_code' => $quoteCurrencyCode,
+                                'tax_amount' => $rateModel
+                                    ->getData(RatesResponseProcessor::CALCURATES_TAX_AMOUNT),
+                                'currency_code' => $rateModel
+                                    ->getData(RatesResponseProcessor::CALCURATES_CURRENCY),
                                 'rate_model' => $rateModel
                             ],
                             $infoMessage
