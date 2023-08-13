@@ -174,6 +174,9 @@ class OrderShippingAdditionalInfo implements ArgumentInterface
         return $packages;
     }
 
+    /**
+     * @return string
+     */
     public function getOriginPackageDescription(): string
     {
         $result = '';
