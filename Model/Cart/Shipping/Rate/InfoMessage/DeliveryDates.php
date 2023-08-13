@@ -8,10 +8,10 @@
 
 namespace Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage;
 
-use Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\OutputProcessorInterface;
-use Magento\Quote\Model\Quote\Address\RateResult\Method;
-use Magento\Quote\Model\Quote\Address\Rate;
 use Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter;
+use Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\OutputProcessorInterface;
+use Magento\Quote\Model\Quote\Address\Rate;
+use Magento\Quote\Model\Quote\Address\RateResult\Method;
 
 class DeliveryDates implements OutputProcessorInterface
 {

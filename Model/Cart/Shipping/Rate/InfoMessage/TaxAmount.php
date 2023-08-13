@@ -32,12 +32,11 @@ class TaxAmount implements OutputProcessorInterface
      */
     public function process(array $data, string $stringToProcess): string
     {
-        if (substr_count($stringToProcess, $this->variableString)) {
-            if (!array_diff($this->requiredFieldsToProcess, array_keys($data)) && $data['tax_amount']) {
+        if (\strpos($stringToProcess, $this->variableString) !== false) {
+            if ($data['tax_amount'] && !array_diff($this->requiredFieldsToProcess, array_keys($data))) {
                 $stringToProcess = str_replace(
                     $this->variableString,
-                    $data['tax_amount']
-                        . $data['currency_code'],
+                    $data['tax_amount'].' '.$data['currency_code'],
                     $stringToProcess
                 );
             }

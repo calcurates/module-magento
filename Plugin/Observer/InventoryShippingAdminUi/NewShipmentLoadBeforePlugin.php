@@ -7,15 +7,15 @@
  */
 namespace Calcurates\ModuleMagento\Plugin\Observer\InventoryShippingAdminUi;
 
-use Magento\Framework\Event\Observer as EventObserver;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Sales\Api\OrderRepositoryInterface;
 use Calcurates\ModuleMagento\Model\Config;
+use Magento\Framework\Event\Observer as EventObserver;
+use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Sales\Model\Order\Item;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Module\Manager as ModuleManager;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\Event\ObserverInterface;
+use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Sales\Model\Order\Item;
 
 class NewShipmentLoadBeforePlugin
 {

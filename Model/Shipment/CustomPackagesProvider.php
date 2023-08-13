@@ -9,10 +9,10 @@
 namespace Calcurates\ModuleMagento\Model\Shipment;
 
 use Calcurates\ModuleMagento\Api\Client\CalcuratesClientInterface;
+use Calcurates\ModuleMagento\Model\Measure;
 use InvalidArgumentException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\Order\Shipment;
-use Calcurates\ModuleMagento\Model\Measure;
 
 class CustomPackagesProvider
 {

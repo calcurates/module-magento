@@ -8,9 +8,9 @@
 
 namespace Calcurates\ModuleMagento\Model\Source\Algorithms;
 
-use Magento\InventorySourceSelectionApi\Api\GetDefaultSourceSelectionAlgorithmCodeInterface;
 use Calcurates\ModuleMagento\Model\Config;
 use Calcurates\ModuleMagento\Model\Config\Source\DefaultSourceSelectionAlgorithm;
+use Magento\InventorySourceSelectionApi\Api\GetDefaultSourceSelectionAlgorithmCodeInterface;
 
 // fix for correct working of \Magento\Setup\Module\Di\Code\Reader\FileClassScanner
 if (true) {
