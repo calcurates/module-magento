@@ -174,6 +174,22 @@ class OrderShippingAdditionalInfo implements ArgumentInterface
         return $packages;
     }
 
+    public function getOriginPackageDescription(): string
+    {
+        $result = '';
+        $carrierPackages = $this->getOrder()->getData('calcurates_carrier_packages');
+        if ($carrierPackages) {
+            $packagesData = json_decode($carrierPackages, true);
+            $result = '';
+            $packageNames = [];
+            foreach ($packagesData ?? [] as $package) {
+                $packageNames[] = $package['name'];
+            }
+            $result .= implode(';', $packageNames);
+        }
+        return $result;
+    }
+
     /**
      * Get package type quantities
      * @return array
