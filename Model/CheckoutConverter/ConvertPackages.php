@@ -55,12 +55,18 @@ class ConvertPackages
 
         $packages = $this->serializer->unserialize($packages);
         $packages = $packages[$carrierData->getCarrierId()][$carrierData->getServiceIdsString()] ?? null;
+        $serviceIds = $carrierData->getServiceIds();
         if (!$packages) {
             return;
         }
 
         $quoteItemIdToOrderItemId = $this->getOrderItemIdToQuoteItemIdMap($order);
         $orderPackages = [];
+        if (count($serviceIds) > 1) {
+            for ($i = 1; $i < count($serviceIds); $i++) {
+                $packages = array_merge($packages, $packages);
+            }
+        }
         foreach ($packages as $package) {
             $orderItemsWithQtys = [];
             foreach ($package['products'] as $product) {
