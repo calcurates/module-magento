@@ -45,7 +45,7 @@ class DeliveryDates implements OutputProcessorInterface
     public function process(array $data, string $stringToProcess): string
     {
         foreach ($this->variables as $dateKey => $dateVariable) {
-            if (substr_count($stringToProcess, $dateVariable) && array_key_exists('rate_model', $data)) {
+            if (array_key_exists('rate_model', $data) && false !== strpos($stringToProcess, $dateVariable)) {
                 if (($data['rate_model'] instanceof Method || $data['rate_model'] instanceof Rate)
                     && $data['rate_model']->getData('calcurates_delivery_dates')
                 ) {

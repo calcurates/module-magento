@@ -82,11 +82,11 @@ class DeliveryDateFormatter
         if (!$date) {
             return null;
         }
-        $date = new \DateTime($date);
+        $dateTime = new \DateTime($date);
         $timezoneString = $this->timezone->getConfigTimezone(ScopeInterface::SCOPE_STORES);
         $timezone = new \DateTimeZone($timezoneString);
-        $date->setTimezone($timezone);
-        return $date;
+        $dateTime->setTimezone($timezone);
+        return $dateTime;
     }
 
     /**
