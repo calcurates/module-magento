@@ -140,8 +140,9 @@ class CarrierProcessor implements ResponseProcessorInterface
                 $packages = [];
                 $servicesPriority = 0;
                 foreach ($responseCarrierRate['services'] as $service) {
+                    $sourceCode = $service['origin']['syncedTargetOriginCode'] ?? null;
                     foreach ($service['packages'] ?? [] as $package) {
-                        $packages[] = $package;
+                        $packages[] = array_merge($package, ['source_code' => $sourceCode]);
                     }
 
                     if (!empty($service['message'])) {
@@ -153,9 +154,6 @@ class CarrierProcessor implements ResponseProcessorInterface
                     }
 
                     $serviceIds[] = $service['id'];
-
-                    $sourceCode = $service['origin']['syncedTargetOriginCode'] ?? null;
-
                     if ($sourceCode) {
                         $sourceToServiceId[$sourceCode] = $service['id'];
                     }
@@ -231,12 +229,13 @@ class CarrierProcessor implements ResponseProcessorInterface
             }
             foreach ($existingCarrierRatesToPackages as $carrierId => $serviceIdData) {
                 foreach ($serviceIdData as $serviceIds => $source) {
-                    $mergedSource = $source;
+                    $mergedSource = $carrierRatesToPackages[$carrierId][$serviceIds];
                     if (isset($carrierRatesToPackages[$carrierId][$serviceIds])) {
-                        $mergedSource = array_unique(
-                            array_merge($source, $carrierRatesToPackages[$carrierId][$serviceIds]),
-                            SORT_REGULAR
-                        );
+                        foreach ($source as $packageToMerge) {
+                            if (!in_array($packageToMerge, $mergedSource)) {
+                                $mergedSource[] = $packageToMerge;
+                            }
+                        }
                     }
                     $carrierRatesToPackages[$carrierId][$serviceIds] = $mergedSource;
                 }
