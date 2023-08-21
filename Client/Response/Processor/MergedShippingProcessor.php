@@ -63,11 +63,15 @@ class MergedShippingProcessor implements ResponseProcessorInterface
     }
 
     /**
-     * @return string[]
+     * @param array $responseRate
+     * @return array
      */
     private function makeErrorMessages(array $responseRate): array
     {
         $messages = [];
+        if (array_key_exists('message', $responseRate) && $responseRate['message']) {
+            $messages = $responseRate['message'];
+        }
         foreach ($responseRate['flatRates'] as $flatRate) {
             if ($flatRate['message']) {
                 $messages[] = $flatRate['message'];
