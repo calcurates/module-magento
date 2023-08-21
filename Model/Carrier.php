@@ -226,7 +226,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             $this->result = $result;
         } else {
             $result = $this->getCachedDataByRequest($request);
-            if ($result === false) {
+            if ($result === false || ($result->getError() && count($result->getAllRates()) === 1)) {
                 $result = $this->_rateFactory->create();
                 $this->ratesResponseProcessor->processFailedRate(
                     (string)$this->getConfigData(Config::CONFIG_TITLE),
