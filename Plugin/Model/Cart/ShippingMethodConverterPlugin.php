@@ -19,6 +19,7 @@ use Calcurates\ModuleMagento\Client\Response\DeliveryDateProcessor;
 use Calcurates\ModuleMagento\Client\Response\MetadataPoolInterface;
 use Calcurates\ModuleMagento\Model\Carrier;
 use Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter;
+use Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\OutputProcessorInterface;
 use Calcurates\ModuleMagento\Model\Config;
 use Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplaySource;
 use Calcurates\ModuleMagento\Model\Data\MetaRateData;
@@ -68,6 +69,11 @@ class ShippingMethodConverterPlugin
     private $metaRateFactory;
 
     /**
+     * @var array
+     */
+    private $infoMessageProcessors;
+
+    /**
      * ShippingMethodConverterPlugin constructor.
      * @param Config $configProvider
      * @param DeliveryDateFormatter $deliveryDateFormatter
@@ -77,6 +83,7 @@ class ShippingMethodConverterPlugin
      * @param MetadataInterfaceFactory $metadataInterfaceFactory
      * @param MetaRateData $metaRateData
      * @param MetaRateInterfaceFactory $metaRateInterfaceFactory
+     * @param array $infoMessageProcessors
      */
     public function __construct(
         Config $configProvider,
@@ -86,8 +93,10 @@ class ShippingMethodConverterPlugin
         MetadataPoolInterface $metadataPool,
         MetadataInterfaceFactory $metadataInterfaceFactory,
         MetaRateData $metaRateData,
-        MetaRateInterfaceFactory $metaRateInterfaceFactory
+        MetaRateInterfaceFactory $metaRateInterfaceFactory,
+        $infoMessageProcessors = []
     ) {
+        $this->infoMessageProcessors = $infoMessageProcessors;
         $this->configProvider = $configProvider;
         $this->deliveryDateFormatter = $deliveryDateFormatter;
         $this->rateDataFactory = $rateDataFactory;
@@ -153,6 +162,22 @@ class ShippingMethodConverterPlugin
             $calcuratesRateData->setTooltipMessage($tooltip);
         }
         if ($infoMessage) {
+            if ($this->infoMessageProcessors) {
+                foreach ($this->infoMessageProcessors as $processor) {
+                    if ($processor instanceof OutputProcessorInterface) {
+                        $infoMessage = $processor->process(
+                            [
+                                'tax_amount' => $rateModel
+                                    ->getData(RatesResponseProcessor::CALCURATES_TAX_AMOUNT),
+                                'currency_code' => $rateModel
+                                    ->getData(RatesResponseProcessor::CALCURATES_CURRENCY),
+                                'rate_model' => $rateModel
+                            ],
+                            $infoMessage
+                        );
+                    }
+                }
+            }
             $calcuratesRateData->setInfoMessage($infoMessage);
         }
 

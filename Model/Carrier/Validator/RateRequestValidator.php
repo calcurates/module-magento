@@ -9,10 +9,10 @@
 namespace Calcurates\ModuleMagento\Model\Carrier\Validator;
 
 use Calcurates\ModuleMagento\Model\Config;
+use Calcurates\ModuleMagento\Plugin\Model\Shipping\ShippingAddEstimateFlagToRequestPlugin;
 use Magento\Directory\Helper\Data;
 use Magento\Framework\App\RequestInterface;
 use Magento\Quote\Model\Quote\Address\RateRequest;
-use Calcurates\ModuleMagento\Plugin\Model\Shipping\ShippingAddEstimateFlagToRequestPlugin;
 
 class RateRequestValidator
 {

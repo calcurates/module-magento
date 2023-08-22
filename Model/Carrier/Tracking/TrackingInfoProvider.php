@@ -13,9 +13,9 @@ namespace Calcurates\ModuleMagento\Model\Carrier\Tracking;
 use Calcurates\ModuleMagento\Api\ShippingLabelRepositoryInterface;
 use Calcurates\ModuleMagento\Client\Command\GetTrackingInfoCommand;
 use Calcurates\ModuleMagento\Client\Http\ApiException;
+use Laminas\Json\Exception\RuntimeException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Shipping\Model\Order\Track;
-use Laminas\Json\Exception\RuntimeException;
 
 class TrackingInfoProvider
 {

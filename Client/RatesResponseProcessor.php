@@ -24,6 +24,8 @@ class RatesResponseProcessor
     public const CALCURATES_DELIVERY_DATES = 'calcurates_delivery_dates';
     public const CALCURATES_MAP_LINK = 'calcurates_map_link';
     public const CALCURATES_IMAGE_URL = 'calcurates_image_url';
+    public const CALCURATES_TAX_AMOUNT = 'tax_amount';
+    public const CALCURATES_CURRENCY = 'currency';
 
     /**
      * @var ResultFactory

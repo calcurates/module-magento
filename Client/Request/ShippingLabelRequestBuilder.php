@@ -10,6 +10,7 @@ namespace Calcurates\ModuleMagento\Client\Request;
 
 use Calcurates\ModuleMagento\Api\Data\TaxIdentifierInterface;
 use Calcurates\ModuleMagento\Model\Catalog\Product\Attribute\Resolver\HsCodeAttributeResolver;
+use Calcurates\ModuleMagento\Model\Measure;
 use Calcurates\ModuleMagento\Model\Source\ShipmentSourceCodeRetriever;
 use InvalidArgumentException;
 use Magento\Catalog\Api\ProductRepositoryInterface;
@@ -19,7 +20,6 @@ use Magento\Framework\DataObject;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Api\Data\ShipmentItemInterface;
 use Magento\Sales\Model\Order\Address;
-use Calcurates\ModuleMagento\Model\Measure;
 
 class ShippingLabelRequestBuilder
 {

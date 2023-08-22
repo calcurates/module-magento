@@ -15,6 +15,7 @@ use Calcurates\ModuleMagento\Client\Http\ApiException;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Request\RateRequestBuilder;
 use Calcurates\ModuleMagento\Client\Response\Strategy\RatesStrategyFactory;
+use Calcurates\ModuleMagento\Model\Carrier\RatesRequestCache;
 use Calcurates\ModuleMagento\Model\Carrier\Validator\RateRequestValidator;
 use Calcurates\ModuleMagento\Model\Shipment\CustomPackagesProvider;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -29,7 +30,6 @@ use Magento\Shipping\Model\Carrier\AbstractCarrierOnline;
 use Magento\Shipping\Model\Carrier\CarrierInterface;
 use Magento\Shipping\Model\Rate\Result;
 use Psr\Log\LoggerInterface;
-use Calcurates\ModuleMagento\Model\Carrier\RatesRequestCache;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -226,7 +226,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             $this->result = $result;
         } else {
             $result = $this->getCachedDataByRequest($request);
-            if ($result === false) {
+            if ($result === false || ($result->getError() && count($result->getAllRates()) === 1)) {
                 $result = $this->_rateFactory->create();
                 $this->ratesResponseProcessor->processFailedRate(
                     (string)$this->getConfigData(Config::CONFIG_TITLE),

@@ -13,9 +13,9 @@ namespace Calcurates\ModuleMagento\Client\Command;
 use Calcurates\ModuleMagento\Client\ApiClientProvider;
 use Calcurates\ModuleMagento\Model\Config;
 use Exception;
+use Laminas\Json\Json;
 use Magento\Framework\Exception\LocalizedException;
 use Psr\Log\LoggerInterface;
-use Laminas\Json\Json;
 
 class GetCarriersSettingsCommand
 {

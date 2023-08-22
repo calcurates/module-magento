@@ -8,8 +8,8 @@
 
 namespace Calcurates\ModuleMagento\Model\Config\Source;
 
-use Magento\Framework\ObjectManagerInterface;
 use Calcurates\ModuleMagento\Model\Source\SourceServiceContext;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\InventorySourceSelectionApi\Api\GetSourceSelectionAlgorithmListInterface;
 
 class DefaultSourceSelectionAlgorithm implements \Magento\Framework\Data\OptionSourceInterface

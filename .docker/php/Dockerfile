@@ -9,49 +9,49 @@ RUN set -xe \
 # PHP
 RUN set -xe \
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
-
+\
     # Xdebug
     && pecl install xdebug \
     && docker-php-ext-enable xdebug \
-
+\
     # Sodium
     && apk add --no-cache libsodium-dev \
     && docker-php-ext-install sodium \
     && docker-php-ext-enable sodium \
-
+\
     # ZIP
     && apk add --no-cache libzip libzip-dev \
     && docker-php-ext-install zip \
     && docker-php-ext-enable zip \
-
+\
     # XSLT
     && apk add --no-cache libxslt-dev libxslt \
     && docker-php-ext-install xsl \
     && docker-php-ext-enable xsl \
-
+\
     # INTL
     && apk add --no-cache icu-dev icu-libs \
     && docker-php-ext-install intl \
     && docker-php-ext-enable intl \
-
+\
     # SOAP
     && apk add --no-cache libxml2-dev \
     && docker-php-ext-install soap \
     && docker-php-ext-enable soap \
-
+\
     # Bcmath
     && docker-php-ext-install bcmath \
     && docker-php-ext-enable bcmath \
-
+\
     # Mysql
     && apk add --no-cache mysql-client \
     && docker-php-ext-install pdo_mysql \
     && docker-php-ext-enable pdo_mysql \
-
+\
     # Sockets
     && docker-php-ext-install sockets \
     && docker-php-ext-enable sockets \
-
+\
     # GD
     && apk add --no-cache freetype libpng libwebp libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev libwebp-dev \
     && docker-php-ext-configure gd \

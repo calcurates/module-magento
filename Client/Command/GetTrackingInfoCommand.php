@@ -12,8 +12,8 @@ namespace Calcurates\ModuleMagento\Client\Command;
 
 use Calcurates\ModuleMagento\Client\ApiClientProvider;
 use Calcurates\ModuleMagento\Client\Http\ApiException;
-use Laminas\Json\Json;
 use Laminas\Json\Exception\RuntimeException;
+use Laminas\Json\Json;
 
 class GetTrackingInfoCommand
 {

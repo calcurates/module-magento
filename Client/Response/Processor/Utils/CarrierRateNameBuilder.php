@@ -39,6 +39,7 @@ class CarrierRateNameBuilder
     public function buildName(array $carrierRate, bool $includePackageNames): string
     {
         $uniqueServiceNames = [];
+        $packageNameAdded = false;
         foreach ($carrierRate['services'] as $service) {
             if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
                 $name = $service['name'] . (!empty($service['displayName']) ? " ({$service['displayName']})" : '');
@@ -53,7 +54,11 @@ class CarrierRateNameBuilder
                 foreach ($service['packages'] ?? [] as $package) {
                     $packageNames[] = $package['name'];
                 }
+                if ($packageNameAdded && $packageNames) {
+                    $name .= ';';
+                }
                 $name .= implode(';', $packageNames);
+                $packageNameAdded = true;
             }
 
             if (!empty($service['additionalText'])) {

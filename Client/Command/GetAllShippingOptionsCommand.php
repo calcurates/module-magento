@@ -11,8 +11,8 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Client\Command;
 
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\App\Request\DataPersistorInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\StoreManagerInterface;
 
 class GetAllShippingOptionsCommand

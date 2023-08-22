@@ -10,8 +10,8 @@ namespace Calcurates\ModuleMagento\Plugin\Model\Order;
 
 use Calcurates\ModuleMagento\Model\Carrier;
 use Calcurates\ModuleMagento\Model\Carrier\Tracking\TrackingInfoProvider;
-use Magento\Shipping\Model\Order\Track;
 use Laminas\Json\Exception\RuntimeException;
+use Magento\Shipping\Model\Order\Track;
 
 class TrackPlugin
 {

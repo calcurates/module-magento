@@ -87,9 +87,7 @@ endif; ?>
                 <?php endif; ?>
                 <?php if (count($viewModel->getPackages())): ?>
                     <div class="shipping-packages-title"><b><?= $block->escapeHtml(__('Packages'))?>:</b></div>
-                    <?php foreach ($viewModel->getPackagesQty() as $title => $count): ?>
-                        <span><?= $block->escapeHtml(__('%1 x %2', $count, $title)) ?></span><br>
-                    <?php endforeach; ?>
+                    <span><?= $block->escapeHtml($viewModel->getOriginPackageDescription()) ?></span>
                 <?php endif; ?>
             <?php else: ?>
                 <?= $block->escapeHtml(__('No shipping information available')) ?>
