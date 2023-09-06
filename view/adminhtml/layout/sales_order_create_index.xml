@@ -18,6 +18,14 @@
                     Calcurates\ModuleMagento\ViewModel\QuoteDeliveryDate
                 </argument>
             </arguments>
+            <block class="Magento\Framework\View\Element\Template" name="metarate"
+                   template="Calcurates_ModuleMagento::order/create/shipping/method/metarate.phtml">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">
+                        Calcurates\ModuleMagento\ViewModel\Adminhtml\MetaRate
+                    </argument>
+                </arguments>
+            </block>
         </referenceBlock>
     </body>
 </page>
