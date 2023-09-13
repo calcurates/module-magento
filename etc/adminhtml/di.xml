@@ -31,6 +31,11 @@
             <argument name="dataPersistor" xsi:type="object">calcurates_backend_data_persistor</argument>
         </arguments>
     </type>
+    <type name="Calcurates\ModuleMagento\Model\Config\Source\FreeMethodSelectionSource">
+        <arguments>
+            <argument name="dataPersistor" xsi:type="object">calcurates_backend_data_persistor</argument>
+        </arguments>
+    </type>
     <type name="Calcurates\ModuleMagento\Plugin\Block\Adminhtml\Order\PackagingPlugin">
         <arguments>
             <argument name="dataPersistor" xsi:type="object">calcurates_backend_data_persistor</argument>
