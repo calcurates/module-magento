@@ -115,6 +115,8 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      */
     private $requestCache;
 
+    protected $_result = null;
+
     /**
      * Carrier constructor.
      * @param ScopeConfigInterface $scopeConfig
@@ -223,7 +225,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             if ($result === false) {
                 return false;
             }
-            $this->result = $result;
         } else {
             $result = $this->getCachedDataByRequest($request);
             if ($result === false || ($result->getError() && count($result->getAllRates()) === 1)) {
@@ -234,11 +235,10 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
                     (string)$this->getConfigData(Config::MISSING_ADDRESS_MESSAGE)
                 );
             }
-            $this->result = $result;
-
         }
+        $this->_result = $result;
         $this->_updateFreeMethodQuote($request);
-
+        $this->result = $this->_result;
         return $this->getResult();
     }
 
