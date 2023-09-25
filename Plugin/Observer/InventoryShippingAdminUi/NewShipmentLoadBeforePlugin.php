@@ -5,6 +5,7 @@
  * @license https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @package Calcurates_ModuleMagento
  */
+
 namespace Calcurates\ModuleMagento\Plugin\Observer\InventoryShippingAdminUi;
 
 use Calcurates\ModuleMagento\Model\Config;
@@ -226,7 +227,7 @@ class NewShipmentLoadBeforePlugin
     private function castQty(Item $item, $qty)
     {
         if ($item->getIsQtyDecimal()) {
-            $qty = (double)$qty;
+            $qty = (float)$qty;
         } else {
             $qty = (int)$qty;
         }

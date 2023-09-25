@@ -257,6 +257,12 @@
                 </group>
                 <group id="advanced" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Advanced</label>
+                    <field id="free_method" translate="label comment" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Free Method</label>
+                        <source_model>Calcurates\ModuleMagento\Model\Config\Source\FreeMethodSelectionSource</source_model>
+                        <config_path>carriers/calcurates/free_method</config_path>
+                        <can_be_empty>1</can_be_empty>
+                    </field>
                     <field id="api_get_rates_timeout" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                         <label>API Timeout (seconds)</label>
                         <validate>validate-greater-than-zero validate-digits required-entry</validate>
