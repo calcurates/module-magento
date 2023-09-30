@@ -141,6 +141,7 @@
             <argument name="infoMessageProcessors" xsi:type="array">
                 <item name="tax_amount" xsi:type="object">Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage\TaxAmount</item>
                 <item name="delivery_from" xsi:type="object">Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage\DeliveryDates</item>
+                <item name="transit_days" xsi:type="object">Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage\TransitDays</item>
             </argument>
         </arguments>
     </type>

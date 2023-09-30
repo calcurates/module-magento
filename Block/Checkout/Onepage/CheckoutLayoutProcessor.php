@@ -72,7 +72,7 @@ class CheckoutLayoutProcessor implements LayoutProcessorInterface
                             ],
                             'children' => [
                                 'calcurates-store' => [
-                                    'label'=> 'Select a store to collect your order:',
+                                    'label' => 'Select a store to collect your order:',
                                     'component' =>
                                         'Calcurates_ModuleMagento/js/view/checkout/instore-pickup/pickup-store',
                                     'dataScope' => 'calcurates-store',

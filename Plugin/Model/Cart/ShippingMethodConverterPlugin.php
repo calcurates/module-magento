@@ -25,6 +25,8 @@ use Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplaySource;
 use Calcurates\ModuleMagento\Model\Data\MetaRateData;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Cart\ShippingMethodConverter;
+use Magento\Quote\Model\Quote\Address\Rate;
+use Magento\Quote\Api\Data\ShippingMethodInterface;
 
 class ShippingMethodConverterPlugin
 {
@@ -83,7 +85,7 @@ class ShippingMethodConverterPlugin
      * @param MetadataInterfaceFactory $metadataInterfaceFactory
      * @param MetaRateData $metaRateData
      * @param MetaRateInterfaceFactory $metaRateInterfaceFactory
-     * @param array $infoMessageProcessors
+     * @param OutputProcessorInterface[] $infoMessageProcessors
      */
     public function __construct(
         Config $configProvider,
@@ -94,7 +96,7 @@ class ShippingMethodConverterPlugin
         MetadataInterfaceFactory $metadataInterfaceFactory,
         MetaRateData $metaRateData,
         MetaRateInterfaceFactory $metaRateInterfaceFactory,
-        $infoMessageProcessors = []
+        array $infoMessageProcessors = []
     ) {
         $this->infoMessageProcessors = $infoMessageProcessors;
         $this->configProvider = $configProvider;
@@ -109,10 +111,10 @@ class ShippingMethodConverterPlugin
 
     /**
      * @param ShippingMethodConverter $subject
-     * @param \Magento\Quote\Api\Data\ShippingMethodInterface  $result
-     * @param \Magento\Quote\Model\Quote\Address\Rate $rateModel The rate model.
+     * @param ShippingMethodInterface  $result
+     * @param Rate $rateModel The rate model.
      * @param string $quoteCurrencyCode The quote currency code.
-     * @return \Magento\Quote\Api\Data\ShippingMethodInterface
+     * @return ShippingMethodInterface
      */
     public function afterModelToDataObject(ShippingMethodConverter $subject, $result, $rateModel, $quoteCurrencyCode)
     {
@@ -126,7 +128,7 @@ class ShippingMethodConverterPlugin
         if (!$calcuratesMetaRateData && $result->getMethodCode() === Carrier\ShippingMethodManager::META_RATE) {
             $ratesOrigin = $this->metaRateData->getRatesData() ?? [];
             $address = $rateModel->getAddress();
-            $metarates = [];
+            $metaRates = [];
             foreach ($ratesOrigin as $originId => $rates) {
                 $shippings = [];
                 $calcuratesMetaRate = $this->metaRateFactory->create();
@@ -137,9 +139,9 @@ class ShippingMethodConverterPlugin
                 $calcuratesMetaRate->setRates($shippings);
                 $calcuratesMetaRate->setProducts($this->metaRateData->getProductData($originId));
                 $calcuratesMetaRate->setOriginId($originId);
-                $metarates[] = $calcuratesMetaRate;
+                $metaRates[] = $calcuratesMetaRate;
             }
-            $result->getExtensionAttributes()->setCalcuratesMetaRateData($metarates);
+            $result->getExtensionAttributes()->setCalcuratesMetaRateData($metaRates);
         }
 
         $infoMessage = $rateModel->getData(RatesResponseProcessor::CALCURATES_TOOLTIP_MESSAGE);
@@ -165,16 +167,7 @@ class ShippingMethodConverterPlugin
             if ($this->infoMessageProcessors) {
                 foreach ($this->infoMessageProcessors as $processor) {
                     if ($processor instanceof OutputProcessorInterface) {
-                        $infoMessage = $processor->process(
-                            [
-                                'tax_amount' => $rateModel
-                                    ->getData(RatesResponseProcessor::CALCURATES_TAX_AMOUNT),
-                                'currency_code' => $rateModel
-                                    ->getData(RatesResponseProcessor::CALCURATES_CURRENCY),
-                                'rate_model' => $rateModel
-                            ],
-                            $infoMessage
-                        );
+                        $infoMessage = $processor->process($rateModel, $infoMessage);
                     }
                 }
             }
@@ -208,9 +201,10 @@ class ShippingMethodConverterPlugin
     }
 
     /**
-     * @param \Magento\Quote\Model\Quote\Address\Rate $rateModel
+     * @param Rate $rateModel
+     * @return string|null
      */
-    private function getDeliveryDates($rateModel): ?string
+    private function getDeliveryDates(Rate $rateModel): ?string
     {
         $deliveryDatesData = $rateModel->getData(RatesResponseProcessor::CALCURATES_DELIVERY_DATES);
 
@@ -227,10 +221,10 @@ class ShippingMethodConverterPlugin
     }
 
     /**
-     * @param \Magento\Quote\Model\Quote\Address\Rate $rateModel
+     * @param Rate $rateModel
      * @return array
      */
-    private function getDeliveryDatesList($rateModel): array
+    private function getDeliveryDatesList(Rate $rateModel): array
     {
         $deliveryDatesData = $rateModel->getData(RatesResponseProcessor::CALCURATES_DELIVERY_DATES);
 
