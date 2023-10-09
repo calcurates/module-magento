@@ -8,12 +8,14 @@
 
 namespace Calcurates\ModuleMagento\Model\Cart\Shipping\Rate;
 
+use Magento\Quote\Model\Quote\Address\Rate;
+
 interface OutputProcessorInterface
 {
     /**
-     * @param array $data
+     * @param Rate $rateModel
      * @param string $stringToProcess
      * @return string
      */
-    public function process(array $data, string $stringToProcess): string;
+    public function process(Rate $rateModel, string $stringToProcess): string;
 }

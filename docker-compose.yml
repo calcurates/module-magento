@@ -4,17 +4,17 @@ volumes:
   Magento2DataVolume:
 
 services:
-  elasticsearch:
+  opensearch:
     build:
-      context: ./.docker/elasticsearch
+      context: ./.docker/opensearch
       dockerfile: Dockerfile
     environment:
       - discovery.type=single-node
-      - xpack.security.enabled=false
+      - plugins.security.disabled=true
       - bootstrap.memory_lock=true
       - cluster.routing.allocation.disk.threshold_enabled=false
-      - "ES_JAVA_OPTS=-Xms256m -Xmx256m -Xlog:disable"
-    container_name: magento2-elasticsearch
+      - "OPENSEARCH_JAVA_OPTS=-Xms256m -Xmx256m -Xlog:disable"
+    container_name: magento2-opensearch
     ports:
       - "9200:9200"
 
@@ -82,7 +82,7 @@ services:
       - MYSQL_DATABASE=magento2
     depends_on:
       - mysql
-      - elasticsearch
+      - opensearch
     expose:
       - "9001" # xdebug
 

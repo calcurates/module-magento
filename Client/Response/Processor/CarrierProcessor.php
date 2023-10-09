@@ -229,15 +229,15 @@ class CarrierProcessor implements ResponseProcessorInterface
             }
             foreach ($existingCarrierRatesToPackages as $carrierId => $serviceIdData) {
                 foreach ($serviceIdData as $serviceIds => $source) {
-                    $mergedSource = $carrierRatesToPackages[$carrierId][$serviceIds];
                     if (isset($carrierRatesToPackages[$carrierId][$serviceIds])) {
+                        $mergedSource = $carrierRatesToPackages[$carrierId][$serviceIds];
                         foreach ($source as $packageToMerge) {
                             if (!in_array($packageToMerge, $mergedSource)) {
                                 $mergedSource[] = $packageToMerge;
                             }
                         }
+                        $carrierRatesToPackages[$carrierId][$serviceIds] = $mergedSource;
                     }
-                    $carrierRatesToPackages[$carrierId][$serviceIds] = $mergedSource;
                 }
             }
         }

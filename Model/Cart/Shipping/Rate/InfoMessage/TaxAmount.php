@@ -8,39 +8,38 @@
 
 namespace Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage;
 
+use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\OutputProcessorInterface;
+use Magento\Quote\Model\Quote\Address\Rate;
 
 class TaxAmount implements OutputProcessorInterface
 {
     /**
      * @var string
      */
-    private $variableString = '{tax_amount}';
+    private $variableTemplate = '{tax_amount}';
 
     /**
-     * @var array
-     */
-    private $requiredFieldsToProcess = [
-        'tax_amount',
-        'currency_code'
-    ];
-
-    /**
-     * @param array $data
+     * @param Rate $rateModel
      * @param string $stringToProcess
      * @return string
      */
-    public function process(array $data, string $stringToProcess): string
+    public function process(Rate $rateModel, string $stringToProcess): string
     {
-        if (\strpos($stringToProcess, $this->variableString) !== false) {
-            if ($data['tax_amount'] && !array_diff($this->requiredFieldsToProcess, array_keys($data))) {
-                $stringToProcess = str_replace(
-                    $this->variableString,
-                    $data['tax_amount'].' '.$data['currency_code'],
-                    $stringToProcess
-                );
-            }
+        if (false === \strpos($stringToProcess, $this->variableTemplate)) {
+            return $stringToProcess;
         }
-        return $stringToProcess;
+
+        $taxAmount = $rateModel->getData(RatesResponseProcessor::CALCURATES_TAX_AMOUNT);
+        $currency = $rateModel->getData(RatesResponseProcessor::CALCURATES_CURRENCY);
+        if (!isset($taxAmount, $currency)) {
+            return $stringToProcess;
+        }
+
+        return str_replace(
+            $this->variableTemplate,
+            $taxAmount.' '.$currency,
+            $stringToProcess
+        );
     }
 }

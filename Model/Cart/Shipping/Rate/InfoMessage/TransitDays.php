@@ -9,33 +9,18 @@
 namespace Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage;
 
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
-use Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter;
 use Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\OutputProcessorInterface;
 use Magento\Quote\Model\Quote\Address\Rate;
 
-class DeliveryDates implements OutputProcessorInterface
+class TransitDays implements OutputProcessorInterface
 {
     /**
      * @var array
      */
     protected $variablesTemplate = [
-        'from' => '{delivery_from}',
-        'to' => '{delivery_to}'
+        'daysInTransitFrom' => '{min_transit_days}',
+        'daysInTransitTo' => '{max_transit_days}'
     ];
-
-    /**
-     * @var DeliveryDateFormatter
-     */
-    private $deliveryDateFormatter;
-
-    /**
-     * DeliveryFrom constructor.
-     * @param DeliveryDateFormatter $deliveryDateFormatter
-     */
-    public function __construct(DeliveryDateFormatter $deliveryDateFormatter)
-    {
-        $this->deliveryDateFormatter = $deliveryDateFormatter;
-    }
 
     /**
      * @param Rate $rateModel
@@ -54,12 +39,7 @@ class DeliveryDates implements OutputProcessorInterface
                 continue;
             }
 
-            if (isset($deliveryDates[$variableKey])) {
-                $date = $this->deliveryDateFormatter->prepareDate($deliveryDates[$variableKey]);
-                $value = $date ? $this->deliveryDateFormatter->formatSingleDate($date) : '';
-            } else {
-                $value = '';
-            }
+            $value = $deliveryDates[$variableKey] ?? '';
             $stringToProcess = str_replace(
                 $variableTemplate,
                 $value,
