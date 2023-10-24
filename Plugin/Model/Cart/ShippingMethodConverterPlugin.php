@@ -26,7 +26,10 @@ use Calcurates\ModuleMagento\Model\Data\MetaRateData;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Cart\ShippingMethodConverter;
 use Magento\Quote\Model\Quote\Address\Rate;
+use Magento\Quote\Model\Quote\Address\RateResult\Method;
+use Magento\Quote\Model\Quote\Address\RateResult\Error;
 use Magento\Quote\Api\Data\ShippingMethodInterface;
+use Magento\Framework\DataObject;
 
 class ShippingMethodConverterPlugin
 {
@@ -201,10 +204,10 @@ class ShippingMethodConverterPlugin
     }
 
     /**
-     * @param Rate $rateModel
+     * @param Rate|Method|Error|DataObject $rateModel
      * @return string|null
      */
-    private function getDeliveryDates(Rate $rateModel): ?string
+    private function getDeliveryDates(DataObject $rateModel): ?string
     {
         $deliveryDatesData = $rateModel->getData(RatesResponseProcessor::CALCURATES_DELIVERY_DATES);
 
@@ -221,10 +224,10 @@ class ShippingMethodConverterPlugin
     }
 
     /**
-     * @param Rate $rateModel
+     * @param Rate|Method|Error|DataObject $rateModel
      * @return array
      */
-    private function getDeliveryDatesList(Rate $rateModel): array
+    private function getDeliveryDatesList(DataObject $rateModel): array
     {
         $deliveryDatesData = $rateModel->getData(RatesResponseProcessor::CALCURATES_DELIVERY_DATES);
 

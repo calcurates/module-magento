@@ -11,6 +11,9 @@ namespace Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\OutputProcessorInterface;
 use Magento\Quote\Model\Quote\Address\Rate;
+use Magento\Quote\Model\Quote\Address\RateResult\Method;
+use Magento\Quote\Model\Quote\Address\RateResult\Error;
+use Magento\Framework\DataObject;
 
 class TaxAmount implements OutputProcessorInterface
 {
@@ -20,11 +23,11 @@ class TaxAmount implements OutputProcessorInterface
     private $variableTemplate = '{tax_amount}';
 
     /**
-     * @param Rate $rateModel
+     * @param Rate|Method|Error|DataObject $rateModel
      * @param string $stringToProcess
      * @return string
      */
-    public function process(Rate $rateModel, string $stringToProcess): string
+    public function process(DataObject $rateModel, string $stringToProcess): string
     {
         if (false === \strpos($stringToProcess, $this->variableTemplate)) {
             return $stringToProcess;

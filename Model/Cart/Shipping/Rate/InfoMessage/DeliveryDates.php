@@ -12,6 +12,9 @@ use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter;
 use Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\OutputProcessorInterface;
 use Magento\Quote\Model\Quote\Address\Rate;
+use Magento\Quote\Model\Quote\Address\RateResult\Method;
+use Magento\Quote\Model\Quote\Address\RateResult\Error;
+use Magento\Framework\DataObject;
 
 class DeliveryDates implements OutputProcessorInterface
 {
@@ -38,11 +41,11 @@ class DeliveryDates implements OutputProcessorInterface
     }
 
     /**
-     * @param Rate $rateModel
+     * @param Rate|Method|Error|DataObject $rateModel
      * @param string $stringToProcess
      * @return string
      */
-    public function process(Rate $rateModel, string $stringToProcess): string
+    public function process(DataObject $rateModel, string $stringToProcess): string
     {
         $deliveryDates = $rateModel->getData(RatesResponseProcessor::CALCURATES_DELIVERY_DATES);
         if (!$deliveryDates) {
