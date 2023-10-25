@@ -60,7 +60,11 @@ RUN set -xe \
         --with-webp \
         --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-enable gd
+    && docker-php-ext-enable gd \
+\
+    # PCNTL
+    && docker-php-ext-install pcntl \
+    && docker-php-ext-enable pcntl
 
 # Cleanup
 RUN set -xe \
