@@ -243,6 +243,81 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     }
 
     /**
+     * Allows free shipping when all product items have free shipping.
+     *
+     * @param \Magento\Quote\Model\Quote\Address\RateRequest $request
+     * @return void
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
+    protected function _updateFreeMethodQuote($request)
+    {
+        if (!$this->hasFreeMethodWeight($request)) {
+            return;
+        }
+
+        $freeMethods = explode(',', $this->getConfigData($this->_freeMethod));
+        if (!$freeMethods) {
+            return;
+        }
+        $freeRateIds = [];
+        // phpstan:ignore
+        if (is_object($this->_result)) {
+            foreach ($this->_result->getAllRates() as $i => $item) {
+                if (in_array($item->getMethod(), $freeMethods)) {
+                    $freeRateIds[] = $i;
+                }
+            }
+        }
+
+        if ($freeRateIds === []) {
+            return;
+        }
+        $price = null;
+        if ($request->getFreeMethodWeight() > 0) {
+            // phpstan:ignore
+            foreach ($freeMethods as $freeMethod) {
+                $this->_rawRequest->setFreeMethodRequest(true);
+                $freeWeight = $this->getTotalNumOfBoxes($this->_rawRequest->getFreeMethodWeight());
+                $this->_rawRequest->setWeight($freeWeight);
+                $this->_rawRequest->setService($freeMethod);
+            }
+
+            // phpstan:ignore
+            $result = $this->_getQuotes();
+            if ($result && ($rates = $result->getAllRates()) && count($rates) > 0) {
+                if (count($rates) == 1 && $rates[0] instanceof \Magento\Quote\Model\Quote\Address\RateResult\Method) {
+                    $price = $rates[0]->getPrice();
+                }
+                if (count($rates) > 1) {
+                    foreach ($rates as $rate) {
+                        if ($rate instanceof \Magento\Quote\Model\Quote\Address\RateResult\Method &&
+                            in_array($rate->getMethod(), $freeMethods)
+                        ) {
+                            $price = $rate->getPrice();
+                        }
+                    }
+                }
+            }
+        } else {
+            /**
+             * if we can apply free shipping for all order we should force price
+             * to $0.00 for shipping with out sending second request to carrier
+             */
+            $price = 0;
+        }
+
+        /**
+         * if we did not get our free shipping method in response we must use its old price
+         */
+        if ($price !== null) {
+            foreach ($freeRateIds as $freeMethodId) {
+                $this->_result->getRateById($freeMethodId)->setPrice($price);
+            }
+        }
+    }
+
+    /**
      * Get result of request
      *
      * @return Result
@@ -475,5 +550,22 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         }
 
         return $containerTypes;
+    }
+
+    /**
+     * Check if the request has free shipping weight
+     *
+     * @param \Magento\Quote\Model\Quote\Address\RateRequest $request
+     * @return bool
+     */
+    private function hasFreeMethodWeight($request): bool
+    {
+        return (
+            $request->getFreeShipping()
+            || (
+                $request->hasFreeMethodWeight()
+                && ((float) $request->getFreeMethodWeight()) !== ((float) $request->getPackageWeight())
+            )
+        );
     }
 }
