@@ -60,7 +60,7 @@ class ShipmentServiceRetriever
             $orderData = $this->getOrderData->get($order->getId());
             if ($orderData && $splitShipments = $orderData->getSplitShipments()) {
                 foreach ($splitShipments as $splitShipment) {
-                    if ($splitShipment['code'] === $requestedSourceCode) {
+                    if (isset($splitShipment['code']) && $splitShipment['code'] === $requestedSourceCode) {
                         $shippingMethod = $splitShipment['method'];
                     }
                 }
