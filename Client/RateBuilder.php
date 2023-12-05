@@ -73,7 +73,6 @@ class RateBuilder
             );
             $responseRateWithoutTax = $responseRate;
             $responseRateWithoutTax['name'] .= __(' - without duties & tax');
-            $responseRateWithTax['tax'] = $tax;
             $rateWithoutTax = $this->createRate($methodId, $responseRateWithoutTax, $carrierTitle);
 
             return [$rateWithTax, $rateWithoutTax];
