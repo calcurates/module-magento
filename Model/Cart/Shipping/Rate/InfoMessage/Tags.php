@@ -20,7 +20,7 @@ class Tags implements OutputProcessorInterface
      * @var array
      */
     protected $variablesTemplate = [
-        '{\n}' => '<br>',
+        '"\n"' => '<br />',
     ];
 
     /**
