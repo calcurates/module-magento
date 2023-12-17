@@ -14,6 +14,7 @@ use Magento\Quote\Model\Quote\Address\Rate;
 use Magento\Quote\Model\Quote\Address\RateResult\Method;
 use Magento\Quote\Model\Quote\Address\RateResult\Error;
 use Magento\Framework\DataObject;
+use Magento\Framework\Pricing\PriceCurrencyInterface;
 
 class TaxAmount implements OutputProcessorInterface
 {
@@ -21,6 +22,20 @@ class TaxAmount implements OutputProcessorInterface
      * @var string
      */
     private $variableTemplate = '{tax_amount}';
+
+    /**
+     * @var PriceCurrencyInterface
+     */
+    protected $priceCurrency;
+
+    /**
+     * TaxAmount constructor.
+     * @param PriceCurrencyInterface $priceCurrency
+     */
+    public function __construct(PriceCurrencyInterface $priceCurrency)
+    {
+        $this->priceCurrency = $priceCurrency;
+    }
 
     /**
      * @param Rate|Method|Error|DataObject $rateModel
@@ -41,7 +56,13 @@ class TaxAmount implements OutputProcessorInterface
 
         return str_replace(
             $this->variableTemplate,
-            $taxAmount.' '.$currency,
+            $this->priceCurrency->convertAndFormat(
+                $taxAmount,
+                false,
+                PriceCurrencyInterface::DEFAULT_PRECISION,
+                null,
+                $currency
+            ),
             $stringToProcess
         );
     }
