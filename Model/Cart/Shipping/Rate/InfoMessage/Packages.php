@@ -56,34 +56,18 @@ class Packages implements OutputProcessorInterface
             if ($packageIdsString && isset($packages[$serviceMethodId][$packageIdsString])) {
                 $packagesForCurrentRate = $packages[$serviceMethodId][$packageIdsString];
                 $ratePackageGrouped = [];
-                foreach ($packagesForCurrentRate as $ratePackage) {
-                    if (isset($ratePackageGrouped[$ratePackage['code']])) {
-                        $ratePackageGrouped[$ratePackage['code']]['qty']++;
-                    } else {
-                        $ratePackageGrouped[$ratePackage['code']] = [
-                            'qty' => 1,
-                            'name' => $ratePackage['name']
-                        ];
-                    }
-                }
+                $this->processRatePackageGrouped($ratePackageGrouped, $packagesForCurrentRate);
             }
         }
        if ($rates = $rateModel->getRates()) {
-           $ratePackageGrouped  = [];
            foreach ($rates as $rate) {
-               foreach ($rate['packages'] ?? [] as $package) {
-                   if (isset($ratePackageGrouped[$package['code']])) {
-                       $ratePackageGrouped[$package['code']]['qty']++;
-                   } else {
-                       $ratePackageGrouped[$package['code']] = [
-                           'qty' => 1,
-                           'name' => $package['name']
-                       ];
-                   }
-               }
+               $this->processRatePackageGrouped($ratePackageGrouped, $rate['packages'] ?? []);
            }
        }
-       if (isset($ratePackageGrouped)) {
+       if ($packages = $rateModel->getPackages()) {
+           $this->processRatePackageGrouped($ratePackageGrouped, $packages);
+       }
+       if (isset($ratePackageGrouped) && $ratePackageGrouped) {
            foreach ($ratePackageGrouped as $packageCode => $packageInfo) {
                $replace .= $packageInfo['name'];
                $replace .= ' x';
@@ -100,5 +84,23 @@ class Packages implements OutputProcessorInterface
        }
 
         return $stringToProcess;
+    }
+
+    /**
+     * @param $ratePackageGrouped
+     * @param array $packages
+     */
+    private function processRatePackageGrouped(&$ratePackageGrouped, $packages = [])
+    {
+        foreach ($packages as $package) {
+            if (isset($ratePackageGrouped[$package['code']])) {
+                $ratePackageGrouped[$package['code']]['qty']++;
+            } else {
+                $ratePackageGrouped[$package['code']] = [
+                    'qty' => 1,
+                    'name' => $package['name']
+                ];
+            }
+        }
     }
 }
