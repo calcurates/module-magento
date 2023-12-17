@@ -18,6 +18,8 @@ use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Calcurates\ModuleMagento\Model\Config;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Shipping\Model\Rate\Result;
+use Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage\Packages;
+use Magento\Framework\DataObject;
 
 class TableRateProcessor implements ResponseProcessorInterface
 {
@@ -42,18 +44,26 @@ class TableRateProcessor implements ResponseProcessorInterface
     private $configProvider;
 
     /**
+     * @var Packages
+     */
+    private $packageMessageProcessor;
+
+    /**
      * TableRateProcessor constructor.
      * @param FailedRateBuilder $failedRateBuilder
      * @param RateBuilder $rateBuilder
      * @param TableRateNameBuilder $tableRateNameBuilder
      * @param Config $configProvider
+     * @param Packages $packageMessageProcessor
      */
     public function __construct(
         FailedRateBuilder $failedRateBuilder,
         RateBuilder $rateBuilder,
         TableRateNameBuilder $tableRateNameBuilder,
-        Config $configProvider
+        Config $configProvider,
+        Packages $packageMessageProcessor
     ) {
+        $this->packageMessageProcessor = $packageMessageProcessor;
         $this->failedRateBuilder = $failedRateBuilder;
         $this->rateBuilder = $rateBuilder;
         $this->tableRateNameBuilder = $tableRateNameBuilder;
@@ -107,7 +117,12 @@ class TableRateProcessor implements ResponseProcessorInterface
                     $responseRateMethod,
                     $this->configProvider->isDisplayPackageNameForCarrier()
                 );
+
                 unset($responseRateMethod['displayName'], $responseRateMethod['additionalText']);
+                if (isset($responseRateMethod['message']) && $responseRateMethod['message']) {
+                    $responseRateMethod['message'] = $this->packageMessageProcessor
+                        ->process(new DataObject($responseRateMethod), $responseRateMethod['message']);
+                }
                 $rates = $this->rateBuilder->build(
                     ShippingMethodManager::TABLE_RATE . '_' . $tableRate['id'] . '_' . $responseRateMethod['id'],
                     $responseRateMethod,

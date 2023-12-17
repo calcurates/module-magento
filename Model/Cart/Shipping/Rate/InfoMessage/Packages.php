@@ -31,8 +31,11 @@ class Packages implements OutputProcessorInterface
         if (false === \strpos($stringToProcess, $this->variableTemplate)) {
             return $stringToProcess;
         }
-        $packages = $rateModel->getAddress()->getQuote()->getCalcuratesCarrierPackages();
-        if ($packages) {
+        if ($rateModel->getAddress()) {
+            $packages = $rateModel->getAddress()->getQuote()->getCalcuratesCarrierPackages();
+        }
+        $replace  = '';
+        if (isset($packages) && $packages) {
             $packages = json_decode($packages, true);
             $carrierPackages = json_decode(
                 $rateModel->getAddress()->getQuote()->getCalcuratesCarrierSrvsSrsCodes(),
@@ -63,22 +66,39 @@ class Packages implements OutputProcessorInterface
                         ];
                     }
                 }
-                $replace  = '';
-                foreach ($ratePackageGrouped as $packageInfo) {
-                    $replace .= $packageInfo['name'];
-                    $replace .= ' x';
-                    $replace .= $packageInfo['qty'];
-                    $replace .= '; ';
-                }
-                if ($replace) {
-                    return str_replace(
-                        $this->variableTemplate,
-                        $replace,
-                        $stringToProcess
-                    );
-                }
             }
         }
+       if ($rates = $rateModel->getRates()) {
+           $ratePackageGrouped  = [];
+           foreach ($rates as $rate) {
+               foreach ($rate['packages'] ?? [] as $package) {
+                   if (isset($ratePackageGrouped[$package['code']])) {
+                       $ratePackageGrouped[$package['code']]['qty']++;
+                   } else {
+                       $ratePackageGrouped[$package['code']] = [
+                           'qty' => 1,
+                           'name' => $package['name']
+                       ];
+                   }
+               }
+           }
+       }
+       if (isset($ratePackageGrouped)) {
+           foreach ($ratePackageGrouped as $packageCode => $packageInfo) {
+               $replace .= $packageInfo['name'];
+               $replace .= ' x';
+               $replace .= $packageInfo['qty'];
+               if (next($ratePackageGrouped) == true) {
+                   $replace .= '; ';
+               }
+           }
+           return str_replace(
+               $this->variableTemplate,
+               $replace,
+               $stringToProcess
+           );
+       }
+
         return $stringToProcess;
     }
 }
