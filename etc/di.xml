@@ -143,6 +143,7 @@
                 <item name="delivery_from" xsi:type="object">Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage\DeliveryDates</item>
                 <item name="transit_days" xsi:type="object">Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage\TransitDays</item>
                 <item name="packages" xsi:type="object">Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage\Packages</item>
+                <item name="tags" xsi:type="object">Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage\Tags</item>
             </argument>
         </arguments>
     </type>
