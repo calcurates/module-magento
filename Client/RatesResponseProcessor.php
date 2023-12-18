@@ -110,7 +110,7 @@ class RatesResponseProcessor
         $status = $response['status'] ?? null;
         if ($response && isset($response['shippingOptions']) && is_array($response['shippingOptions'])) {
             $shippingOptionsExist = false;
-            foreach ($response['shippingOptions'] as $ratesGroupName => $ratesData) {
+            foreach ($response['shippingOptions'] as $ratesData) {
                 if ($ratesData) {
                     $shippingOptionsExist = true;
                 }
@@ -169,7 +169,7 @@ class RatesResponseProcessor
      * @param Result $result
      * @param string $message
      */
-    public function processFailedRate(string $rateName, Result $result, string $message = '')
+    public function processFailedRate(string $rateName, Result $result, string $message = ''): void
     {
         $failedRate = $this->failedRateBuilder->build($rateName, '', $message);
         $result->append($failedRate);

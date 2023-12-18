@@ -90,7 +90,7 @@ class ConvertPackages
             foreach ($orderPackages as &$orderPackage) {
                 $packageProducts = array_filter(
                     $orderPackage['products'],
-                    function ($product) use ($orderPackage, $orderItemIdToSku, $splitShipmentsIdx, $carrierData) {
+                    static function ($product) use ($orderPackage, $orderItemIdToSku, $splitShipmentsIdx, $carrierData) {
                         list(, , $serviceIdString) = array_pad(explode(
                             '_',
                             $splitShipmentsIdx[$orderPackage['origin_id']]['method'] ?? '',
@@ -106,7 +106,7 @@ class ConvertPackages
                 $orderPackage['products'] = $packageProducts;
             }
         }
-        $orderPackages = array_filter($orderPackages, function ($package) {
+        $orderPackages = array_filter($orderPackages, static function ($package) {
             return !empty($package['products']);
         });
 
@@ -140,7 +140,7 @@ class ConvertPackages
      * @param Order $order
      * @return array
      */
-    private function getOrderItemIdToSkuMap(Order $order)
+    private function getOrderItemIdToSkuMap(Order $order): array
     {
         $map = [];
         foreach ($order->getAllItems() as $orderItem) {
