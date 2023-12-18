@@ -59,29 +59,29 @@ class Packages implements OutputProcessorInterface
                 $this->processRatePackageGrouped($ratePackageGrouped, $packagesForCurrentRate);
             }
         }
-       if ($rates = $rateModel->getRates()) {
-           foreach ($rates as $rate) {
-               $this->processRatePackageGrouped($ratePackageGrouped, $rate['packages'] ?? []);
-           }
-       }
-       if ($packages = $rateModel->getPackages()) {
-           $this->processRatePackageGrouped($ratePackageGrouped, $packages);
-       }
-       if (isset($ratePackageGrouped) && $ratePackageGrouped) {
-           foreach ($ratePackageGrouped as $packageCode => $packageInfo) {
-               $replace .= $packageInfo['name'];
-               $replace .= ' x';
-               $replace .= $packageInfo['qty'];
-               if (next($ratePackageGrouped) == true) {
-                   $replace .= '; ';
-               }
-           }
-           return str_replace(
-               $this->variableTemplate,
-               $replace,
-               $stringToProcess
-           );
-       }
+        if ($rates = $rateModel->getRates()) {
+            foreach ($rates as $rate) {
+                $this->processRatePackageGrouped($ratePackageGrouped, $rate['packages'] ?? []);
+            }
+        }
+        if ($packages = $rateModel->getPackages()) {
+            $this->processRatePackageGrouped($ratePackageGrouped, $packages);
+        }
+        if (isset($ratePackageGrouped) && $ratePackageGrouped) {
+            foreach ($ratePackageGrouped as $packageCode => $packageInfo) {
+                $replace .= $packageInfo['name'];
+                $replace .= ' x';
+                $replace .= $packageInfo['qty'];
+                if (next($ratePackageGrouped) == true) {
+                    $replace .= '; ';
+                }
+            }
+            return str_replace(
+                $this->variableTemplate,
+                $replace,
+                $stringToProcess
+            );
+        }
 
         return $stringToProcess;
     }
