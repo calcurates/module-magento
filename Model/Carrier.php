@@ -66,11 +66,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     protected $trackingObject;
 
     /**
-     * @var CalcuratesClientInterface
-     */
-    private $calcuratesClient;
-
-    /**
      * @var RatesResponseProcessor
      */
     private $ratesResponseProcessor;
@@ -135,7 +130,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param \Magento\Directory\Helper\Data $directoryData
      * @param \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry
      * @param \Magento\Framework\Registry $registry
-     * @param CalcuratesClientInterface $calcuratesClient
      * @param RatesResponseProcessor $ratesResponseProcessor
      * @param RatesStrategyFactory $ratesStrategyFactory
      * @param RateRequestBuilder $rateRequestBuilder
@@ -164,7 +158,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         \Magento\Directory\Helper\Data $directoryData,
         \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
         \Magento\Framework\Registry $registry,
-        CalcuratesClientInterface $calcuratesClient,
         RatesResponseProcessor $ratesResponseProcessor,
         RatesStrategyFactory $ratesStrategyFactory,
         RateRequestBuilder $rateRequestBuilder,
@@ -196,7 +189,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         );
         $this->requestCache = $requestCache;
         $this->registry = $registry;
-        $this->calcuratesClient = $calcuratesClient;
         $this->ratesResponseProcessor = $ratesResponseProcessor;
         $this->rateRequestBuilder = $rateRequestBuilder;
         $this->ratesStrategyFactory = $ratesStrategyFactory;
@@ -255,22 +247,22 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         if (!$this->hasFreeMethodWeight($request)) {
             return;
         }
-
-        $freeMethods = explode(',', $this->getConfigData($this->_freeMethod));
+        $freeMethods = $this->prepareFreeMethods();
         if (!$freeMethods) {
             return;
         }
+
         $freeRateIds = [];
         // phpstan:ignore
         if (is_object($this->_result)) {
             foreach ($this->_result->getAllRates() as $i => $item) {
-                if (in_array($item->getMethod(), $freeMethods)) {
+                if (in_array($item->getMethod(), $freeMethods, true)) {
                     $freeRateIds[] = $i;
                 }
             }
         }
 
-        if ($freeRateIds === []) {
+        if (!$freeRateIds) {
             return;
         }
         $price = null;
@@ -286,13 +278,13 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             // phpstan:ignore
             $result = $this->_getQuotes();
             if ($result && ($rates = $result->getAllRates()) && count($rates) > 0) {
-                if (count($rates) == 1 && $rates[0] instanceof \Magento\Quote\Model\Quote\Address\RateResult\Method) {
+                if (count($rates) === 1 && $rates[0] instanceof \Magento\Quote\Model\Quote\Address\RateResult\Method) {
                     $price = $rates[0]->getPrice();
                 }
                 if (count($rates) > 1) {
                     foreach ($rates as $rate) {
                         if ($rate instanceof \Magento\Quote\Model\Quote\Address\RateResult\Method &&
-                            in_array($rate->getMethod(), $freeMethods)
+                            in_array($rate->getMethod(), $freeMethods, true)
                         ) {
                             $price = $rate->getPrice();
                         }
@@ -554,11 +546,8 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
 
     /**
      * Check if the request has free shipping weight
-     *
-     * @param \Magento\Quote\Model\Quote\Address\RateRequest $request
-     * @return bool
      */
-    private function hasFreeMethodWeight($request): bool
+    private function hasFreeMethodWeight(\Magento\Quote\Model\Quote\Address\RateRequest $request): bool
     {
         return (
             $request->getFreeShipping()
@@ -567,5 +556,18 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
                 && ((float) $request->getFreeMethodWeight()) !== ((float) $request->getPackageWeight())
             )
         );
+    }
+
+    /**
+     * @return string[]
+     */
+    private function prepareFreeMethods(): array
+    {
+        $freeMethodConfigData = $this->getConfigData($this->_freeMethod);
+        if (!$freeMethodConfigData) {
+            return [];
+        }
+
+        return explode(',', $freeMethodConfigData);
     }
 }
