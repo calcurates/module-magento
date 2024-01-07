@@ -98,15 +98,17 @@ class ShippingPlugin
         $result = $proceed($carrierCode, $request);
         if ($carrierCode == Carrier::CODE) {
             $calcuratesRates = $result->getResult()->getRatesByCarrier(Carrier::CODE);
-            $showFallBackMethod = true;
-            if ($calcuratesRates && is_array($calcuratesRates)) {
-                foreach ($calcuratesRates as $rate) {
-                    if ($rate->getMethodTitle()) {
-                        $showFallBackMethod = false;
-                    }
+            if (count($calcuratesRates) === 1) {
+                $rate = reset($calcuratesRates);
+                if (!$rate->getMethodTitle()
+                    && $rate->getErrorMessage()
+                    == (string) $this->config->getMissingAddressMessage($request->getStoreId())
+                ) {
+                    $this->showFallBackMethod = false;
+                } elseif (!$rate->getMethodTitle()) {
+                    $this->showFallBackMethod = true;
                 }
             }
-            $this->showFallBackMethod = $showFallBackMethod;
         }
         return $result;
     }
