@@ -33,6 +33,11 @@ class ShippingPlugin
     private $scopeConfig;
 
     /**
+     * @var bool
+     */
+    private $showFallBackMethod = false;
+
+    /**
      * ShippingPlugin constructor.
      * @param Config $config
      * @param ScopeConfigInterface $scopeConfig
@@ -86,11 +91,24 @@ class ShippingPlugin
         if ($this->config->isActive($request->getStoreId())
             && in_array($carrierCode, $shippingMethodsForFallback)
             && $request->getIsAllCarriersCalcuratesFirst()
+            && !$this->showFallBackMethod
         ) {
             return $subject;
         }
-
-        return $proceed($carrierCode, $request);
+        $result = $proceed($carrierCode, $request);
+        if ($carrierCode == Carrier::CODE) {
+            $calcuratesRates = $result->getResult()->getRatesByCarrier(Carrier::CODE);
+            $showFallBackMethod = true;
+            if ($calcuratesRates && is_array($calcuratesRates)) {
+                foreach ($calcuratesRates as $rate) {
+                    if ($rate->getMethodTitle()) {
+                        $showFallBackMethod = false;
+                    }
+                }
+            }
+            $this->showFallBackMethod = $showFallBackMethod;
+        }
+        return $result;
     }
 
     /**
