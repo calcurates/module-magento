@@ -31,6 +31,10 @@ class RateRequestValidator
      */
     private $config;
 
+    private $estimateOnlyRoutes = [
+        '/rest/V1/stripe/payments/estimate_cart'
+    ];
+
     /**
      * RequestRatesValidator constructor.
      * @param RequestInterface $request
@@ -74,7 +78,6 @@ class RateRequestValidator
         $isRemoveFromCart = $this->request->getModuleName() === 'checkout'
             && $controller === 'sidebar'
             && $this->request->getActionName() === 'removeItem';
-
         return $isAddToCart || $isRemoveFromCart;
     }
 
@@ -94,7 +97,11 @@ class RateRequestValidator
         if ($this->config->isAllowPartialAddressRequests($request->getStoreId())) {
             return $valid;
         }
-        if ($valid && !$request->getData(ShippingAddEstimateFlagToRequestPlugin::IS_ESTIMATE_ONLY_FLAG)) {
+        if ($valid
+            && !$request->getData(ShippingAddEstimateFlagToRequestPlugin::IS_ESTIMATE_ONLY_FLAG)
+            && !in_array($this->request->getPathInfo(), $this->estimateOnlyRoutes)
+
+        ) {
             return $request->getDestStreet() && $request->getDestCity();
         }
         return $valid;
