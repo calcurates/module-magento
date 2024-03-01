@@ -153,7 +153,18 @@ define([
              * @returns {*}
              */
             getShipmentQuoteItems: function (shipment) {
-                return quote.totals().items.filter(function (item) {
+                let items = quote.totals().items,
+                    bundleItems = [],
+                    result = []
+
+                items.forEach(function (item) {
+                    if (item.extension_attributes && item.extension_attributes.bundle_children) {
+                        bundleItems.push(...item.extension_attributes.bundle_children)
+                    }
+                })
+                result.push(...items, ...bundleItems)
+
+                return result.filter(function (item) {
                     return shipment.products.includes(parseInt(item.item_id))
                 })
             },

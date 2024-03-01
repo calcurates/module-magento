@@ -360,4 +360,12 @@
         <plugin name="calcurates_quote_submit_observers_sort"
                 type="Calcurates\ModuleMagento\Plugin\Framework\Event\Config\QuoteSubmitObserversSort"/>
     </type>
+    <type name="Magento\Quote\Model\Cart\Totals\ItemConverter">
+        <plugin name="calcurates_quote_item_converter_plugin"
+                type="Calcurates\ModuleMagento\Plugin\Model\Quote\Totals\QuoteItemConverter"/>
+    </type>
+    <type name="Magento\Checkout\Model\Cart\ImageProvider">
+        <plugin name="calcurates_model_cart_image_provider"
+                type="Calcurates\ModuleMagento\Plugin\Model\Cart\CheckoutImageProvider"/>
+    </type>
 </config>
