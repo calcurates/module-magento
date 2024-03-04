@@ -36,4 +36,7 @@
             </join>
         </attribute>
     </extension_attributes>
+    <extension_attributes for="Magento\Quote\Api\Data\TotalsItemInterface">
+        <attribute code="bundle_children" type="Magento\Quote\Api\Data\TotalsItemInterface[]"/>
+    </extension_attributes>
 </config>

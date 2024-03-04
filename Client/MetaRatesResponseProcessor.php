@@ -126,7 +126,19 @@ class MetaRatesResponseProcessor
             $this->calcuratesConfig->getCarrierTitle($quote->getStoreId())
         );
         $result->append($metarate);
-        foreach ($response['origins'] as $origin) {
+        $sortedOrigins = $response['origins'];
+        usort($sortedOrigins, function ($origin1, $origin2) {
+            $stringLength =  strlen($origin1['origin']['syncedTargetOriginCode'])
+            >= strlen($origin2['origin']['syncedTargetOriginCode'])
+                ? strlen($origin1['origin']['syncedTargetOriginCode'])
+                : strlen($origin2['origin']['syncedTargetOriginCode']);
+            return strncasecmp(
+                $origin1['origin']['syncedTargetOriginCode'],
+                $origin2['origin']['syncedTargetOriginCode'],
+                $stringLength
+            );
+        });
+        foreach ($sortedOrigins as $origin) {
             $childRates = $this->ratesResponseProcessor->processResponse($origin, $quote);
             $this->metaRateData->setRatesData($origin['origin']['id'], $childRates->getAllRates());
         }

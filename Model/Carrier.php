@@ -339,7 +339,9 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
 
                 if ($item->getHasChildren() && $item->isShipSeparately()) {
                     foreach ($item->getChildren() as $child) {
-                        if ($child->getFreeShipping() || ($ignoreVirtual && $item->getProduct()->isVirtual())) {
+                        if (($child->getFreeShipping() && $child->getOriginalPrice() == 0)
+                            || ($ignoreVirtual && $item->getProduct()->isVirtual())
+                        ) {
                             continue;
                         }
                         $items[] = $child;
