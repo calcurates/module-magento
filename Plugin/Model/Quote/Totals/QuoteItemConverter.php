@@ -51,6 +51,7 @@ class QuoteItemConverter
             foreach ($item->getChildren() as $child) {
                 $itemsData = $this->totalsItemFactory->create();
                 $item = $child->toArray();
+                unset($item['extension_attributes']);
                 $item['options'] = "[]";
                 $this->dataObjectHelper->populateWithArray(
                     $itemsData,
