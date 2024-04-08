@@ -21,6 +21,7 @@ use Magento\Framework\ObjectManagerInterface;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Bundle\Model\Product\Type as Bundle;
 
 class RateRequestBuilder
 {
@@ -148,6 +149,12 @@ class RateRequestBuilder
         foreach ($items as $item) {
             $itemsSkus[$item->getSku()] = $item->getSku();
             $itemsSkus[$item->getProduct()->getData('sku')] = $item->getProduct()->getData('sku');
+            if ($item->getProductType() === Bundle::TYPE_CODE) {
+                foreach ($item->getChildren() as $childItem)
+                if ($childItem && $childItem->getSku()) {
+                    $itemsSkus[$childItem->getSku()] = $childItem->getSku();
+                }
+            }
         }
 
         $itemsSkus = array_values($itemsSkus);
@@ -177,6 +184,30 @@ class RateRequestBuilder
                     $attributedProductId = $childItem->getProductId();
                 }
             }
+            $bundleItemInventories = [];
+            if ($item->getProductType() === Bundle::TYPE_CODE) {
+                foreach ($item->getChildren() as $childItem) {
+                    if ($childItem->getSku() && isset($itemsSourceCodes[$childItem->getSku()])) {
+                        foreach ($itemsSourceCodes[$childItem->getSku()] as $source) {
+                            if (!isset($bundleItemInventories[$source['source']])
+                                || $bundleItemInventories[$source['source']] > $source['quantity']
+                            ) {
+                                $bundleItemInventories[$source['source']] = $source['quantity'];
+                            }
+                        }
+                    }
+                }
+                if ($bundleItemInventories) {
+                    $resultedInventories = [];
+                    foreach ($bundleItemInventories as $srouceCode => $quantity) {
+                        $resultedInventories[] = [
+                            'source' => $srouceCode,
+                            'quantity' => $quantity
+                        ];
+                    }
+                    $bundleItemInventories = $resultedInventories;
+                }
+            }
 
             $attributedProduct = $this->productRepository->getById(
                 $attributedProductId,
@@ -190,6 +221,11 @@ class RateRequestBuilder
 
             $isVirtual = (bool) $item->getIsVirtual();
 
+            if (!isset($itemsSourceCodes[$attributedProduct->getSku()]) && isset($bundleItemInventories)) {
+                $inventories = $bundleItemInventories;
+            } else {
+                $inventories = $itemsSourceCodes[$attributedProduct->getSku()] ?? [];
+            }
             $apiRequestBody['products'][] = [
                 'quoteItemId' => $item->getItemId() ?? $item->getQuoteItemId(),
                 'priceWithTax' => round((float) $item->getBasePriceInclTax(), 2),
@@ -200,7 +236,7 @@ class RateRequestBuilder
                 'sku' => $item->getSku(),
                 'isVirtual' => $isVirtual,
                 'attributes' => $attributes,
-                'inventories' => $itemsSourceCodes[$attributedProduct->getSku()] ?? []
+                'inventories' => $inventories
             ];
         }
 
