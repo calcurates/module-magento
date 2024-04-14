@@ -1,4 +1,4 @@
-FROM php:8.2-fpm-alpine
+FROM php:8.3-fpm-alpine
 
 # Update repo and install some utilites
 RUN set -xe \
@@ -78,7 +78,8 @@ RUN set -xe \
     && rm -rf /tmp/* /var/cache/apk/*
 
 # Composer
-COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+# https://github.com/markshust/docker-magento/issues/1084
+COPY --from=composer:2.6 /usr/bin/composer /usr/local/bin/composer
 ENV COMPOSER_HOME=/.composer
 COPY auth.json /.composer/
 

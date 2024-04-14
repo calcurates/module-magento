@@ -1,5 +1,3 @@
-version: '3.8'
-
 volumes:
   Magento2DataVolume:
 
@@ -14,6 +12,7 @@ services:
       - bootstrap.memory_lock=true
       - cluster.routing.allocation.disk.threshold_enabled=false
       - "OPENSEARCH_JAVA_OPTS=-Xms256m -Xmx256m -Xlog:disable"
+      - "OPENSEARCH_INITIAL_ADMIN_PASSWORD=^paSswoRt1~"
     container_name: magento2-opensearch
     ports:
       - "9200:9200"
@@ -44,6 +43,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - '.docker/php/php.ini:/usr/local/etc/php/php.ini'
+      - '.docker/php/php-fpm.conf:/usr/local/etc/php-fpm.conf'
       - '.docker/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini'
       - 'Magento2DataVolume:/var/www/magento2'
       - './Api:/var/www/magento2/app/code/Calcurates/ModuleMagento/Api'

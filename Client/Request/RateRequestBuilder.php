@@ -150,9 +150,10 @@ class RateRequestBuilder
             $itemsSkus[$item->getSku()] = $item->getSku();
             $itemsSkus[$item->getProduct()->getData('sku')] = $item->getProduct()->getData('sku');
             if ($item->getProductType() === Bundle::TYPE_CODE) {
-                foreach ($item->getChildren() as $childItem)
-                if ($childItem && $childItem->getSku()) {
-                    $itemsSkus[$childItem->getSku()] = $childItem->getSku();
+                foreach ($item->getChildren() as $childItem) {
+                    if ($childItem && $childItem->getSku()) {
+                        $itemsSkus[$childItem->getSku()] = $childItem->getSku();
+                    }
                 }
             }
         }

@@ -37,7 +37,7 @@ if [[ -f "/mg24.tar.gz" || "${isSourced}" -eq "0" ]]; then
             --admin-password=admin123 \
             --language=en_US \
             --currency=USD \
-            --timezone=Europe/Minsk \
+            --timezone=UTC \
             --use-rewrites=1 \
             --use-secure=0 \
             --search-engine=opensearch \
@@ -66,7 +66,7 @@ if [[ -f "/mg24.tar.gz" || "${isSourced}" -eq "0" ]]; then
     echo "Configuring the phpcs..."
     php vendor/bin/phpcs --config-set default_standard Magento2
     php vendor/bin/phpcs --config-set colors 1
-    php vendor/bin/phpcs --config-set installed_paths /var/www/magento2/vendor/magento/magento-coding-standard/,/var/www/magento2/vendor/phpcompatibility/php-compatibility/PHPCompatibility
+    php vendor/bin/phpcs --config-set installed_paths /var/www/magento2/vendor/magento/magento-coding-standard/,/var/www/magento2/vendor/magento/php-compatibility-fork/PHPCompatibility
     php vendor/bin/phpcs --config-set severity 7
     php vendor/bin/phpcs --config-set show_progress 1
 
@@ -75,7 +75,7 @@ if [[ -f "/mg24.tar.gz" || "${isSourced}" -eq "0" ]]; then
 
 
     echo "Configuring the php-cs-fixer..."
-    curl -L -o /php-cs-fixer.phar https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.51.0/php-cs-fixer.phar
+    curl -L -o /php-cs-fixer.phar https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.53.0/php-cs-fixer.phar
     chmod 755 /php-cs-fixer.phar
     echo "php /php-cs-fixer.phar fix ${PWD}/app/code/Calcurates/ModuleMagento --rules=@PSR12" > /php-cs-fixer
     chmod 755 /php-cs-fixer
