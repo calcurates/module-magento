@@ -1,11 +1,22 @@
 <?php
 /**
  * @var $block Magento\Framework\View\Element\Template
+ * @var $secureRenderer Magento\Framework\View\Helper\SecureHtmlRenderer
  */
 ?>
+<?php
+$scriptString = 'window.calcurates_module_enabled = true;' . PHP_EOL;
+if ($block->getAmOscEnabled()) {
+    $scriptString .= 'window.am_osc_enabled = true;';
+}
+?>
+<?php if (isset($secureRenderer)): ?>
+    <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
+<?php else: ?>
 <script>
     window.calcurates_module_enabled = true;
     <?php if ($block->getAmOscEnabled()): ?>
     window.am_osc_enabled = true;
     <?php endif; ?>
 </script>
+<?php endif; ?>
