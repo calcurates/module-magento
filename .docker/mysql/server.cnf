@@ -27,3 +27,5 @@ key_buffer_size=1M
 #join_buffer_size = 6M #myisam
 
 innodb_fast_shutdown = 0
+
+log_bin_trust_function_creators = 1
