@@ -61,7 +61,7 @@ endif; ?>
                 <b><?= $block->escapeHtml($viewModel->getMethodPrice($splitShipment['price'] ?? 0)) ?></b>
                 <br>
                 <span>
-                    <?= $block->escapeHtml(__('Included SKUs: %1', implode(', ', $splitShipment['products'] ?? []))) ?>
+                    <?= $block->escapeHtml(__('Included SKUs: %1', implode(', ', $viewModel->getProductList($splitShipment) ?? []))) ?>
                 </span><br>
             <?php endforeach; ?>
             <?php if (count($viewModel->getPackages())): ?>

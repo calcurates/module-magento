@@ -110,6 +110,24 @@ class MetaRate implements ArgumentInterface
     }
 
     /**
+     * @param array $itemData
+     * @return array
+     */
+    public function getProductSkuQty(array $itemData): array
+    {
+        $result = [];
+        foreach ($itemData as $productItem) {
+            foreach ($productItem as $itemId => $qty) {
+                $item = $this->getQuoteItemById($itemId);
+                if ($item) {
+                    $result[$item->getSku()] = $item->getSku() . ' (' . $qty . ')';
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @param int $originId
      * @param string $method
      * @return bool

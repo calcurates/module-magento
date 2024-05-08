@@ -18,6 +18,7 @@ $viewModel = $block->getViewModel();
 $origins = $viewModel->getMetaRateData()->getOriginData();
 $rates = $viewModel->getMetaRateData()->getRatesData();
 $productData = $viewModel->getMetaRateData()->getProductData();
+$productStockData = $viewModel->getMetaRateData()->getProductQtys();
 $shipmentCount = 1;
 $isSelected = $block->getActiveMethod() && $block->getActiveMethod()->getCode() === 'calcurates_metarate';
 ?>
@@ -28,7 +29,11 @@ $isSelected = $block->getActiveMethod() && $block->getActiveMethod()->getCode() 
 >
 <?php foreach ($origins ?? [] as $origin): ?>
     <b><?= $block->escapeHtml(__('Shipment %1 of %2', $shipmentCount++, count($origins))) ?></b><br>
-    <?php $itemIds = $viewModel->getSkusListByItemIds($productData[$origin['id']] ?? []) ?>
+    <?php
+    $itemIds = $productStockData
+        ? $viewModel->getProductSkuQty($productStockData[$origin['id']] ?? [])
+        : $viewModel->getSkusListByItemIds($productData[$origin['id']] ?? [])
+    ?>
     <span><?= $block->escapeHtml(__('Included SKUs: %1', implode(', ', $itemIds))) ?></span><br>
     <?php if (!$block->getIsPreview()): ?>
     <select name="origin[<?= /** @noEscape  */ $origin['id'] ?>]"

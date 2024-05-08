@@ -80,6 +80,7 @@ class MetarateTotal
         $quoteData = $this->getQuoteData->get($quote->getId());
         $splitShipmentData = $quoteData->getSplitShipments();
         $productData = $this->metarateData->getProductData();
+        $proudctQty = $this->metarateData->getProductQtys();
         if (!$splitShipmentData || !$this->metarateData->getRatesData()) {
             $shippingAddress = $quote->getShippingAddress();
             $total->addTotalAmount($subject->getCode(), $shippingAddress->getShippingAmount());
@@ -99,6 +100,9 @@ class MetarateTotal
                         $splitShipment['cost'] = $rate->getCost();
                         $splitShipment['price'] = $rate->getPrice();
                         $splitShipment['products'] = $this->getProductSku($quote, $productData[$origin]);
+                        if ($proudctQty) {
+                            $splitShipment['product_qty'] = $this->getProductSkuQty($quote, $proudctQty[$origin]);
+                        }
                         $splitShipment['title'] = $rate->getMethodTitle();
                         $splitShipment['code'] = $this->metarateData->getOriginData($origin)['code'];
                         $splitShipmentData[$key] = $splitShipment;
@@ -123,6 +127,28 @@ class MetarateTotal
         foreach ($itemId as $id) {
             $item = $quote->getItemById($id);
             $result[] = $item->getSku();
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param Quote $quote
+     * @param array $itemData
+     * @return array
+     */
+    private function getProductSkuQty(Quote $quote, array $itemData): array
+    {
+        $result = [];
+        foreach ($itemData as $productItem) {
+            foreach ($productItem as $itemId => $qty) {
+                $item = $quote->getItemById($itemId);
+                if (isset($result[$item->getSku()])) {
+                    $result[$item->getSku()] += $qty;
+                } else {
+                    $result[$item->getSku()] = $qty;
+                }
+            }
         }
 
         return $result;
