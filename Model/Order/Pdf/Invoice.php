@@ -299,7 +299,7 @@ class Invoice extends MagentoInvoice
                     }
                 }
 
-                $skusText = __('Included SKUs: %1', implode(', ', $splitShipment['products'] ?? []));
+                $skusText = __('Included SKUs: %1', implode(', ', $this->viewModel->getProductList($splitShipment) ?? []));
                 if (trim($skusText) != '') {
                     $skusText = preg_replace('/<br[^>]*>/i', "\n", $skusText);
                     foreach ($this->string->split($skusText, 60, true, true) as $_value) {

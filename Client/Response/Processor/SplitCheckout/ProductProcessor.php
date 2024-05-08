@@ -41,8 +41,12 @@ class ProductProcessor implements ResponseProcessorInterface
     public function process(Result $result, array &$response, CartInterface $quote): void
     {
         $products = [];
+        $qtys = [];
         foreach ($response['products'] as $product) {
             $products[] = $product['quoteItemId'];
+            if (isset($product['quantity'])) {
+                $qtys[] = [$product['quoteItemId'] => $product['quantity']];
+            }
         }
 
         foreach ($quote->getAllItems() as $quoteItem) {
@@ -55,5 +59,6 @@ class ProductProcessor implements ResponseProcessorInterface
         }
 
         $this->metaRateData->setProductData($response['origin']['id'], $products);
+        $this->metaRateData->setProductQtys($response['origin']['id'], $qtys);
     }
 }

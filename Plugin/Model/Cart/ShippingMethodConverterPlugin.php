@@ -141,6 +141,7 @@ class ShippingMethodConverterPlugin
                 }
                 $calcuratesMetaRate->setRates($shippings);
                 $calcuratesMetaRate->setProducts($this->metaRateData->getProductData($originId));
+                $calcuratesMetaRate->setProductQtys($this->metaRateData->getProductQtys($originId));
                 $calcuratesMetaRate->setOriginId($originId);
                 $metaRates[] = $calcuratesMetaRate;
             }
