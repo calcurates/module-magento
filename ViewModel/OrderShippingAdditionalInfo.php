@@ -132,8 +132,21 @@ class OrderShippingAdditionalInfo implements ArgumentInterface
     }
 
     /**
-     * @return OrderDataInterface
+     * @param array $splitShipmentData
+     * @return array
      */
+    public function getProductList($splitShipmentData): array
+    {
+        if (isset($splitShipmentData['product_qty'])) {
+            $result = [];
+            foreach ($splitShipmentData['product_qty'] as $productSku => $qty) {
+                $result[] = $productSku . ' (' . $qty . ')';
+            }
+            return $result;
+        }
+        return $splitShipmentData['products'];
+    }
+
     public function getOrderData(): OrderDataInterface
     {
         return $this->orderData;

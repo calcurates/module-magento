@@ -62,4 +62,20 @@ class MetaRate extends AbstractSimpleObject implements MetaRateInterface
     {
         $this->setData(self::ORIGIN, $id);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setProductQtys(array $productQtys): void
+    {
+        $this->setData(self::QTYS, $productQtys);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductQtys(): ?array
+    {
+        return $this->_get(self::QTYS);
+    }
 }

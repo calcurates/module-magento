@@ -31,6 +31,11 @@ class MetaRateData extends DataObject implements MetaRateDataInterface
     protected $origins = [];
 
     /**
+     * @var array
+     */
+    protected $productQtys;
+
+    /**
      * @param string|null $code
      * @return array|null
      */
@@ -94,5 +99,27 @@ class MetaRateData extends DataObject implements MetaRateDataInterface
     public function setOriginData(int $origin, array $originData): void
     {
         $this->origins[$origin] = $originData;
+    }
+
+    /**
+     * @param string|null $code
+     * @return array|null
+     */
+    public function getProductQtys($code = null): ?array
+    {
+        if (null === $code) {
+            return $this->productQtys;
+        }
+        return $this->productQtys[$code] ?? null;
+    }
+
+    /**
+     * @param int $origin
+     * @param array $productData
+     * @return void
+     */
+    public function setProductQtys(int $origin, array $productData): void
+    {
+        $this->productQtys[$origin] = $productData;
     }
 }

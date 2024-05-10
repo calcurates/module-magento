@@ -51,4 +51,17 @@ interface MetaRateDataInterface
      * @return void
      */
     public function setOriginData(int $origin, array $originData): void;
+
+    /**
+     * @param string|null $code
+     * @return array|null
+     */
+    public function getProductQtys($code = null): ?array;
+
+    /**
+     * @param int $origin
+     * @param array $productData
+     * @return void
+     */
+    public function setProductQtys(int $origin, array $productData): void;
 }

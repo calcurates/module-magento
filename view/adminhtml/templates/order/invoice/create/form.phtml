@@ -60,7 +60,7 @@
                                     <br>
                                     <span>
                                         <?= $block->escapeHtml(
-                                            __('Included SKUs: %1', implode(', ', $splitShipment['products'] ?? []))
+                                            __('Included SKUs: %1', implode(', ', $viewModel->getProductList($splitShipment) ?? []))
                                         ) ?>
                                     </span><br>
                                 <?php endforeach; ?>

@@ -164,9 +164,18 @@ define([
                 })
                 result.push(...items, ...bundleItems)
 
-                return result.filter(function (item) {
+                result = result.filter(function (item) {
                     return shipment.products.includes(parseInt(item.item_id))
                 })
+
+                result.forEach(function (item) {
+                    let originQty = shipment.product_qtys.find(function (qtyItem) {
+                        return !!qtyItem[item.item_id]
+                    })
+                    item.qty = (originQty && originQty[item.item_id]) ? originQty[item.item_id] : item.qty
+                })
+
+                return result
             },
 
             /**

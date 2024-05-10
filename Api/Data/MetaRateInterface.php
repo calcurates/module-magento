@@ -15,6 +15,7 @@ interface MetaRateInterface
     public const RATES = 'rates';
     public const PRODUCTS = 'products';
     public const ORIGIN = 'origin';
+    public const QTYS = 'product_qty';
 
     /**
      * @return \Magento\Quote\Api\Data\ShippingMethodInterface[]
@@ -48,4 +49,15 @@ interface MetaRateInterface
      * @return void
      */
     public function setOriginId(int $id): void;
+
+    /**
+     * @param array $products
+     * @return void
+     */
+    public function setProductQtys(array $products): void;
+
+    /**
+     * @return \Magento\Catalog\Api\Data\ProductInterface[]|null
+     */
+    public function getProductQtys(): ?array;
 }
