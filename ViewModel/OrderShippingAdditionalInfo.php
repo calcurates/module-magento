@@ -144,7 +144,7 @@ class OrderShippingAdditionalInfo implements ArgumentInterface
             }
             return $result;
         }
-      return $splitShipmentData['products'];
+        return $splitShipmentData['products'];
     }
 
     public function getOrderData(): OrderDataInterface
