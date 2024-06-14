@@ -65,8 +65,17 @@ class CalculateTotalsInformation
         try {
             $splitShipments = $addressInformation->getExtensionAttributes()->getCalcuratesSplitShipments();
             $splitShipmentArray = [];
-            foreach ($splitShipments as $splitShipment) {
-                $splitShipmentArray[] = $splitShipment->__toArray();
+            if (!$splitShipments && $addressInformation->getAddress()) {
+                $advancedConditions = $addressInformation->getAddress()
+                    ->getExtensionAttributes()
+                    ->getAdvancedConditions();
+                if ($advancedConditions) {
+                    $splitShipmentArray = $quoteData->getSplitShipments();
+                }
+            } else {
+                foreach ($splitShipments as $splitShipment) {
+                    $splitShipmentArray[] = $splitShipment->__toArray();
+                }
             }
             $quoteData->setSplitShipments($splitShipmentArray);
         } catch (\Exception $exception) {
