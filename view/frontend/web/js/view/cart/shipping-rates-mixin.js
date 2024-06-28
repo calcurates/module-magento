@@ -19,11 +19,27 @@ define([
                 template: 'Calcurates_ModuleMagento/cart/shipping-rates'
             },
 
+            initObservable: function () {
+                this._super();
+                this.shippingRates.subscribe(this.preselectSingleRate.bind(this));
+                return this;
+            },
+
             selectShippingMethod: function (methodData) {
                 checkoutData.setSelectedSplitCheckoutShipments(
                     this.getMinimumSplitShipmentCodes(methodData)
                 )
                 return this._super(methodData)
+            },
+
+            /**
+             * If only one shipping rate is available, pre-select it
+             * @param rates
+             */
+            preselectSingleRate: function (rates) {
+                if (rates.length === 1) {
+                    this.selectShippingMethod(rates[0])
+                }
             },
 
             /**
