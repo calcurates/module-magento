@@ -66,10 +66,13 @@ class CalculateTotalsInformation
             $splitShipments = $addressInformation->getExtensionAttributes()->getCalcuratesSplitShipments();
             $splitShipmentArray = [];
             if (!$splitShipments && $addressInformation->getAddress()) {
-                $advancedConditions = $addressInformation->getAddress()
-                    ->getExtensionAttributes()
-                    ->getAdvancedConditions();
-                if ($advancedConditions) {
+                $extensionAttributes = $addressInformation->getAddress()
+                    ->getExtensionAttributes();
+                if (method_exists($extensionAttributes,'getAdvancedConditions')) {
+                    $advancedConditions = $extensionAttributes->getAdvancedConditions();
+                }
+
+                if (isset($advancedConditions)) {
                     $splitShipmentArray = $quoteData->getSplitShipments();
                 }
             } else {
