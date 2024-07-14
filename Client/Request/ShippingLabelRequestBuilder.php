@@ -125,7 +125,7 @@ class ShippingLabelRequestBuilder
                 'priceWithTax' => round($item->getBasePriceInclTax() ?? 0, 2),
                 'priceWithoutTax' => round($item->getBasePrice() ?? 0, 2),
                 'discountAmount' => round($item->getBaseDiscountAmount() ?? 0 / $item->getQty(), 2),
-                'quantity' => round($item->getQty() ?? 0, 0),
+                'quantity' => ceil((float) $item->getQty() ?? 0),
                 'weight' => $isVirtual ? 0 : $item->getWeight(),
                 'sku' => $item->getSku(),
                 'isVirtual' => $isVirtual,
