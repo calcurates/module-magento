@@ -90,10 +90,9 @@ class GetSourceCodesPerSkus
         $manageStockBySku = $this->getManageStockPerSku($skus);
         foreach ($rows as $row) {
             $manageStock = $manageStockBySku[$row['sku']] ?? 1;
-
             $quantity = null;
             if ($manageStock) {
-                $quantity = $row['status'] == SourceItemInterface::STATUS_IN_STOCK ? floor($row['quantity']) : 0;
+                $quantity = $row['status'] == SourceItemInterface::STATUS_IN_STOCK ? ceil((float) $row['quantity']) : 0;
             }
             $sourcesBySkus[$row['sku']][] = [
                 'source' => $row['source_code'],
