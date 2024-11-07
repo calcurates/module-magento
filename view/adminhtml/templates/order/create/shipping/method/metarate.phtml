@@ -48,11 +48,17 @@ $isSelected = $block->getActiveMethod() && $block->getActiveMethod()->getCode() 
             <?= $block->escapeHtml(__('Please select a shipping method...')); ?>
         </option>
         <?php foreach ($rates[$origin['id']] as $rate): ?>
-            <option value="<?= /** @noEscape  */ $rate->getMethod() ?>"
-                <?= $viewModel->isSavedMethod($origin['id'], $rate->getMethod()) ? ' selected="selected"' : ''; ?>
-            >
-                <?= /** @noEscape  */ $viewModel->renderShippingRateOption($rate) ?>
-            </option>
+            <?php if ($rate->getErrorMessage()): ?>
+                <option value="<?= /** @noEscape  */ $viewModel->getErrorRateOptionValue($rate) ?>" disabled>
+                    <?= /** @noEscape  */ $viewModel->renderShippingRateErrorOption($rate) ?>
+                </option>
+            <?php else: ?>
+                <option value="<?= /** @noEscape  */ $rate->getMethod() ?>"
+                    <?= $viewModel->isSavedMethod($origin['id'], $rate->getMethod()) ? ' selected="selected"' : ''; ?>
+                >
+                    <?= /** @noEscape  */ $viewModel->renderShippingRateOption($rate) ?>
+                </option>
+            <?php endif; ?>
         <?php endforeach; ?>
     </select><br>
         <?php if (isset($secureRenderer)): ?>
@@ -65,7 +71,7 @@ $isSelected = $block->getActiveMethod() && $block->getActiveMethod()->getCode() 
     <?php else: ?>
         <span><?= $block->escapeHtml(__('Method:'))?></span>
         <?php foreach ($rates[$origin['id']] as $rate): ?>
-            <?php if ($viewModel->isSavedMethod($origin['id'], $rate->getMethod())): ?>
+            <?php if (!$rate->getErrorMessage() && $viewModel->isSavedMethod($origin['id'], $rate->getMethod())): ?>
                 <span><?= /** @noEscape  */ $viewModel->renderShippingRateOption($rate) ?></span><br>
             <?php endif; ?>
         <?php endforeach; ?>
