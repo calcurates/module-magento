@@ -16,6 +16,7 @@ use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Quote\Model\Quote\Address\RateResult\Method;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Tax\Helper\Data;
+use Magento\Quote\Model\Quote\Address\RateResult\Error;
 
 class MetaRate implements ArgumentInterface
 {
@@ -168,6 +169,28 @@ class MetaRate implements ArgumentInterface
             }
         }
         return sprintf($format, $rate->getMethodTitle(), $price, $renderedInclTax);
+    }
+
+    /**
+     * @param Error $rate
+     * @param string $format
+     * @return string
+     */
+    public function renderShippingRateErrorOption(
+        Error $rate,
+        string $format = '%s - %s'
+    ): string {
+        return sprintf($format, $rate->getMethodTitle(), $rate->getErrorMessage());
+    }
+
+    /**
+     * @param Error $rate
+     * @return string
+     */
+    public function getErrorRateOptionValue(
+        Error $rate
+    ): string {
+        return sprintf('%s_%s', $rate->getCarrier(), strtolower(trim($rate->getMethodTitle())));
     }
 
     /**
