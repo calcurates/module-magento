@@ -68,7 +68,7 @@ class CalculateTotalsInformation
             if (!$splitShipments && $addressInformation->getAddress()) {
                 $extensionAttributes = $addressInformation->getAddress()
                     ->getExtensionAttributes();
-                if (method_exists($extensionAttributes,'getAdvancedConditions')) {
+                if (method_exists($extensionAttributes, 'getAdvancedConditions')) {
                     $advancedConditions = $extensionAttributes->getAdvancedConditions();
                 }
 
