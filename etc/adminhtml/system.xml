@@ -286,6 +286,11 @@
                             ]]>
                         </comment>
                     </field>
+                    <field id="rate_request_cache_timeout" translate="label" type="text" sortOrder="26" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                        <label>Rates request cache timeout (seconds)</label>
+                        <validate>validate-greater-than-zero validate-digits required-entry</validate>
+                        <config_path>carriers/calcurates/rate_request_cache_timeout</config_path>
+                    </field>
                     <field id="debug" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                         <label>Enable Debug</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
