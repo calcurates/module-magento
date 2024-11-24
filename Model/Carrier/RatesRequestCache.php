@@ -35,8 +35,18 @@ class RatesRequestCache
      */
     private $encryptor;
 
+    /**
+     * @var Config
+     */
     private $config;
 
+    /**
+     * RatesRequestCache constructor.
+     * @param SerializerInterface $serializer
+     * @param CacheInterface $cache
+     * @param EncryptorInterface $encryptor
+     * @param Config $config
+     */
     public function __construct(
         SerializerInterface $serializer,
         CacheInterface $cache,
