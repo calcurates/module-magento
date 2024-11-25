@@ -12,13 +12,13 @@ use Calcurates\ModuleMagento\Api\CalcuratesCacheInterface;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Serialize\SerializerInterface;
+use Calcurates\ModuleMagento\Model\Config;
 
 class RatesRequestCache
 {
     public const TYPE_IDENTIFIER = CalcuratesCacheInterface::TYPE_IDENTIFIER;
     public const CACHE_TAG = 'calcurates_rates';
     public const RATES_IDENTIFIER = 'rates';
-    public const LIFETIME = 60;
 
     /**
      * @var SerializerInterface
@@ -36,16 +36,27 @@ class RatesRequestCache
     private $encryptor;
 
     /**
-     * Cache constructor.
+     * @var Config
+     */
+    private $config;
+
+    /**
+     * RatesRequestCache constructor.
      * @param SerializerInterface $serializer
      * @param CacheInterface $cache
      * @param EncryptorInterface $encryptor
+     * @param Config $config
      */
-    public function __construct(SerializerInterface $serializer, CacheInterface $cache, EncryptorInterface $encryptor)
-    {
+    public function __construct(
+        SerializerInterface $serializer,
+        CacheInterface $cache,
+        EncryptorInterface $encryptor,
+        Config $config
+    ) {
         $this->serializer = $serializer;
         $this->cache = $cache;
         $this->encryptor = $encryptor;
+        $this->config = $config;
     }
 
     /**
@@ -83,7 +94,7 @@ class RatesRequestCache
             $data,
             $cacheKey,
             [static::CACHE_TAG],
-            static::LIFETIME
+            $this->config->getRateRequestCacheTimeout($storeId)
         );
     }
 

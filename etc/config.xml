@@ -19,6 +19,7 @@
                 <specificerrmsg>This shipping method is not available. To use this shipping method, please contact us.</specificerrmsg>
                 <missing_address_message>Please fill in the required delivery address fields to get shipping quotes</missing_address_message>
                 <info_message_display_position>in_tooltip</info_message_display_position>
+                <rate_request_cache_timeout>86400</rate_request_cache_timeout>
                 <debug>0</debug>
                 <other_shipping_methods_action>2</other_shipping_methods_action>
                 <api_get_rates_timeout>10</api_get_rates_timeout>
