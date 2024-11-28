@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Calcurates Team
  * @copyright Copyright © 2022 Calcurates (https://www.calcurates.com)
