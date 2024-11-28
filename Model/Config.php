@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Calcurates Team
  * @copyright Copyright © 2019-2020 Calcurates (https://www.calcurates.com)
@@ -34,6 +35,7 @@ class Config implements ConfigProviderInterface
     public const MISSING_ADDRESS_MESSAGE = 'missing_address_message';
     public const CONFIG_TITLE = 'title';
     public const API_GET_RATES_TIMEOUT = 'api_get_rates_timeout';
+    public const RATE_REQUEST_CACHE_TIMEOUT = 'rate_request_cache_timeout';
     public const SHIPPING_METHODS_FOR_FALLBACK = 'shipping_methods_for_fallback';
     public const DELIVERY_DATE_DEFAULT_VALUE_TYPE = 'delivery_date_default_value_type';
     public const DELIVERY_DATE_DISPLAY = 'delivery_date_display';
@@ -233,6 +235,19 @@ class Config implements ConfigProviderInterface
     {
         return (int)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::API_GET_RATES_TIMEOUT,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param int|string $storeId
+     * @return int
+     */
+    public function getRateRequestCacheTimeout($storeId): int
+    {
+        return (int)$this->scopeConfig->getValue(
+            self::CONFIG_GROUP . self::RATE_REQUEST_CACHE_TIMEOUT,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );
