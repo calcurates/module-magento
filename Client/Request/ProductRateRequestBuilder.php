@@ -109,7 +109,7 @@ class ProductRateRequestBuilder
         $apiRequestBody = [
             'promoCode' => '',
             'storeView' => $storeId,
-            'customerGroup' => $customerGroupId,
+            'customerGroup' => (string)$customerGroupId,
             'shipTo' => $shipTo,
             'products' => [],
         ];
