@@ -15,6 +15,7 @@ use Calcurates\ModuleMagento\Model\Config;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Shipping\Model\Shipping;
+use Magento\Framework\App\Request\DataPersistorInterface;
 
 class ShippingPlugin
 {
@@ -39,14 +40,24 @@ class ShippingPlugin
     private $showFallBackMethod = false;
 
     /**
+     * @var DataPersistorInterface
+     */
+    private $dataPersistor;
+
+    /**
      * ShippingPlugin constructor.
      * @param Config $config
      * @param ScopeConfigInterface $scopeConfig
+     * @param DataPersistorInterface $dataPersistor
      */
-    public function __construct(Config $config, ScopeConfigInterface $scopeConfig)
-    {
+    public function __construct(
+        Config $config,
+        ScopeConfigInterface $scopeConfig,
+        DataPersistorInterface $dataPersistor
+    ) {
         $this->config = $config;
         $this->scopeConfig = $scopeConfig;
+        $this->dataPersistor = $dataPersistor;
     }
 
     /**
@@ -95,6 +106,9 @@ class ShippingPlugin
             && !$this->showFallBackMethod
         ) {
             return $subject;
+        }
+        if ($this->dataPersistor->get('vat_id')) {
+            $request->setVatId($this->dataPersistor->get('vat_id'));
         }
         $result = $proceed($carrierCode, $request);
         if ($carrierCode == Carrier::CODE) {

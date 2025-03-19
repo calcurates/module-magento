@@ -308,6 +308,24 @@
         </arguments>
     </type>
 
+    <type name="Calcurates\ModuleMagento\Plugin\Model\Quote\TotalsCollectorPlugin">
+        <arguments>
+            <argument name="dataPersistor" xsi:type="object">Calcurates\ModuleMagento\Model\Request\DataPersistor</argument>
+        </arguments>
+    </type>
+
+    <type name="Calcurates\ModuleMagento\Plugin\Model\Shipping\ShippingPlugin">
+        <arguments>
+            <argument name="dataPersistor" xsi:type="object">Calcurates\ModuleMagento\Model\Request\DataPersistor</argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Quote\Model\Quote\TotalsCollector">
+        <plugin name="Calcurates_ModuleMagento::SetVatId"
+                type="Calcurates\ModuleMagento\Plugin\Model\Quote\TotalsCollectorPlugin"
+                sortOrder="10"/>
+    </type>
+
     <type name="Magento\Checkout\Api\ShippingInformationManagementInterface">
         <plugin name="Calcurates_ModuleMagento::SaveDeliveryDatesPlugin"
                 type="Calcurates\ModuleMagento\Plugin\QuoteDataSave\Checkout\Model\SaveDeliveryDateFromShippingInfoPlugin"
