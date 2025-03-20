@@ -143,7 +143,8 @@ class RateRequestBuilder
             // setting "Use store codes in URL"
             'storeView' => $storeId,
             'promoCode' => (string)$quote->getCouponCode(),
-            'estimate' => $estimate
+            'estimate' => $estimate,
+            'vatNumber' => $request->getVatId(),
         ];
 
         $itemsSkus = [];
