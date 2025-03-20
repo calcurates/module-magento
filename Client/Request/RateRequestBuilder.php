@@ -134,6 +134,7 @@ class RateRequestBuilder
                 'contactName' => $customerData['contactName'],
                 'companyName' => $customerData['companyName'],
                 'contactPhone' => $customerData['contactPhone'],
+                'vatNumber' => $request->getVatId(),
             ],
             'extraFee' => [],
             'customerGroup' => (string)($customer->getGroupId() ?: 0),
@@ -144,7 +145,6 @@ class RateRequestBuilder
             'storeView' => $storeId,
             'promoCode' => (string)$quote->getCouponCode(),
             'estimate' => $estimate,
-            'vatNumber' => $request->getVatId(),
         ];
 
         $itemsSkus = [];

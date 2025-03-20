@@ -79,7 +79,7 @@ RUN set -xe \
 
 # Composer
 # https://github.com/markshust/docker-magento/issues/1084
-COPY --from=composer:2.6 /usr/bin/composer /usr/local/bin/composer
+COPY --from=composer:lts /usr/bin/composer /usr/local/bin/composer
 ENV COMPOSER_HOME=/.composer
 COPY auth.json /.composer/
 

@@ -3,14 +3,14 @@
 
 set -e
 
-until mysql --user="$MYSQL_USER" --password="$MYSQL_PASSWORD" --host="mysql" --port="3306" -e "SELECT VERSION()"; do
+until mariadb --skip-ssl --user="$MYSQL_USER" --password="$MYSQL_PASSWORD" --host="mysql" --port="3306" -e "SELECT VERSION()"; do
   >&2 echo "MySQL is unavailable - waiting"
   sleep 1
 done
 
 >&2 echo "MySQL is up"
 
-isSourced=`mysql --silent --skip-column-names --user="$MYSQL_USER" --password="$MYSQL_PASSWORD" --host="mysql" --port="3306" -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$MYSQL_DATABASE';"`
+isSourced=`mariadb --skip-ssl --silent --skip-column-names --user="$MYSQL_USER" --password="$MYSQL_PASSWORD" --host="mysql" --port="3306" -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$MYSQL_DATABASE';"`
 #isSourced=0
 if [[ -f "/mg24.tar.gz" || "${isSourced}" -eq "0" ]]; then
     echo "Copying the Magento2 template to the working directory..."
@@ -75,7 +75,7 @@ if [[ -f "/mg24.tar.gz" || "${isSourced}" -eq "0" ]]; then
 
 
     echo "Configuring the php-cs-fixer..."
-    curl -L -o /php-cs-fixer.phar https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.65.0/php-cs-fixer.phar
+    curl -L -o /php-cs-fixer.phar https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.73.1/php-cs-fixer.phar
     chmod 755 /php-cs-fixer.phar
     echo "php /php-cs-fixer.phar fix ${PWD}/app/code/Calcurates/ModuleMagento --rules=@PSR12" > /php-cs-fixer
     chmod 755 /php-cs-fixer
