@@ -24,6 +24,9 @@ class CartWeight implements OutputProcessorInterface
      */
     private $variableTemplate = '{cart_weight}';
 
+    /**
+     * @var ScopeConfigInterface
+     */
     private $config;
 
     /**
