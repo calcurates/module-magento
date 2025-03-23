@@ -27,6 +27,7 @@ class RatesResponseProcessor
     public const CALCURATES_IMAGE_URL = 'calcurates_image_url';
     public const CALCURATES_TAX_AMOUNT = 'tax_amount';
     public const CALCURATES_CURRENCY = 'currency';
+    public const CALCURATES_CUSTOM_NUMBER = 'custom_number';
 
     /**
      * @var ResultFactory
