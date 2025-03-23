@@ -88,10 +88,10 @@ class CalcuratesCachedClient implements CalcuratesClientInterface
         if (null === $rates) {
             try {
                 $rates = $this->calcuratesClient->getRates($request, $storeId);
+                $this->cache->saveCachedData($request, $storeId, $rates);
             } catch (LocalizedException|ApiException $e) {
                 $rates = [];
             }
-            $this->cache->saveCachedData($request, $storeId, $rates);
         }
 
         return $rates;
