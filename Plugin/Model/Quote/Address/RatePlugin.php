@@ -35,6 +35,7 @@ class RatePlugin
             RatesResponseProcessor::CALCURATES_IMAGE_URL,
             RatesResponseProcessor::CALCURATES_TAX_AMOUNT,
             RatesResponseProcessor::CALCURATES_CURRENCY,
+            RatesResponseProcessor::CALCURATES_CUSTOM_NUMBER,
             ShippingMethodInterface::KEY_METHOD_TITLE
         ];
         foreach ($arrayToImport as $key) {

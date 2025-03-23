@@ -139,6 +139,9 @@ class RateBuilder
         if (!empty($responseRate['rate']['tax'])) {
             $rate->setTaxAmount($responseRate['rate']['tax']);
         }
+        if (array_key_exists('customNumber', $responseRate)) {
+            $rate->setData(RatesResponseProcessor::CALCURATES_CUSTOM_NUMBER, $responseRate['customNumber']);
+        }
 
         return $rate;
     }
