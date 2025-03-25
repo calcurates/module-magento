@@ -134,6 +134,7 @@ class RateRequestBuilder
                 'contactName' => $customerData['contactName'],
                 'companyName' => $customerData['companyName'],
                 'contactPhone' => $customerData['contactPhone'],
+                'vatNumber' => $request->getVatId(),
             ],
             'extraFee' => [],
             'customerGroup' => (string)($customer->getGroupId() ?: 0),
@@ -143,7 +144,7 @@ class RateRequestBuilder
             // setting "Use store codes in URL"
             'storeView' => $storeId,
             'promoCode' => (string)$quote->getCouponCode(),
-            'estimate' => $estimate
+            'estimate' => $estimate,
         ];
 
         $itemsSkus = [];

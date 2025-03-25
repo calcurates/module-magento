@@ -139,6 +139,8 @@
     <type name="Calcurates\ModuleMagento\Plugin\Model\Cart\ShippingMethodConverterPlugin">
         <arguments>
             <argument name="infoMessageProcessors" xsi:type="array">
+                <item name="cart_weight" xsi:type="object">Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage\CartWeight</item>
+                <item name="custom_number" xsi:type="object">Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage\CustomNumber</item>
                 <item name="tax_amount" xsi:type="object">Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage\TaxAmount</item>
                 <item name="delivery_from" xsi:type="object">Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage\DeliveryDates</item>
                 <item name="transit_days" xsi:type="object">Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage\TransitDays</item>
@@ -306,6 +308,24 @@
         <arguments>
             <argument name="dataPersistor" xsi:type="object">Calcurates\ModuleMagento\Model\Request\DataPersistor</argument>
         </arguments>
+    </type>
+
+    <type name="Calcurates\ModuleMagento\Plugin\Model\Quote\TotalsCollectorPlugin">
+        <arguments>
+            <argument name="dataPersistor" xsi:type="object">Calcurates\ModuleMagento\Model\Request\DataPersistor</argument>
+        </arguments>
+    </type>
+
+    <type name="Calcurates\ModuleMagento\Plugin\Model\Shipping\ShippingPlugin">
+        <arguments>
+            <argument name="dataPersistor" xsi:type="object">Calcurates\ModuleMagento\Model\Request\DataPersistor</argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Quote\Model\Quote\TotalsCollector">
+        <plugin name="Calcurates_ModuleMagento::SetVatId"
+                type="Calcurates\ModuleMagento\Plugin\Model\Quote\TotalsCollectorPlugin"
+                sortOrder="10"/>
     </type>
 
     <type name="Magento\Checkout\Api\ShippingInformationManagementInterface">
