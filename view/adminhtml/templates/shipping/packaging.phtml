@@ -109,14 +109,14 @@
                             packageData = this.getPackageData(packageId);
 
                         if (packageData) {
-                            packageData.dimensionsLength ?
-                                lengthField.val(packageData.dimensionsLength) :
+                            packageData.dimensionsOuterLength ?
+                                lengthField.val(packageData.dimensionsOuterLength) :
                                 lengthField.removeClass('validate-greater-than-zero').attr('disabled', true);
-                            packageData.dimensionsWidth ?
-                                widthField.val(packageData.dimensionsWidth) :
+                            packageData.dimensionsOuterWidth ?
+                                widthField.val(packageData.dimensionsOuterWidth) :
                                 widthField.removeClass('validate-greater-than-zero').attr('disabled', true);
-                            packageData.dimensionsHeight ?
-                                heightField.val(packageData.dimensionsHeight) :
+                            packageData.dimensionsOuterHeight ?
+                                heightField.val(packageData.dimensionsOuterHeight) :
                                 heightField.removeClass('validate-greater-than-zero').attr('disabled', true);
 
                             if (templateReplacement) {
