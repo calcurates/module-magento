@@ -96,7 +96,7 @@ class RateRequestValidator
             )
             && !empty($request->getDestCountryId());
         if ($this->config->isAllowPartialAddressRequests($request->getStoreId())) {
-            return $valid;
+            return true;
         }
         if ($valid
             && !$request->getData(ShippingAddEstimateFlagToRequestPlugin::IS_ESTIMATE_ONLY_FLAG)
