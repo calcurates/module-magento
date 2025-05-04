@@ -31,6 +31,12 @@
             <resource ref="Calcurates_ModuleMagento::api" />
         </resources>
     </route>
+    <route url="/V1/calcurates/product/attributes" method="GET">
+        <service class="Calcurates\ModuleMagento\Api\Catalog\Product\ProductAttributeListInterface" method="getItems" />
+        <resources>
+            <resource ref="Calcurates_ModuleMagento::api" />
+        </resources>
+    </route>
 
     <!-- Source -->
     <route url="/V1/calcurates/inventory/sources" method="GET">

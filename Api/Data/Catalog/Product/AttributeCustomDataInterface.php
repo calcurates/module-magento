@@ -11,6 +11,8 @@ namespace Calcurates\ModuleMagento\Api\Data\Catalog\Product;
 
 /**
  * @api
+ * @deprecated since 1.48.10
+ * @see \Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributesCustomDataInterface
  */
 interface AttributeCustomDataInterface
 {

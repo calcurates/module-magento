@@ -12,6 +12,10 @@ namespace Calcurates\ModuleMagento\Model\Catalog\Product;
 use Calcurates\ModuleMagento\Api\Catalog\Product\ProductAttributesListInterface;
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 
+/**
+ * @deprecated since 1.48.10
+ * @see \Calcurates\ModuleMagento\Model\Catalog\Product\AttributeList
+ */
 class AttributesList implements ProductAttributesListInterface
 {
     /**
