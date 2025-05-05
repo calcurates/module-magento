@@ -21,7 +21,7 @@ interface ProductAttributeListInterface
     public const BANNED_ATTRIBUTES = ['available_shipping_methods'];
 
     /**
-     * @return AttributesCustomDataInterface[]
+     * @return \Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributesCustomDataInterface[]
      */
     public function getItems(): array;
 }
