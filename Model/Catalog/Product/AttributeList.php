@@ -106,8 +106,8 @@ class AttributeList implements ProductAttributeListInterface
             if ($type = $this->resolveType($attributesItem, $values)) {
                 $result[] = $this->getCustomDataObject()
                     ->setAttributeCode($attributesItem->getAttributeCode())
-                    ->setFrontendLabel($attributesItem->getDefaultFrontendLabel())
-                    ->setValues($values ?: null)
+                    ->setFrontendLabel((string) $attributesItem->getDefaultFrontendLabel())
+                    ->setValues($values)
                     ->setType($type);
             }
         }

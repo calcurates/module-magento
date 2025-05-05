@@ -25,7 +25,7 @@ class Data extends DataObject implements AttributesCustomDataInterface
     /**
      * @inheritDoc
      */
-    public function getFrontendLabel(): ?string
+    public function getFrontendLabel(): string
     {
         return $this->_getData(self::FRONTEND_LABEL);
     }
@@ -33,7 +33,7 @@ class Data extends DataObject implements AttributesCustomDataInterface
     /**
      * @inheritDoc
      */
-    public function getValues(): ?array
+    public function getValues(): array
     {
         return $this->_getData(self::VALUES);
     }
@@ -49,7 +49,7 @@ class Data extends DataObject implements AttributesCustomDataInterface
     /**
      * @inheritDoc
      */
-    public function setFrontendLabel(?string $frontendLabel): AttributesCustomDataInterface
+    public function setFrontendLabel(string $frontendLabel): AttributesCustomDataInterface
     {
         return $this->setData(self::FRONTEND_LABEL, $frontendLabel);
     }
@@ -65,7 +65,7 @@ class Data extends DataObject implements AttributesCustomDataInterface
     /**
      * @inheritDoc
      */
-    public function setValues(?array $values): AttributesCustomDataInterface
+    public function setValues(array $values = []): AttributesCustomDataInterface
     {
         return $this->setData(self::VALUES, $values);
     }

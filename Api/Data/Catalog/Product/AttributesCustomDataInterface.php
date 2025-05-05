@@ -32,12 +32,12 @@ interface AttributesCustomDataInterface
     /**
      * @return string|null
      */
-    public function getFrontendLabel(): ?string;
+    public function getFrontendLabel(): string;
 
     /**
-     * @return \Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataOptionInterface[]|null $values
+     * @return \Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataOptionInterface[] $values
      */
-    public function getValues(): ?array;
+    public function getValues(): array;
 
     /**
      * @return string
@@ -45,11 +45,11 @@ interface AttributesCustomDataInterface
     public function getType(): string;
 
     /**
-     * @param string||null $frontendLabel
+     * @param string $frontendLabel
      *
      * @return $this
      */
-    public function setFrontendLabel(?string $frontendLabel): AttributesCustomDataInterface;
+    public function setFrontendLabel(string $frontendLabel): AttributesCustomDataInterface;
 
     /**
      * @param string $attributeCode
@@ -59,11 +59,11 @@ interface AttributesCustomDataInterface
     public function setAttributeCode(string $attributeCode): AttributesCustomDataInterface;
 
     /**
-     * @param \Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataOptionInterface[]|null $values
+     * @param \Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataOptionInterface[] $values
      *
      * @return $this
      */
-    public function setValues(?array $values): AttributesCustomDataInterface;
+    public function setValues(array $values): AttributesCustomDataInterface;
 
     /**
      * @param string $type
