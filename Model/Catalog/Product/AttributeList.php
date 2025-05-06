@@ -13,12 +13,9 @@ use Calcurates\ModuleMagento\Api\Catalog\Product\ProductAttributeListInterface;
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Eav\Api\AttributeRepositoryInterface;
-use Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributesCustomDataInterfaceFactory;
-use Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataOptionInterfaceFactory;
-use Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributesCustomDataInterface;
 use Magento\Framework\Api\SearchCriteria;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
-use Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataOptionInterface;
+use \Calcurates\ModuleMagento\Api\Data\Catalog\Product\Attribute\ProcessorInterface;
 
 class AttributeList implements ProductAttributeListInterface
 {
@@ -33,38 +30,31 @@ class AttributeList implements ProductAttributeListInterface
     private $searchCriteriaBuilder;
 
     /**
-     * @var AttributesCustomDataInterfaceFactory
+     * @var array
      */
-    private $customDataFactory;
-
-    /**
-     * @var AttributeCustomDataOptionInterfaceFactory
-     */
-    private $customDataOptionFactory;
+    private $attributeProcessors = [];
 
     /**
      * AttributeList constructor.
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param AttributeRepositoryInterface $eavAttributeRepository
-     * @param AttributesCustomDataInterfaceFactory $customDataFactory
-     * @param AttributeCustomDataOptionInterfaceFactory $customDataOptionFactory
+     * @param array $attributeProcessors
      */
     public function __construct(
         SearchCriteriaBuilder $searchCriteriaBuilder,
         AttributeRepositoryInterface $eavAttributeRepository,
-        AttributesCustomDataInterfaceFactory $customDataFactory,
-        AttributeCustomDataOptionInterfaceFactory $customDataOptionFactory
+       array $attributeProcessors = []
     ) {
+        $this->attributeProcessors = $attributeProcessors;
         $this->eavAttributeRepository = $eavAttributeRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->customDataFactory = $customDataFactory;
-        $this->customDataOptionFactory = $customDataOptionFactory;
     }
 
     /**
-     * @return AttributesCustomDataInterface[]
+     * @param int|null $websiteId
+     * @return array
      */
-    public function getItems(): array
+    public function getItems(int $websiteId = null): array
     {
         /** @var SearchCriteria $searchCriteria */
         $searchCriteria = $this->searchCriteriaBuilder
@@ -89,75 +79,30 @@ class AttributeList implements ProductAttributeListInterface
             ) {
                 continue;
             }
-            $values = [];
-            try {
-                $sourceOptions = $attributesItem->getSource()->getAllOptions();
-            } catch (\Exception $e) {
-                continue;
-            }
-            foreach ($sourceOptions as $option) {
-                if (empty($option['value']) || is_array($option['value'])) {
+            $item = $defaultProcessor = null;
+            foreach ($this->attributeProcessors as $key => $attributeProcessor) {
+                if ($key === "default") {
+                    $defaultProcessor = $attributeProcessor;
                     continue;
                 }
-                $values[] = $this->getCustomDataOptionObject()
-                    ->setLabel($option['label'])
-                    ->setValue($option['value']);
+                if ($attributeProcessor instanceof ProcessorInterface) {
+                    if ($attributeProcessor->canProcess($attributesItem->getAttributeCode())) {
+                        $item = $attributeProcessor->process($attributesItem, $websiteId);
+                        if ($item) {
+                            $result[] = $item;
+                            break;
+                        }
+                    }
+                }
             }
-            if ($type = $this->resolveType($attributesItem, $values)) {
-                $result[] = $this->getCustomDataObject()
-                    ->setAttributeCode($attributesItem->getAttributeCode())
-                    ->setFrontendLabel((string) $attributesItem->getDefaultFrontendLabel())
-                    ->setValues($values)
-                    ->setType($type);
+            if ($defaultProcessor && !$item) {
+                $item = $defaultProcessor->process($attributesItem, $websiteId);
+                if ($item) {
+                    $result[] = $item;
+                }
             }
         }
 
         return $result;
-    }
-
-    /**
-     * @return AttributesCustomDataInterface
-     */
-    private function getCustomDataObject(): AttributesCustomDataInterface
-    {
-        return $this->customDataFactory->create();
-    }
-
-    /**
-     * @return AttributeCustomDataOptionInterface
-     */
-    private function getCustomDataOptionObject(): AttributeCustomDataOptionInterface
-    {
-        return $this->customDataOptionFactory->create();
-    }
-
-    /**
-     * @param Attribute $attribute
-     * @param array $values
-     * @return string|null
-     */
-    private function resolveType(Attribute $attribute, array $values): ?string
-    {
-        $frontendType = $attribute->getFrontendInput();
-        $backendType = $attribute->getBackendType();
-        if ('boolean' === $frontendType
-            || ('text' === $frontendType && 'int' === $backendType && $values && 1 === count($values))
-        ) {
-            return AttributesCustomDataInterface::ATTRIBUTE_TYPE_BOOL;
-        }
-        if (in_array($backendType, ['decimal',  'int'], true)
-            || $attribute->getFrontendClass() == 'validate-number'
-        ) {
-            return AttributesCustomDataInterface::ATTRIBUTE_TYPE_NUMBER;
-        }
-        if (in_array($frontendType, ['select', 'multiselect'], true)) {
-            return AttributesCustomDataInterface::ATTRIBUTE_TYPE_COLLECTION;
-        }
-        if (in_array($backendType, ['varchar', 'text', 'static'], true)
-            && in_array($frontendType, ['text', 'textarea'], true)
-        ) {
-            return AttributesCustomDataInterface::ATTRIBUTE_TYPE_STRING;
-        }
-        return null;
     }
 }
