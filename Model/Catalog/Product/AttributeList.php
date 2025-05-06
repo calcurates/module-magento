@@ -51,10 +51,10 @@ class AttributeList implements ProductAttributeListInterface
     }
 
     /**
-     * @param int|null $websiteId
+     * @param int $websiteId
      * @return array
      */
-    public function getItems(int $websiteId = null): array
+    public function getItems(int $websiteId): array
     {
         /** @var SearchCriteria $searchCriteria */
         $searchCriteria = $this->searchCriteriaBuilder

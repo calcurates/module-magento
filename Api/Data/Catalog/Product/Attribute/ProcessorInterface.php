@@ -16,10 +16,10 @@ interface ProcessorInterface
 {
     /**
      * @param \Magento\Catalog\Api\Data\ProductAttributeInterface $attribute
-     * @param int|null $websiteId
+     * @param int $websiteId
      * @return \Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributesCustomDataInterface|null
      */
-    public function process(ProductAttributeInterface $attribute, ?int $websiteId): ?AttributesCustomDataInterface;
+    public function process(ProductAttributeInterface $attribute, int $websiteId): ?AttributesCustomDataInterface;
 
     /**
      * @param string $attributeCode

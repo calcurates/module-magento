@@ -40,10 +40,10 @@ class CategoryIds extends Base
 
     /**
      * @param ProductAttributeInterface $attribute
-     * @param int|null $websiteId
+     * @param int $websiteId
      * @return AttributesCustomDataInterface|null
      */
-    public function process(ProductAttributeInterface $attribute, ?int $websiteId): ?AttributesCustomDataInterface
+    public function process(ProductAttributeInterface $attribute, int $websiteId): ?AttributesCustomDataInterface
     {
         $values = [];
         $result = null;
