@@ -9,8 +9,6 @@
 
 namespace Calcurates\ModuleMagento\Api\Catalog\Product;
 
-use Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributesCustomDataInterface;
-
 /**
  * @api
  */
@@ -21,7 +19,9 @@ interface ProductAttributeListInterface
     public const BANNED_ATTRIBUTES = ['available_shipping_methods'];
 
     /**
+     * @param int $websiteId
+     *
      * @return \Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributesCustomDataInterface[]
      */
-    public function getItems(): array;
+    public function getItems(int $websiteId): array;
 }
