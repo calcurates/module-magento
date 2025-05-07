@@ -15,6 +15,23 @@ use Magento\Framework\DataObject;
 class Data extends DataObject implements AttributesCustomDataInterface
 {
     /**
+     * @return bool
+     */
+    public function getCanMulti(): bool
+    {
+        return (bool) $this->_getData(self::CAN_MULTI);
+    }
+
+    /**
+     * @param bool $canMulti
+     * @return AttributesCustomDataInterface
+     */
+    public function setCanMulti(bool $canMulti): AttributesCustomDataInterface
+    {
+        return $this->setData(self::CAN_MULTI, $canMulti);
+    }
+
+    /**
      * @inheritDoc
      */
     public function getAttributeCode(): string

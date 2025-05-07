@@ -10,6 +10,7 @@
 
     <!-- Category Service -->
     <route url="/V1/calcurates/categories-by-website/:websiteId" method="GET">
+        <!-- Deprecated: since 1.48.10 - Use /V1/calcurates/product/attributes/:websiteId instead -->
         <service class="Calcurates\ModuleMagento\Api\Catalog\CategoryManagementInterface" method="getTree" />
         <resources>
             <resource ref="Calcurates_ModuleMagento::api" />
@@ -31,7 +32,7 @@
             <resource ref="Calcurates_ModuleMagento::api" />
         </resources>
     </route>
-    <route url="/V1/calcurates/product/attributes" method="GET">
+    <route url="/V1/calcurates/product/attributes/:websiteId" method="GET">
         <service class="Calcurates\ModuleMagento\Api\Catalog\Product\ProductAttributeListInterface" method="getItems" />
         <resources>
             <resource ref="Calcurates_ModuleMagento::api" />
@@ -40,6 +41,7 @@
 
     <!-- Source -->
     <route url="/V1/calcurates/inventory/sources" method="GET">
+        <!-- Deprecated: since 1.38.0 - Use /V1/calcurates/origins-by-website/:websiteId instead -->
         <service class="Calcurates\ModuleMagento\Api\Source\SourceRepositoryInterface" method="getList"/>
         <resources>
             <resource ref="Magento_InventoryApi::source"/>

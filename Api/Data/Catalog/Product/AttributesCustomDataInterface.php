@@ -18,6 +18,7 @@ interface AttributesCustomDataInterface
     public const FRONTEND_LABEL = 'frontend_label';
     public const VALUES = 'values';
     public const TYPE = 'type';
+    public const CAN_MULTI = 'can_multi';
 
     public const ATTRIBUTE_TYPE_NUMBER = 'number';
     public const ATTRIBUTE_TYPE_STRING = 'string';
@@ -43,6 +44,11 @@ interface AttributesCustomDataInterface
      * @return string
      */
     public function getType(): string;
+
+    /**
+     * @return bool
+     */
+    public function getCanMulti(): bool;
 
     /**
      * @param string $frontendLabel
@@ -71,4 +77,11 @@ interface AttributesCustomDataInterface
      * @return $this
      */
     public function setType(string $type): AttributesCustomDataInterface;
+
+    /**
+     * @param bool $type
+     *
+     * @return $this
+     */
+    public function setCanMulti(bool $canMulti): AttributesCustomDataInterface;
 }
