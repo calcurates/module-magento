@@ -83,13 +83,8 @@ class CategoryIds extends Base
     private function getCategoriesData(CategoryTreeInterface $category): array
     {
         if ($childrenData = $category->getChildrenData()) {
-            $children = $this->recursiveCategoriesFilter($childrenData);
             return [
-                [
-                    'value' => $category->getId(),
-                    'label' => $category->getName(),
-                ],
-                ...$this->unwrapCategories($children),
+                ...$this->unwrapCategories([$category])
             ];
         }
 
