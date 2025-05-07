@@ -4,7 +4,7 @@ FROM php:8.3-fpm-alpine
 RUN set -xe \
     && apk update \
     && apk upgrade \
-    && apk --no-cache add htop unzip gzip tar curl linux-headers
+    && apk --no-cache add htop unzip gzip tar curl linux-headers mariadb-connector-c
 
 # PHP
 RUN set -xe \
