@@ -41,12 +41,12 @@
                                                                         $block->escapeHtml(
                                                                             $block->renderShippingRateValue($rate)
                                                                         );
-                                                                        ?>"
+                                                        ?>"
                                                             <?= ($currentRate === $rate) ?
                                                                 ' selected="selected"' : '';
-                                                            ?>>
+                                                        ?>>
                                                             <?= /* @noEscape */ $block->renderShippingRateOption($rate);
-                                                            ?>
+                                                        ?>
                                                         </option>
                                                     <?php endforeach; ?>
                                                 </optgroup>

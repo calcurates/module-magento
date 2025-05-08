@@ -52,7 +52,7 @@ class CarriersSettingsProvider
      * @param int|null $storeId
      * @return array
      */
-    public function get(int $storeId = null): array
+    public function get(?int $storeId = null): array
     {
         $carriersSettings = $this->dataPersistor->get(self::CARRIERS_SETTINGS_DATA_CODE);
         if ($carriersSettings === null) {

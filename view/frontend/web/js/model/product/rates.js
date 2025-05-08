@@ -23,7 +23,7 @@ define(["ko", "mage/storage", "underscore", "Calcurates_ModuleMagento/js/action/
          * @param {Object} shipTo
          * @return {void}
          */
-        loadLocations: function (storeCode, productIds, isLoggedIn, shipTo = null) {
+        loadLocations: function (storeCode, productIds, isLoggedIn, shipTo) {
             var estimateUrl = "rest/" + storeCode + "/V1/calcurates/estimate?",
                 estimateGuestUrl = "rest/" + storeCode + "/V1/calcurates/estimate-guest?",
                 url

@@ -62,8 +62,9 @@ $shippingHelper = $block->getData('shippingHelper') ?? $viewModel->getShippingHe
             </tfoot>
         <?php if ($_tracks = $block->getShipment()->getAllTracks()): ?>
             <tbody>
-            <?php $i = 0; foreach ($_tracks as $_track): $i++ ?>
-                <tr class="<?= /* @noEscape */ ($i%2 == 0) ? 'even' : 'odd' ?>">
+            <?php $i = 0;
+            foreach ($_tracks as $_track): $i++ ?>
+                <tr class="<?= /* @noEscape */ ($i % 2 == 0) ? 'even' : 'odd' ?>">
                     <td class="col-carrier">
                         <?= $block->escapeHtml($block->getCarrierTitle($_track->getCarrierCode())) ?>
                     </td>
@@ -72,7 +73,7 @@ $shippingHelper = $block->getData('shippingHelper') ?? $viewModel->getShippingHe
                         <?php if ($_track->isCustom()): ?>
                             <?= $block->escapeHtml($_track->getNumber()) ?>
                         <?php else: ?>
-                            <?php if($viewModel->isTrackable()): ?>
+                            <?php if ($viewModel->isTrackable()): ?>
                                 <?php if (isset($secureRenderer)): ?>
                                     <a id="col-track-<?= (int) $_track->getId() ?>" href="#">
                                     <?= $block->escapeHtml($_track->getNumber()) ?>

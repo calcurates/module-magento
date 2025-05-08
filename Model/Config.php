@@ -455,7 +455,7 @@ class Config implements ConfigProviderInterface
      * @param int|null $storeId
      * @return bool
      */
-    public function isSplitCheckoutEnabled(int $storeId = null): bool
+    public function isSplitCheckoutEnabled(?int $storeId = null): bool
     {
         return (bool)$this->scopeConfig->isSetFlag(
             self::CONFIG_GROUP . self::SPLIT_CHECKOUT_ENABLED,
@@ -468,7 +468,7 @@ class Config implements ConfigProviderInterface
      * @param int|null $storeId
      * @return string
      */
-    public function getSplitCheckoutTitle(int $storeId = null): string
+    public function getSplitCheckoutTitle(?int $storeId = null): string
     {
         return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::SPLIT_CHECKOUT_TITLE,
@@ -481,7 +481,7 @@ class Config implements ConfigProviderInterface
      * @param int|null $storeId
      * @return string
      */
-    public function getSourceSelectionAlgorithm(int $storeId = null): string
+    public function getSourceSelectionAlgorithm(?int $storeId = null): string
     {
         return (string) $this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::SOURCE_SELECTION_ALGORITHM,
@@ -494,7 +494,7 @@ class Config implements ConfigProviderInterface
      * @param int|null $storeId
      * @return string
      */
-    public function getCarrierTitle(int $storeId = null): string
+    public function getCarrierTitle(?int $storeId = null): string
     {
         return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . 'title',

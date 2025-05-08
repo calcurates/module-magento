@@ -106,7 +106,7 @@ class Estimation implements ArgumentInterface
      * @return bool|string
      * @throws NoSuchEntityException
      */
-    public function getJsLayout(string $jsLayout = null): string
+    public function getJsLayout(?string $jsLayout = null): string
     {
         $jsLayout = $jsLayout ? $this->serializer->unserialize($jsLayout) : [];
         $isLoggedIn = $this->httpContext->getValue(Context::CONTEXT_AUTH);

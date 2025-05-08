@@ -15,7 +15,7 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Framework\Api\SearchCriteria;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
-use \Calcurates\ModuleMagento\Api\Data\Catalog\Product\Attribute\ProcessorInterface;
+use Calcurates\ModuleMagento\Api\Data\Catalog\Product\Attribute\ProcessorInterface;
 
 class AttributeList implements ProductAttributeListInterface
 {
@@ -43,7 +43,7 @@ class AttributeList implements ProductAttributeListInterface
     public function __construct(
         SearchCriteriaBuilder $searchCriteriaBuilder,
         AttributeRepositoryInterface $eavAttributeRepository,
-       array $attributeProcessors = []
+        array $attributeProcessors = []
     ) {
         $this->attributeProcessors = $attributeProcessors;
         $this->eavAttributeRepository = $eavAttributeRepository;

@@ -94,7 +94,7 @@ require(['prototype'], function(){
     $('order-shipping-method-choose').show();
 });
 script;
-    ?>
+?>
     <?php if ($_rate = $block->getActiveMethodRate()): ?>
         <div id="order-shipping-method-info" class="order-shipping-method-info">
             <dl class="admin__order-shipment-methods">
@@ -104,10 +104,10 @@ script;
                 <dd class="admin__order-shipment-methods-options">
                     <?php if ($_rate->getCode() === 'calcurates_metarate'): ?>
                         <?= $block->escapeHtml($_rate->getMethodTitle() ?
-                            $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?>
+                        $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?>
                     <?php else: ?>
                         <?= $block->escapeHtml($_rate->getMethodTitle() ?
-                            $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?>
+                        $_rate->getMethodTitle() : $_rate->getMethodDescription()) ?>
                         <?= /* @noEscape */ $orderDeliveryDates->formatDeliveryDates(
                             $quoteDeliveryDates->getDeliveryDates($_rate, $block->getQuote())
                         ); ?>

@@ -114,9 +114,10 @@ class Base implements ProcessorInterface
         ) {
             return AttributesCustomDataInterface::ATTRIBUTE_TYPE_BOOL;
         }
-        if ((in_array($backendType, ['decimal',  'int'], true)
+        if ((
+            in_array($backendType, ['decimal',  'int'], true)
                 || in_array($attribute->getFrontendClass(), ['validate-number', 'validate-digits'], true)
-            )
+        )
             && !in_array($frontendType, ['select',  'multiselect'], true)
         ) {
             return AttributesCustomDataInterface::ATTRIBUTE_TYPE_NUMBER;

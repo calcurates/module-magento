@@ -116,7 +116,7 @@
                         } else {
                             $customsValueValidation = '';
                         }
-                        ?>
+?>
                         <td class="col-custom"
                             <?php if (!$block->displayCustomsValue()): ?>
                                 style="display: none;"
@@ -125,7 +125,7 @@
                             <div class="admin__control-addon">
                                 <input type="text"
                                        class="customs-value input-text admin__control-text <?=
-                                       /* @noEscape */ $customsValueValidation ?>"
+               /* @noEscape */ $customsValueValidation ?>"
                                        name="package_customs_value" />
                                 <span class="admin__addon-suffix">
                                     <span class="customs-value-currency">
@@ -258,24 +258,24 @@ require(['jquery'], function($){
     $("div#packages_content").on('click', "button.action-delete.DeletePackageBtn",
         function(){packaging.deletePackage(this)});
 script;
-    if ($girthEnabled == 1 && !empty($sizeSource)) {
-        $scriptString .= <<<script
+if ($girthEnabled == 1 && !empty($sizeSource)) {
+    $scriptString .= <<<script
     $("div#packages_content").on('change', "select[name='package_size']",
         function(){packaging.checkSizeAndGirthParameter(this, {$block->escapeJs($girthEnabled)})});
     $("div#packages_content").on('change', "select[name='container_girth_dimension_units']",
         function(){packaging.changeMeasures(this)});
 script;
-    }
-    if ($block->getContentTypes()) {
-        $scriptString .= <<<script
+}
+if ($block->getContentTypes()) {
+    $scriptString .= <<<script
     $("div#packages_content").on('change', "select[name='content_type']",
         function(){packaging.changeContentTypes(this)});
 script;
-    }
-    $scriptString .= <<<script
+}
+$scriptString .= <<<script
 })
 script;
-    ?>
+?>
     <?php if (isset($secureRenderer)): ?>
         <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
     <?php else: ?>

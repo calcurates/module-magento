@@ -30,17 +30,18 @@ if ($shippingLabels->getSize() < 2) {
             </tr>
             </thead>
             <tbody>
-            <?php $i = 0; foreach ($shippingLabels as $shippingLabel): $i++ ?>
-                <tr class="<?= /* @noEscape */ ($i%2 == 0) ? 'even' : 'odd' ?>">
+            <?php $i = 0;
+foreach ($shippingLabels as $shippingLabel): $i++ ?>
+                <tr class="<?= /* @noEscape */ ($i % 2 == 0) ? 'even' : 'odd' ?>">
                     <td class="col-date"><?= /* @noEscape */ $block->formatDate($shippingLabel->getCreatedAt(), \IntlDateFormatter::MEDIUM, true) ?></td>
                     <td class="col-carrier"><?= /* @noEscape */ $block->escapeHtml($shippingLabel->getShippingCarrierLabel() . ' - ' . $shippingLabel->getShippingServiceLabel()) ?></td>
                     <td class="col-actions">
                         <?php
-                            $shippingLabelUrl = $block->getUrl('adminhtml/order_shipment/printCalcuratesLabel', [
-                                'shipment_id' => $block->getShipment()->getId(),
-                                'shipping_label_id' => $shippingLabel->getId()
-                            ]);
-                        ?>
+                $shippingLabelUrl = $block->getUrl('adminhtml/order_shipment/printCalcuratesLabel', [
+                    'shipment_id' => $block->getShipment()->getId(),
+                    'shipping_label_id' => $shippingLabel->getId()
+                ]);
+    ?>
                         <button title="<?= /* @noEscape */ $block->escapeHtml(__('Print Shipping Label')) ?>"
                                 type="button"
                                 class="action-default scalable"
@@ -54,7 +55,7 @@ if ($shippingLabels->getSize() < 2) {
                                 class="action-default scalable"
                                 onclick="showCalcuratesPackedWindow(<?= $shippingLabel->getId() ?>)"
                                 data-ui-id="widget-button-2">
-                            <span><?= /* @noEscape */ $block->escapeHtml(__('Show Packages')) ?></span> <?php // @TODO show packages ?>
+                            <span><?= /* @noEscape */ $block->escapeHtml(__('Show Packages')) ?></span> <?php // @TODO show packages?>
                         </button>
                     </td>
                 </tr>

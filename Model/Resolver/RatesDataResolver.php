@@ -26,7 +26,7 @@ class RatesDataResolver implements ResolverInterface
      * @param array|null $args
      * @return \Magento\Framework\GraphQl\Query\Resolver\Value|mixed|string[]
      */
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
+    public function resolve(Field $field, $context, ResolveInfo $info, ?array $value = null, ?array $args = null)
     {
         $fields = [
             RateDataInterface::TOOLTIP_MESSAGE,

@@ -49,7 +49,7 @@ class SimpleRatesResolver implements ResolverInterface
      * @return Value|mixed|void
      * @throws GraphQlInputException
      */
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
+    public function resolve(Field $field, $context, ResolveInfo $info, ?array $value = null, ?array $args = null)
     {
         $storeId = (int)$context->getExtensionAttributes()->getStore()->getId();
         $skus = $this->getSkus($args);

@@ -19,10 +19,10 @@
     <?php $_order = $block->getInvoice()->getOrder() ?>
     <?php
     $viewModel = $block->getViewModel();
-    $viewModel->setOrder($_order);
-    /** @var \Magento\Tax\Helper\Data $taxHelper */
-    $taxHelper = $block->getData('taxHelper') ?? $viewModel->getTaxHelper();
-    ?>
+$viewModel->setOrder($_order);
+/** @var \Magento\Tax\Helper\Data $taxHelper */
+$taxHelper = $block->getData('taxHelper') ?? $viewModel->getTaxHelper();
+?>
     <?= $block->getChildHtml('order_info') ?>
 
     <section class="admin__page-section">

@@ -56,7 +56,7 @@ class MetadataPool implements MetadataPoolInterface
      * @return array|null
      * @throws LocalizedException
      */
-    public function getMetadata(string $entityType = null): ?array
+    public function getMetadata(?string $entityType = null): ?array
     {
         if ($entityType === null) {
             return $this->registry;

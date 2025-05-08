@@ -16,9 +16,9 @@
     <?= $block->getBlockHtml('formkey') ?>
     <?php
     $_order = $block->getCreditmemo()->getOrder();
-    $viewModel = $block->getViewModel();
-    $viewModel->setOrder($_order);
-    ?>
+$viewModel = $block->getViewModel();
+$viewModel->setOrder($_order);
+?>
 
     <?= $block->getChildHtml('order_info') ?>
 
