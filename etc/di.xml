@@ -13,6 +13,18 @@
     <preference for="Calcurates\ModuleMagento\Api\Data\RateDataInterface" type="Calcurates\ModuleMagento\Model\Data\RateData"/>
     <preference for="Calcurates\ModuleMagento\Api\Source\OriginsManagementInterface" type="Calcurates\ModuleMagento\Model\Source\OriginsManagement"/>
 
+    <preference for="Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributesCustomDataInterface" type="Calcurates\ModuleMagento\Model\Catalog\Product\Attribute\Data"/>
+    <preference for="Calcurates\ModuleMagento\Api\Catalog\Product\ProductAttributeListInterface" type="Calcurates\ModuleMagento\Model\Catalog\Product\AttributeList"/>
+
+    <type name="Calcurates\ModuleMagento\Model\Catalog\Product\AttributeList">
+        <arguments>
+            <argument name="attributeProcessors" xsi:type="array">
+                <item name="default" xsi:type="object">Calcurates\ModuleMagento\Model\Catalog\Product\Attribute\Processor\Base</item>
+                <item name="category_ids" xsi:type="object">Calcurates\ModuleMagento\Model\Catalog\Product\Attribute\Processor\CategoryIds</item>
+            </argument>
+        </arguments>
+    </type>
+
     <preference for="Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataInterface" type="Calcurates\ModuleMagento\Model\Catalog\Product\Attribute\CustomData"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataOptionInterface" type="Calcurates\ModuleMagento\Model\Catalog\Product\Attribute\CustomDataOption"/>
     <preference for="Calcurates\ModuleMagento\Api\Catalog\Product\ProductAttributesListInterface" type="Calcurates\ModuleMagento\Model\Catalog\Product\AttributesList"/>

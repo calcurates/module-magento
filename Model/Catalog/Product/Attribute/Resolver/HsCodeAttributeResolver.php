@@ -52,7 +52,7 @@ class HsCodeAttributeResolver
      * @param int|null $storeId
      * @return AttributeInterface|null
      */
-    public function resolveAttribute(int $storeId = null): ?AttributeInterface
+    public function resolveAttribute(?int $storeId = null): ?AttributeInterface
     {
         if ($this->attribute === null) {
             $hsCodeAttributeName = $this->resolveAttributeName($storeId);
@@ -75,7 +75,7 @@ class HsCodeAttributeResolver
      * @param int|null $storeId
      * @return string|null
      */
-    private function resolveAttributeName(int $storeId = null): ?string
+    private function resolveAttributeName(?int $storeId = null): ?string
     {
         $carriersSettings = $this->carriersSettingsProvider->get($storeId);
         if (empty($carriersSettings)

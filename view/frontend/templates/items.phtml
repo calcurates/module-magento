@@ -59,8 +59,8 @@ $viewModel->setOrder($_order);
             <dd class="tracking-content">
                 <?php
                 $i = 1;
-                $_size = $tracks->count();
-                foreach ($tracks as $track) : ?>
+        $_size = $tracks->count();
+        foreach ($tracks as $track) : ?>
                     <?php if ($track->isCustom()) : ?>
                         <?= $block->escapeHtml($track->getNumber()) ?>
                     <?php else : ?>
@@ -75,7 +75,7 @@ $viewModel->setOrder($_order);
                     <?php endif; ?>
                     <?php if ($i != $_size) : ?>, <?php endif; ?>
                     <?php $i++;
-                endforeach; ?>
+        endforeach; ?>
             </dd>
         </dl>
     <?php  endif; ?>

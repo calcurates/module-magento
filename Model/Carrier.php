@@ -534,7 +534,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      * @param DataObject|null $params
      * @return array
      */
-    public function getContainerTypes(\Magento\Framework\DataObject $params = null)
+    public function getContainerTypes(?\Magento\Framework\DataObject $params = null)
     {
         $shipment = $this->registry->registry('current_shipment');
         $customPackages = $this->customPackagesProvider->getCustomPackages($shipment);

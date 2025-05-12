@@ -63,7 +63,7 @@ $hsCodeFieldRenderer->setShipment($block->getShipment());
             <?php foreach ($block->getCollection() as $item): ?>
                 <?php
                     $_order = $block->getShipment()->getOrder();
-                    $_orderItem = $_order->getItemById($item->getOrderItemId());
+                $_orderItem = $_order->getItemById($item->getOrderItemId());
                 ?>
                 <?php if ($item->getIsVirtual()
                     || ($_orderItem->isShipSeparately()
@@ -97,7 +97,7 @@ $hsCodeFieldRenderer->setShipment($block->getShipment());
                         $customsValueValidation = '';
                     }
 
-                    ?>
+                ?>
                     <td id="custom-value-<?= /* @noEscape */ $randomId . '-' . $id ?>" class="custom-value">
                         <input type="text"
                                name="customs_value"
@@ -148,7 +148,7 @@ $hsCodeFieldRenderer->setShipment($block->getShipment());
                 function(){packaging.deleteItem(this)});
         });
 script;
-        ?>
+?>
         <?php if (isset($secureRenderer)): ?>
             <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
         <?php else: ?>

@@ -56,7 +56,7 @@ $taxHelper = $block->getData('taxHelper') ?? $viewModel->getTaxHelper();
                                     'event.preventDefault();' .
                                     "popWin('{$block->escapeJs($shippingHelper->getTrackingPopupUrlBySalesModel(
                                         $block->getShipment()
-                                        ))}','trackshipment','width=800,height=600,resizable=yes,scrollbars=yes')",
+                                    ))}','trackshipment','width=800,height=600,resizable=yes,scrollbars=yes')",
                                     'a#linkId'
                                 ) ?>
                             </p>
@@ -114,9 +114,9 @@ $taxHelper = $block->getData('taxHelper') ?? $viewModel->getTaxHelper();
                             });
                             window.packaging.setLabelCreatedCallback(function () {
                                 setLocation("{$block->escapeJs($block->getUrl(
-                                        'adminhtml/order_shipment/view',
-                                        ['shipment_id' => $block->getShipment()->getId()]
-                                    ))}");
+                    'adminhtml/order_shipment/view',
+                    ['shipment_id' => $block->getShipment()->getId()]
+                ))}");
                             });
                         };
 
@@ -128,7 +128,7 @@ $taxHelper = $block->getData('taxHelper') ?? $viewModel->getTaxHelper();
                     });
 
 script;
-                ?>
+?>
                 <?php if (isset($secureRenderer)): ?>
                     <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
                 <?php else: ?>

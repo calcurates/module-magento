@@ -12,11 +12,15 @@ done
 
 isSourced=`mariadb --skip-ssl --silent --skip-column-names --user="$MYSQL_USER" --password="$MYSQL_PASSWORD" --host="mysql" --port="3306" -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$MYSQL_DATABASE';"`
 #isSourced=0
-if [[ -f "/mg24.tar.gz" || "${isSourced}" -eq "0" ]]; then
+if [[ -f "/magento2-2.4.8.tar.gz" || "${isSourced}" -eq "0" ]]; then
     echo "Copying the Magento2 template to the working directory..."
-    rm -rf "vendor/*"
-    tar -zxvf "/mg24.tar.gz"
-    rm "/mg24.tar.gz"
+    tar -zxf "/magento2-2.4.8.tar.gz"
+    rm "/magento2-2.4.8.tar.gz"
+    cp -r ./magento2-2.4.8/* .
+    rm -rf ./magento2-2.4.8
+
+    echo "Install composer deps..."
+    php -d memory_limit=-1 -d default_socket_timeout=1000 /usr/local/bin/composer update --with-all-dependencies
 
     chmod 755 bin/magento
 
@@ -40,21 +44,20 @@ if [[ -f "/mg24.tar.gz" || "${isSourced}" -eq "0" ]]; then
             --timezone=UTC \
             --use-rewrites=1 \
             --use-secure=0 \
+            --use-secure-admin=0 \
             --search-engine=opensearch \
             --opensearch-host=opensearch \
             --opensearch-port=9200 \
-            --opensearch-enable-auth=false
+            --opensearch-enable-auth=false \
+            --no-interaction
+            #--disable-modules="Magento_AdminAdobeImsTwoFactorAuth,Magento_TwoFactorAuth"
 
     bin/magento deploy:mode:set developer
 
     # bin/magento sampledata:deploy # not working. idk
     bin/magento setup:upgrade
-    # disable TwoFactorAuth
-    bin/magento module:disable Magento_AdminAdobeImsTwoFactorAuth
-    bin/magento module:disable Magento_TwoFactorAuth
     # https://devdocs.magento.com/guides/v2.4/get-started/authentication/gs-authentication-token.html#integration-tokens
     bin/magento config:set oauth/consumer/enable_integration_as_bearer 1
-
     bin/magento cache:disable full_page
     bin/magento cache:flush
 

@@ -150,7 +150,7 @@ $elementId = 'packed_window_' . $block->getShippingLabel()->getId();
                             <?= $block->escapeHtml($block->getQtyOrderedItem($item->getOrderItemId())) ?>
                         </td>
                         <td class="col-qty">
-                            <?= /* @noEscape */ $item->getQty()*1 ?>
+                            <?= /* @noEscape */ $item->getQty() * 1 ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>

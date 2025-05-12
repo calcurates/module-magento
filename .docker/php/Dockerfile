@@ -1,10 +1,10 @@
-FROM php:8.3-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 # Update repo and install some utilites
 RUN set -xe \
     && apk update \
     && apk upgrade \
-    && apk --no-cache add htop unzip gzip tar curl linux-headers
+    && apk --no-cache add htop unzip gzip tar curl linux-headers mariadb-connector-c
 
 # PHP
 RUN set -xe \
@@ -64,7 +64,11 @@ RUN set -xe \
 \
     # PCNTL
     && docker-php-ext-install pcntl \
-    && docker-php-ext-enable pcntl
+    && docker-php-ext-enable pcntl \
+\
+    # Ftp
+    && docker-php-ext-install ftp \
+    && docker-php-ext-enable ftp
 
 # Cleanup
 RUN set -xe \
@@ -86,12 +90,7 @@ COPY auth.json /.composer/
 # Template of Magento2
 RUN set -xe \
     && cd / \
-    && php -d memory_limit=-1 -d default_socket_timeout=1000 /usr/local/bin/composer create-project --repository=https://repo.magento.com/ magento/project-community-edition:2.4.* mg24 \
-    && cd mg24 \
-    && tar -zcvf /mg24.tar.gz * \
-    && cd .. \
-    && rm -rf mg24 \
-    && composer clear-cache
+    && curl https://codeload.github.com/magento/magento2/tar.gz/refs/tags/2.4.8 --output magento2-2.4.8.tar.gz
 
 
 WORKDIR /var/www/magento2

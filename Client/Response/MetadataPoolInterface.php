@@ -26,7 +26,7 @@ interface MetadataPoolInterface
      * @return array|null
      * @throws LocalizedException
      */
-    public function getMetadata(string $entityType = null): ?array;
+    public function getMetadata(?string $entityType = null): ?array;
 
     /**
      * @param string $entityType

@@ -42,7 +42,7 @@ class GetAllShippingOptionsCommand
     public function __construct(
         GetShippingOptionsCommand $getShippingOptionsCommand,
         StoreManagerInterface $storeManager,
-        DataPersistorInterface $dataPersistor = null
+        ?DataPersistorInterface $dataPersistor = null
     ) {
         $this->storeManager = $storeManager;
         $this->getShippingOptionsCommand = $getShippingOptionsCommand;

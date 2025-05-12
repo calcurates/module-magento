@@ -11,17 +11,17 @@ namespace Calcurates\ModuleMagento\Api\Catalog\Product;
 
 /**
  * @api
- * @deprecated since 1.48.10
- * @see \Calcurates\ModuleMagento\Api\Catalog\Product\ProductAttributeListInterface
  */
-interface ProductAttributesListInterface
+interface ProductAttributeListInterface
 {
     public const BANNED_INPUT_TYPES = ['gallery', 'media_image'];
 
     public const BANNED_ATTRIBUTES = ['available_shipping_methods'];
 
     /**
-     * @return \Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributeCustomDataInterface[]
+     * @param int $websiteId
+     *
+     * @return \Calcurates\ModuleMagento\Api\Data\Catalog\Product\AttributesCustomDataInterface[]
      */
-    public function getItems();
+    public function getItems(int $websiteId): array;
 }

@@ -65,7 +65,7 @@ class SourceRepository implements SourceRepositoryInterface
      * @return \Calcurates\ModuleMagento\Api\Source\Data\SourceSearchResultsInterface
      */
     public function getList(
-        \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria = null
+        ?\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria = null
     ): \Calcurates\ModuleMagento\Api\Source\Data\SourceSearchResultsInterface {
         /** @var SourceSearchResultsInterface $searchResult */
         $searchResult = $this->sourceSearchResultsFactory->create();
