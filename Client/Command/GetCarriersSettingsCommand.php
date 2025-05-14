@@ -61,7 +61,7 @@ class GetCarriersSettingsCommand
         $apiUrl = $this->apiClientProvider->getApiUrl();
 
         try {
-            $response = $httpClient->get($apiUrl . '/carriers-settings');
+            $response = $httpClient->get($apiUrl . '/international-shipping-settings');
             $response = Json::decode($response, 1);
         } catch (Exception $exception) {
             if ($this->config->isDebug($storeId)) {
