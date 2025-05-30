@@ -87,16 +87,16 @@ services:
     expose:
       - "9001" # xdebug
 
-  nginx:
+  angie:
     build:
-      context: ./.docker/nginx
+      context: ./.docker/angie
       dockerfile: Dockerfile
     volumes:
       - 'Magento2DataVolume:/var/www/magento2'
       - './vendor:/var/www/magento2/vendor'
-      - './.docker/nginx/magento2.conf:/etc/nginx/conf.d/default.conf'
+      - './.docker/angie/magento2.conf:/etc/angie/http.d/default.conf'
     ports:
       - "80:80"
-    container_name: magento2-nginx
+    container_name: magento2-angie
     depends_on:
       - php
