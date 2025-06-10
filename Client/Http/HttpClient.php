@@ -61,7 +61,7 @@ class HttpClient
      * @throws ApiException
      * @throws \InvalidArgumentException
      */
-    public function request($type, $url, $requestData = null)
+    public function request(string $type, string $url, $requestData = null)
     {
         $client = $this->httpClientFactory->create();
         if ($this->getTimeout()) {
@@ -110,7 +110,7 @@ class HttpClient
      * @return string
      * @throws ApiException
      */
-    public function get($url)
+    public function get(string $url): string
     {
         return $this->request(self::TYPE_GET, $url);
     }
@@ -121,7 +121,7 @@ class HttpClient
      * @return string
      * @throws ApiException
      */
-    public function post($url, $data)
+    public function post(string $url, $data)
     {
         return $this->request(self::TYPE_POST, $url, $data);
     }
@@ -129,7 +129,7 @@ class HttpClient
     /**
      * @return int|null
      */
-    public function getTimeout()
+    public function getTimeout(): ?int
     {
         return $this->timeout;
     }
@@ -138,7 +138,7 @@ class HttpClient
      * @param int|null $timeout
      * @return $this
      */
-    public function setTimeout($timeout)
+    public function setTimeout(?int $timeout): self
     {
         $this->timeout = $timeout;
 
