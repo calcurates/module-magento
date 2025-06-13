@@ -78,7 +78,7 @@ class ApiClientProvider
      * @TODO: move inside http client provider
      * @return string
      */
-    public function getApiUrl()
+    public function getApiUrl(): string
     {
         return rtrim($this->calcuratesConfig->getApiUrl(), '/') . '/api/magento2';
     }

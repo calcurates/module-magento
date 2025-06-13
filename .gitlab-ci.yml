@@ -1,4 +1,4 @@
-image: alpine:3.21
+image: alpine:3.22
 
 before_script:
     - apk add openssh-client
