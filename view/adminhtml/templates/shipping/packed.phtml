@@ -159,7 +159,7 @@ $elementId = 'packed_window_' . $block->getShippingLabel()->getId();
         </div>
     </section>
 <?php endforeach; ?>
-    <?= $block->getChildBlock('label_data_renderer')->render($block->getShippingLabel()) ?>
+    <?= /* @noEscape */ $block->getChildBlock('label_data_renderer')->render($block->getShippingLabel()) ?>
 </div>
 
 <script type="text/x-magento-init">

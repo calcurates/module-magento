@@ -53,7 +53,7 @@ foreach ($shippingLabels as $shippingLabel): $i++ ?>
                                 title="<?= /* @noEscape */ $block->escapeHtml(__('Show Packages')) ?>"
                                 type="button"
                                 class="action-default scalable"
-                                onclick="showCalcuratesPackedWindow(<?= $shippingLabel->getId() ?>)"
+                                onclick="showCalcuratesPackedWindow(<?= $block->escapeJs($shippingLabel->getId()) ?>)"
                                 data-ui-id="widget-button-2">
                             <span><?= /* @noEscape */ $block->escapeHtml(__('Show Packages')) ?></span> <?php // @TODO show packages?>
                         </button>
@@ -65,7 +65,7 @@ foreach ($shippingLabels as $shippingLabel): $i++ ?>
     </div>
 </section>
 <?php foreach ($shippingLabels as $shippingLabel): ?>
-    <?= $block->getChildBlock('calcurates_shipping_label_packages_renderer')->render($shippingLabel) ?>
+    <?= /* @noEscape */ $block->getChildBlock('calcurates_shipping_label_packages_renderer')->render($shippingLabel) ?>
 <?php endforeach; ?>
 <script>
     function showCalcuratesPackedWindow(labelId) {
