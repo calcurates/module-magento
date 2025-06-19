@@ -17,7 +17,7 @@
         ], function(jQuery){
             var checkboxLabel = jQuery('label[for=create_shipping_label] span'),
                 text = "<?= $block->escapeHtml(__('Create Shipping Label with Calcurates')) ?>",
-                customPackagesData = <?= $block->getCustomPackagesJson() ?>;
+                customPackagesData = <?= /* @noEscape */ $block->getCustomPackagesJson() ?>;
 
             if (checkboxLabel.length > 0) {
                 checkboxLabel.text(text);

@@ -32,7 +32,7 @@ class Tree extends OriginalTree
         Collection $categoryCollection,
         CategoryTreeInterfaceFactory $treeFactory,
         CollectionFactory $collectionFactory,
-        TreeFactory $treeResourceFactory = null
+        ?TreeFactory $treeResourceFactory = null
     ) {
         parent::__construct(
             $categoryTree,

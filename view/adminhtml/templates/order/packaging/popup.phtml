@@ -47,7 +47,7 @@ $taxIdsViewModel = $block->getTaxIdentifiersViewModel();
         "Magento_Ui/js/modal/modal"
     ], function (jQuery, smartPackaging, _, template, utils) {
         var isShipmentNew = <?= $isShipmentNew ? 'true' : 'false' ?>,
-            smartPackages = <?= $smartPackages ?>;
+            smartPackages = <?= /* @noEscape */ $smartPackages ?>;
         window.packaging = new Packaging(<?= /* @noEscape */ $block->getConfigDataJson() ?>);
         packaging.changeContainerType($$('select[name=package_container]')[0]);
         packaging.checkSizeAndGirthParameter(
@@ -273,8 +273,8 @@ $block->assign(
         'girthEnabled' => $girthEnabled
     ]
 );
-
-echo /* @noEscape */
+?>
+<?= /* @noEscape */
 $block->fetchView($block->getTemplateFile('Calcurates_ModuleMagento::order/packaging/popup_content.phtml'));
 ?>
 <div id="packaging_window_overview">
@@ -283,7 +283,7 @@ $block->fetchView($block->getTemplateFile('Calcurates_ModuleMagento::order/packa
         <div class="admin__page-section-content">
             <div class="admin__page-section-item order-payment-method">
                 <div class="admin__page-section-item-title">
-                    <span class="title"><?= __('Shipping Method') ?></span>
+                    <span class="title"><?= $block->escapeHtml(__('Shipping Method')) ?></span>
                 </div>
                 <div class="admin__page-section-item-content">
                     <?php $shippingServiceId = $helper->getShippingServiceId($order, $shipment); ?>
@@ -316,7 +316,7 @@ $block->fetchView($block->getTemplateFile('Calcurates_ModuleMagento::order/packa
         <div class="admin__page-section-content">
             <div class="admin__page-section-item order-payment-method">
                 <div class="admin__page-section-item-title">
-                    <span class="title"><?= __('Shipping Date') ?></span>
+                    <span class="title"><?= $block->escapeHtml(__('Shipping Date')) ?></span>
                 </div>
                 <div class="admin__page-section-item-content">
                     <input name="calcurates_change_shipping_date"
@@ -342,83 +342,83 @@ $block->fetchView($block->getTemplateFile('Calcurates_ModuleMagento::order/packa
         <div class="admin__page-section-content">
             <div class="admin__page-section-item">
                 <div class="admin__page-section-item-title">
-                    <span class="title"><?= __('Tax Identifiers') ?></span>
+                    <span class="title"><?= $block->escapeHtml(__('Tax Identifiers')) ?></span>
                     <span class="message message-notice notice hint">
-                        <?= __('Specify tax identifiers for international shipment (optional)') ?>
+                        <?= $block->escapeHtml(__('Specify tax identifiers for international shipment (optional)')) ?>
                     </span>
                 </div>
                 <div class="admin__page-section-item-content">
                     <table class="admin__control-table tax-identifiers-table">
                         <thead>
                             <tr>
-                                <th><?= __('Use') ?></th>
-                                <th class="column"><?= __('Tax ID Type') ?></th>
-                                <th class="column"><?= __('Value') ?></th>
-                                <th class="column"><?= __('Issuing Authority') ?></th>
-                                <th class="column"><?= __('Entity Type') ?></th>
-                                <th class="column"><?= __('Action') ?></th>
+                                <th><?= $block->escapeHtml(__('Use')) ?></th>
+                                <th class="column"><?= $block->escapeHtml(__('Tax ID Type')) ?></th>
+                                <th class="column"><?= $block->escapeHtml(__('Value')) ?></th>
+                                <th class="column"><?= $block->escapeHtml(__('Issuing Authority')) ?></th>
+                                <th class="column"><?= $block->escapeHtml(__('Entity Type')) ?></th>
+                                <th class="column"><?= $block->escapeHtml(__('Action')) ?></th>
                             </tr>
                         </thead>
                         <tbody>
                         <?php foreach ($taxIdsViewModel->getTaxIdentifiers() as $taxId) : ?>
-                            <tr class="tax-id-row" data-tax-row-id="<?= $taxId->getId() ?>">
+                            <tr class="tax-id-row" data-tax-row-id="<?= $block->escapeHtml($taxId->getId()) ?>">
                                 <td class="check">
                                     <input type="checkbox"
-                                           name="calcurates_tax_id[<?= $taxId->getId() ?>]"
-                                           id="calcurates_tax_id[<?= $taxId->getId() ?>]"
+                                           name="calcurates_tax_id[<?= $block->escapeHtml($taxId->getId()) ?>]"
+                                           id="calcurates_tax_id[<?= $block->escapeHtml($taxId->getId()) ?>]"
                                            class="admin__control-checkbox"/>
                                     <label for="calcurates_tax_id"></label>
                                 </td>
                                 <td>
-                                    <select name="calcurates_tax_id_type[<?= $taxId->getId() ?>]"
-                                           id="calcurates_tax_id_type[<?= $taxId->getId() ?>]"
+                                    <select name="calcurates_tax_id_type[<?= $block->escapeHtml($taxId->getId()) ?>]"
+                                           id="calcurates_tax_id_type[<?= $block->escapeHtml($taxId->getId()) ?>]"
                                            class="admin__control-select select">
                                         <option value=""></option>
                                         <?php foreach ($taxIdsMeta['type'] ?? [] as $type) : ?>
-                                            <option value="<?= $type ?>"
+                                            <option value="<?= $block->escapeHtml($type) ?>"
                                                 <?php if ($taxId->getType() === $type) : ?>
                                                     selected
                                                 <?php endif; ?>
                                             >
-                                                <?= $type ?>
+                                                <?= $block->escapeHtml($type) ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
                                 </td>
                                 <td>
-                                    <input name="calcurates_tax_id_value[<?= $taxId->getId() ?>]"
-                                           id="calcurates_tax_id_value[<?= $taxId->getId() ?>]"
-                                           value="<?= $taxId->getValue() ?>"
+                                    <input name="calcurates_tax_id_value[<?= $block->escapeHtml($taxId->getId()) ?>]"
+                                           id="calcurates_tax_id_value[<?= $block->escapeHtml($taxId->getId()) ?>]"
+                                           value="<?= $block->escapeHtml($taxId->getValue()) ?>"
                                            type="text"
                                            class="admin__control-text"/>
                                 </td>
                                 <td>
-                                    <select name="calcurates_tax_authority[<?= $taxId->getId() ?>]"
-                                            id="calcurates_tax_authority[<?= $taxId->getId() ?>]"
+                                    <select name="calcurates_tax_authority[<?= $block->escapeHtml($taxId->getId()) ?>]"
+                                            id="calcurates_tax_authority[<?= $block->escapeHtml($taxId->getId()) ?>]"
                                             class="admin__control-select select">
                                         <?php foreach ($helper->getCountriesOptions($order->getStoreId()) as $country) : ?>
-                                            <option value="<?= $country['value'] ?>"
+                                            <option value="<?= $block->escapeHtml($country['value']) ?>"
                                                 <?php if ($taxId->getIssueAuthority() === $country['value']) : ?>
                                                     selected
                                                 <?php endif; ?>
                                             >
-                                                <?= $country['label'] ?>
+                                                <?= $block->escapeHtml($country['label']) ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
                                 </td>
                                 <td>
-                                    <select name="calcurates_tax_entity_type[<?= $taxId->getId() ?>]"
-                                            id="calcurates_tax_entity_type[<?= $taxId->getId() ?>]"
+                                    <select name="calcurates_tax_entity_type[<?= $block->escapeHtml($taxId->getId()) ?>]"
+                                            id="calcurates_tax_entity_type[<?= $block->escapeHtml($taxId->getId()) ?>]"
                                             class="admin__control-select select">
                                         <option value=""></option>
                                         <?php foreach ($taxIdsMeta['entity_type'] ?? [] as $type) : ?>
-                                            <option value="<?= $type ?>"
+                                            <option value="<?= $block->escapeHtml($type) ?>"
                                                 <?php if ($taxId->getEntityType() === $type) : ?>
                                                     selected
                                                 <?php endif; ?>
                                             >
-                                                <?= $type ?>
+                                                <?= $block->escapeHtml($type) ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
@@ -441,9 +441,11 @@ $block->fetchView($block->getTemplateFile('Calcurates_ModuleMagento::order/packa
         <div class="admin__page-section-content">
             <div class="admin__page-section-item order-billing-address">
                 <div class="admin__page-section-item-title">
-                    <span class="title"><?= __('Origin Address') ?></span>
+                    <span class="title"><?= $block->escapeHtml(__('Origin Address')) ?></span>
                     <span class="message message-notice notice hint">
-                        <?= __('Make sure this address match Origin address that is specified in Calcurates as shipping label will be requested using the one from Calcurates.') ?>
+                        <?= $block->escapeHtml(
+                                __('Make sure this address match Origin address that is specified in Calcurates as shipping label will be requested using the one from Calcurates.')
+                        ) ?>
                     </span>
                 </div>
                 <address class="admin__page-section-item-content">
@@ -453,7 +455,7 @@ $block->fetchView($block->getTemplateFile('Calcurates_ModuleMagento::order/packa
             </div>
             <div class="admin__page-section-item order-shipping-address">
                 <div class="admin__page-section-item-title">
-                    <span class="title"><?= __('Shipping Address') ?></span>
+                    <span class="title"><?= $block->escapeHtml(__('Shipping Address')) ?></span>
                 </div>
                 <address class="admin__page-section-item-content"> <?= /* @noEscape */
                     $helper->getFormattedAddress($order->getShippingAddress()) ?></address>
@@ -466,11 +468,11 @@ $block->fetchView($block->getTemplateFile('Calcurates_ModuleMagento::order/packa
     <script id="packages_content_overview_template" type="text/x-magento-template">
         <div class="admin__page-section-title">
             <span class="title">
-                <?= __('Package') ?> <span data-role="package-number"><%- packageId %></span>
+                <?= $block->escapeHtml(__('Package')) ?> <span data-role="package-number"><%- packageId %></span>
             </span>
         </div>
         <div style="margin-bottom: 10px;font-weight: 600;">
-            <?= __('Custom Package') ?>, <%- weight %> <%- weightUnits %>
+            <?= $block->escapeHtml(__('Custom Package')) ?>, <%- weight %> <%- weightUnits %>
             <% if(length && width && height) { %>
                 , <%- length %>x<%- width %>x<%- height %> <%- dimensionUnits %>
             <% } %>
@@ -483,9 +485,9 @@ $block->fetchView($block->getTemplateFile('Calcurates_ModuleMagento::order/packa
                     <table class="data-grid">
                         <thead>
                         <tr>
-                            <th class="data-grid-th"><?= __('Product Name') ?></th>
-                            <th class="data-grid-th"><?= __('Weight') ?></th>
-                            <th class="data-grid-th"><?= __('Qty') ?></th>
+                            <th class="data-grid-th"><?= $block->escapeHtml(__('Product Name')) ?></th>
+                            <th class="data-grid-th"><?= $block->escapeHtml(__('Weight')) ?></th>
+                            <th class="data-grid-th"><?= $block->escapeHtml(__('Qty')) ?></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -515,7 +517,7 @@ $block->fetchView($block->getTemplateFile('Calcurates_ModuleMagento::order/packa
                         class="admin__control-select select">
                     <option value=""></option>
                     <?php foreach ($taxIdsMeta['type'] ?? [] as $type) : ?>
-                        <option value="<?= $type ?>"><?= $type ?></option>
+                        <option value="<?= $block->escapeHtml($type) ?>"><?= $block->escapeHtml($type) ?></option>
                     <?php endforeach; ?>
                 </select>
             </td>
@@ -530,7 +532,7 @@ $block->fetchView($block->getTemplateFile('Calcurates_ModuleMagento::order/packa
                         id="calcurates_tax_authority_<%- rowId %>"
                         class="admin__control-select select">
                     <?php foreach ($helper->getCountriesOptions($order->getStoreId()) as $country) : ?>
-                        <option value="<?= $country['value'] ?>"><?= $country['label'] ?></option>
+                        <option value="<?= $block->escapeHtml($country['value']) ?>"><?= $block->escapeHtml($country['label']) ?></option>
                     <?php endforeach; ?>
                 </select>
             </td>
@@ -540,7 +542,7 @@ $block->fetchView($block->getTemplateFile('Calcurates_ModuleMagento::order/packa
                         class="admin__control-select select">
                     <option value=""></option>
                     <?php foreach ($taxIdsMeta['entity_type'] ?? [] as $type) : ?>
-                        <option value="<?= $type ?>"><?= $type ?></option>
+                        <option value="<?= $block->escapeHtml($type) ?>"><?= $block->escapeHtml($type) ?></option>
                     <?php endforeach; ?>
                 </select>
             </td>
