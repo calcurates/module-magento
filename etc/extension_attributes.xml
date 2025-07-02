@@ -35,6 +35,7 @@
                 <field>residential_delivery</field>
             </join>
         </attribute>
+        <attribute code="calcurates_split_shipments" type="Calcurates\ModuleMagento\Api\Data\Order\SplitShipmentInterface[]"/>
     </extension_attributes>
     <extension_attributes for="Magento\Quote\Api\Data\TotalsItemInterface">
         <attribute code="bundle_children" type="Magento\Quote\Api\Data\TotalsItemInterface[]"/>
