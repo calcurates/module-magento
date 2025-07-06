@@ -36,6 +36,8 @@
             </join>
         </attribute>
         <attribute code="calcurates_split_shipments" type="Calcurates\ModuleMagento\Api\Data\Order\SplitShipmentInterface[]"/>
+        <attribute code="calcurates_delivery_dates_metadata" type="Calcurates\ModuleMagento\Api\Data\Order\DeliveryDateInterface"/>
+        <attribute code="calcurates_delivery_dates" type="Calcurates\ModuleMagento\Api\Data\Order\OrderDataInterface"/>
     </extension_attributes>
     <extension_attributes for="Magento\Quote\Api\Data\TotalsItemInterface">
         <attribute code="bundle_children" type="Magento\Quote\Api\Data\TotalsItemInterface[]"/>

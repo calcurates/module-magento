@@ -11,13 +11,12 @@ namespace Calcurates\ModuleMagento\Plugin\Model\Order;
 
 use Calcurates\ModuleMagento\Api\SalesData\OrderData\GetOrderDataInterface;
 use Magento\Sales\Api\Data\OrderAddressExtensionFactory;
-use Calcurates\ModuleMagento\Api\Data\Order\SplitShipmentInterfaceFactory;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Api\Data\OrderInterface;
-use Calcurates\ModuleMagento\Api\Data\Order\SplitShipment\ProductQtyInterfaceFactory;
-use Calcurates\ModuleMagento\Api\Data\Order\SplitShipment\ProductQtyInterface;
+use Calcurates\ModuleMagento\Api\Data\Order\DeliveryDateInterfaceFactory;
+use Calcurates\ModuleMagento\Api\Data\Order\DeliveryDate\CutOffTimeInterfaceFactory;
 
-class AddSplitShipmentExtensionAttribute
+class AddDeliveryDatesExtensionAttribute
 {
     /**
      * @var GetOrderDataInterface
@@ -30,32 +29,32 @@ class AddSplitShipmentExtensionAttribute
     private $addressExtensionFactory;
 
     /**
-     * @var SplitShipmentInterfaceFactory
+     * @var DeliveryDateInterfaceFactory
      */
-    private $splitShipmentFactory;
+    private $deliveryDateFactory;
 
     /**
-     * @var ProductQtyInterfaceFactory
+     * @var CutOffTimeInterfaceFactory
      */
-    private $productQtyFactory;
+    private $cutOffTimeFactory;
 
     /**
-     * AddSplitShipmentExtensionAttribute constructor.
+     * AddDeliveryDatesExtensionAttribute constructor.
      * @param GetOrderDataInterface $getOrderData
-     * @param SplitShipmentInterfaceFactory $splitShipmentFactory
-     * @param ProductQtyInterfaceFactory $productQtyInterfaceFactory
+     * @param DeliveryDateInterfaceFactory $deliveryDateInterfaceFactory
+     * @param CutOffTimeInterfaceFactory $cutOffTimeInterfaceFactory
      * @param OrderAddressExtensionFactory $addressExtensionFactory
      */
     public function __construct(
         GetOrderDataInterface $getOrderData,
-        SplitShipmentInterfaceFactory $splitShipmentFactory,
-        ProductQtyInterfaceFactory $productQtyInterfaceFactory,
+        DeliveryDateInterfaceFactory $deliveryDateInterfaceFactory,
+        CutOffTimeInterfaceFactory $cutOffTimeInterfaceFactory,
         OrderAddressExtensionFactory $addressExtensionFactory
     ) {
         $this->addressExtensionFactory = $addressExtensionFactory;
-        $this->productQtyFactory = $productQtyInterfaceFactory;
+        $this->cutOffTimeFactory = $cutOffTimeInterfaceFactory;
+        $this->deliveryDateFactory = $deliveryDateInterfaceFactory;
         $this->getOrderData = $getOrderData;
-        $this->splitShipmentFactory = $splitShipmentFactory;
     }
 
     /**
@@ -78,22 +77,16 @@ class AddSplitShipmentExtensionAttribute
                 $addressExtensionAttributes = $address->getExtensionAttributes()
                     ?: $this->addressExtensionFactory->create();
                 $orderData = $this->getOrderData->get($order->getEntityId());
-                if ($orderData && $orderData->getSplitShipments()) {
-                    $splitShipments = [];
-                    foreach ($orderData->getSplitShipments() as $splitShipment) {
-                        $productQty = [];
-                        foreach ($splitShipment['product_qty'] as $sku => $qty) {
-                            $productQty[] = [
-                                ProductQtyInterface::QTY => $qty,
-                                ProductQtyInterface::SKU => $sku,
-                            ];
-                        }
-                        $splitShipment['product_qty'] = $productQty;
-                        $splitShipments[] = $this->splitShipmentFactory->create(['data' => $splitShipment]);
+                if ($orderData && $orderData->getDeliveryDates()) {
+                    $deliveryDateData = $orderData->getDeliveryDates();
+                    if (isset($deliveryDateData['cutOffTime']) && is_array($deliveryDateData['cutOffTime'])) {
+                        $deliveryDateData['cutOffTime'] = $this->cutOffTimeFactory->create(
+                            ['data' => $deliveryDateData['cutOffTime']]
+                        );
                     }
-                    if ($splitShipments) {
-                        $addressExtensionAttributes->setCalcuratesSplitShipments($splitShipments);
-                    }
+                    $addressExtensionAttributes->setCalcuratesDeliveryDatesMetadata(
+                        $this->deliveryDateFactory->create(['data' => $deliveryDateData])
+                    );
                 }
                 $address->setExtensionAttributes($addressExtensionAttributes);
             }

@@ -11,13 +11,10 @@ namespace Calcurates\ModuleMagento\Plugin\Model\Order;
 
 use Calcurates\ModuleMagento\Api\SalesData\OrderData\GetOrderDataInterface;
 use Magento\Sales\Api\Data\OrderAddressExtensionFactory;
-use Calcurates\ModuleMagento\Api\Data\Order\SplitShipmentInterfaceFactory;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Api\Data\OrderInterface;
-use Calcurates\ModuleMagento\Api\Data\Order\SplitShipment\ProductQtyInterfaceFactory;
-use Calcurates\ModuleMagento\Api\Data\Order\SplitShipment\ProductQtyInterface;
 
-class AddSplitShipmentExtensionAttribute
+class AddOrderDataExtensionAttribute
 {
     /**
      * @var GetOrderDataInterface
@@ -30,32 +27,16 @@ class AddSplitShipmentExtensionAttribute
     private $addressExtensionFactory;
 
     /**
-     * @var SplitShipmentInterfaceFactory
-     */
-    private $splitShipmentFactory;
-
-    /**
-     * @var ProductQtyInterfaceFactory
-     */
-    private $productQtyFactory;
-
-    /**
-     * AddSplitShipmentExtensionAttribute constructor.
+     * AddOrderDataExtensionAttribute constructor.
      * @param GetOrderDataInterface $getOrderData
-     * @param SplitShipmentInterfaceFactory $splitShipmentFactory
-     * @param ProductQtyInterfaceFactory $productQtyInterfaceFactory
      * @param OrderAddressExtensionFactory $addressExtensionFactory
      */
     public function __construct(
         GetOrderDataInterface $getOrderData,
-        SplitShipmentInterfaceFactory $splitShipmentFactory,
-        ProductQtyInterfaceFactory $productQtyInterfaceFactory,
         OrderAddressExtensionFactory $addressExtensionFactory
     ) {
         $this->addressExtensionFactory = $addressExtensionFactory;
-        $this->productQtyFactory = $productQtyInterfaceFactory;
         $this->getOrderData = $getOrderData;
-        $this->splitShipmentFactory = $splitShipmentFactory;
     }
 
     /**
@@ -78,22 +59,8 @@ class AddSplitShipmentExtensionAttribute
                 $addressExtensionAttributes = $address->getExtensionAttributes()
                     ?: $this->addressExtensionFactory->create();
                 $orderData = $this->getOrderData->get($order->getEntityId());
-                if ($orderData && $orderData->getSplitShipments()) {
-                    $splitShipments = [];
-                    foreach ($orderData->getSplitShipments() as $splitShipment) {
-                        $productQty = [];
-                        foreach ($splitShipment['product_qty'] as $sku => $qty) {
-                            $productQty[] = [
-                                ProductQtyInterface::QTY => $qty,
-                                ProductQtyInterface::SKU => $sku,
-                            ];
-                        }
-                        $splitShipment['product_qty'] = $productQty;
-                        $splitShipments[] = $this->splitShipmentFactory->create(['data' => $splitShipment]);
-                    }
-                    if ($splitShipments) {
-                        $addressExtensionAttributes->setCalcuratesSplitShipments($splitShipments);
-                    }
+                if ($orderData) {
+                    $addressExtensionAttributes->setCalcuratesDeliveryDates($orderData);
                 }
                 $address->setExtensionAttributes($addressExtensionAttributes);
             }
