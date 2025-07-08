@@ -12,12 +12,12 @@ done
 
 isSourced=`mariadb --skip-ssl --silent --skip-column-names --user="$MYSQL_USER" --password="$MYSQL_PASSWORD" --host="mysql" --port="3306" -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$MYSQL_DATABASE';"`
 #isSourced=0
-if [[ -f "/magento2-2.4.8.tar.gz" || "${isSourced}" -eq "0" ]]; then
+if [[ -f "/magento2-2.4.8-p1.tar.gz" || "${isSourced}" -eq "0" ]]; then
     echo "Copying the Magento2 template to the working directory..."
-    tar -zxf "/magento2-2.4.8.tar.gz"
-    rm "/magento2-2.4.8.tar.gz"
-    cp -r ./magento2-2.4.8/* .
-    rm -rf ./magento2-2.4.8
+    tar -zxf "/magento2-2.4.8-p1.tar.gz"
+    rm "/magento2-2.4.8-p1.tar.gz"
+    cp -r ./magento2-2.4.8-p1/* .
+    rm -rf ./magento2-2.4.8-p1
 
     echo "Install composer deps..."
     php -d memory_limit=-1 -d default_socket_timeout=1000 /usr/local/bin/composer update --with-all-dependencies
@@ -78,7 +78,7 @@ if [[ -f "/magento2-2.4.8.tar.gz" || "${isSourced}" -eq "0" ]]; then
 
 
     echo "Configuring the php-cs-fixer..."
-    curl -L -o /php-cs-fixer.phar https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.81.0/php-cs-fixer.phar
+    curl -L -o /php-cs-fixer.phar https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.82.1/php-cs-fixer.phar
     chmod 755 /php-cs-fixer.phar
     echo "php /php-cs-fixer.phar fix ${PWD}/app/code/Calcurates/ModuleMagento --rules=@PSR12" > /php-cs-fixer
     chmod 755 /php-cs-fixer
