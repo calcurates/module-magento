@@ -261,10 +261,15 @@
     <preference for="Calcurates\ModuleMagento\Api\SalesData\QuoteData\SaveQuoteDataInterface" type="Calcurates\ModuleMagento\Model\SalesData\QuoteData\SaveQuoteData"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\QuoteDataInterface" type="Calcurates\ModuleMagento\Model\QuoteData"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\OrderDataInterface" type="Calcurates\ModuleMagento\Model\OrderData"/>
+    <preference for="Calcurates\ModuleMagento\Api\Data\Order\OrderDataInterface" type="Calcurates\ModuleMagento\Model\OrderData"/>
     <preference for="Calcurates\ModuleMagento\Api\SalesData\OrderData\GetOrderDataInterface" type="Calcurates\ModuleMagento\Model\SalesData\OrderData\GetOrderData"/>
     <preference for="Calcurates\ModuleMagento\Api\SalesData\OrderData\SaveOrderDataInterface" type="Calcurates\ModuleMagento\Model\SalesData\OrderData\SaveOrderData"/>
     <preference for="Calcurates\ModuleMagento\Api\SalesData\QuoteData\QuoteAddressExtensionAttributesInterface" type="Calcurates\ModuleMagento\Model\SalesData\QuoteData\QuoteAddress"/>
     <preference for="Calcurates\ModuleMagento\Api\SalesData\OrderData\OrderAddressExtensionAttributesInterface" type="Calcurates\ModuleMagento\Model\SalesData\OrderData\OrderAddress"/>
+    <preference for="Calcurates\ModuleMagento\Api\Data\Order\SplitShipmentInterface" type="Calcurates\ModuleMagento\Model\Data\Order\SplitShipment"/>
+    <preference for="Calcurates\ModuleMagento\Api\Data\Order\DeliveryDateInterface" type="Calcurates\ModuleMagento\Model\Data\Order\DeliveryDate"/>
+    <preference for="Calcurates\ModuleMagento\Api\Data\Order\DeliveryDate\CutOffTimeInterface" type="Calcurates\ModuleMagento\Model\Data\Order\DeliveryDate\CutOffTime"/>
+    <preference for="Calcurates\ModuleMagento\Api\Data\Order\SplitShipment\ProductQtyInterface" type="Calcurates\ModuleMagento\Model\Data\Order\SplitShipment\ProductQty"/>
     <!-- Delivery Dates -->
     <preference for="Calcurates\ModuleMagento\Api\Data\DeliveryDate\DateInterface" type="Calcurates\ModuleMagento\Model\DeliveryDate\Date"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\DeliveryDate\TimeIntervalInterface" type="Calcurates\ModuleMagento\Model\DeliveryDate\TimeInterval"/>
@@ -306,6 +311,18 @@
                 type="Calcurates\ModuleMagento\Plugin\Model\Order\AddResidentialExtensionAttribute"
                 sortOrder="10"/>
     </type>
+    <type name="Magento\Sales\Api\OrderRepositoryInterface">
+        <plugin name="Calcurates_ModuleMagento::AddSplitShipmentExtensionAttributesPlugin"
+                type="Calcurates\ModuleMagento\Plugin\Model\Order\AddSplitShipmentExtensionAttribute"
+                sortOrder="20"/>
+        <plugin name="Calcurates_ModuleMagento::AddDeliveryDatesExtensionAttributesPlugin"
+                type="Calcurates\ModuleMagento\Plugin\Model\Order\AddDeliveryDatesExtensionAttribute"
+                sortOrder="30"/>
+        <plugin name="Calcurates_ModuleMagento::AddOrderDataExtensionAttributesPlugin"
+                type="Calcurates\ModuleMagento\Plugin\Model\Order\AddOrderDataExtensionAttribute"
+                sortOrder="30"/>
+    </type>
+
     <virtualType name="Calcurates\ModuleMagento\Model\Request\DataPersistor" type="Magento\Framework\App\Request\DataPersistor">
         <arguments>
             <argument name="session" xsi:type="object">Magento\Checkout\Model\Session</argument>

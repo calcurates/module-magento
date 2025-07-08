@@ -12,8 +12,9 @@ declare(strict_types=1);
 namespace Calcurates\ModuleMagento\Model;
 
 use Calcurates\ModuleMagento\Api\Data\OrderDataInterface;
+use Calcurates\ModuleMagento\Api\Data\Order\OrderDataInterface as DataOrderInterface;
 
-class OrderData extends \Magento\Framework\Model\AbstractModel implements OrderDataInterface
+class OrderData extends \Magento\Framework\Model\AbstractModel implements OrderDataInterface, DataOrderInterface
 {
     /**
      * Init resource model
