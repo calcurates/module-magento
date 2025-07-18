@@ -34,7 +34,7 @@ class ProductQty extends AbstractSimpleObject implements ProductQtyInterface
     /**
      * {@inheritdoc}
      */
-    public function getQty(): int
+    public function getQty(): float
     {
         return $this->_get(self::QTY);
     }
@@ -42,7 +42,7 @@ class ProductQty extends AbstractSimpleObject implements ProductQtyInterface
     /**
      * {@inheritdoc}
      */
-    public function setQty(int $qty): void
+    public function setQty(float $qty): float
     {
         $this->setData(self::QTY, $qty);
     }

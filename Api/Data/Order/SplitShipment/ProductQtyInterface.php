@@ -28,13 +28,13 @@ interface ProductQtyInterface
     public function setSku(string $sku): void;
 
     /**
-     * @return int
+     * @return float
      */
-    public function getQty(): int;
+    public function getQty(): float;
 
     /**
-     * @param int $qty
+     * @param float $qty
      * @return void
      */
-    public function setQty(int $qty): void;
+    public function setQty(float $qty): void;
 }

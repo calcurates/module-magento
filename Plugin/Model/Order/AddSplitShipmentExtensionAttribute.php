@@ -82,11 +82,13 @@ class AddSplitShipmentExtensionAttribute
                     $splitShipments = [];
                     foreach ($orderData->getSplitShipments() as $splitShipment) {
                         $productQty = [];
-                        foreach ($splitShipment['product_qty'] as $sku => $qty) {
-                            $productQty[] = [
-                                ProductQtyInterface::QTY => $qty,
-                                ProductQtyInterface::SKU => $sku,
-                            ];
+                        if (isset($splitShipment['product_qty']) && is_array($splitShipment['product_qty'])) {
+                            foreach ($splitShipment['product_qty'] as $sku => $qty) {
+                                $productQty[] = [
+                                    ProductQtyInterface::QTY => $qty,
+                                    ProductQtyInterface::SKU => $sku,
+                                ];
+                            }
                         }
                         $splitShipment['product_qty'] = $productQty;
                         $splitShipments[] = $this->splitShipmentFactory->create(['data' => $splitShipment]);
