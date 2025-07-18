@@ -49,7 +49,7 @@ class SplitShipment extends \Calcurates\ModuleMagento\Model\Data\SplitShipment i
     /**
      * {@inheritdoc}
      */
-    public function getProductQty(): array
+    public function getProductQty(): ?array
     {
         return $this->_get(self::PRODUCT_QTY);
     }
@@ -57,7 +57,7 @@ class SplitShipment extends \Calcurates\ModuleMagento\Model\Data\SplitShipment i
     /**
      * {@inheritdoc}
      */
-    public function setProductQty(array $productQty): void
+    public function setProductQty(?array $productQty): void
     {
         $this->setData(self::PRODUCT_QTY, $productQty);
     }
