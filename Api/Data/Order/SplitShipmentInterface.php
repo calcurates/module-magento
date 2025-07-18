@@ -40,14 +40,14 @@ interface SplitShipmentInterface extends \Calcurates\ModuleMagento\Api\Data\Spli
     public function setCode(string $code): void;
 
     /**
-     * @return \Calcurates\ModuleMagento\Api\Data\Order\SplitShipment\ProductQtyInterface[]
+     * @return \Calcurates\ModuleMagento\Api\Data\Order\SplitShipment\ProductQtyInterface[]|null
      */
-    public function getProductQty(): array;
+    public function getProductQty(): ?array;
 
     /**
-     * @param \Calcurates\ModuleMagento\Api\Data\Order\SplitShipment\ProductQtyInterface[] $productQty
+     * @param \Calcurates\ModuleMagento\Api\Data\Order\SplitShipment\ProductQtyInterface[]|null $productQty
      * @return void
      */
-    public function setProductQty(array $productQty): void;
+    public function setProductQty(?array $productQty): void;
 
 }
