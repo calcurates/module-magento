@@ -60,6 +60,7 @@ class Config implements ConfigProviderInterface
     public const SHIPPING_ON_PRODUCT_ATTRIBUTE_VALUE = 'shipping_on_product_attribute_value';
     public const SHIPPING_ON_PRODUCT_COUNTDOWN_TIMER_FORMAT = 'shipping_on_product_timer_format';
     public const ALLOW_PARTIAL_ADDRESS_REQUESTS = 'allow_partial_address_requests';
+    public const USE_UNIQUE_ORDER_ITEM_SOURCE = 'unique_order_item_source';
     public const ACTIVE = 'active';
     public const DEBUG = 'debug';
 
@@ -602,6 +603,19 @@ class Config implements ConfigProviderInterface
     {
         return (string)$this->scopeConfig->getValue(
             self::CONFIG_GROUP . self::INFO_MESSAGE_DISPLAY_POSITION,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string||null $storeId
+     * @return bool
+     */
+    public function isUniqueOrderItemSource($storeId = null): bool
+    {
+        return (bool) $this->scopeConfig->isSetFlag(
+            self::CONFIG_GROUP . self::USE_UNIQUE_ORDER_ITEM_SOURCE,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );
