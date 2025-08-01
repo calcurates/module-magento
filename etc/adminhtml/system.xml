@@ -296,6 +296,11 @@
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <config_path>carriers/calcurates/debug</config_path>
                     </field>
+                    <field id="unique_order_item_source" translate="label" type="select" sortOrder="30" showInDefault="0" showInWebsite="0" showInStore="0" canRestore="0">
+                        <label>Enable One Source Per Order Item</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>carriers/calcurates/unique_order_item_source</config_path>
+                    </field>
                 </group>
             </group>
         </section>

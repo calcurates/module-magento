@@ -270,6 +270,7 @@
     <preference for="Calcurates\ModuleMagento\Api\Data\Order\DeliveryDateInterface" type="Calcurates\ModuleMagento\Model\Data\Order\DeliveryDate"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\Order\DeliveryDate\CutOffTimeInterface" type="Calcurates\ModuleMagento\Model\Data\Order\DeliveryDate\CutOffTime"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\Order\SplitShipment\ProductQtyInterface" type="Calcurates\ModuleMagento\Model\Data\Order\SplitShipment\ProductQty"/>
+    <preference for="\Calcurates\ModuleMagento\Api\Data\Order\Item\ShippingInformationInterface" type="Calcurates\ModuleMagento\Model\Order\Item\ShippingInformation"/>
     <!-- Delivery Dates -->
     <preference for="Calcurates\ModuleMagento\Api\Data\DeliveryDate\DateInterface" type="Calcurates\ModuleMagento\Model\DeliveryDate\Date"/>
     <preference for="Calcurates\ModuleMagento\Api\Data\DeliveryDate\TimeIntervalInterface" type="Calcurates\ModuleMagento\Model\DeliveryDate\TimeInterval"/>
@@ -311,6 +312,12 @@
                 type="Calcurates\ModuleMagento\Plugin\Model\Order\AddResidentialExtensionAttribute"
                 sortOrder="10"/>
     </type>
+
+    <type name="Magento\Sales\Api\OrderItemRepositoryInterface">
+        <plugin name="Calcurates_ModuleMagento::AddOrderItemShippingInformationExtensionPlugin"
+                type="Calcurates\ModuleMagento\Plugin\Model\Order\Item\AddShippingInformationExtensionAttribute"
+                sortOrder="50"/>
+    </type>
     <type name="Magento\Sales\Api\OrderRepositoryInterface">
         <plugin name="Calcurates_ModuleMagento::AddSplitShipmentExtensionAttributesPlugin"
                 type="Calcurates\ModuleMagento\Plugin\Model\Order\AddSplitShipmentExtensionAttribute"
@@ -320,7 +327,7 @@
                 sortOrder="30"/>
         <plugin name="Calcurates_ModuleMagento::AddOrderDataExtensionAttributesPlugin"
                 type="Calcurates\ModuleMagento\Plugin\Model\Order\AddOrderDataExtensionAttribute"
-                sortOrder="30"/>
+                sortOrder="40"/>
     </type>
 
     <virtualType name="Calcurates\ModuleMagento\Model\Request\DataPersistor" type="Magento\Framework\App\Request\DataPersistor">
