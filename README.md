@@ -46,3 +46,10 @@ Magento provides options to the `setup:install` and `setup:upgrade` commands tha
 #### API Permissions
 - Calcurates API resource
 - Stores → Settings → All Stores (the codes are `Calcurates_ModuleMagento::api` and `Magento_Backend::store`)
+
+#### Set only one source per order item for shipping information added as extension attribute for order item
+```bash
+cd path_to_magento
+sudo -u magento_user php bin/magento config:set carriers/calcurates/unique_order_item_source 1
+sudo -u magento_user php bin/magento cache:flush
+```

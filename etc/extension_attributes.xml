@@ -42,4 +42,7 @@
     <extension_attributes for="Magento\Quote\Api\Data\TotalsItemInterface">
         <attribute code="bundle_children" type="Magento\Quote\Api\Data\TotalsItemInterface[]"/>
     </extension_attributes>
+    <extension_attributes for="Magento\Sales\Api\Data\OrderItemInterface">
+        <attribute code="calcurates_shipping_information" type="Calcurates\ModuleMagento\Api\Data\Order\Item\ShippingInformationInterface" />
+    </extension_attributes>
 </config>
