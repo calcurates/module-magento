@@ -90,7 +90,7 @@ COPY auth.json /.composer/
 # Template of Magento2
 RUN set -xe \
     && cd / \
-    && curl https://codeload.github.com/magento/magento2/tar.gz/refs/tags/2.4.8-p1 --output magento2-2.4.8-p1.tar.gz
+    && curl https://codeload.github.com/magento/magento2/tar.gz/refs/tags/2.4.8-p2 --output magento2-2.4.8-p2.tar.gz
 
 
 WORKDIR /var/www/magento2
