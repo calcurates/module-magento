@@ -105,8 +105,7 @@ class ShippingLabelRequestBuilder
             ],
             'packages' => [],
             'testLabel' => $testLabel,
-            'validateAddress' => 'no_validation',
-            'products' => [],
+            'validateAddress' => 'no_validation'
         ];
 
         foreach ($request['calcurates_tax_ids'] ?? [] as $taxId) {
@@ -123,8 +122,7 @@ class ShippingLabelRequestBuilder
         foreach ($request->getOrderShipment()->getAllItems() as $item) {
             $product = $this->productRepository->getById($item->getProductId());
             $isVirtual = (bool) $item->getIsVirtual();
-
-            $apiRequestBody['products'][] = $products[$item->getOrderItemId()] = [
+            $products[$item->getOrderItemId()] = [
                 'priceWithTax' => round($item->getBasePriceInclTax() ?? 0, 2),
                 'priceWithoutTax' => round($item->getBasePrice() ?? 0, 2),
                 'discountAmount' => round($item->getBaseDiscountAmount() ?? 0 / $item->getQty(), 2),
