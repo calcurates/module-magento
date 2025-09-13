@@ -102,6 +102,7 @@ class LabelGeneratorPlugin
 
         $shipment->setData('calcuratesShippingServiceId', (int)$shippingServiceId);
         $shipment->setData('calcuratesShippingDate', $shippingDate);
+        $shipment->setData('calcuratesServiceInsurance', (bool)$request->getParam('insurance'));
     }
 
     /**

@@ -47,9 +47,9 @@ class CarriersServicesOptionSource
             $shippingCarrier = [
                 'value' => $item['id'],
                 'label' => $item['carrierName'],
+                'insurance' => isset($item['insurance']) ? $item['insurance'] : false,
                 'options' => []
             ];
-
             foreach ($item['services'] as $service) {
                 $shippingCarrier['options'][] = [
                     'value' => $service['id'],

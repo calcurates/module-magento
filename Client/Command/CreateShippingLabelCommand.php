@@ -61,6 +61,16 @@ class CreateShippingLabelCommand
      */
     private $storeManager;
 
+    /**
+     * CreateShippingLabelCommand constructor.
+     * @param LoggerInterface $logger
+     * @param Config $config
+     * @param ShippingLabelRequestBuilder $shippingLabelRequestBuilder
+     * @param CalcuratesClientInterface $calcuratesClient
+     * @param ShippingLabelInterfaceFactory $shippingLabelFactory
+     * @param GetShippingOptionsCommand $getShippingOptionsCommand
+     * @param StoreManagerInterface $storeManager
+     */
     public function __construct(
         LoggerInterface $logger,
         Config $config,
@@ -118,6 +128,7 @@ class CreateShippingLabelCommand
         $request->setData('calcurates_service_code', $shippingCarrierData['service']['code']);
         $request->setData('calcurates_shipping_date', $shippingDate);
         $request->setData('calcurates_tax_ids', $taxIds);
+        $request->setData('calcurates_service_insurance', $request->getOrderShipment()->getData('calcuratesServiceInsurance'));
 
         $apiRequestBody = $this->shippingLabelRequestBuilder->build(
             $request,
