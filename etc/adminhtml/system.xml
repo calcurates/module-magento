@@ -98,7 +98,7 @@
                     </field>
                     <field id="delivery_date_default_value_type" translate="label comment" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                         <label>Delivery Date and Time Slots Default Value</label>
-                        <source_model>\Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDefaultValueType</source_model>
+                        <source_model>Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDefaultValueType</source_model>
                         <config_path>carriers/calcurates/delivery_date_default_value_type</config_path>
                         <comment>
                             <![CDATA[
