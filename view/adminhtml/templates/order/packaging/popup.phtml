@@ -27,6 +27,7 @@ $smartPackaging = $block->getCalcuratesSmartPackaging();
 $smartPackages = $smartPackaging->getPackages($shipment);
 $taxIdsMeta = $block->getTaxIdentifiersMeta() ?? [];
 $taxIdsViewModel = $block->getTaxIdentifiersViewModel();
+$shippingServices = $helper->getShippingCarriersWithServices((int)$order->getStoreId());
 ?>
 <?php /** fix for magento 2.3.3 validation styles. Remove after fixing in magento */ ?>
 <style>
@@ -47,7 +48,9 @@ $taxIdsViewModel = $block->getTaxIdentifiersViewModel();
         "Magento_Ui/js/modal/modal"
     ], function (jQuery, smartPackaging, _, template, utils) {
         var isShipmentNew = <?= $isShipmentNew ? 'true' : 'false' ?>,
-            smartPackages = <?= /* @noEscape */ $smartPackages ?>;
+            smartPackages = <?= /* @noEscape */ $smartPackages ?>,
+            shippingServices = <?= /* @noEscape */ $helper->getShippingCarriersWithServicesJson($shippingServices) ?>;
+
         window.packaging = new Packaging(<?= /* @noEscape */ $block->getConfigDataJson() ?>);
         packaging.changeContainerType($$('select[name=package_container]')[0]);
         packaging.checkSizeAndGirthParameter(
@@ -130,7 +133,8 @@ $taxIdsViewModel = $block->getTaxIdentifiersViewModel();
 
                 params = {
                     calcuratesShippingServiceId: jQuery('#calcurates_change_shipping_method_select').val(),
-                    calcuratesShippingDate: date.toISOString().slice(0, 10)
+                    calcuratesShippingDate: date.toISOString().slice(0, 10),
+                    insurance: jQuery('#calcurates_include_insurance_checkbox').is(':checked') ? 1: 0
                 }
 
                 jQuery('.tax-identifiers-table .tax-id-row').each(function () {
@@ -208,8 +212,33 @@ $taxIdsViewModel = $block->getTaxIdentifiersViewModel();
             buttons: packagingWindowOverviewButtons
         });
 
+        function updateInsuranceCheckbox(selectedServiceId) {
+            var isChecked = false;
+            _.each(shippingServices, function(carrier) {
+                _.each(carrier.options, function(service) {
+                    if (service.value == selectedServiceId) {
+                        if (carrier.insurance) {
+                            isChecked = true;
+                        }
+                        return false;
+                    }
+                });
+                if (isChecked) {
+                    return false;
+                }
+            });
+
+            jQuery('#calcurates_include_insurance_checkbox').prop('checked', isChecked);
+        }
+
+        jQuery('#calcurates_change_shipping_method_select').on('change', function () {
+            var selectedServiceId = jQuery(this).val();
+            updateInsuranceCheckbox(selectedServiceId);
+        });
+
         jQuery('#calcurates_change_shipping_method').on('click', function () {
             jQuery('#calcurates_change_shipping_method_select').prop('disabled', false);
+            jQuery('#calcurates_include_insurance_checkbox').prop('disabled', false);
             return false;
         });
 
@@ -291,7 +320,7 @@ $block->fetchView($block->getTemplateFile('Calcurates_ModuleMagento::order/packa
                             id="calcurates_change_shipping_method_select"
                             class="select admin__control-select carrier required-entry"
                             <?php if ($shippingServiceId): ?>disabled="disabled"<?php endif; ?>>
-                        <?php foreach ($helper->getShippingCarriersWithServices((int)$order->getStoreId()) as $shippingCarrier): ?>
+                        <?php foreach ($shippingServices as $shippingCarrier): ?>
                             <optgroup label="<?= $block->escapeHtml($shippingCarrier['label']) ?>">
                                 <?php foreach ($shippingCarrier['options'] as $shippingService): ?>
                                     <option value="<?= $block->escapeHtml(
@@ -308,6 +337,29 @@ $block->fetchView($block->getTemplateFile('Calcurates_ModuleMagento::order/packa
                             <a href="#" id="calcurates_change_shipping_method">Edit</a>
                         </div>
                     <?php endif; ?>
+                    <div class="admin__field admin__field-option">
+                        <?php
+                        $isInsuranceChecked = false;
+                        foreach ($shippingServices as $shippingCarrier) {
+                            foreach ($shippingCarrier['options'] as $shippingService) {
+                                if ($shippingService['value'] == $shippingServiceId) {
+                                    $isInsuranceChecked = isset($shippingCarrier['insurance']) && $shippingCarrier['insurance'];
+                                    break 2;
+                                }
+                            }
+                        }
+                        ?>
+                        <input type="checkbox"
+                               id="calcurates_include_insurance_checkbox"
+                               name="calcurates_include_insurance"
+                               value="1"
+                               class="admin__control-checkbox"
+                               <?php if ($isInsuranceChecked): ?>checked="checked"<?php endif; ?>
+                               <?php if ($shippingServiceId): ?>disabled="disabled"<?php endif; ?>/>
+                        <label for="calcurates_include_insurance_checkbox" class="admin__field-label">
+                            <span><?= $block->escapeHtml(__('Include Carrier Insurance')) ?></span>
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>

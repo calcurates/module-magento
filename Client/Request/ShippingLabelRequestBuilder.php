@@ -88,6 +88,7 @@ class ShippingLabelRequestBuilder
             'serviceCode' => $request->getData('calcurates_service_code'),
             'carrierCode' => $request->getData('calcurates_carrier_code'),
             'providerCode' => $request->getData('calcurates_provider_code'),
+            'insurance' => $request->getData('calcurates_service_insurance'),
             'shipDateUtc' => $request->getData('calcurates_shipping_date'),
             'shipTo' => [
                 'contactName' => $request->getRecipientContactPersonName(),
@@ -104,8 +105,7 @@ class ShippingLabelRequestBuilder
             ],
             'packages' => [],
             'testLabel' => $testLabel,
-            'validateAddress' => 'no_validation',
-            'products' => [],
+            'validateAddress' => 'no_validation'
         ];
 
         foreach ($request['calcurates_tax_ids'] ?? [] as $taxId) {
@@ -117,12 +117,12 @@ class ShippingLabelRequestBuilder
             ];
         }
 
+        $products = [];
         /** @var ShipmentItemInterface $item */
         foreach ($request->getOrderShipment()->getAllItems() as $item) {
             $product = $this->productRepository->getById($item->getProductId());
             $isVirtual = (bool) $item->getIsVirtual();
-
-            $apiRequestBody['products'][] = [
+            $products[$item->getOrderItemId()] = [
                 'priceWithTax' => round($item->getBasePriceInclTax() ?? 0, 2),
                 'priceWithoutTax' => round($item->getBasePrice() ?? 0, 2),
                 'discountAmount' => round($item->getBaseDiscountAmount() ?? 0 / $item->getQty(), 2),
@@ -151,6 +151,16 @@ class ShippingLabelRequestBuilder
                     'height' => $package['params']['height'],
                     'unit' => $this->getDimensionUnits($package['params']['dimension_units']),
                 ];
+            }
+            if (isset($package['items']) && is_array($package['items'])) {
+                foreach ($package['items'] as $itemId => $packageItem) {
+                    if (isset($products[$itemId])) {
+                        $packagedProduct = $products[$itemId];
+                        $packagedProduct['quantity'] = $packageItem['qty'];
+                        $packagedProduct['weight'] = $packageItem['weight'];
+                        $rawPackage['products'][] = $packagedProduct;
+                    }
+                }
             }
             $apiRequestBody['packages'][] = $rawPackage;
         }

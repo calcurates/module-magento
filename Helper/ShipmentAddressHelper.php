@@ -27,6 +27,7 @@ use Magento\Sales\Model\Order\AddressFactory;
 use Magento\Sales\Model\Order\Shipment;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
+use Magento\Framework\Serialize\Serializer\Json;
 
 class ShipmentAddressHelper extends AbstractHelper
 {
@@ -76,6 +77,12 @@ class ShipmentAddressHelper extends AbstractHelper
     private $countryCollectionFactory;
 
     /**
+     * @var Json
+     */
+    private $jsonSerializer;
+
+    /**
+     * ShipmentAddressHelper constructor.
      * @param Context $context
      * @param Renderer $addressRenderer
      * @param Session $authSession
@@ -86,6 +93,7 @@ class ShipmentAddressHelper extends AbstractHelper
      * @param ShipmentServiceRetriever $shipmentServiceRetriever
      * @param CarriersServicesOptionSource $carriersServicesOptionSource
      * @param CollectionFactory $countryCollectionFactory
+     * @param Json $jsonSerializer
      */
     public function __construct(
         Context $context,
@@ -97,9 +105,11 @@ class ShipmentAddressHelper extends AbstractHelper
         ShipmentSourceCodeRetriever $shipmentSourceCodeRetriever,
         ShipmentServiceRetriever $shipmentServiceRetriever,
         CarriersServicesOptionSource $carriersServicesOptionSource,
-        CollectionFactory $countryCollectionFactory
+        CollectionFactory $countryCollectionFactory,
+        Json $jsonSerializer
     ) {
         parent::__construct($context);
+        $this->jsonSerializer = $jsonSerializer;
         $this->addressRenderer = $addressRenderer;
         $this->authSession = $authSession;
         $this->addressFactory = $addressFactory;
@@ -159,6 +169,15 @@ class ShipmentAddressHelper extends AbstractHelper
     public function getShippingCarriersWithServices(int $storeId): array
     {
         return $this->carriersServicesOptionSource->getOptions($storeId);
+    }
+
+    /**
+     * @param int $storeId
+     * @return string
+     */
+    public function getShippingCarriersWithServicesJson(array $carriersData): string
+    {
+        return $this->jsonSerializer->serialize($carriersData);
     }
 
     /**
