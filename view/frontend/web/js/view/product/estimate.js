@@ -132,6 +132,7 @@ define([
                 mapper = {
                     country: 'country',
                     regionCode: 'administrative_area_level_1',
+                    regionName: 'administrative_area_level_1',
                     postalCode: 'postal_code',
                     city: 'locality',
                     addressLine1: 'route',
@@ -141,7 +142,15 @@ define([
                 place.address_components.forEach(function (component) {
                     _.each(mapper, function (value, key) {
                         if (_.contains(component.types, value)) {
-                            address[key] = key === 'country' ? component.short_name : component.long_name
+                            if (key === 'country') {
+                                address[key] = component.short_name
+                            } else if (key === 'regionCode') {
+                                address[key] = component.short_name || ''
+                            } else if (key === 'regionName') {
+                                address[key] = component.long_name || null
+                            } else {
+                                address[key] = component.long_name
+                            }
                         }
                     })
                 })
