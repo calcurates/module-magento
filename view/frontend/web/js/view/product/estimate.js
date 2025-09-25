@@ -42,6 +42,7 @@ define([
                 flat_rate: 'Calcurates_ModuleMagento/product/rate/default',
                 table_rates: 'Calcurates_ModuleMagento/product/rate/default',
                 in_store_pickup: 'Calcurates_ModuleMagento/product/rate/default',
+                default_rate: 'Calcurates_ModuleMagento/product/rate/default'
             },
             timeTmplString: '',
             countDowns: [],
@@ -80,7 +81,7 @@ define([
         },
 
         getRateTemplate: function (rate) {
-            return this.rateTemplatesMap[rate.type]
+            return this.rateTemplatesMap[rate.type] || this.rateTemplatesMap['default_rate']
         },
 
         _initNodes: function () {
