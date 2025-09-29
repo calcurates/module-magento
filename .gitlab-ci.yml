@@ -1,7 +1,6 @@
 image: alpine:3.22
 
 before_script:
-    - apk upgrade
     - apk add openssh-client
 
 stages:
