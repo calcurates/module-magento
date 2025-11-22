@@ -42,6 +42,7 @@ define([
                 flat_rate: 'Calcurates_ModuleMagento/product/rate/default',
                 table_rates: 'Calcurates_ModuleMagento/product/rate/default',
                 in_store_pickup: 'Calcurates_ModuleMagento/product/rate/default',
+                default_rate: 'Calcurates_ModuleMagento/product/rate/default'
             },
             timeTmplString: '',
             countDowns: [],
@@ -80,7 +81,7 @@ define([
         },
 
         getRateTemplate: function (rate) {
-            return this.rateTemplatesMap[rate.type]
+            return this.rateTemplatesMap[rate.type] || this.rateTemplatesMap['default_rate']
         },
 
         _initNodes: function () {
@@ -129,28 +130,86 @@ define([
 
         convertPlaceToAddress: function (place) {
             let address = {},
-                mapper = {
-                    country: 'country',
-                    regionCode: 'administrative_area_level_1',
-                    postalCode: 'postal_code',
-                    city: 'locality',
-                    addressLine1: 'route',
-                    streetNumber: 'street_number',
-                }
+                route = '',
+                streetNumber = '',
+                subpremise = '',
+                regionName = '',
+                regionCode = '';
+
+            const mapper = {
+                country: 'country',
+                postalCode: 'postal_code',
+                addressLine1: 'route',
+                streetNumber: 'street_number',
+                addressLine2: 'subpremise'
+            };
+
+            const cityPriority = [
+                'locality',
+                'postal_town',
+                'neighborhood',
+                'sublocality',
+                'sublocality_level_1',
+                'sublocality_level_2',
+                'sublocality_level_3',
+                'sublocality_level_4'
+            ];
+
             if (place.address_components && _.isArray(place.address_components)) {
                 place.address_components.forEach(function (component) {
-                    _.each(mapper, function (value, key) {
-                        if (_.contains(component.types, value)) {
-                            address[key] = key === 'country' ? component.short_name : component.long_name
+                    const types = component.types;
+                    _.each(mapper, function (type, key) {
+                        if (types.includes(type)) {
+                            switch (key) {
+                                case 'country':
+                                    address.country = component.short_name;
+                                    break;
+                                case 'postalCode':
+                                    address.postalCode = component.long_name;
+                                    break;
+                                case 'addressLine1':
+                                    route = component.long_name;
+                                    break;
+                                case 'streetNumber':
+                                    streetNumber = component.long_name;
+                                    break;
+                                case 'addressLine2':
+                                    subpremise = component.long_name;
+                                    break;
+                            }
                         }
-                    })
-                })
+                    });
+                    if (types.includes('administrative_area_level_1')) {
+                        regionName = component.long_name;
+                        regionCode = /^[A-Z]{2}$/.test(component.short_name) ? component.short_name : '';
+                    } else if (
+                        !regionName
+                        && ['administrative_area_level_2', 'administrative_area_level_3'].includes(types[0])
+                    ) {
+                        regionName = component.long_name;
+                    }
+
+                    if (cityPriority.includes(types[0]) && !address.city) {
+                        address.city = component.long_name;
+                    }
+                });
             }
-            if (address['addressLine1'] && address['streetNumber']) {
-                address.addressLine1 = address['streetNumber'] + ' ' + address['addressLine1']
+
+            if (route && streetNumber) {
+                address.addressLine1 = `${route}, ${streetNumber}`;
+            } else if (route) {
+                address.addressLine1 = route;
             }
-            delete address['streetNumber']
-            return address
+
+            if (subpremise) {
+                address.addressLine2 = subpremise;
+            }
+
+            address.regionName = regionName;
+            if (regionCode) {
+                address.regionCode = regionCode;
+            }
+            return address;
         },
 
         /**
