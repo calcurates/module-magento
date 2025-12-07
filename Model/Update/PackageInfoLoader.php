@@ -15,7 +15,7 @@ use Magento\Framework\Serialize\Serializer\Json;
 
 class PackageInfoLoader
 {
-    public const BASE_URL = 'https://repo.packagist.org/packages/{PACKAGE}.json';
+    public const BASE_URL = 'https://packagist.org/packages/{PACKAGE}.json';
     public const TIMEOUT = 10;
 
     /**
