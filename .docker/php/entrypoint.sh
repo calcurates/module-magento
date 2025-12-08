@@ -78,7 +78,7 @@ if [[ -f "/magento2-2.4.8-p3.tar.gz" || "${isSourced}" -eq "0" ]]; then
 
 
     echo "Configuring the php-cs-fixer..."
-    curl -L -o /php-cs-fixer.phar https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.90.0/php-cs-fixer.phar
+    curl -L -o /php-cs-fixer.phar https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.91.3/php-cs-fixer.phar
     chmod 755 /php-cs-fixer.phar
     echo "php /php-cs-fixer.phar fix ${PWD}/app/code/Calcurates/ModuleMagento --rules=@PSR12" > /php-cs-fixer
     chmod 755 /php-cs-fixer
