@@ -124,7 +124,7 @@ class RatesRequestCache
     {
         $result = [];
         foreach ($requestData as $fieldName => $data) {
-            if ($fieldName == 'estimate') {
+            if ($fieldName === 'estimate') {
                 continue;
             }
             if (is_array($data)) {
