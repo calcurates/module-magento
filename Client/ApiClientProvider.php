@@ -67,6 +67,10 @@ class ApiClientProvider
                     $this->productMetadata->getVersion()
                 )
             );
+            $client->addHeader(
+                'X-PHP-Version',
+                PHP_VERSION
+            );
 
             $this->httpClients[$storeId] = $client;
         }
