@@ -229,12 +229,16 @@ class RateRequestBuilder
             } else {
                 $inventories = $itemsSourceCodes[$attributedProduct->getSku()] ?? [];
             }
+            $qty = $item->getQty();
+            if ($item->getParentItem() && $item->getParentItem()->getProductType() === Bundle::TYPE_CODE) {
+                $qty *= $item->getParentItem()->getQty();
+            }
             $apiRequestBody['products'][] = [
                 'quoteItemId' => $item->getItemId() ?? $item->getQuoteItemId(),
                 'priceWithTax' => round((float) $item->getBasePriceInclTax(), 2),
                 'priceWithoutTax' => round((float) $item->getBasePrice(), 2),
                 'discountAmount' => round((float) $item->getBaseDiscountAmount() / (float) $item->getQty(), 2),
-                'quantity' => ceil((float) $item->getQty()),
+                'quantity' => ceil((float) $qty),
                 'weight' => $isVirtual ? 0 : $item->getWeight(),
                 'sku' => $item->getSku(),
                 'isVirtual' => $isVirtual,
