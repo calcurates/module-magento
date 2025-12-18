@@ -14,6 +14,7 @@
         <policy id="img-src">
             <values>
                 <value id="maps_places_static" type="host">maps.gstatic.com</value>
+                <value id="imgs_calcurates" type="host">*.calcurates.com</value>
             </values>
         </policy>
     </policies>
