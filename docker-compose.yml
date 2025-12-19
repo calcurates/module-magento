@@ -13,6 +13,8 @@ services:
       - cluster.routing.allocation.disk.threshold_enabled=false
       - "OPENSEARCH_JAVA_OPTS=-Xms256m -Xmx256m -Xlog:disable"
       - "OPENSEARCH_INITIAL_ADMIN_PASSWORD=^paSswoRt1~"
+    depends_on:
+      - mysql
     container_name: magento2-opensearch
     ports:
       - "9200:9200"
@@ -34,8 +36,6 @@ services:
     volumes:
       - './.docker/mysql/data:/var/lib/mysql'
       - './.docker/mysql/server.cnf:/etc/mysql/my.cnf'
-    security_opt:
-      - seccomp:unconfined
 
   php:
     privileged: true
@@ -73,7 +73,7 @@ services:
       - './LICENSE:/var/www/magento2/app/code/Calcurates/ModuleMagento/LICENSE'
       - './README.md:/var/www/magento2/app/code/Calcurates/ModuleMagento/README.md'
       - './registration.php:/var/www/magento2/app/code/Calcurates/ModuleMagento/registration.php'
-      - './vendor:/var/www/magento2/vendor'
+      - './vendor:/var/www/magento2/vendor:cached'
     container_name: magento2-php
     ports:
       - "9000:9000" # php-fpm
