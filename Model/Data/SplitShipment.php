@@ -21,7 +21,8 @@ class SplitShipment extends AbstractSimpleObject implements SplitShipmentInterfa
      */
     public function getOrigin(): ?string
     {
-        return $this->_get(self::ORIGIN);
+        $value = $this->_get(self::ORIGIN);
+        return $value !== null ? (string) $value : null;
     }
 
     /**
