@@ -66,10 +66,10 @@ class DeliveryDateFormatter
             [$from, $to] = [$to, $from];
         }
 
-        $timezoneString = $this->timezone->getConfigTimezone(ScopeInterface::SCOPE_STORES);
-        $timezone = new \DateTimeZone($timezoneString);
-        $from->setTimezone($timezone);
-        $to->setTimezone($timezone);
+        // $timezoneString = $this->timezone->getConfigTimezone(ScopeInterface::SCOPE_STORES);
+        // $timezone = new \DateTimeZone($timezoneString);
+        // $from->setTimezone($timezone);
+        // $to->setTimezone($timezone);
 
         return [$from, $to];
     }
@@ -84,9 +84,9 @@ class DeliveryDateFormatter
             return null;
         }
         $dateTime = new \DateTime($date);
-        $timezoneString = $this->timezone->getConfigTimezone(ScopeInterface::SCOPE_STORES);
-        $timezone = new \DateTimeZone($timezoneString);
-        $dateTime->setTimezone($timezone);
+        // $timezoneString = $this->timezone->getConfigTimezone(ScopeInterface::SCOPE_STORES);
+        // $timezone = new \DateTimeZone($timezoneString);
+        // $dateTime->setTimezone($timezone);
         return $dateTime;
     }
 
@@ -156,10 +156,10 @@ class DeliveryDateFormatter
      */
     public function formatTimeInterval(string $from, string $to, string $date = '2020-02-02'): string
     {
-        $from = new \DateTime($date . ' ' . $from);
-        $to = new \DateTime($date . ' ' . $to);
+        $fromObj = new \DateTime($date . ' ' . $from);
+        $toObj = new \DateTime($date . ' ' . $to);
 
-        return $from->format('H:i') . ' - ' . $to->format('H:i');
+        return $fromObj->format('H:i') . ' - ' . $toObj->format('H:i');
     }
 
     /**
