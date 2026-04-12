@@ -107,13 +107,16 @@ class ManifestCreator
                     . self::KEY_SEPARATOR
                     . $label->getCarrierCode()
                     . self::KEY_SEPARATOR
-                    . $shipment->getStoreId();
+                    . $shipment->getStoreId()
+                    . self::KEY_SEPARATOR
+                    . $label->getAccountNumber()
+                ;
                 $labelIdsGrouped[$key][] = $labelId;
             }
         }
 
         foreach ($labelIdsGrouped as $key => $labelIds) {
-            list($providerCode, $carrierCode, $storeId) = explode(self::KEY_SEPARATOR, $key);
+            list($providerCode, $carrierCode, $storeId, $accountNumber) = explode(self::KEY_SEPARATOR, $key);
 
             $storeId = (int)$storeId;
 
@@ -121,7 +124,8 @@ class ManifestCreator
                 $carrierCode,
                 $providerCode,
                 $labelIds,
-                $storeId
+                $storeId,
+                $accountNumber
             );
 
             foreach ($manifests as $manifestData) {

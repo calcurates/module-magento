@@ -13,6 +13,7 @@
             "packages": true,
             "created_at": true,
             "carrier_code": true,
+            "account_number": true,
             "carrier_provider_code": true,
             "manifest_id": true
         },

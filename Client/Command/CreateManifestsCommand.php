@@ -30,10 +30,11 @@ class CreateManifestsCommand
      * @param string $providerCode
      * @param array $labelIds
      * @param int $storeId
+     * @param string|null $accountNumber
      * @return array
      * @throws \Calcurates\ModuleMagento\Client\Http\ApiException
      */
-    public function createManifests(string $carrierCode, string $providerCode, array $labelIds, int $storeId): array
+    public function createManifests(string $carrierCode, string $providerCode, array $labelIds, int $storeId, ?string $accountNumber): array
     {
         $httpClient = $this->apiClientProvider->getClient($storeId);
         $apiUrl = $this->apiClientProvider->getApiUrl();
@@ -41,7 +42,8 @@ class CreateManifestsCommand
         $query = \Laminas\Json\Json::encode([
             'carrierCode' => $carrierCode,
             'providerCode' => $providerCode,
-            'labelsId' => $labelIds
+            'labelsId' => $labelIds,
+            'accountNumber' => $accountNumber
         ]);
 
         $response = $httpClient->post($apiUrl . '/manifests', $query);

@@ -125,6 +125,7 @@ class CreateShippingLabelCommand
 
         $request->setData('calcurates_carrier_code', $shippingCarrierData['carrierType']);
         $request->setData('calcurates_provider_code', $shippingCarrierData['carrierProvider']);
+        $request->setData('calcurates_account_number', $shippingCarrierData['accountNumber']);
         $request->setData('calcurates_service_code', $shippingCarrierData['service']['code']);
         $request->setData('calcurates_shipping_date', $shippingDate);
         $request->setData('calcurates_tax_ids', $taxIds);
@@ -167,6 +168,7 @@ class CreateShippingLabelCommand
         $shippingLabel->setShippingServiceLabel((string)$shippingCarrierData['service']['name']);
         $shippingLabel->setCarrierCode($shippingCarrierData['carrierType']);
         $shippingLabel->setCarrierProviderCode($shippingCarrierData['carrierProvider']);
+        $shippingLabel->setAccountNumber($shippingCarrierData['accountNumber']);
 
         $trackingNumber = !empty($shippingLabelResponse['trackingNumber'])
             ? $shippingLabelResponse['trackingNumber'] : '';

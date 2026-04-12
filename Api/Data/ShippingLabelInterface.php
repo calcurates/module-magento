@@ -23,6 +23,7 @@ interface ShippingLabelInterface
     public const PACKAGES = 'packages';
     public const CREATED_AT = 'created_at';
     public const CARRIER_CODE = 'carrier_code';
+    public const ACCOUNT_NUMBER = 'account_number';
     public const CARRIER_PROVIDER_CODE = 'carrier_provider_code';
     public const MANIFEST_ID = 'manifest_id';
 
@@ -146,6 +147,17 @@ interface ShippingLabelInterface
      * @param string $carrierCode
      */
     public function setCarrierCode(string $carrierCode): void;
+
+    /**
+     * Calcurates account number
+     * @return string|null
+     */
+    public function getAccountNumber(): ?string;
+
+    /**
+     * @param string $accountNumber
+     */
+    public function setAccountNumber(string $accountNumber): void;
 
     /**
      * Calcurates Carrier Provider Code
