@@ -88,6 +88,7 @@ class ShippingLabelRequestBuilder
             'serviceCode' => $request->getData('calcurates_service_code'),
             'carrierCode' => $request->getData('calcurates_carrier_code'),
             'providerCode' => $request->getData('calcurates_provider_code'),
+            'accountNumber' => $request->getData('calcurates_account_number'),
             'insurance' => $request->getData('calcurates_service_insurance'),
             'shipDateUtc' => $request->getData('calcurates_shipping_date'),
             'shipTo' => [

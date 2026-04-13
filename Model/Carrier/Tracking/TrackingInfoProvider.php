@@ -69,7 +69,8 @@ class TrackingInfoProvider
                 (string)$shippingLabel->getCarrierCode(),
                 (string)$shippingLabel->getCarrierProviderCode(),
                 (string)$track->getTrackNumber(),
-                (int)$track->getStore()->getId()
+                (int)$track->getStore()->getId(),
+                (string)$shippingLabel->getAccountNumber()
             );
 
             return $this->parseTrackingData($track, $trackingInfoArray);

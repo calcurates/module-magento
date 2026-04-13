@@ -33,11 +33,11 @@ class GetTrackingInfoCommand
      * @param string $providerCode
      * @param string $trackingNumber
      * @param int $storeId
+     * @param string|null $accountNumber
      * @return array
      * @throws ApiException
-     * @throws RuntimeException
      */
-    public function get(string $carrierCode, string $providerCode, string $trackingNumber, int $storeId): array
+    public function get(string $carrierCode, string $providerCode, string $trackingNumber, int $storeId, ?string $accountNumber): array
     {
         $httpClient = $this->apiClientProvider->getClient($storeId);
         $apiUrl = $this->apiClientProvider->getApiUrl();
@@ -45,7 +45,8 @@ class GetTrackingInfoCommand
         $query = http_build_query([
             'carrierCode' => $carrierCode,
             'providerCode' => $providerCode,
-            'trackingNumber' => $trackingNumber
+            'trackingNumber' => $trackingNumber,
+            'accountNUmber' => $accountNumber
         ]);
         $response = $httpClient->get($apiUrl . '/tracking?' . $query);
 
