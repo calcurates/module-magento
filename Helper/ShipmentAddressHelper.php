@@ -164,11 +164,12 @@ class ShipmentAddressHelper extends AbstractHelper
 
     /**
      * @param int $storeId
+     * @param bool $addShippingOptionLabel
      * @return array
      */
-    public function getShippingCarriersWithServices(int $storeId): array
+    public function getShippingCarriersWithServices(int $storeId, bool $addShippingOptionLabel = false): array
     {
-        return $this->carriersServicesOptionSource->getOptions($storeId);
+        return $this->carriersServicesOptionSource->getOptions($storeId, $addShippingOptionLabel);
     }
 
     /**

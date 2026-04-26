@@ -27,7 +27,7 @@ $smartPackaging = $block->getCalcuratesSmartPackaging();
 $smartPackages = $smartPackaging->getPackages($shipment);
 $taxIdsMeta = $block->getTaxIdentifiersMeta() ?? [];
 $taxIdsViewModel = $block->getTaxIdentifiersViewModel();
-$shippingServices = $helper->getShippingCarriersWithServices((int)$order->getStoreId());
+$shippingServices = $helper->getShippingCarriersWithServices((int)$order->getStoreId(), true);
 ?>
 <?php /** fix for magento 2.3.3 validation styles. Remove after fixing in magento */ ?>
 <style>
