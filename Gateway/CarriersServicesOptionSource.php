@@ -22,6 +22,10 @@ class CarriersServicesOptionSource
      */
     private $getShippingOptionsCommand;
 
+    /**
+     * CarriersServicesOptionSource constructor.
+     * @param GetShippingOptionsCommand $getShippingOptionsCommand
+     */
     public function __construct(GetShippingOptionsCommand $getShippingOptionsCommand)
     {
         $this->getShippingOptionsCommand = $getShippingOptionsCommand;
@@ -29,9 +33,10 @@ class CarriersServicesOptionSource
 
     /**
      * @param int $storeId
+     * @param bool $extendedNames
      * @return array
      */
-    public function getOptions(int $storeId): array
+    public function getOptions(int $storeId, bool $extendedNames = false): array
     {
         try {
             $carriersWithOptions = $this->getShippingOptionsCommand->get(
@@ -41,7 +46,6 @@ class CarriersServicesOptionSource
         } catch (ApiException | LocalizedException $e) {
             return [];
         }
-
         $shippingCarriers = [];
         foreach ($carriersWithOptions as $item) {
             $shippingCarrier = [
@@ -51,9 +55,13 @@ class CarriersServicesOptionSource
                 'options' => []
             ];
             foreach ($item['services'] as $service) {
+                $prefix = '';
+                if ($extendedNames && !empty($item['shippingOption']['name'])) {
+                    $prefix = $item['shippingOption']['name'] . ' - ';
+                }
                 $shippingCarrier['options'][] = [
                     'value' => $service['id'],
-                    'label' => $service['name']
+                    'label' => $prefix . $service['name'],
                 ];
             }
             if ($shippingCarrier['options']) {
