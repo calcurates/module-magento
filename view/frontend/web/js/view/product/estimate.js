@@ -188,11 +188,18 @@ define([
                     ) {
                         regionName = component.long_name;
                     }
-
-                    if (cityPriority.includes(types[0]) && !address.city) {
-                        address.city = component.long_name;
-                    }
                 });
+
+                for (let i = 0; i < cityPriority.length; i++) {
+                    place.address_components.forEach(function (component) {
+                        if (component.types.includes(cityPriority[i])) {
+                            address.city = component.long_name;
+                        }
+                    });
+                    if (address.city) {
+                        break;
+                    }
+                }
             }
 
             if (route && streetNumber) {

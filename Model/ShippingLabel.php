@@ -191,6 +191,16 @@ class ShippingLabel extends \Magento\Framework\Model\AbstractModel implements Sh
         $this->setData(self::CARRIER_CODE, $carrierCode);
     }
 
+    public function getAccountNumber(): ?string
+    {
+        return $this->getData(self::ACCOUNT_NUMBER);
+    }
+
+    public function setAccountNumber(string $accountNumber): void
+    {
+        $this->setData(self::ACCOUNT_NUMBER, $accountNumber);
+    }
+
     public function getCarrierProviderCode(): ?string
     {
         return $this->getData(self::CARRIER_PROVIDER_CODE);
