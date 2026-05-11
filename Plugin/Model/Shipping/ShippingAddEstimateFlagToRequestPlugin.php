@@ -47,6 +47,11 @@ class ShippingAddEstimateFlagToRequestPlugin
      */
     public function isAjaxFromCartPage(): bool
     {
+        $pathInfo = $this->request->getPathInfo();
+        if ($pathInfo && strpos($pathInfo, 'paymentservicespaypal/smartbuttons/shippingcallback') !== false) {
+            return true;
+        }
+
         if (!$this->request->isXmlHttpRequest()) {
             return false;
         }

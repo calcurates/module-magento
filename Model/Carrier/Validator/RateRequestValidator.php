@@ -33,6 +33,7 @@ class RateRequestValidator
     private $config;
 
     private $estimateOnlyRoutes = [
+        '/paymentservicespaypal/smartbuttons/shippingcallback',
         '/rest/V1/stripe/payments/estimate_cart'
     ];
 

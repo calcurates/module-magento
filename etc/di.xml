@@ -424,4 +424,7 @@
         <plugin name="calcurates_model_cart_image_provider"
                 type="Calcurates\ModuleMagento\Plugin\Model\Cart\CheckoutImageProvider"/>
     </type>
+    <type name="Magento\PaymentServicesPaypal\Model\ShippingCallback\ShippingProcessor">
+        <plugin name="Calcurates_ModuleMagento::FixShippingMethodLabelsPaypal" type="Calcurates\ModuleMagento\Plugin\PaymentServices\ShippingProcessorPlugin"/>
+    </type>
 </config>
