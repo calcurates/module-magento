@@ -1,4 +1,4 @@
-FROM opensearchproject/opensearch:2
+FROM opensearchproject/opensearch:3
 
 RUN set -xe \
 #    && yum upgrade --exclude=opensearch* \
