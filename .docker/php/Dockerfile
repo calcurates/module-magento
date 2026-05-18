@@ -1,4 +1,4 @@
-FROM php:8.4-fpm-alpine
+FROM php:8.5-fpm-alpine
 
 # Update repo and install some utilites
 RUN set -xe \
@@ -82,15 +82,14 @@ RUN set -xe \
     && rm -rf /tmp/* /var/cache/apk/*
 
 # Composer
-# https://github.com/markshust/docker-magento/issues/1084
-COPY --from=composer:lts /usr/bin/composer /usr/local/bin/composer
+COPY --from=composer /usr/bin/composer /usr/local/bin/composer
 ENV COMPOSER_HOME=/.composer
 COPY auth.json /.composer/
 
 # Template of Magento2
 RUN set -xe \
     && cd / \
-    && curl https://codeload.github.com/magento/magento2/tar.gz/refs/tags/2.4.8-p4 --output magento2-2.4.8-p4.tar.gz
+    && curl https://codeload.github.com/magento/magento2/tar.gz/refs/tags/2.4.9 --output magento2-2.4.9.tar.gz
 
 
 WORKDIR /var/www/magento2
