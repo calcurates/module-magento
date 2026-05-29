@@ -192,7 +192,7 @@ define([
 
                 for (let i = 0; i < cityPriority.length; i++) {
                     place.address_components.forEach(function (component) {
-                        if (component.types.includes(cityPriority[i])) {
+                        if (component.types.includes(cityPriority[i]) && place.formatted_address.includes(component.long_name)) {
                             address.city = component.long_name;
                         }
                     });
