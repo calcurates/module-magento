@@ -87,20 +87,13 @@ class ShippingProcessorPlugin
             if (!isset($rateTitles[$methodId])) {
                 continue;
             }
-
-            $carrierTitle = $rateTitles[$methodId]['carrierTitle'];
             $methodTitle = $rateTitles[$methodId]['methodTitle'];
-
-            if ($methodTitle && $methodTitle !== $carrierTitle) {
-                $method['label'] = $carrierTitle . ' - ' . $methodTitle;
-            } elseif ($methodTitle) {
+            if ($methodTitle) {
                 $method['label'] = $methodTitle;
             }
         }
-
         return $result;
     }
-
 
     /**
      * @param ShippingProcessor $subject
