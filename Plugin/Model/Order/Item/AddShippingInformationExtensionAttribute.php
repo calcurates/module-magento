@@ -84,7 +84,7 @@ class AddShippingInformationExtensionAttribute
             $shippingAdditionalInfo = null;
             foreach ($orderData->getSplitShipments() as $splitShipment) {
                 $productInfo = $splitShipment;
-                $productInfo['method_price'] = $productInfo['price'];
+                $productInfo['method_price'] = $productInfo['price'] ?? 0;
                 if (isset($splitShipment['product_qty']) && is_array($splitShipment['product_qty'])) {
                     foreach ($splitShipment['product_qty'] as $sku => $qty) {
                         if ($orderItem->getSku() === $sku) {
