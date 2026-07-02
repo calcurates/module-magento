@@ -192,6 +192,7 @@
                 <item name="carrier_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\CarrierProcessor</item>
                 <item name="in_store_pickup_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\InStorePickupProcessor</item>
                 <item name="merged_shipping_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\MergedShippingProcessor</item>
+                <item name="cheapest_merged_shipping_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\CheapestMergedShippingProcessor</item>
                 <item name="rate_shopping_processor" xsi:type="object">Calcurates\ModuleMagento\Client\Response\Processor\RateShoppingProcessor</item>
             </argument>
         </arguments>
