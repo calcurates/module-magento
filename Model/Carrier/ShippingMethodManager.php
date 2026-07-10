@@ -20,6 +20,7 @@ class ShippingMethodManager
 {
     public const FLAT_RATES = 'flatRate';
     public const MERGED_SHIPPING = 'mergedRate';
+    public const CHEAPEST_MERGED_SHIPPING = 'cheapestMergedRate';
     public const FREE_SHIPPING = 'freeShipping';
     public const TABLE_RATE = 'tableRate';
     public const CARRIER = 'carrier';
@@ -137,7 +138,7 @@ class ShippingMethodManager
             return null;
         }
 
-        if ($method !== self::MERGED_SHIPPING) {
+        if ($method !== self::MERGED_SHIPPING && $method !== self::CHEAPEST_MERGED_SHIPPING) {
             return null;
         }
         list($method, $additional) = explode('_', $additional, 2);

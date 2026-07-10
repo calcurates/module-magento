@@ -126,7 +126,7 @@ class CreateShippingLabelCommand
         $request->setData('calcurates_carrier_code', $shippingCarrierData['carrierType']);
         $request->setData('calcurates_provider_code', $shippingCarrierData['carrierProvider']);
         $request->setData('calcurates_account_number', $shippingCarrierData['accountNumber']);
-        $request->setData('calcurates_service_code', $shippingCarrierData['service']['code']);
+        $request->setData('calcurates_service_code', $shippingCarrierData['service']['carrierServiceCode']);
         $request->setData('calcurates_shipping_date', $shippingDate);
         $request->setData('calcurates_tax_ids', $taxIds);
         $request->setData('calcurates_service_insurance', $request->getOrderShipment()->getData('calcuratesServiceInsurance'));

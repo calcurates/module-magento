@@ -32,6 +32,7 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
         $this->sortCarriers($response['shippingOptions']);
         $this->sortRateShopping($response['shippingOptions']);
         $this->sortMergedShippingOptions($response['shippingOptions']);
+        $this->sortCheapestMergedShippingOptions($response['shippingOptions']);
     }
 
 
@@ -485,6 +486,34 @@ class ShippingOptionSortProcessor implements ResponseProcessorInterface
         }
         \usort(
             $resultShippingOptions['mergedShippingOptions'],
+            static function (array $firstMethod, array $secondMethod): int {
+                if (!$firstMethod['success'] || !$firstMethod['rate']) {
+                    return 1;
+                }
+                if (!$secondMethod['success'] || !$secondMethod['rate']) {
+                    return -1;
+                }
+
+                $result = $firstMethod['rate']['cost'] <=> $secondMethod['rate']['cost'];
+                if (0 === $result) {
+                    $result = $firstMethod['name'] <=> $secondMethod['name'];
+                }
+
+                return $result;
+            }
+        );
+    }
+
+    /**
+     * @param array $resultShippingOptions
+     */
+    private function sortCheapestMergedShippingOptions(array &$resultShippingOptions): void
+    {
+        if (!$resultShippingOptions['cheapestMergedShippingOptions']) {
+            return;
+        }
+        \usort(
+            $resultShippingOptions['cheapestMergedShippingOptions'],
             static function (array $firstMethod, array $secondMethod): int {
                 if (!$firstMethod['success'] || !$firstMethod['rate']) {
                     return 1;
