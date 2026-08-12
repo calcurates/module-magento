@@ -17,6 +17,7 @@ use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Client\Response\Processor\Utils\CarrierRateNameBuilder;
 use Calcurates\ModuleMagento\Client\Response\Processor\Utils\ChildChecker;
 use Calcurates\ModuleMagento\Client\Response\Processor\Utils\StringUniqueIncrement;
+use Calcurates\ModuleMagento\Client\Response\Processor\Utils\StalePackageFilter;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Calcurates\ModuleMagento\Model\Config;
@@ -62,6 +63,11 @@ class CarrierProcessor implements ResponseProcessorInterface
     private $stringUniqueIncrement;
 
     /**
+     * @var StalePackageFilter
+     */
+    private $stalePackageFilter;
+
+    /**
      * CarrierProcessor constructor.
      * @param FailedRateBuilder $failedRateBuilder
      * @param RateBuilder $rateBuilder
@@ -70,6 +76,7 @@ class CarrierProcessor implements ResponseProcessorInterface
      * @param ChildChecker $childChecker
      * @param CarrierRateNameBuilder $carrierRateNameBuilder
      * @param StringUniqueIncrement $stringUniqueIncrement
+     * @param StalePackageFilter $stalePackageFilter
      */
     public function __construct(
         FailedRateBuilder $failedRateBuilder,
@@ -78,7 +85,8 @@ class CarrierProcessor implements ResponseProcessorInterface
         Config $configProvider,
         ChildChecker $childChecker,
         CarrierRateNameBuilder $carrierRateNameBuilder,
-        StringUniqueIncrement $stringUniqueIncrement
+        StringUniqueIncrement $stringUniqueIncrement,
+        StalePackageFilter $stalePackageFilter
     ) {
         $this->failedRateBuilder = $failedRateBuilder;
         $this->rateBuilder = $rateBuilder;
@@ -87,6 +95,7 @@ class CarrierProcessor implements ResponseProcessorInterface
         $this->childChecker = $childChecker;
         $this->carrierRateNameBuilder = $carrierRateNameBuilder;
         $this->stringUniqueIncrement = $stringUniqueIncrement;
+        $this->stalePackageFilter = $stalePackageFilter;
     }
 
     /**
@@ -231,6 +240,7 @@ class CarrierProcessor implements ResponseProcessorInterface
                 }
             }
         }
+        $carrierRatesToPackages = $this->stalePackageFilter->filter($carrierRatesToPackages, $quote);
         $quote->setData(
             CustomSalesAttributesInterface::CARRIER_PACKAGES,
             $this->serializer->serialize($carrierRatesToPackages)
