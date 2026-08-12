@@ -30,7 +30,10 @@ define([
                 return this._super();
             }
 
-            if (shippingMethod !== null && shippingMethod['method_title'] !== null && shippingMethod['carrier_code'] === 'calcurates') {
+            if (shippingMethod !== null
+                && shippingMethod['method_title'] !== null
+                && shippingMethod['carrier_code'] === 'calcurates'
+            ) {
                 title = shippingMethod['carrier_title'] + ' - ' + shippingMethod['method_title'];
             } else {
                 title = this._super();
@@ -66,13 +69,24 @@ define([
             }
 
             _.each(selected, function (val, key) {
-                let metaRate = shippingMethod.extension_attributes.calcurates_metarate_data.filter(function (item) {
-                    return item.origin_id === parseInt(key)
-                })
-                let rate = _.first(metaRate).rates.filter(function (rate) {
+                let metaRate = _.find(
+                    shippingMethod.extension_attributes.calcurates_metarate_data,
+                    function (item) {
+                        return item.origin_id === parseInt(key)
+                    }
+                )
+
+                if (!metaRate || !_.isArray(metaRate.rates)) {
+                    return
+                }
+
+                let rate = _.find(metaRate.rates, function (rate) {
                     return rate.method_code === val
                 })
-                selectedView.push(_.first(rate))
+
+                if (rate) {
+                    selectedView.push(rate)
+                }
             })
 
             return selectedView
