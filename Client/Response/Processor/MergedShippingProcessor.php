@@ -14,6 +14,7 @@ namespace Calcurates\ModuleMagento\Client\Response\Processor;
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Client\RateBuilder;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
+use Calcurates\ModuleMagento\Client\Response\Processor\Utils\StalePackageFilter;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
 use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Magento\Framework\App\Area;
@@ -45,22 +46,30 @@ class MergedShippingProcessor implements ResponseProcessorInterface
     private $appState;
 
     /**
+     * @var StalePackageFilter
+     */
+    private $stalePackageFilter;
+
+    /**
      * MergedShippingProcessor constructor.
      * @param FailedRateBuilder $failedRateBuilder
      * @param RateBuilder $rateBuilder
      * @param SerializerInterface $serializer
      * @param State $appState
+     * @param StalePackageFilter $stalePackageFilter
      */
     public function __construct(
         FailedRateBuilder $failedRateBuilder,
         RateBuilder $rateBuilder,
         SerializerInterface $serializer,
-        State $appState
+        State $appState,
+        StalePackageFilter $stalePackageFilter
     ) {
         $this->serializer = $serializer;
         $this->failedRateBuilder = $failedRateBuilder;
         $this->rateBuilder = $rateBuilder;
         $this->appState = $appState;
+        $this->stalePackageFilter = $stalePackageFilter;
     }
 
     /**
@@ -128,7 +137,7 @@ class MergedShippingProcessor implements ResponseProcessorInterface
         foreach ($response['shippingOptions']['mergedShippingOptions'] as $responseRate) {
             if ($this->appState->getAreaCode() === Area::AREA_ADMINHTML) {
                 $responseRate['displayName'] = $responseRate['name']
-                                               . (!empty($responseRate['displayName']) ? " ({$responseRate['displayName']})" : '');
+                    . (!empty($responseRate['displayName']) ? " ({$responseRate['displayName']})" : '');
             } else {
                 $responseRate['displayName'] = $responseRate['displayName'] ?? $responseRate['name'];
             }
@@ -224,6 +233,7 @@ class MergedShippingProcessor implements ResponseProcessorInterface
                     }
                 }
             }
+            $carrierRatesToPackages = $this->stalePackageFilter->filter($carrierRatesToPackages, $quote);
             $quote->setData(
                 CustomSalesAttributesInterface::CARRIER_PACKAGES,
                 $this->serializer->serialize($carrierRatesToPackages)

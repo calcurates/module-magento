@@ -66,7 +66,21 @@ define([
                     isSavedMetarate = checkoutData.getSelectedShippingRate() === "calcurates_metarate"
 
                 if (metaMethod.length) {
-                    metaMethod[0].extension_attributes.calcurates_metarate_data.forEach(function (item) {
+                    let metarateData = metaMethod[0].extension_attributes.calcurates_metarate_data,
+                        currentOriginIds = {}
+
+                    metarateData.forEach(function (item) {
+                        currentOriginIds[item.origin_id] = true
+                    })
+
+                    Object.keys(selectedSplitCheckoutShipments || {}).forEach(function (originId) {
+                        if (!currentOriginIds[originId]) {
+                            delete selectedSplitCheckoutShipments[originId]
+                            delete self.splitCheckoutShipments[originId]
+                        }
+                    })
+
+                    metarateData.forEach(function (item) {
                         if (typeof self.splitCheckoutShipments[item.origin_id] === "function") {
                             return
                         }
@@ -76,8 +90,8 @@ define([
                         }
                         self.splitCheckoutShipments[item.origin_id] = ko.observable(
                             selectedSplitCheckoutShipments &&
-                                selectedSplitCheckoutShipments[item.origin_id] &&
-                                (isSavedMetarate || hasPreSelected)
+                            selectedSplitCheckoutShipments[item.origin_id] &&
+                            (isSavedMetarate || hasPreSelected)
                                 ? selectedSplitCheckoutShipments[item.origin_id]
                                 : null
                         )
@@ -213,7 +227,7 @@ define([
              */
             getInfoMessagePosition: function () {
                 return window.checkoutConfig.calcurates &&
-                    window.checkoutConfig.calcurates.info_message_display_position
+                window.checkoutConfig.calcurates.info_message_display_position
                     ? window.checkoutConfig.calcurates.info_message_display_position
                     : "in_tooltip"
             },

@@ -67,6 +67,10 @@ class ConvertPackages
             foreach ($package['products'] as $product) {
                 $orderItemId = $quoteItemIdToOrderItemId[$product['quoteItemId']] ?? null;
 
+                if ($orderItemId === null) {
+                    continue;
+                }
+
                 if (isset($orderItemsWithQtys[$orderItemId])) {
                     $orderItemsWithQtys[$orderItemId]['qty'] += 1;
                 } else {
