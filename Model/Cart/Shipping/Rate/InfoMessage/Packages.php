@@ -56,27 +56,42 @@ class Packages implements OutputProcessorInterface
 
             if ($packageIdsString && isset($packages[$serviceMethodId][$packageIdsString])) {
                 $packagesForCurrentRate = $packages[$serviceMethodId][$packageIdsString];
-                $ratePackageGrouped = [];
-                $this->processRatePackageGrouped($ratePackageGrouped, $packagesForCurrentRate);
+                $grouped = [];
+                $this->processRatePackageGrouped($grouped, $packagesForCurrentRate);
+                $groupedBySource[] = $grouped;
             }
         }
         if ($rates = $rateModel->getRates()) {
+            $grouped = [];
             foreach ($rates as $rate) {
-                $this->processRatePackageGrouped($ratePackageGrouped, $rate['packages'] ?? []);
+                $this->processRatePackageGrouped($grouped, $rate['packages'] ?? []);
             }
+            $groupedBySource[] = $grouped;
         }
         if ($packages = $rateModel->getPackages()) {
-            $this->processRatePackageGrouped($ratePackageGrouped, $packages);
+            $grouped = [];
+            $this->processRatePackageGrouped($grouped, $packages);
+            $groupedBySource[] = $grouped;
         }
-        if (isset($ratePackageGrouped) && $ratePackageGrouped) {
-            foreach ($ratePackageGrouped as $packageCode => $packageInfo) {
-                $replace .= $packageInfo['name'];
-                $replace .= ' x';
-                $replace .= $packageInfo['qty'];
-                if (next($ratePackageGrouped) == true) {
-                    $replace .= '; ';
+
+        $ratePackageGrouped = [];
+        foreach ($groupedBySource ?? [] as $grouped) {
+            foreach ($grouped as $key => $packageInfo) {
+                if (!isset($ratePackageGrouped[$key])
+                    || $ratePackageGrouped[$key]['qty'] < $packageInfo['qty']
+                ) {
+                    $ratePackageGrouped[$key] = $packageInfo;
                 }
             }
+        }
+
+        if (!empty($ratePackageGrouped)) {
+            $parts = [];
+            foreach ($ratePackageGrouped as $packageInfo) {
+                $parts[] = $packageInfo['name'] . ' x' . $packageInfo['qty'];
+            }
+            $replace = implode('; ', $parts);
+
             return str_replace(
                 $this->variableTemplate,
                 $replace,
@@ -93,13 +108,19 @@ class Packages implements OutputProcessorInterface
      */
     private function processRatePackageGrouped(&$ratePackageGrouped, $packages = [])
     {
+        if (!is_array($ratePackageGrouped)) {
+            $ratePackageGrouped = [];
+        }
+
         foreach ($packages as $package) {
-            if (isset($ratePackageGrouped[$package['code']])) {
-                $ratePackageGrouped[$package['code']]['qty']++;
+            $key = $package['customPackageId'] ?? ($package['code'] ?? ($package['name'] ?? ''));
+
+            if (isset($ratePackageGrouped[$key])) {
+                $ratePackageGrouped[$key]['qty']++;
             } else {
-                $ratePackageGrouped[$package['code']] = [
+                $ratePackageGrouped[$key] = [
                     'qty' => 1,
-                    'name' => $package['name']
+                    'name' => $package['name'] ?? ($package['code'] ?? '')
                 ];
             }
         }
