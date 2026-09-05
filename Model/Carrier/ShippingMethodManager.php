@@ -92,11 +92,7 @@ class ShippingMethodManager
      */
     private function retrieveCarrierData($method, $orderShippingDescription)
     {
-        try {
-            list($method, $additional) = explode('_', $method, 2);
-        } catch (\Exception $exception) {
-            return null;
-        }
+        list($method, $additional) = array_pad(explode('_', $method, 2), 2, '');
 
         if ($method !== self::CARRIER) {
             return null;
@@ -132,11 +128,7 @@ class ShippingMethodManager
         if (!$sourceCodeToService) {
             return null;
         }
-        try {
-            list($method, $additional) = explode('_', $method, 2);
-        } catch (\Exception $exception) {
-            return null;
-        }
+        list($method, $additional) = array_pad(explode('_', $method, 2), 2, '');
 
         if ($method !== self::MERGED_SHIPPING && $method !== self::CHEAPEST_MERGED_SHIPPING) {
             return null;
@@ -184,11 +176,7 @@ class ShippingMethodManager
             return null;
         }
 
-        try {
-            list($method, $additional) = explode('_', $shippingMethodCode, 2);
-        } catch (\Exception $exception) {
-            return null;
-        }
+        list($method, $additional) = array_pad(explode('_', $shippingMethodCode, 2), 2, '');
 
         if ($method !== self::IN_STORE_PICKUP) {
             return null;
