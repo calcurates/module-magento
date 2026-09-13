@@ -54,11 +54,21 @@ class Packages implements OutputProcessorInterface
                 }
             }
 
-            if ($packageIdsString && isset($packages[$serviceMethodId][$packageIdsString])) {
-                $packagesForCurrentRate = $packages[$serviceMethodId][$packageIdsString];
-                $grouped = [];
-                $this->processRatePackageGrouped($grouped, $packagesForCurrentRate);
-                $groupedBySource[] = $grouped;
+            if ($packageIdsString) {
+                $packagesForCurrentRate = $packages[$serviceMethodId][$packageIdsString] ?? null;
+
+                if ($packagesForCurrentRate === null) {
+                    $legacyPackageIdsString = strstr($packageIdsString, '_', true);
+                    if ($legacyPackageIdsString !== false) {
+                        $packagesForCurrentRate = $packages[$serviceMethodId][$legacyPackageIdsString] ?? null;
+                    }
+                }
+
+                if ($packagesForCurrentRate) {
+                    $grouped = [];
+                    $this->processRatePackageGrouped($grouped, $packagesForCurrentRate);
+                    $groupedBySource[] = $grouped;
+                }
             }
         }
         if ($rates = $rateModel->getRates()) {
