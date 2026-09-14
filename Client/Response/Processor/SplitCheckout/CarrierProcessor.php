@@ -169,8 +169,13 @@ class CarrierProcessor implements ResponseProcessorInterface
                     $this->configProvider->isDisplayPackageNameForCarrier()
                 );
 
+                $baseServiceIdsString = implode(',', $serviceIds);
+                if (isset($response['origin']['id'])) {
+                    $baseServiceIdsString .= '_' . $response['origin']['id'];
+                }
+
                 $serviceIdsString = $this->stringUniqueIncrement->getUniqueString(
-                    implode(',', $serviceIds),
+                    $baseServiceIdsString,
                     $existingServiceIds
                 );
 
@@ -227,16 +232,16 @@ class CarrierProcessor implements ResponseProcessorInterface
         ) ?: [];
         if ($existingCarrierRatesToPackages) {
             $existingCarrierRatesToPackages = $this->serializer->unserialize($existingCarrierRatesToPackages);
+            $currentOriginId = $response['origin']['id'] ?? null;
             foreach ($existingCarrierRatesToPackages as $carrierId => $serviceIdData) {
                 foreach ($serviceIdData as $serviceIds => $source) {
-                    $mergedSource = $source;
                     if (isset($carrierRatesToPackages[$carrierId][$serviceIds])) {
-                        $mergedSource = array_unique(
-                            array_merge($source, $carrierRatesToPackages[$carrierId][$serviceIds]),
-                            SORT_REGULAR
-                        );
+                        continue;
                     }
-                    $carrierRatesToPackages[$carrierId][$serviceIds] = $mergedSource;
+                    if ($currentOriginId !== null && $this->containsOrigin($source, $currentOriginId)) {
+                        continue;
+                    }
+                    $carrierRatesToPackages[$carrierId][$serviceIds] = $source;
                 }
             }
         }
@@ -245,5 +250,21 @@ class CarrierProcessor implements ResponseProcessorInterface
             CustomSalesAttributesInterface::CARRIER_PACKAGES,
             $this->serializer->serialize($carrierRatesToPackages)
         );
+    }
+
+    /**
+     * @param array $packages
+     * @param $originId
+     * @return bool
+     */
+    private function containsOrigin(array $packages, $originId): bool
+    {
+        foreach ($packages as $package) {
+            if (isset($package['origin_id']) && (string)$package['origin_id'] === (string)$originId) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

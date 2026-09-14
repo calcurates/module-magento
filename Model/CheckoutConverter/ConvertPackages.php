@@ -55,7 +55,17 @@ class ConvertPackages
         }
 
         $packages = $this->serializer->unserialize($packages);
-        $packages = $packages[$carrierData->getCarrierId()][$carrierData->getServiceIdsString()] ?? null;
+        $carrierPackages = $packages[$carrierData->getCarrierId()] ?? [];
+        $serviceIdsString = $carrierData->getServiceIdsString();
+        $packages = $carrierPackages[$serviceIdsString] ?? null;
+
+        if ($packages === null) {
+            $legacyServiceIdsString = strstr($serviceIdsString, '_', true);
+            if ($legacyServiceIdsString !== false) {
+                $packages = $carrierPackages[$legacyServiceIdsString] ?? null;
+            }
+        }
+
         if (!$packages) {
             return;
         }

@@ -98,7 +98,7 @@ class ShippingMethodManager
             return null;
         }
 
-        list($carrierId, $serviceIds, $inc) = array_pad(explode('_', $additional), 3, '');
+        list($carrierId, $serviceIds, $inc) = array_pad(explode('_', $additional, 3), 3, '');
 
         $serviceIdsArray = explode(',', $serviceIds);
 
