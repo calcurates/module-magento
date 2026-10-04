@@ -17,6 +17,7 @@ use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Client\Request\RateRequestBuilder;
 use Calcurates\ModuleMagento\Client\Response\Strategy\RatesStrategyFactory;
 use Calcurates\ModuleMagento\Model\Carrier\RatesRequestCache;
+use Calcurates\ModuleMagento\Plugin\Model\Shipping\ShippingAddEstimateFlagToRequestPlugin;
 use Calcurates\ModuleMagento\Model\Carrier\Validator\RateRequestValidator;
 use Calcurates\ModuleMagento\Model\Shipment\CustomPackagesProvider;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -221,6 +222,9 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         } else {
             $result = $this->getCachedDataByRequest($request);
             if ($result === false || ($result->getError() && count($result->getAllRates()) === 1)) {
+                if ($request->getData(ShippingAddEstimateFlagToRequestPlugin::IS_GRAPHQL_ESTIMATE_FLAG)) {
+                    return false;
+                }
                 $result = $this->_rateFactory->create();
                 $this->ratesResponseProcessor->processFailedRate(
                     (string)$this->getConfigData(Config::CONFIG_TITLE),
