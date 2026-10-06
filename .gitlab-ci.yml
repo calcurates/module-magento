@@ -4,7 +4,23 @@ before_script:
     - apk add openssh-client
 
 stages:
+    - lint
     - deploy
+
+lint:
+    image: php:8.5-cli-alpine
+    tags:
+        - calcurates
+    stage: lint
+    allow_failure: true
+    rules:
+        - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    before_script:
+        - apk add --no-cache curl
+    script:
+        - echo "Run php-cs-fixer (latest v3, dry-run, @PSR12)"
+        - curl -fsSL https://cs.symfony.com/download/php-cs-fixer-v3.phar -o php-cs-fixer.phar
+        - php php-cs-fixer.phar fix . --rules=@PSR12 --dry-run --diff --using-cache=no --no-interaction
 
 deploy_staging:
     tags:
