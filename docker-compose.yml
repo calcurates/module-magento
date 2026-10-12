@@ -26,6 +26,10 @@ services:
       context: ./.docker/mysql
       dockerfile: Dockerfile
     command: [--log-bin-trust-function-creators=1, --skip-mysqlx]
+    # MySQL container is run as root, so we need to change the user to 999:999, It is the mysql account inside mysql:8.4
+    # Also it could be replaced with user and owner of directory .docker/mysql/data
+    # You can find it by command: stat -c '%u:%g' .docker/mysql/data
+    user: "${MYSQL_UID:-999}:${MYSQL_GID:-999}"
     container_name: magento2-mysql
     restart: always
     ports:

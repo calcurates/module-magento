@@ -12,7 +12,9 @@ done
 
 isSourced=`mariadb --skip-ssl --silent --skip-column-names --user="$MYSQL_USER" --password="$MYSQL_PASSWORD" --host="mysql" --port="3306" -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$MYSQL_DATABASE';"`
 #isSourced=0
-if [[ -f "/magento2-2.4.9.tar.gz" || "${isSourced}" -eq "0" ]]; then
+# The tarball lives in the image, so a recreated container still has it after Magento is installed.
+# Install only when that archive is present and the database has no tables.
+if [[ -f "/magento2-2.4.9.tar.gz" && "${isSourced}" -eq "0" ]]; then
     echo "Copying the Magento2 template to the working directory..."
     tar -zxf "/magento2-2.4.9.tar.gz"
     rm "/magento2-2.4.9.tar.gz"
@@ -62,9 +64,11 @@ if [[ -f "/magento2-2.4.9.tar.gz" || "${isSourced}" -eq "0" ]]; then
     bin/magento cache:flush
 
     echo "Changing the permissions..."
-    find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
-    find var generated vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} +
-    chown -R :www-data .
+    # vendor and app/code are host bind mounts. This filesystem rejects chown there,
+    # and with set -e that exits the container before php-fpm starts.
+    find var generated pub/static pub/media app/etc -type f -exec chmod g+w {} +
+    find var generated pub/static pub/media app/etc -type d -exec chmod g+ws {} +
+    chown -R :www-data var generated pub/static pub/media app/etc
 
     echo "Configuring the phpcs..."
     php vendor/bin/phpcs --config-set default_standard Magento2
