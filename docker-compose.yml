@@ -17,7 +17,9 @@ services:
       - mysql
     container_name: magento2-opensearch
     ports:
-      - "9200:9200"
+      - "${OPENSEARCH_PORT:-9200}:9200"
+    networks:
+      - default
 
   mysql:
     build:
@@ -27,15 +29,17 @@ services:
     container_name: magento2-mysql
     restart: always
     ports:
-      - "3306:3306"
+      - "${MYSQL_PORT:-3306}:3306"
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-      - MYSQL_PASSWORD=passwoRt
-      - MYSQL_USER=magento2
-      - MYSQL_DATABASE=magento2
+      - MYSQL_PASSWORD="${MYSQL_PASS:-passwoRt}"
+      - MYSQL_USER="${MYSQL_USER:-magento2}"
+      - MYSQL_DATABASE="${MYSQL_DB:-magento2}"
     volumes:
       - './.docker/mysql/data:/var/lib/mysql'
       - './.docker/mysql/server.cnf:/etc/mysql/my.cnf'
+    networks:
+      - default
 
   php:
     privileged: true
@@ -76,16 +80,20 @@ services:
       - './vendor:/var/www/magento2/vendor:cached'
     container_name: magento2-php
     ports:
-      - "9000:9000" # php-fpm
+      - "${PHP_PORT:-9000}:9000" # php-fpm
     environment:
-      - MYSQL_PASSWORD=passwoRt
-      - MYSQL_USER=magento2
-      - MYSQL_DATABASE=magento2
+      - MYSQL_PASSWORD="${MYSQL_PASS:-passwoRt}"
+      - MYSQL_USER="${MYSQL_USER:-magento2}"
+      - MYSQL_DATABASE="${MYSQL_DB:-magento2}"
+      - ANGIE_PORT=${ANGIE_PORT:-80}
     depends_on:
       - mysql
       - opensearch
     expose:
-      - "9001" # xdebug
+      - "${XDEBUG_PROT:-9001}" # xdebug
+    networks:
+      - calcurates-dev
+      - default
 
   angie:
     build:
@@ -96,7 +104,19 @@ services:
       - './vendor:/var/www/magento2/vendor'
       - './.docker/angie/magento2.conf:/etc/angie/http.d/default.conf'
     ports:
-      - "80:80"
+      - "${ANGIE_PORT:-80}:80"
     container_name: magento2-angie
     depends_on:
       - php
+    networks:
+      - calcurates-dev
+      - default
+
+# Networks are used to connect containers from different docker-compose files.
+# If you want to connect containers from different docker-compose files,
+# you need to add the network to the services that you want to connect to.
+# For example, in this, we need to connect with Calcurates API.
+# To find the network name, you can use the following command: docker network ls
+networks:
+  calcurates-dev:
+    external: true
