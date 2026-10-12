@@ -10,3 +10,4 @@ composer.lock
 .docker/mysql/data/*
 !.docker/mysql/data/.gitkeep
 .docker/php/auth.json
+.env

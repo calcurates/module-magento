@@ -28,7 +28,7 @@ if [[ -f "/magento2-2.4.9.tar.gz" || "${isSourced}" -eq "0" ]]; then
     bin/magento setup:uninstall
 
     bin/magento setup:install \
-            --base-url=http://localhost/ \
+            --base-url=http://localhost:${ANGIE_PORT:-80}/ \
             --backend-frontname=admin \
             --db-host=mysql:3306 \
             --db-name="$MYSQL_DATABASE" \
