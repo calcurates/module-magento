@@ -28,6 +28,12 @@ class RatesResponseProcessor
     public const CALCURATES_TAX_AMOUNT = 'tax_amount';
     public const CALCURATES_CURRENCY = 'currency';
     public const CALCURATES_CUSTOM_NUMBER = 'custom_number';
+    public const CALCURATES_FINAL_RATE = 'final_rate';
+    public const CALCURATES_BASE_RATE = 'base_rate';
+    public const CALCURATES_SURCHARGE = 'surcharge';
+    public const CALCURATES_DISCOUNT = 'discount';
+    public const CALCURATES_SURCHARGE_RULES = 'surcharge_rules';
+    public const CALCURATES_DISCOUNT_RULES = 'discount_rules';
 
     /**
      * @var ResultFactory
