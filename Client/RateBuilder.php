@@ -63,6 +63,9 @@ class RateBuilder
     {
         $displayRatesType = $this->calcuratesConfig->getRatesTaxDisplayType();
         $tax = $responseRate['rate']['tax'] ?? null;
+        if (isset($responseRate['rate']) && is_array($responseRate['rate'])) {
+            $responseRate['rate']['finalRate'] = $responseRate['rate']['cost'] ?? null;
+        }
         if ($displayRatesType === RateTaxDisplaySource::BOTH && $tax) {
             $responseRateWithTax = $responseRate;
             $responseRateWithTax['rate']['cost'] += $tax;
@@ -141,6 +144,30 @@ class RateBuilder
         }
         if (array_key_exists('customNumber', $responseRate)) {
             $rate->setData(RatesResponseProcessor::CALCURATES_CUSTOM_NUMBER, $responseRate['customNumber']);
+        }
+        if (array_key_exists('finalRate', $responseRate['rate'])) {
+            $rate->setData(RatesResponseProcessor::CALCURATES_FINAL_RATE, $responseRate['rate']['finalRate']);
+        }
+        if (array_key_exists('baseRate', $responseRate['rate'])) {
+            $rate->setData(RatesResponseProcessor::CALCURATES_BASE_RATE, $responseRate['rate']['baseRate']);
+        }
+        if (array_key_exists('surcharge', $responseRate['rate'])) {
+            $rate->setData(RatesResponseProcessor::CALCURATES_SURCHARGE, $responseRate['rate']['surcharge']);
+        }
+        if (array_key_exists('discount', $responseRate['rate'])) {
+            $rate->setData(RatesResponseProcessor::CALCURATES_DISCOUNT, $responseRate['rate']['discount']);
+        }
+        if (is_array($responseRate['rate']['surchargeRules'] ?? null)) {
+            $rate->setData(
+                RatesResponseProcessor::CALCURATES_SURCHARGE_RULES,
+                $responseRate['rate']['surchargeRules']
+            );
+        }
+        if (is_array($responseRate['rate']['discountRules'] ?? null)) {
+            $rate->setData(
+                RatesResponseProcessor::CALCURATES_DISCOUNT_RULES,
+                $responseRate['rate']['discountRules']
+            );
         }
 
         return $rate;
