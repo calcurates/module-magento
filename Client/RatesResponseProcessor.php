@@ -34,6 +34,7 @@ class RatesResponseProcessor
     public const CALCURATES_DISCOUNT = 'discount';
     public const CALCURATES_SURCHARGE_RULES = 'surcharge_rules';
     public const CALCURATES_DISCOUNT_RULES = 'discount_rules';
+    public const CALCURATES_INSURANCE_AMOUNT = 'insurance_amount';
 
     /**
      * @var ResultFactory

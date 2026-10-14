@@ -28,6 +28,7 @@ class RatePrice implements OutputProcessorInterface
         RatesResponseProcessor::CALCURATES_BASE_RATE => '{base_rate}',
         RatesResponseProcessor::CALCURATES_SURCHARGE => '{surcharge}',
         RatesResponseProcessor::CALCURATES_DISCOUNT => '{discount}',
+        RatesResponseProcessor::CALCURATES_INSURANCE_AMOUNT => '{insurance_amount}',
     ];
 
     /**

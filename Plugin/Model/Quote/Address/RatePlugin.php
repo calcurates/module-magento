@@ -42,6 +42,7 @@ class RatePlugin
             RatesResponseProcessor::CALCURATES_DISCOUNT,
             RatesResponseProcessor::CALCURATES_SURCHARGE_RULES,
             RatesResponseProcessor::CALCURATES_DISCOUNT_RULES,
+            RatesResponseProcessor::CALCURATES_INSURANCE_AMOUNT,
             ShippingMethodInterface::KEY_METHOD_TITLE
         ];
         foreach ($arrayToImport as $key) {
