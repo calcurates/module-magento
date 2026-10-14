@@ -20,6 +20,7 @@ use Calcurates\ModuleMagento\Client\Response\DeliveryDateProcessor;
 use Calcurates\ModuleMagento\Client\Response\MetadataPoolInterface;
 use Calcurates\ModuleMagento\Model\Carrier;
 use Calcurates\ModuleMagento\Model\Carrier\DeliveryDateFormatter;
+use Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage\RatePrice;
 use Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\OutputProcessorInterface;
 use Calcurates\ModuleMagento\Model\Config;
 use Calcurates\ModuleMagento\Model\Config\Source\DeliveryDateDisplaySource;
@@ -80,6 +81,11 @@ class ShippingMethodConverterPlugin
     private $infoMessageProcessors;
 
     /**
+     * @var RatePrice
+     */
+    private $ratePrice;
+
+    /**
      * ShippingMethodConverterPlugin constructor.
      * @param Config $configProvider
      * @param DeliveryDateFormatter $deliveryDateFormatter
@@ -89,6 +95,7 @@ class ShippingMethodConverterPlugin
      * @param MetadataInterfaceFactory $metadataInterfaceFactory
      * @param MetaRateData $metaRateData
      * @param MetaRateInterfaceFactory $metaRateInterfaceFactory
+     * @param RatePrice $ratePrice
      * @param OutputProcessorInterface[] $infoMessageProcessors
      */
     public function __construct(
@@ -100,9 +107,11 @@ class ShippingMethodConverterPlugin
         MetadataInterfaceFactory $metadataInterfaceFactory,
         MetaRateData $metaRateData,
         MetaRateInterfaceFactory $metaRateInterfaceFactory,
+        RatePrice $ratePrice,
         array $infoMessageProcessors = []
     ) {
         $this->infoMessageProcessors = $infoMessageProcessors;
+        $this->ratePrice = $ratePrice;
         $this->configProvider = $configProvider;
         $this->deliveryDateFormatter = $deliveryDateFormatter;
         $this->rateDataFactory = $rateDataFactory;
@@ -177,6 +186,11 @@ class ShippingMethodConverterPlugin
                 }
             }
             $calcuratesRateData->setInfoMessage($infoMessage);
+        }
+
+        $ratePriceInfo = $this->ratePrice->buildDisplay($rateModel);
+        if ($ratePriceInfo !== '') {
+            $calcuratesRateData->setRatePriceInfo($ratePriceInfo);
         }
 
         if ($mapLink = $rateModel->getData(RatesResponseProcessor::CALCURATES_MAP_LINK)) {

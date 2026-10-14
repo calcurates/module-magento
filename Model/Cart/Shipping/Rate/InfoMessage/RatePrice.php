@@ -12,6 +12,7 @@ namespace Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\InfoMessage;
 use Calcurates\ModuleMagento\Client\RatesResponseProcessor;
 use Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\OutputProcessorInterface;
 use Magento\Framework\DataObject;
+use Magento\Framework\Escaper;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Quote\Model\Quote\Address\Rate;
 use Magento\Quote\Model\Quote\Address\RateResult\Error;
@@ -43,11 +44,18 @@ class RatePrice implements OutputProcessorInterface
     private $priceCurrency;
 
     /**
-     * @param PriceCurrencyInterface $priceCurrency
+     * @var Escaper
      */
-    public function __construct(PriceCurrencyInterface $priceCurrency)
+    private $escaper;
+
+    /**
+     * @param PriceCurrencyInterface $priceCurrency
+     * @param Escaper $escaper
+     */
+    public function __construct(PriceCurrencyInterface $priceCurrency, Escaper $escaper)
     {
         $this->priceCurrency = $priceCurrency;
+        $this->escaper = $escaper;
     }
 
     /**
@@ -95,6 +103,68 @@ class RatePrice implements OutputProcessorInterface
         }
 
         return $stringToProcess;
+    }
+
+    /**
+     * Labeled amounts for the checkout shipping method. Empty when the rate has nothing to show.
+     *
+     * @param Rate|Method|Error|DataObject $rateModel
+     * @return string
+     */
+    public function buildDisplay(DataObject $rateModel): string
+    {
+        $currency = $rateModel->getData(RatesResponseProcessor::CALCURATES_CURRENCY);
+        if (!isset($currency)) {
+            return '';
+        }
+
+        $lines = [];
+        $amountLabels = [
+            RatesResponseProcessor::CALCURATES_FINAL_RATE => __('Final rate'),
+            RatesResponseProcessor::CALCURATES_BASE_RATE => __('Base rate'),
+            RatesResponseProcessor::CALCURATES_SURCHARGE => __('Surcharge'),
+            RatesResponseProcessor::CALCURATES_DISCOUNT => __('Discount'),
+        ];
+        foreach ($amountLabels as $dataKey => $label) {
+            $amount = $rateModel->getData($dataKey);
+            if (!isset($amount)) {
+                continue;
+            }
+            $lines[] = $this->renderLine((string)$label, $this->formatAmount($amount, $currency));
+        }
+
+        $ruleLabels = [
+            RatesResponseProcessor::CALCURATES_SURCHARGE_RULES => 'Surcharge rule %1',
+            RatesResponseProcessor::CALCURATES_DISCOUNT_RULES => 'Discount rule %1',
+        ];
+        foreach ($ruleLabels as $dataKey => $label) {
+            $rules = $rateModel->getData($dataKey);
+            if (!is_array($rules)) {
+                continue;
+            }
+            foreach ($rules as $ruleId => $amount) {
+                if (!isset($amount)) {
+                    continue;
+                }
+                $lines[] = $this->renderLine(
+                    (string)__($label, $ruleId),
+                    $this->formatAmount($amount, $currency)
+                );
+            }
+        }
+
+        return implode('', $lines);
+    }
+
+    /**
+     * @param string $label
+     * @param string $amount
+     * @return string
+     */
+    private function renderLine(string $label, string $amount): string
+    {
+        return '<div>' . $this->escaper->escapeHtml($label) . ': '
+            . $this->escaper->escapeHtml($amount) . '</div>';
     }
 
     /**

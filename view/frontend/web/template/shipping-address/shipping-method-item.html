@@ -33,6 +33,10 @@
            attr="'href': method.extension_attributes.calcurates_data.map_link"
            target="_blank"
            translate="'see on the map'"></a>
+        <div class="calcurates-rate-prices"
+             if="method.extension_attributes && method.extension_attributes.calcurates_data.rate_price_info">
+            <span data-bind="html: method.extension_attributes.calcurates_data.rate_price_info"></span>
+        </div>
         <div class="info-message"
              if="method.extension_attributes && method.extension_attributes.calcurates_data.info_message && element.getInfoMessagePosition() == 'below_method'">
             <span data-bind="html: method.extension_attributes.calcurates_data.info_message"></span>
