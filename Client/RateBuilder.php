@@ -169,6 +169,12 @@ class RateBuilder
                 $responseRate['rate']['discountRules']
             );
         }
+        if (array_key_exists('insurance', $responseRate['rate'])) {
+            $rate->setData(
+                RatesResponseProcessor::CALCURATES_INSURANCE_AMOUNT,
+                $responseRate['rate']['insurance']
+            );
+        }
 
         return $rate;
     }
