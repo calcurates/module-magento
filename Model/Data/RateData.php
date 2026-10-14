@@ -112,4 +112,21 @@ class RateData extends AbstractSimpleObject implements RateDataInterface
     {
         $this->setData(self::METADATA, $metadata);
     }
+
+    /**
+     * @return string|null
+     */
+    public function getRatePriceInfo(): ?string
+    {
+        return $this->_get(self::RATE_PRICE_INFO);
+    }
+
+    /**
+     * @param string $ratePriceInfo
+     * @return void
+     */
+    public function setRatePriceInfo(string $ratePriceInfo): void
+    {
+        $this->setData(self::RATE_PRICE_INFO, $ratePriceInfo);
+    }
 }
