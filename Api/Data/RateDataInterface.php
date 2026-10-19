@@ -19,7 +19,6 @@ interface RateDataInterface
     public const IMAGE_URL = 'image_url';
     public const DELIVERY_DATES_LIST = 'delivery_dates_list';
     public const METADATA = 'metadata';
-    public const RATE_PRICE_INFO = 'rate_price_info';
 
     /**
      * @return string|null
@@ -86,15 +85,4 @@ interface RateDataInterface
      * @return void
      */
     public function setMetadata(\Calcurates\ModuleMagento\Api\Data\MetadataInterface $metadata): void;
-
-    /**
-     * @return string|null
-     */
-    public function getRatePriceInfo(): ?string;
-
-    /**
-     * @param string $ratePriceInfo
-     * @return void
-     */
-    public function setRatePriceInfo(string $ratePriceInfo): void;
 }
