@@ -14,6 +14,7 @@ use Calcurates\ModuleMagento\Api\SalesData\QuoteData\GetQuoteDataInterface;
 use Calcurates\ModuleMagento\Api\SalesData\QuoteData\SaveQuoteDataInterface;
 use Calcurates\ModuleMagento\Client\Response\FailedRateBuilder;
 use Calcurates\ModuleMagento\Client\Response\ResponseProcessorInterface;
+use Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\ShippingRateSnapshot;
 use Calcurates\ModuleMagento\Model\Config as CalcuratesConfig;
 use Magento\Quote\Model\Quote;
 use Magento\Shipping\Model\Rate\Result;
@@ -35,6 +36,7 @@ class RatesResponseProcessor
     public const CALCURATES_SURCHARGE_RULES = 'surcharge_rules';
     public const CALCURATES_DISCOUNT_RULES = 'discount_rules';
     public const CALCURATES_INSURANCE_AMOUNT = 'insurance_amount';
+    public const CALCURATES_PACKAGES = 'packages';
 
     /**
      * @var ResultFactory
@@ -72,6 +74,20 @@ class RatesResponseProcessor
     private $quoteDataFactory;
 
     /**
+     * @var ShippingRateSnapshot
+     */
+    private $shippingRateSnapshot;
+
+    /**
+     * Rate details collected for the current request, keyed by quote id.
+     * Split checkout calls this processor once per origin, so later origins are merged
+     * instead of replacing the rates saved for the previous origin.
+     *
+     * @var array
+     */
+    private $shippingRatesByQuote = [];
+
+    /**
      * RatesResponseProcessor constructor.
      * @param ResultFactory $resultFactory
      * @param CalcuratesConfig $calcuratesConfig
@@ -80,6 +96,7 @@ class RatesResponseProcessor
      * @param GetQuoteDataInterface $getQuoteData
      * @param SaveQuoteDataInterface $saveQuoteData
      * @param QuoteDataInterfaceFactory $quoteDataFactory
+     * @param ShippingRateSnapshot $shippingRateSnapshot
      */
     public function __construct(
         ResultFactory $resultFactory,
@@ -88,7 +105,8 @@ class RatesResponseProcessor
         FailedRateBuilder $failedRateBuilder,
         GetQuoteDataInterface $getQuoteData,
         SaveQuoteDataInterface $saveQuoteData,
-        QuoteDataInterfaceFactory $quoteDataFactory
+        QuoteDataInterfaceFactory $quoteDataFactory,
+        ShippingRateSnapshot $shippingRateSnapshot
     ) {
         $this->resultFactory = $resultFactory;
         $this->calcuratesConfig = $calcuratesConfig;
@@ -97,6 +115,7 @@ class RatesResponseProcessor
         $this->getQuoteData = $getQuoteData;
         $this->saveQuoteData = $saveQuoteData;
         $this->quoteDataFactory = $quoteDataFactory;
+        $this->shippingRateSnapshot = $shippingRateSnapshot;
     }
 
     /**
@@ -104,6 +123,8 @@ class RatesResponseProcessor
      *
      * @param array $response
      * @param Quote $quote
+     * @param bool $resetStoredRates Replace rates stored earlier in this request.
+     *        Split checkout passes false for every origin after the first one.
      *
      * @return Result
      *
@@ -111,7 +132,7 @@ class RatesResponseProcessor
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.ElseExpression)
      */
-    public function processResponse(array $response, Quote $quote): Result
+    public function processResponse(array $response, Quote $quote, bool $resetStoredRates = true): Result
     {
         $result = $this->resultFactory->create();
 
@@ -143,10 +164,16 @@ class RatesResponseProcessor
 
         // @TODO: temporary fix, need refactoring
         $deliveryDates = [];
+        $shippingRates = [];
         foreach ($result->getAllRates() as $rate) {
+            $methodCode = $rate->getCarrier() . '_' . $rate->getMethod();
             $rateDeliveryDates = $rate->getData(self::CALCURATES_DELIVERY_DATES);
             if ($rateDeliveryDates) {
-                $deliveryDates[$rate->getCarrier() . '_' . $rate->getMethod()] = $rateDeliveryDates;
+                $deliveryDates[$methodCode] = $rateDeliveryDates;
+            }
+            $snapshot = $this->shippingRateSnapshot->fromRate($rate);
+            if ($snapshot) {
+                $shippingRates[$methodCode] = $snapshot;
             }
         }
 
@@ -166,7 +193,18 @@ class RatesResponseProcessor
             $quoteData->setQuoteId((int)$quote->getId());
         }
 
+        $quoteId = (int)$quote->getId();
+        if ($resetStoredRates) {
+            $this->shippingRatesByQuote[$quoteId] = $shippingRates;
+        } else {
+            $this->shippingRatesByQuote[$quoteId] = array_merge(
+                $this->shippingRatesByQuote[$quoteId] ?? [],
+                $shippingRates
+            );
+        }
+
         $quoteData->setDeliveryDates($deliveryDates);
+        $quoteData->setShippingRates($this->shippingRatesByQuote[$quoteId]);
         $this->saveQuoteData->save($quoteData);
 
         return $result;

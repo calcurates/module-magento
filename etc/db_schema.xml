@@ -47,6 +47,7 @@
     <column xsi:type="decimal" name="delivery_date_time_fee" scale="4" precision="12" unsigned="false" nullable="false" comment="Date Fee"/>
     <column xsi:type="text" name="delivery_dates" nullable="false" comment="Delivery dates for quote"/>
     <column xsi:type="text" name="split_shipments" nullable="true" comment="Calcurates Split Shipments"/>
+    <column xsi:type="text" name="shipping_rates" nullable="true" comment="Selected shipping rate details by method"/>
     <constraint xsi:type="primary" referenceId="PRIMARY">
       <column name="id"/>
     </constraint>
@@ -91,6 +92,7 @@
     <column xsi:type="decimal" name="dd_fee_amount" scale="4" precision="12" unsigned="false" nullable="false" comment="Whole delivery date fee amount in order currency"/>
     <column xsi:type="text" name="delivery_dates" nullable="false" comment="Delivery Dates serialized for current method"/>
     <column xsi:type="text" name="split_shipments" nullable="true" comment="Calcurates Split Shipments"/>
+    <column xsi:type="text" name="shipping_rate" nullable="true" comment="Selected shipping rate details"/>
     <constraint xsi:type="primary" referenceId="PRIMARY">
       <column name="id"/>
     </constraint>

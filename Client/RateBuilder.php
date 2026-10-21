@@ -139,8 +139,16 @@ class RateBuilder
             );
         }
         $rate->setCurrency($responseRate['rate']['currency']);
-        if (!empty($responseRate['rate']['tax'])) {
+        if (array_key_exists('tax', $responseRate['rate']) && $responseRate['rate']['tax'] !== null) {
             $rate->setTaxAmount($responseRate['rate']['tax']);
+        }
+        $insuranceAmount = $this->resolveInsuranceAmount($responseRate['rate']);
+        if ($insuranceAmount !== null) {
+            $rate->setData(RatesResponseProcessor::CALCURATES_INSURANCE_AMOUNT, $insuranceAmount);
+        }
+        $packages = $this->collectPackages($responseRate);
+        if ($packages) {
+            $rate->setData(RatesResponseProcessor::CALCURATES_PACKAGES, $packages);
         }
         if (array_key_exists('customNumber', $responseRate)) {
             $rate->setData(RatesResponseProcessor::CALCURATES_CUSTOM_NUMBER, $responseRate['customNumber']);
@@ -177,5 +185,64 @@ class RateBuilder
         }
 
         return $rate;
+    }
+
+    /**
+     * Insurance is returned either as a number or as an amount object, depending on the rate type.
+     *
+     * @param array $rateData
+     * @return float|null
+     */
+    private function resolveInsuranceAmount(array $rateData): ?float
+    {
+        $amount = $rateData['insuranceAmount'] ?? $rateData['insurance'] ?? null;
+        if (is_array($amount)) {
+            $amount = $amount['amount'] ?? $amount['cost'] ?? null;
+        }
+        if ($amount === null || $amount === '') {
+            return null;
+        }
+
+        return (float)$amount;
+    }
+
+    /**
+     * @param array $responseRate
+     * @return array
+     */
+    private function collectPackages(array $responseRate): array
+    {
+        $packages = [];
+        $this->appendPackages($packages, $responseRate['packages'] ?? []);
+        $this->appendPackages($packages, $responseRate['rate']['packages'] ?? []);
+        foreach ($responseRate['rates'] ?? [] as $rate) {
+            if (is_array($rate)) {
+                $this->appendPackages($packages, $rate['packages'] ?? []);
+            }
+        }
+        foreach ($responseRate['services'] ?? [] as $service) {
+            if (is_array($service)) {
+                $this->appendPackages($packages, $service['packages'] ?? []);
+            }
+        }
+
+        return $packages;
+    }
+
+    /**
+     * @param array $packages
+     * @param mixed $packagesToAppend
+     * @return void
+     */
+    private function appendPackages(array &$packages, $packagesToAppend): void
+    {
+        if (!is_array($packagesToAppend)) {
+            return;
+        }
+        foreach ($packagesToAppend as $package) {
+            if (is_array($package)) {
+                $packages[] = $package;
+            }
+        }
     }
 }
