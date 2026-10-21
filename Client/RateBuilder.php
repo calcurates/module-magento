@@ -177,12 +177,6 @@ class RateBuilder
                 $responseRate['rate']['discountRules']
             );
         }
-        if (array_key_exists('insurance', $responseRate['rate'])) {
-            $rate->setData(
-                RatesResponseProcessor::CALCURATES_INSURANCE_AMOUNT,
-                $responseRate['rate']['insurance']
-            );
-        }
 
         return $rate;
     }
@@ -199,7 +193,7 @@ class RateBuilder
         if (is_array($amount)) {
             $amount = $amount['amount'] ?? $amount['cost'] ?? null;
         }
-        if ($amount === null || $amount === '') {
+        if (!is_numeric($amount)) {
             return null;
         }
 

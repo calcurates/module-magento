@@ -68,6 +68,14 @@ class OrderShippingRate implements ArgumentInterface
         if (!$packages && !$shipments) {
             $packages = $this->packagesFromOrder($order);
         }
+        foreach ($shipments as &$shipment) {
+            if (is_array($shipment['rate'] ?? null)) {
+                $shipment['rate']['insurance_amount'] = $this->shippingRateSnapshot->normalizeAmount(
+                    $shipment['rate']['insurance_amount'] ?? null
+                );
+            }
+        }
+        unset($shipment);
 
         return [
             'delivery_from' => $rate['delivery_from'] ?? ($dates['from'] ?? null),
@@ -76,7 +84,7 @@ class OrderShippingRate implements ArgumentInterface
             'max_transit_days' => $rate['max_transit_days'] ?? ($dates['daysInTransitTo'] ?? null),
             'currency' => $rate['currency'] ?? null,
             'tax_amount' => $rate['tax_amount'] ?? null,
-            'insurance_amount' => $rate['insurance_amount'] ?? null,
+            'insurance_amount' => $this->shippingRateSnapshot->normalizeAmount($rate['insurance_amount'] ?? null),
             'base_rate' => $rate['base_rate'] ?? null,
             'surcharge' => $rate['surcharge'] ?? null,
             'surcharge_rules' => is_array($rate['surcharge_rules'] ?? null) ? $rate['surcharge_rules'] : [],

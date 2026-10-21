@@ -93,11 +93,29 @@ class ShippingRateSnapshot
         if (!$rate->hasData($sourceKey)) {
             return;
         }
-        $amount = $rate->getData($sourceKey);
-        if ($amount === null || $amount === '') {
+        $amount = $this->normalizeAmount($rate->getData($sourceKey));
+        if ($amount === null) {
             return;
         }
         $data[$key] = $amount;
+    }
+
+    /**
+     * A rate amount may be a number or an object with an amount inside it.
+     *
+     * @param mixed $amount
+     * @return float|null
+     */
+    public function normalizeAmount($amount): ?float
+    {
+        if (is_array($amount)) {
+            $amount = $amount['amount'] ?? $amount['cost'] ?? null;
+        }
+        if (!is_numeric($amount)) {
+            return null;
+        }
+
+        return (float)$amount;
     }
 
     /**
