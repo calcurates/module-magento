@@ -13,8 +13,11 @@ namespace Calcurates\ModuleMagento\Model\CheckoutConverter;
 
 use Calcurates\ModuleMagento\Api\Data\OrderDataInterface;
 use Calcurates\ModuleMagento\Api\Data\OrderDataInterfaceFactory;
+use Calcurates\ModuleMagento\Api\Data\QuoteDataInterface;
 use Calcurates\ModuleMagento\Api\SalesData\OrderData\SaveOrderDataInterface;
 use Calcurates\ModuleMagento\Api\SalesData\QuoteData\GetQuoteDataInterface;
+use Calcurates\ModuleMagento\Model\Carrier;
+use Calcurates\ModuleMagento\Model\Carrier\ShippingMethodManager;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order;
@@ -82,8 +85,51 @@ class ConvertQuoteData
             $orderData->setDeliveryDates($deliveryDatesForCurrentShippingMethod);
 
             $orderData->setSplitShipments($quoteData->getSplitShipments());
+            $orderData->setShippingRate(
+                $this->resolveShippingRate($quoteData, (string)$order->getShippingMethod(false))
+            );
 
             $this->saveOrderData->save($orderData);
         }
+    }
+
+    /**
+     * Keep only the method the customer selected. Split checkout stores one snapshot per shipment.
+     *
+     * @param QuoteDataInterface $quoteData
+     * @param string $methodCode
+     * @return array
+     */
+    private function resolveShippingRate(QuoteDataInterface $quoteData, string $methodCode): array
+    {
+        $rates = $quoteData->getShippingRates();
+        $selected = $rates[$methodCode] ?? [];
+        if ($methodCode !== Carrier::CODE . '_' . ShippingMethodManager::META_RATE) {
+            return $selected;
+        }
+
+        $shipments = [];
+        foreach ($quoteData->getSplitShipments() as $splitShipment) {
+            $childMethod = (string)($splitShipment['method'] ?? '');
+            if ($childMethod === '') {
+                continue;
+            }
+            $childCode = strpos($childMethod, Carrier::CODE . '_') === 0
+                ? $childMethod
+                : Carrier::CODE . '_' . $childMethod;
+            if (!isset($rates[$childCode])) {
+                continue;
+            }
+            $shipments[] = [
+                'title' => (string)($splitShipment['title'] ?? ''),
+                'method' => $childCode,
+                'rate' => $rates[$childCode],
+            ];
+        }
+        if ($shipments) {
+            $selected['shipments'] = $shipments;
+        }
+
+        return $selected;
     }
 }

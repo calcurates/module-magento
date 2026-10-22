@@ -145,4 +145,26 @@ class QuoteData extends \Magento\Framework\Model\AbstractModel implements QuoteD
     {
         $this->setData(self::SPLIT_SHIPMENTS, $shipments);
     }
+
+    /**
+     * @return array
+     */
+    public function getShippingRates(): array
+    {
+        $shippingRates = $this->getData(self::SHIPPING_RATES);
+        if ($shippingRates && is_array($shippingRates)) {
+            return $shippingRates;
+        }
+
+        return [];
+    }
+
+    /**
+     * @param array $shippingRates
+     * @return void
+     */
+    public function setShippingRates(array $shippingRates): void
+    {
+        $this->setData(self::SHIPPING_RATES, $shippingRates);
+    }
 }

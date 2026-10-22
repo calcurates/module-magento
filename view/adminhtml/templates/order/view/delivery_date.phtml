@@ -7,18 +7,36 @@
  */
 /** @var $block \Calcurates\ModuleMagento\Block\Adminhtml\Order\View\DeliveryDate */
 /** @var $viewModel \Calcurates\ModuleMagento\ViewModel\OrderDeliveryDate */
+/** @var \Calcurates\ModuleMagento\ViewModel\OrderShippingRate $rateViewModel */
 /** @var \Magento\Framework\Escaper $escaper */
 $viewModel = $block->getViewModel();
+$rateViewModel = $block->getShippingRateViewModel();
 
 $orderData = $viewModel->getOrderDataByOrderId((int)$block->getOrder()->getId());
-$hasDeliveryDateAndTime = $orderData && $orderData->getDeliveryDate();
-$deliveryDatesFormatted = '';
-if ($orderData) {
-    $deliveryDatesFormatted = $viewModel->formatDeliveryDates($orderData->getDeliveryDates());
+$hasSelectedDate = $orderData && $orderData->getDeliveryDate();
+$details = ($orderData && $rateViewModel) ? $rateViewModel->getDetails($orderData, $block->getOrder()) : [];
+$shipments = $details['shipments'] ?? [];
+$deliveryGroups = $shipments
+    ? $shipments
+    : [['title' => '', 'rate' => $details]];
+$hasDeliveryWindow = false;
+foreach ($deliveryGroups as $deliveryGroup) {
+    if ($rateViewModel && $rateViewModel->hasDeliveryFields($deliveryGroup['rate'] ?? [])) {
+        $hasDeliveryWindow = true;
+        break;
+    }
+}
+$hasRateDetails = false;
+foreach ($deliveryGroups as $deliveryGroup) {
+    $rate = $shipments ? ($deliveryGroup['rate'] ?? []) : $details;
+    if ($rateViewModel && $rateViewModel->hasPriceFields($rate)) {
+        $hasRateDetails = true;
+        break;
+    }
 }
 ?>
 
-<?php if ($deliveryDatesFormatted || $hasDeliveryDateAndTime): ?>
+<?php if ($hasDeliveryWindow || $hasSelectedDate): ?>
     <section class="admin__page-section order-view-billing-shipping">
         <div class="admin__page-section-title">
             <span class="title"><?= $block->escapeHtml(__('Delivery Dates')) ?></span>
@@ -26,17 +44,49 @@ if ($orderData) {
         <div class="admin__page-section-content">
             <div class="admin__page-section-item order-information">
                 <div class="admin__page-section-item-content">
-
                     <table class="admin__table-secondary order-information-table">
                         <tbody>
-                        <?php if ($deliveryDatesFormatted && !$hasDeliveryDateAndTime): ?>
-                            <tr>
-                                <th><?= $block->escapeHtml(__('Estimated Delivery Dates')) ?></th>
-                                <td><?= $block->escapeHtml($deliveryDatesFormatted) ?></td>
-                            </tr>
-                        <?php endif; ?>
+                        <?php foreach ($deliveryGroups as $deliveryGroup): ?>
+                            <?php $rate = $deliveryGroup['rate'] ?? []; ?>
+                            <?php if (!$rateViewModel || !$rateViewModel->hasDeliveryFields($rate)) {
+                                continue;
+                            } ?>
+                            <?php if (!empty($deliveryGroup['title'])): ?>
+                                <tr>
+                                    <th colspan="2"><?= $block->escapeHtml($deliveryGroup['title']) ?></th>
+                                </tr>
+                            <?php endif; ?>
+                            <?php if ($rateViewModel->isPresent($rate['delivery_from'] ?? null)): ?>
+                                <tr>
+                                    <th><?= $block->escapeHtml(__('Delivery From')) ?></th>
+                                    <td><?= /** @noEscape */ $viewModel->formatDate(
+                                        (string)$rate['delivery_from']
+                                    ) ?></td>
+                                </tr>
+                            <?php endif; ?>
+                            <?php if ($rateViewModel->isPresent($rate['delivery_to'] ?? null)): ?>
+                                <tr>
+                                    <th><?= $block->escapeHtml(__('Delivery To')) ?></th>
+                                    <td><?= /** @noEscape */ $viewModel->formatDate(
+                                        (string)$rate['delivery_to']
+                                    ) ?></td>
+                                </tr>
+                            <?php endif; ?>
+                            <?php if ($rateViewModel->isPresent($rate['min_transit_days'] ?? null)): ?>
+                                <tr>
+                                    <th><?= $block->escapeHtml(__('Min Transit Days')) ?></th>
+                                    <td><?= $block->escapeHtml($rate['min_transit_days']) ?></td>
+                                </tr>
+                            <?php endif; ?>
+                            <?php if ($rateViewModel->isPresent($rate['max_transit_days'] ?? null)): ?>
+                                <tr>
+                                    <th><?= $block->escapeHtml(__('Max Transit Days')) ?></th>
+                                    <td><?= $block->escapeHtml($rate['max_transit_days']) ?></td>
+                                </tr>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
 
-                        <?php if ($hasDeliveryDateAndTime): ?>
+                        <?php if ($hasSelectedDate): ?>
                             <tr>
                                 <th><?= $block->escapeHtml(__('Selected Delivery Date')) ?></th>
                                 <td>
@@ -58,6 +108,114 @@ if ($orderData) {
                                 </tr>
                             <?php endif; ?>
                         <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+<?php endif; ?>
+
+<?php if ($hasRateDetails): ?>
+    <section class="admin__page-section order-view-billing-shipping">
+        <div class="admin__page-section-title">
+            <span class="title"><?= $block->escapeHtml(__('Shipping Rate')) ?></span>
+        </div>
+        <div class="admin__page-section-content">
+            <div class="admin__page-section-item order-information">
+                <div class="admin__page-section-item-content">
+                    <table class="admin__table-secondary order-information-table">
+                        <tbody>
+                        <?php foreach ($deliveryGroups as $deliveryGroup): ?>
+                            <?php $rate = $shipments ? ($deliveryGroup['rate'] ?? []) : $details; ?>
+                            <?php if (!$rateViewModel->hasPriceFields($rate)) {
+                                continue;
+                            } ?>
+                            <?php $currency = $rate['currency'] ?? null; ?>
+                            <?php if (!empty($deliveryGroup['title'])): ?>
+                                <tr>
+                                    <th colspan="2"><?= $block->escapeHtml($deliveryGroup['title']) ?></th>
+                                </tr>
+                            <?php endif; ?>
+                            <?php if ($rateViewModel->isPresent($rate['tax_amount'] ?? null)): ?>
+                                <tr>
+                                    <th><?= $block->escapeHtml(__('Tax Amount')) ?></th>
+                                    <td><?= $block->escapeHtml(
+                                        $rateViewModel->formatAmount($rate['tax_amount'], $currency)
+                                    ) ?></td>
+                                </tr>
+                            <?php endif; ?>
+                            <?php if ($rateViewModel->isPresent($rate['insurance_amount'] ?? null)): ?>
+                                <tr>
+                                    <th><?= $block->escapeHtml(__('Insurance Amount')) ?></th>
+                                    <td><?= $block->escapeHtml(
+                                        $rateViewModel->formatAmount($rate['insurance_amount'], $currency)
+                                    ) ?></td>
+                                </tr>
+                            <?php endif; ?>
+                            <?php if (!empty($rate['packages'])): ?>
+                                <tr>
+                                    <th><?= $block->escapeHtml(__('Packages')) ?></th>
+                                    <td>
+                                        <?php foreach ($rate['packages'] as $package): ?>
+                                            <div><?= $block->escapeHtml(
+                                                __('%1 x %2', $package['qty'] ?? 1, $package['name'] ?? '')
+                                            ) ?></div>
+                                        <?php endforeach; ?>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                            <?php if ($rateViewModel->isPresent($rate['base_rate'] ?? null)): ?>
+                                <tr>
+                                    <th><?= $block->escapeHtml(__('Base Rate')) ?></th>
+                                    <td><?= $block->escapeHtml(
+                                        $rateViewModel->formatAmount($rate['base_rate'], $currency)
+                                    ) ?></td>
+                                </tr>
+                            <?php endif; ?>
+                            <?php if ($rateViewModel->isPresent($rate['surcharge'] ?? null)): ?>
+                                <tr>
+                                    <th><?= $block->escapeHtml(__('Surcharge')) ?></th>
+                                    <td><?= $block->escapeHtml(
+                                        $rateViewModel->formatAmount($rate['surcharge'], $currency)
+                                    ) ?></td>
+                                </tr>
+                            <?php endif; ?>
+                            <?php if (!empty($rate['surcharge_rules'])): ?>
+                                <tr>
+                                    <th><?= $block->escapeHtml(__('Surcharge Rules')) ?></th>
+                                    <td>
+                                        <?php foreach ($rate['surcharge_rules'] as $ruleId => $amount): ?>
+                                            <div><?= $block->escapeHtml(__('Rule %1', $ruleId)) ?>:
+                                                <?= $block->escapeHtml(
+                                                    $rateViewModel->formatAmount($amount, $currency)
+                                                ) ?></div>
+                                        <?php endforeach; ?>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                            <?php if ($rateViewModel->isPresent($rate['discount'] ?? null)): ?>
+                                <tr>
+                                    <th><?= $block->escapeHtml(__('Discount')) ?></th>
+                                    <td><?= $block->escapeHtml(
+                                        $rateViewModel->formatAmount($rate['discount'], $currency)
+                                    ) ?></td>
+                                </tr>
+                            <?php endif; ?>
+                            <?php if (!empty($rate['discount_rules'])): ?>
+                                <tr>
+                                    <th><?= $block->escapeHtml(__('Discount Rules')) ?></th>
+                                    <td>
+                                        <?php foreach ($rate['discount_rules'] as $ruleId => $amount): ?>
+                                            <div><?= $block->escapeHtml(__('Rule %1', $ruleId)) ?>:
+                                                <?= $block->escapeHtml(
+                                                    $rateViewModel->formatAmount($amount, $currency)
+                                                ) ?></div>
+                                        <?php endforeach; ?>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>

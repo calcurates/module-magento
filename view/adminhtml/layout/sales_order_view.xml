@@ -13,6 +13,7 @@
                    template="Calcurates_ModuleMagento::order/view/delivery_date.phtml">
                 <arguments>
                     <argument name="view_model" xsi:type="object">Calcurates\ModuleMagento\ViewModel\OrderDeliveryDate</argument>
+                    <argument name="shipping_rate_view_model" xsi:type="object">Calcurates\ModuleMagento\ViewModel\OrderShippingRate</argument>
                 </arguments>
             </block>
         </referenceContainer>

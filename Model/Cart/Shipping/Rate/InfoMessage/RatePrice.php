@@ -64,7 +64,7 @@ class RatePrice implements OutputProcessorInterface
                 continue;
             }
             $amount = $rateModel->getData($dataKey);
-            if (!isset($amount, $currency)) {
+            if (!is_numeric($amount) || !isset($currency)) {
                 continue;
             }
             $stringToProcess = str_replace(
