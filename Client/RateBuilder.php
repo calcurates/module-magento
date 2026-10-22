@@ -182,17 +182,12 @@ class RateBuilder
     }
 
     /**
-     * Insurance is returned either as a number or as an amount object, depending on the rate type.
-     *
      * @param array $rateData
      * @return float|null
      */
     private function resolveInsuranceAmount(array $rateData): ?float
     {
-        $amount = $rateData['insuranceAmount'] ?? $rateData['insurance'] ?? null;
-        if (is_array($amount)) {
-            $amount = $amount['amount'] ?? $amount['cost'] ?? null;
-        }
+        $amount = $rateData['insurance'] ?? null;
         if (!is_numeric($amount)) {
             return null;
         }
