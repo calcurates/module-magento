@@ -35,7 +35,7 @@ foreach ($deliveryGroups as $deliveryGroup) {
     }
 }
 $displayShippingRatesMetadata = $rateViewModel
-    && $rateViewModel->isDisplayShippingRatesMetadata((int)$block->getOrder()->getStoreId());
+    && $rateViewModel->isDisplayShippingRatesMetadata((int) $block->getOrder()->getStoreId());
 ?>
 
 <?php if ($displayShippingRatesMetadata && ($hasDeliveryWindow || $hasSelectedDate)): ?>

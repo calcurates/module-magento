@@ -407,7 +407,7 @@ class Config implements ConfigProviderInterface
      */
     public function isDisplayShippingRatesMetadata($storeId = null): bool
     {
-        return (bool)$this->scopeConfig->isSetFlag(
+        return (bool) $this->scopeConfig->isSetFlag(
             self::CONFIG_GROUP . self::DISPLAY_SHIPPING_RATES_METADATA,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId

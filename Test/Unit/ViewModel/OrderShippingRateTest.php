@@ -33,7 +33,7 @@ class OrderShippingRateTest extends \PHPUnit\Framework\TestCase
         $config = $this->createStub(Config::class);
         $config->method('isDisplayShippingRatesMetadata')->willReturnCallback(
             function ($storeId = null) {
-                return (int)$storeId === 2;
+                return (int) $storeId === 2;
             }
         );
         $this->viewModel = new OrderShippingRate(
