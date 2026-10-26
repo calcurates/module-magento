@@ -14,6 +14,7 @@ namespace Calcurates\ModuleMagento\ViewModel;
 use Calcurates\ModuleMagento\Api\Data\CustomSalesAttributesInterface;
 use Calcurates\ModuleMagento\Api\Data\OrderDataInterface;
 use Calcurates\ModuleMagento\Model\Cart\Shipping\Rate\ShippingRateSnapshot;
+use Calcurates\ModuleMagento\Model\Config;
 use Magento\Framework\Locale\CurrencyInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
@@ -37,18 +38,26 @@ class OrderShippingRate implements ArgumentInterface
     private $shippingRateSnapshot;
 
     /**
+     * @var Config
+     */
+    private $config;
+
+    /**
      * @param CurrencyInterface $localeCurrency
      * @param SerializerInterface $serializer
      * @param ShippingRateSnapshot $shippingRateSnapshot
+     * @param Config $config
      */
     public function __construct(
         CurrencyInterface $localeCurrency,
         SerializerInterface $serializer,
-        ShippingRateSnapshot $shippingRateSnapshot
+        ShippingRateSnapshot $shippingRateSnapshot,
+        Config $config
     ) {
         $this->localeCurrency = $localeCurrency;
         $this->serializer = $serializer;
         $this->shippingRateSnapshot = $shippingRateSnapshot;
+        $this->config = $config;
     }
 
     /**
@@ -96,6 +105,15 @@ class OrderShippingRate implements ArgumentInterface
     }
 
     /**
+     * @param int|string|null $storeId
+     * @return bool
+     */
+    public function isDisplayShippingRatesMetadata($storeId = null): bool
+    {
+        return $this->config->isDisplayShippingRatesMetadata($storeId);
+    }
+
+    /**
      * @param mixed $value
      * @return bool
      */
@@ -124,7 +142,6 @@ class OrderShippingRate implements ArgumentInterface
     {
         return $this->isPresent($rate['tax_amount'] ?? null)
             || $this->isPresent($rate['insurance_amount'] ?? null)
-            || $this->isPresent($rate['base_rate'] ?? null)
             || $this->isPresent($rate['surcharge'] ?? null)
             || $this->isPresent($rate['discount'] ?? null)
             || !empty($rate['surcharge_rules'])

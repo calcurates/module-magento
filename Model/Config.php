@@ -45,6 +45,7 @@ class Config implements ConfigProviderInterface
     public const DISPLAY_IMAGES = 'display_shipping_options_images';
     public const DISPLAY_PACKAGE_NAME_FOR_CARRIER = 'display_package_name_for_carrier';
     public const DISPLAY_SHIPPING_OPTION_NAME = 'display_shipping_option_name';
+    public const DISPLAY_SHIPPING_RATES_METADATA = 'display_shipping_rates_metadata';
     public const SHIPPING_ON_PRODUCT_ENABLED = 'shipping_on_product_enabled';
     public const SHIPPING_ON_PRODUCT_FALLBACK_MESSAGE = 'shipping_on_product_fallback_message';
     public const STORE_PICKUP_DISPLAY = 'store_pickup_display';
@@ -395,6 +396,19 @@ class Config implements ConfigProviderInterface
     {
         return (bool)$this->scopeConfig->isSetFlag(
             self::CONFIG_GROUP . self::DISPLAY_SHIPPING_OPTION_NAME,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * @param \Magento\Framework\App\ScopeInterface|int|string $storeId
+     * @return bool
+     */
+    public function isDisplayShippingRatesMetadata($storeId = null): bool
+    {
+        return (bool)$this->scopeConfig->isSetFlag(
+            self::CONFIG_GROUP . self::DISPLAY_SHIPPING_RATES_METADATA,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $storeId
         );
