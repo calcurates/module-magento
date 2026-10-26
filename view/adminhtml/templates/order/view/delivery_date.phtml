@@ -34,9 +34,11 @@ foreach ($deliveryGroups as $deliveryGroup) {
         break;
     }
 }
+$displayShippingRatesMetadata = $rateViewModel
+    && $rateViewModel->isDisplayShippingRatesMetadata((int) $block->getOrder()->getStoreId());
 ?>
 
-<?php if ($hasDeliveryWindow || $hasSelectedDate): ?>
+<?php if ($displayShippingRatesMetadata && ($hasDeliveryWindow || $hasSelectedDate)): ?>
     <section class="admin__page-section order-view-billing-shipping">
         <div class="admin__page-section-title">
             <span class="title"><?= $block->escapeHtml(__('Delivery Dates')) ?></span>
@@ -116,7 +118,7 @@ foreach ($deliveryGroups as $deliveryGroup) {
     </section>
 <?php endif; ?>
 
-<?php if ($hasRateDetails): ?>
+<?php if ($displayShippingRatesMetadata && $hasRateDetails): ?>
     <section class="admin__page-section order-view-billing-shipping">
         <div class="admin__page-section-title">
             <span class="title"><?= $block->escapeHtml(__('Shipping Rate')) ?></span>
