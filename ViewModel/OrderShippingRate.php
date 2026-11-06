@@ -123,6 +123,38 @@ class OrderShippingRate implements ArgumentInterface
     }
 
     /**
+     * A stored amount that should appear on the order. Zero is treated as absent.
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    public function isNonZeroAmount($value): bool
+    {
+        return $this->isPresent($value) && is_numeric($value) && (float) $value !== 0.0;
+    }
+
+    /**
+      * @param mixed $rules
+     * @return array
+     */
+    public function nonZeroRules($rules): array
+    {
+        if (!is_array($rules)) {
+            return [];
+        }
+
+        $visible = [];
+        foreach ($rules as $ruleId => $amount) {
+            if (!$this->isNonZeroAmount($amount)) {
+                continue;
+            }
+            $visible[$ruleId] = $amount;
+        }
+
+        return $visible;
+    }
+
+    /**
      * @param array $rate
      * @return bool
      */
@@ -142,10 +174,10 @@ class OrderShippingRate implements ArgumentInterface
     {
         return $this->isPresent($rate['tax_amount'] ?? null)
             || $this->isPresent($rate['insurance_amount'] ?? null)
-            || $this->isPresent($rate['surcharge'] ?? null)
-            || $this->isPresent($rate['discount'] ?? null)
-            || !empty($rate['surcharge_rules'])
-            || !empty($rate['discount_rules'])
+            || $this->isNonZeroAmount($rate['surcharge'] ?? null)
+            || $this->isNonZeroAmount($rate['discount'] ?? null)
+            || $this->nonZeroRules($rate['surcharge_rules'] ?? null)
+            || $this->nonZeroRules($rate['discount_rules'] ?? null)
             || !empty($rate['packages']);
     }
 
@@ -159,13 +191,13 @@ class OrderShippingRate implements ArgumentInterface
     public function formatAmount($amount, ?string $currency): string
     {
         if (!$currency) {
-            return number_format((float)$amount, 2, '.', '');
+            return number_format((float) $amount, 2, '.', '');
         }
 
         try {
-            return $this->localeCurrency->getCurrency($currency)->toCurrency((float)$amount);
+            return $this->localeCurrency->getCurrency($currency)->toCurrency((float) $amount);
         } catch (\Exception $exception) {
-            return number_format((float)$amount, 2, '.', '') . ' ' . $currency;
+            return number_format((float) $amount, 2, '.', '') . ' ' . $currency;
         }
     }
 
