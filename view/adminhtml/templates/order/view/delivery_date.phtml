@@ -12,7 +12,7 @@
 $viewModel = $block->getViewModel();
 $rateViewModel = $block->getShippingRateViewModel();
 
-$orderData = $viewModel->getOrderDataByOrderId((int)$block->getOrder()->getId());
+$orderData = $viewModel->getOrderDataByOrderId((int) $block->getOrder()->getId());
 $hasSelectedDate = $orderData && $orderData->getDeliveryDate();
 $details = ($orderData && $rateViewModel) ? $rateViewModel->getDetails($orderData, $block->getOrder()) : [];
 $shipments = $details['shipments'] ?? [];
@@ -62,7 +62,7 @@ $displayShippingRatesMetadata = $rateViewModel
                                 <tr>
                                     <th><?= $block->escapeHtml(__('Delivery From')) ?></th>
                                     <td><?= /** @noEscape */ $viewModel->formatDate(
-                                        (string)$rate['delivery_from']
+                                        (string) $rate['delivery_from']
                                     ) ?></td>
                                 </tr>
                             <?php endif; ?>
@@ -70,7 +70,7 @@ $displayShippingRatesMetadata = $rateViewModel
                                 <tr>
                                     <th><?= $block->escapeHtml(__('Delivery To')) ?></th>
                                     <td><?= /** @noEscape */ $viewModel->formatDate(
-                                        (string)$rate['delivery_to']
+                                        (string) $rate['delivery_to']
                                     ) ?></td>
                                 </tr>
                             <?php endif; ?>

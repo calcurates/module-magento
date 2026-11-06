@@ -130,7 +130,7 @@ class OrderShippingRate implements ArgumentInterface
      */
     public function isNonZeroAmount($value): bool
     {
-        return $this->isPresent($value) && is_numeric($value) && (float)$value !== 0.0;
+        return $this->isPresent($value) && is_numeric($value) && (float) $value !== 0.0;
     }
 
     /**
@@ -191,13 +191,13 @@ class OrderShippingRate implements ArgumentInterface
     public function formatAmount($amount, ?string $currency): string
     {
         if (!$currency) {
-            return number_format((float)$amount, 2, '.', '');
+            return number_format((float) $amount, 2, '.', '');
         }
 
         try {
-            return $this->localeCurrency->getCurrency($currency)->toCurrency((float)$amount);
+            return $this->localeCurrency->getCurrency($currency)->toCurrency((float) $amount);
         } catch (\Exception $exception) {
-            return number_format((float)$amount, 2, '.', '') . ' ' . $currency;
+            return number_format((float) $amount, 2, '.', '') . ' ' . $currency;
         }
     }
 
