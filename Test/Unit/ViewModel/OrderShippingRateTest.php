@@ -68,10 +68,74 @@ class OrderShippingRateTest extends \PHPUnit\Framework\TestCase
             'insurance amount' => [['insurance_amount' => 2], true],
             'surcharge' => [['surcharge' => 3], true],
             'discount' => [['discount' => 4], true],
+            'zero surcharge with base rate' => [['base_rate' => 10, 'surcharge' => 0], false],
+            'zero discount with base rate' => [['base_rate' => 10, 'discount' => 0.0], false],
+            'zero surcharge and discount with base rate' => [
+                ['base_rate' => 10, 'surcharge' => '0', 'discount' => '0.00'],
+                false,
+            ],
+            'zero surcharge with tax' => [['tax_amount' => 1, 'surcharge' => 0], true],
             'surcharge rules' => [['surcharge_rules' => ['1' => 5]], true],
             'discount rules' => [['discount_rules' => ['2' => 6]], true],
+            'zero surcharge rules with base rate' => [
+                ['base_rate' => 10, 'surcharge_rules' => ['1' => 0, '2' => '0.00']],
+                false,
+            ],
+            'zero discount rules with base rate' => [
+                ['base_rate' => 10, 'discount_rules' => ['3' => 0.0]],
+                false,
+            ],
+            'mixed surcharge rules' => [['surcharge_rules' => ['1' => 0, '2' => 5]], true],
             'packages' => [['packages' => [['name' => 'Box', 'qty' => 1]]], true],
             'empty extras' => [['base_rate' => 10, 'surcharge_rules' => [], 'packages' => []], false],
+        ];
+    }
+
+    /**
+     * @param mixed $value
+     * @param bool $expected
+     */
+    #[DataProvider('nonZeroAmountDataProvider')]
+    public function testIsNonZeroAmount($value, bool $expected): void
+    {
+        $this->assertSame($expected, $this->viewModel->isNonZeroAmount($value));
+    }
+
+    /**
+     * @return array
+     */
+    public static function nonZeroAmountDataProvider(): array
+    {
+        return [
+            'null' => [null, false],
+            'empty string' => ['', false],
+            'zero' => [0, false],
+            'zero float' => [0.0, false],
+            'zero string' => ['0.00', false],
+            'amount' => [3.5, true],
+            'negative amount' => [-1, true],
+        ];
+    }
+
+    /**
+     * @param mixed $rules
+     * @param array $expected
+     */
+    #[DataProvider('nonZeroRulesDataProvider')]
+    public function testNonZeroRules($rules, array $expected): void
+    {
+        $this->assertSame($expected, $this->viewModel->nonZeroRules($rules));
+    }
+
+    /**
+     * @return array
+     */
+    public static function nonZeroRulesDataProvider(): array
+    {
+        return [
+            'not an array' => [null, []],
+            'zeros' => [['1' => 0, '2' => '0.00'], []],
+            'mixed' => [['1' => 0, '2' => 5, '3' => -1], ['2' => 5, '3' => -1]],
         ];
     }
 

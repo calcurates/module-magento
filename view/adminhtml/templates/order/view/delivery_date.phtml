@@ -175,7 +175,7 @@ $displayShippingRatesMetadata = $rateViewModel
                                     ) ?></td>
                                 </tr>
                             <?php endif; ?>
-                            <?php if ($rateViewModel->isPresent($rate['surcharge'] ?? null)): ?>
+                            <?php if ($rateViewModel->isNonZeroAmount($rate['surcharge'] ?? null)): ?>
                                 <tr>
                                     <th><?= $block->escapeHtml(__('Surcharge')) ?></th>
                                     <td><?= $block->escapeHtml(
@@ -183,11 +183,12 @@ $displayShippingRatesMetadata = $rateViewModel
                                     ) ?></td>
                                 </tr>
                             <?php endif; ?>
-                            <?php if (!empty($rate['surcharge_rules'])): ?>
+                            <?php $surchargeRules = $rateViewModel->nonZeroRules($rate['surcharge_rules'] ?? []); ?>
+                            <?php if ($surchargeRules): ?>
                                 <tr>
                                     <th><?= $block->escapeHtml(__('Surcharge Rules')) ?></th>
                                     <td>
-                                        <?php foreach ($rate['surcharge_rules'] as $ruleId => $amount): ?>
+                                        <?php foreach ($surchargeRules as $ruleId => $amount): ?>
                                             <div><?= $block->escapeHtml(__('Rule %1', $ruleId)) ?>:
                                                 <?= $block->escapeHtml(
                                                     $rateViewModel->formatAmount($amount, $currency)
@@ -196,7 +197,7 @@ $displayShippingRatesMetadata = $rateViewModel
                                     </td>
                                 </tr>
                             <?php endif; ?>
-                            <?php if ($rateViewModel->isPresent($rate['discount'] ?? null)): ?>
+                            <?php if ($rateViewModel->isNonZeroAmount($rate['discount'] ?? null)): ?>
                                 <tr>
                                     <th><?= $block->escapeHtml(__('Discount')) ?></th>
                                     <td><?= $block->escapeHtml(
@@ -204,11 +205,12 @@ $displayShippingRatesMetadata = $rateViewModel
                                     ) ?></td>
                                 </tr>
                             <?php endif; ?>
-                            <?php if (!empty($rate['discount_rules'])): ?>
+                            <?php $discountRules = $rateViewModel->nonZeroRules($rate['discount_rules'] ?? []); ?>
+                            <?php if ($discountRules): ?>
                                 <tr>
                                     <th><?= $block->escapeHtml(__('Discount Rules')) ?></th>
                                     <td>
-                                        <?php foreach ($rate['discount_rules'] as $ruleId => $amount): ?>
+                                        <?php foreach ($discountRules as $ruleId => $amount): ?>
                                             <div><?= $block->escapeHtml(__('Rule %1', $ruleId)) ?>:
                                                 <?= $block->escapeHtml(
                                                     $rateViewModel->formatAmount($amount, $currency)
