@@ -31,7 +31,7 @@ services:
     # You can find it by command: stat -c '%u:%g' .docker/mysql/data
     user: "${MYSQL_UID:-999}:${MYSQL_GID:-999}"
     container_name: magento2-mysql
-    restart: always
+    restart: on-failure
     ports:
       - "${MYSQL_PORT:-3306}:3306"
     environment:
