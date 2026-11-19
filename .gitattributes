@@ -3,4 +3,6 @@
 .gitignore             export-ignore
 .gitlab-ci.yml         export-ignore
 .docker                export-ignore
+.env.dist              export-ignore
 docker-compose.yml     export-ignore
+.php-cs-fixer.dist.php export-ignore
