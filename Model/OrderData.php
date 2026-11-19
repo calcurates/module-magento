@@ -145,4 +145,26 @@ class OrderData extends \Magento\Framework\Model\AbstractModel implements OrderD
     {
         $this->setData(self::SPLIT_SHIPMENTS, $shipments);
     }
+
+    /**
+     * @return array
+     */
+    public function getShippingRate(): array
+    {
+        $shippingRate = $this->getData(self::SHIPPING_RATE);
+        if ($shippingRate && is_array($shippingRate)) {
+            return $shippingRate;
+        }
+
+        return [];
+    }
+
+    /**
+     * @param array $shippingRate
+     * @return void
+     */
+    public function setShippingRate(array $shippingRate): void
+    {
+        $this->setData(self::SHIPPING_RATE, $shippingRate);
+    }
 }

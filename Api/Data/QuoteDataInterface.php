@@ -24,6 +24,7 @@ interface QuoteDataInterface
     public const DELIVERY_DATE_TIME_FEE = 'delivery_date_time_fee';
     public const DELIVERY_DATES = 'delivery_dates';
     public const SPLIT_SHIPMENTS = 'split_shipments';
+    public const SHIPPING_RATES = 'shipping_rates';
 
     /**
      * @return int
@@ -145,4 +146,17 @@ interface QuoteDataInterface
      * @return void
      */
     public function setSplitShipments(array $shipments): void;
+
+    /**
+     * Rate details for every method returned for the quote, keyed by shipping method code.
+     *
+     * @return array
+     */
+    public function getShippingRates(): array;
+
+    /**
+     * @param array $shippingRates
+     * @return void
+     */
+    public function setShippingRates(array $shippingRates): void;
 }

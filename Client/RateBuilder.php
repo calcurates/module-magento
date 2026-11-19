@@ -63,6 +63,9 @@ class RateBuilder
     {
         $displayRatesType = $this->calcuratesConfig->getRatesTaxDisplayType();
         $tax = $responseRate['rate']['tax'] ?? null;
+        if (isset($responseRate['rate']) && is_array($responseRate['rate'])) {
+            $responseRate['rate']['finalRate'] = $responseRate['rate']['cost'] ?? null;
+        }
         if ($displayRatesType === RateTaxDisplaySource::BOTH && $tax) {
             $responseRateWithTax = $responseRate;
             $responseRateWithTax['rate']['cost'] += $tax;
@@ -136,13 +139,99 @@ class RateBuilder
             );
         }
         $rate->setCurrency($responseRate['rate']['currency']);
-        if (!empty($responseRate['rate']['tax'])) {
+        if (array_key_exists('tax', $responseRate['rate']) && $responseRate['rate']['tax'] !== null) {
             $rate->setTaxAmount($responseRate['rate']['tax']);
+        }
+        $insuranceAmount = $this->resolveInsuranceAmount($responseRate['rate']);
+        if ($insuranceAmount !== null) {
+            $rate->setData(RatesResponseProcessor::CALCURATES_INSURANCE_AMOUNT, $insuranceAmount);
+        }
+        $packages = $this->collectPackages($responseRate);
+        if ($packages) {
+            $rate->setData(RatesResponseProcessor::CALCURATES_PACKAGES, $packages);
         }
         if (array_key_exists('customNumber', $responseRate)) {
             $rate->setData(RatesResponseProcessor::CALCURATES_CUSTOM_NUMBER, $responseRate['customNumber']);
         }
+        if (array_key_exists('finalRate', $responseRate['rate'])) {
+            $rate->setData(RatesResponseProcessor::CALCURATES_FINAL_RATE, $responseRate['rate']['finalRate']);
+        }
+        if (array_key_exists('baseRate', $responseRate['rate'])) {
+            $rate->setData(RatesResponseProcessor::CALCURATES_BASE_RATE, $responseRate['rate']['baseRate']);
+        }
+        if (array_key_exists('surcharge', $responseRate['rate'])) {
+            $rate->setData(RatesResponseProcessor::CALCURATES_SURCHARGE, $responseRate['rate']['surcharge']);
+        }
+        if (array_key_exists('discount', $responseRate['rate'])) {
+            $rate->setData(RatesResponseProcessor::CALCURATES_DISCOUNT, $responseRate['rate']['discount']);
+        }
+        if (is_array($responseRate['rate']['surchargeRules'] ?? null)) {
+            $rate->setData(
+                RatesResponseProcessor::CALCURATES_SURCHARGE_RULES,
+                $responseRate['rate']['surchargeRules']
+            );
+        }
+        if (is_array($responseRate['rate']['discountRules'] ?? null)) {
+            $rate->setData(
+                RatesResponseProcessor::CALCURATES_DISCOUNT_RULES,
+                $responseRate['rate']['discountRules']
+            );
+        }
 
         return $rate;
+    }
+
+    /**
+     * @param array $rateData
+     * @return float|null
+     */
+    private function resolveInsuranceAmount(array $rateData): ?float
+    {
+        $amount = $rateData['insurance'] ?? null;
+        if (!is_numeric($amount)) {
+            return null;
+        }
+
+        return (float)$amount;
+    }
+
+    /**
+     * @param array $responseRate
+     * @return array
+     */
+    private function collectPackages(array $responseRate): array
+    {
+        $packages = [];
+        $this->appendPackages($packages, $responseRate['packages'] ?? []);
+        $this->appendPackages($packages, $responseRate['rate']['packages'] ?? []);
+        foreach ($responseRate['rates'] ?? [] as $rate) {
+            if (is_array($rate)) {
+                $this->appendPackages($packages, $rate['packages'] ?? []);
+            }
+        }
+        foreach ($responseRate['services'] ?? [] as $service) {
+            if (is_array($service)) {
+                $this->appendPackages($packages, $service['packages'] ?? []);
+            }
+        }
+
+        return $packages;
+    }
+
+    /**
+     * @param array $packages
+     * @param mixed $packagesToAppend
+     * @return void
+     */
+    private function appendPackages(array &$packages, $packagesToAppend): void
+    {
+        if (!is_array($packagesToAppend)) {
+            return;
+        }
+        foreach ($packagesToAppend as $package) {
+            if (is_array($package)) {
+                $packages[] = $package;
+            }
+        }
     }
 }

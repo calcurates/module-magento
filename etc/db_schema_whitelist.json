@@ -44,7 +44,8 @@
             "delivery_date_time_label": true,
             "delivery_date_time_fee": true,
             "delivery_dates": true,
-            "split_shipments": true
+            "split_shipments": true,
+            "shipping_rates": true
         },
         "index": {
             "CALCURATES_QUOTE_DATA_QUOTE_ID": true
@@ -66,7 +67,8 @@
             "base_dd_fee_amount": true,
             "dd_fee_amount": true,
             "delivery_dates": true,
-            "split_shipments": true
+            "split_shipments": true,
+            "shipping_rate": true
         },
         "index": {
             "CALCURATES_ORDER_DATA_ORDER_ID": true

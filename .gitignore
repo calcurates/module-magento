@@ -1,6 +1,9 @@
 ### PhpStorm
 .idea
 
+### AI
+.ai
+
 ### Composer
 vendor/
 composer.lock
@@ -9,4 +12,7 @@ composer.lock
 ### docker
 .docker/mysql/data/*
 !.docker/mysql/data/.gitkeep
+.docker/magento2/
 .docker/php/auth.json
+.docker/.env
+.env

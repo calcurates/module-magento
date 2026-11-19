@@ -24,6 +24,7 @@ interface OrderDataInterface
     public const DD_FEE_AMOUNT = 'dd_fee_amount';
     public const DELIVERY_DATES = 'delivery_dates';
     public const SPLIT_SHIPMENTS = 'split_shipments';
+    public const SHIPPING_RATE = 'shipping_rate';
 
     /**
      * @return int
@@ -145,4 +146,17 @@ interface OrderDataInterface
      * @return void
      */
     public function setSplitShipments(array $shipments): void;
+
+    /**
+     * Rate details of the shipping method selected for the order.
+     *
+     * @return array
+     */
+    public function getShippingRate(): array;
+
+    /**
+     * @param array $shippingRate
+     * @return void
+     */
+    public function setShippingRate(array $shippingRate): void;
 }

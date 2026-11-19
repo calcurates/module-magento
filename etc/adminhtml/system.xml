@@ -75,6 +75,18 @@
                         <config_path>carriers/calcurates/display_shipping_option_name</config_path>
                         <comment><![CDATA[Relates to Shipping Options with multiple methods inside (Carriers, Table Rates, in-Store Pickup, Rate Shopping)]]></comment>
                     </field>
+                    <field id="display_shipping_rates_metadata" translate="label comment" type="select" sortOrder="46"
+                           showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                        <label>Display Shipping Rates Metadata</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>carriers/calcurates/display_shipping_rates_metadata</config_path>
+                        <comment>
+                            <![CDATA[
+                                When set to No, Delivery Dates and Shipping Rate are hidden on the order page.<br>
+                                Shipping Rate is also hidden when it contains only the Base Rate.
+                            ]]>
+                        </comment>
+                    </field>
                     <field id="sort_order" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Sort Order</label>
                         <validate>validate-number validate-zero-or-greater</validate>

@@ -139,8 +139,10 @@ class MetaRatesResponseProcessor
                 $stringLength
             );
         });
+        $isFirstOrigin = true;
         foreach ($sortedOrigins as $origin) {
-            $childRates = $this->ratesResponseProcessor->processResponse($origin, $quote);
+            $childRates = $this->ratesResponseProcessor->processResponse($origin, $quote, $isFirstOrigin);
+            $isFirstOrigin = false;
             $this->metaRateData->setRatesData($origin['origin']['id'], $childRates->getAllRates());
         }
 

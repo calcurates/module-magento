@@ -1,5 +1,40 @@
 volumes:
-  Magento2DataVolume:
+  mysql_data:
+  opensearch_data:
+
+# Shared PHP definition for the one-shot init service and php-fpm.
+x-php: &php
+  build:
+    context: ./.docker/php
+    dockerfile: Dockerfile
+    args:
+      LOCAL_UID: ${LOCAL_UID:-1000}
+      LOCAL_GID: ${LOCAL_GID:-1000}
+  working_dir: /var/www/magento2
+  volumes:
+    # The module repository. Magento is linked to it, see .docker/php/init.sh.
+    - '.:/var/www/module-magento'
+    # Magento itself lives on the host so the IDE can index the full tree.
+    - './.docker/magento2:/var/www/magento2'
+    - './.docker/php/php.ini:/usr/local/etc/php/php.ini:ro'
+    - './.docker/php/php-fpm.conf:/usr/local/etc/php-fpm.conf:ro'
+    - './.docker/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro'
+  environment:
+    MYSQL_PASSWORD: ${MYSQL_PASS:-passwoRt}
+    MYSQL_USER: ${MYSQL_USER:-magento2}
+    MYSQL_DATABASE: ${MYSQL_DB:-magento2}
+    ANGIE_PORT: ${ANGIE_PORT:-80}
+    MAGENTO_SAMPLE_DATA: ${MAGENTO_SAMPLE_DATA:-1}
+    MAGENTO_ADMIN_USER: ${MAGENTO_ADMIN_USER:-admin}
+    MAGENTO_ADMIN_PASSWORD: ${MAGENTO_ADMIN_PASSWORD:-admin123}
+    MAGENTO_ADMIN_EMAIL: ${MAGENTO_ADMIN_EMAIL:-user@example.com}
+    XDEBUG_MODE: ${XDEBUG_MODE:-off}
+    XDEBUG_CONFIG: client_port=${XDEBUG_PORT:-9003}
+  extra_hosts:
+    - 'host.docker.internal:host-gateway'
+  networks:
+    - default
+    - calcurates-dev
 
 services:
   opensearch:
@@ -13,90 +48,100 @@ services:
       - cluster.routing.allocation.disk.threshold_enabled=false
       - "OPENSEARCH_JAVA_OPTS=-Xms256m -Xmx256m -Xlog:disable"
       - "OPENSEARCH_INITIAL_ADMIN_PASSWORD=^paSswoRt1~"
-    depends_on:
-      - mysql
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - 'opensearch_data:/usr/share/opensearch/data'
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -fs http://localhost:9200/_cluster/health || exit 1']
+      interval: 5s
+      timeout: 3s
+      retries: 40
     container_name: magento2-opensearch
+    restart: unless-stopped
     ports:
-      - "9200:9200"
+      - "127.0.0.1:${OPENSEARCH_PORT:-9200}:9200"
+    networks:
+      - default
 
   mysql:
     build:
       context: ./.docker/mysql
       dockerfile: Dockerfile
-    command: [--log-bin-trust-function-creators=1, --skip-mysqlx]
+    command: [--skip-mysqlx]
     container_name: magento2-mysql
-    restart: always
+    restart: unless-stopped
     ports:
-      - "3306:3306"
+      - "127.0.0.1:${MYSQL_PORT:-3306}:3306"
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-      - MYSQL_PASSWORD=passwoRt
-      - MYSQL_USER=magento2
-      - MYSQL_DATABASE=magento2
+      - MYSQL_PASSWORD=${MYSQL_PASS:-passwoRt}
+      - MYSQL_USER=${MYSQL_USER:-magento2}
+      - MYSQL_DATABASE=${MYSQL_DB:-magento2}
     volumes:
-      - './.docker/mysql/data:/var/lib/mysql'
-      - './.docker/mysql/server.cnf:/etc/mysql/my.cnf'
+      - 'mysql_data:/var/lib/mysql'
+      - './.docker/mysql/server.cnf:/etc/mysql/conf.d/server.cnf:ro'
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', '127.0.0.1', '-uroot', '--silent']
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    networks:
+      - default
+
+  # Prepares Magento before php/angie start: links the module, installs Magento
+  # if the database is empty, applies module updates on every start.
+  init:
+    <<: *php
+    user: root
+    container_name: magento2-init
+    restart: 'no'
+    command: ['sh', '/var/www/module-magento/.docker/php/init.sh']
+    depends_on:
+      mysql:
+        condition: service_healthy
+      opensearch:
+        condition: service_healthy
 
   php:
-    privileged: true
-    build:
-      context: ./.docker/php
-      dockerfile: Dockerfile
-    volumes:
-      - '.docker/php/php.ini:/usr/local/etc/php/php.ini'
-      - '.docker/php/php-fpm.conf:/usr/local/etc/php-fpm.conf'
-      - '.docker/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini'
-      - 'Magento2DataVolume:/var/www/magento2'
-      - './Api:/var/www/magento2/app/code/Calcurates/ModuleMagento/Api'
-      - './Block:/var/www/magento2/app/code/Calcurates/ModuleMagento/Block'
-      - './Client:/var/www/magento2/app/code/Calcurates/ModuleMagento/Client'
-      - './Controller:/var/www/magento2/app/code/Calcurates/ModuleMagento/Controller'
-      - './etc:/var/www/magento2/app/code/Calcurates/ModuleMagento/etc'
-      - './Gateway:/var/www/magento2/app/code/Calcurates/ModuleMagento/Gateway'
-      - './Helper:/var/www/magento2/app/code/Calcurates/ModuleMagento/Helper'
-      - './i18n:/var/www/magento2/app/code/Calcurates/ModuleMagento/i18n'
-      - './Model:/var/www/magento2/app/code/Calcurates/ModuleMagento/Model'
-      - './Observer:/var/www/magento2/app/code/Calcurates/ModuleMagento/Observer'
-      - './Plugin:/var/www/magento2/app/code/Calcurates/ModuleMagento/Plugin'
-      - './Setup:/var/www/magento2/app/code/Calcurates/ModuleMagento/Setup'
-      - './Test:/var/www/magento2/app/code/Calcurates/ModuleMagento/Test'
-      - './UI:/var/www/magento2/app/code/Calcurates/ModuleMagento/UI'
-      - './view:/var/www/magento2/app/code/Calcurates/ModuleMagento/view'
-      - './ViewModel:/var/www/magento2/app/code/Calcurates/ModuleMagento/ViewModel'
-      - './.editorconfig:/var/www/magento2/app/code/Calcurates/ModuleMagento/.editorconfig'
-      - './.gitattributes:/var/www/magento2/app/code/Calcurates/ModuleMagento/.gitattributes'
-      - './.gitignore:/var/www/magento2/app/code/Calcurates/ModuleMagento/.gitignore'
-      - './.gitlab-ci.yml:/var/www/magento2/app/code/Calcurates/ModuleMagento/.gitlab-ci.yml'
-      - './composer.json:/var/www/magento2/app/code/Calcurates/ModuleMagento/composer.json'
-      - './docker-compose.yml:/var/www/magento2/app/code/Calcurates/ModuleMagento/docker-compose.yml'
-      - './installation_guide.pdf:/var/www/magento2/app/code/Calcurates/ModuleMagento/installation_guide.pdf'
-      - './LICENSE:/var/www/magento2/app/code/Calcurates/ModuleMagento/LICENSE'
-      - './README.md:/var/www/magento2/app/code/Calcurates/ModuleMagento/README.md'
-      - './registration.php:/var/www/magento2/app/code/Calcurates/ModuleMagento/registration.php'
-      - './vendor:/var/www/magento2/vendor:cached'
+    <<: *php
     container_name: magento2-php
+    restart: unless-stopped
     ports:
-      - "9000:9000" # php-fpm
-    environment:
-      - MYSQL_PASSWORD=passwoRt
-      - MYSQL_USER=magento2
-      - MYSQL_DATABASE=magento2
+      - "127.0.0.1:${PHP_PORT:-9000}:9000" # php-fpm
     depends_on:
-      - mysql
-      - opensearch
-    expose:
-      - "9001" # xdebug
+      init:
+        condition: service_completed_successfully
 
   angie:
     build:
       context: ./.docker/angie
       dockerfile: Dockerfile
     volumes:
-      - 'Magento2DataVolume:/var/www/magento2'
-      - './vendor:/var/www/magento2/vendor'
-      - './.docker/angie/magento2.conf:/etc/angie/http.d/default.conf'
+      - './.docker/magento2:/var/www/magento2:ro'
+      - './.docker/angie/magento2.conf:/etc/angie/http.d/default.conf:ro'
     ports:
-      - "80:80"
+      - "127.0.0.1:${ANGIE_PORT:-80}:80"
     container_name: magento2-angie
+    restart: unless-stopped
     depends_on:
-      - php
+      php:
+        condition: service_started
+    networks:
+      - calcurates-dev
+      - default
+
+# Networks are used to connect containers from different docker-compose files.
+# If you want to connect containers from different docker-compose files,
+# you need to add the network to the services that you want to connect to.
+# For example, in this, we need to connect with Calcurates API.
+# To find the network name, you can use the following command: docker network ls
+# On a fresh machine create it first: docker network create calcurates-dev
+networks:
+  calcurates-dev:
+    external: true
