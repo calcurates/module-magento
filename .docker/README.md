@@ -51,6 +51,14 @@ rm -rf .docker/magento2
 docker compose up -d --build
 ```
 
+## Local integration
+
+`calcurates-dev` is shared with the Calcurates backend when it runs from
+`docker-compose.dev.yml`.
+
+- From `php`, the local backend is `http://calcurates-angie`.
+- From the backend, this site is `http://magento2-angie`.
+
 ## Notes
 
 - Xdebug: set `XDEBUG_MODE=debug` and `XDEBUG_PORT=9003` in `.env`.

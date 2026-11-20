@@ -32,9 +32,6 @@ x-php: &php
     XDEBUG_CONFIG: client_port=${XDEBUG_PORT:-9003}
   extra_hosts:
     - 'host.docker.internal:host-gateway'
-  networks:
-    - default
-    - calcurates-dev
 
 services:
   opensearch:
@@ -117,6 +114,9 @@ services:
     depends_on:
       init:
         condition: service_completed_successfully
+    networks:
+      - default
+      - calcurates-dev
 
   angie:
     build:
@@ -133,14 +133,11 @@ services:
       php:
         condition: service_started
     networks:
-      - calcurates-dev
       - default
+      - calcurates-dev
 
-# Networks are used to connect containers from different docker-compose files.
-# If you want to connect containers from different docker-compose files,
-# you need to add the network to the services that you want to connect to.
-# For example, in this, we need to connect with Calcurates API.
-# To find the network name, you can use the following command: docker network ls
+# Shared external network for local Calcurates projects.
+# The backend joins it via its docker-compose.dev.yml.
 # On a fresh machine create it first: docker network create calcurates-dev
 networks:
   calcurates-dev:
